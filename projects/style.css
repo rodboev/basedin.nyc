@@ -4,8 +4,8 @@
 body {
   font: 1.1rem sans-serif;
   max-width: 1020px;
-  width: 80%;
-  margin: 2rem auto;
+  width: calc(100% - 10vw);
+  margin: min(2vw, 2rem) auto;
 }
 
 h4 {
