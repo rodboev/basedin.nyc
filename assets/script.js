@@ -17,7 +17,7 @@ links.forEach(function(link) {
 });
 
 docs.forEach(function(doc) {
-    PDFJS.getDocument(doc + '.pdf')
+    PDFJS.getDocument(doc)
     .then(function(pdf) {
         return pdf.getPage(1);
     })
