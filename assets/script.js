@@ -17,7 +17,7 @@ links.forEach(function(link) {
 });
 
 docs.forEach(function(doc) {
-    PDFJS.getDocument(doc)
+    pdfjsLib.getDocument(doc).promise
     .then(function(pdf) {
         return pdf.getPage(1);
     })
@@ -26,7 +26,7 @@ docs.forEach(function(doc) {
             el = document.querySelector(selector),
             elStyle = window.getComputedStyle(el),
             scale = parseFloat(elStyle.height) / parseFloat(elStyle.width) * window.devicePixelRatio,
-            viewport = page.getViewport(scale),
+            viewport = page.getViewport({ scale: scale }),
             canvas = document.getElementById(doc),
             context = canvas.getContext('2d'),
             task = page.render({ canvasContext: context, viewport: viewport });

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Recommendations — Rod Boev</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Recommendations from colleagues and clients across NBC Sports, Victoria's Secret, agency partnerships, and direct engagements." />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { background: #333; display: flex; flex-direction: column; align-items: center; padding: 2vh 0; gap: 2vh; }
+      canvas { display: block; max-width: 96vw; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+    </style>
+  </head>
+  <body>
+    <script src="/pdfjs-dist/build/pdf.min.js"></script>
+    <script>
+      pdfjsLib.getDocument('/recommendations.pdf').promise.then(function(pdf) {
+        var pages = [];
+        for (var i = 1; i <= pdf.numPages; i++) pages.push(i);
+        pages.reduce(function(chain, pageNum) {
+          return chain.then(function() {
+            return pdf.getPage(pageNum).then(function(page) {
+              var scale = Math.min(1600, window.innerWidth * 0.96 * window.devicePixelRatio) / page.getViewport({ scale: 1 }).width;
+              var viewport = page.getViewport({ scale: scale });
+              var canvas = document.createElement('canvas');
+              canvas.width = viewport.width;
+              canvas.height = viewport.height;
+              canvas.style.width = (viewport.width / window.devicePixelRatio) + 'px';
+              document.body.appendChild(canvas);
+              return page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+            });
+          });
+        }, Promise.resolve());
+      });
+    </script>
+  </body>
+</html>
