@@ -10,6 +10,7 @@
 html {
   background: #222 url('assets/texture.png');
   min-height: 100%;
+  color-scheme: dark light;
 }
 
 body {
@@ -100,6 +101,26 @@ a {
   }
 }
 
+.projects h1 .back {
+  margin: 0;
+  padding-left: 7pt;
+  padding-right: 7pt;
+  margin-right: 10pt;
+  position: relative;
+  top: -2pt;
+}
+
+@media (min-width: 1136px) {
+  .projects h1 .back {
+    position: absolute;
+    left: -4em;
+    top: 0;
+    padding-left: 10pt;
+    padding-right: 10pt;
+    font-size: 13pt;
+  }
+}
+
 @media (max-width: 768px) and (-webkit-min-device-pixel-ratio: 2),
 (max-width: 768px) and (min-resolution: 192dpi) {
   .home a:not(.btn) {
@@ -115,7 +136,7 @@ a {
   }
   .home a:not(.btn) {
     height: 39vh;
-    width: 39vh;
+    width: 30.5vh;
     margin-left: auto;
     margin-right: auto !important;
   }
@@ -123,9 +144,11 @@ a {
     margin-bottom: 4vh;
   }
   .home .btn {
-    position: static;
     transform: none;
-    margin: 3vh auto 0;
+    margin: 4vh auto 0;
+    position: relative;
+    top: 1vh;
+    left: 0;
   }
 }
 
@@ -146,6 +169,7 @@ a {
 }
 
 .projects h1 {
+  position: relative;
   font-family: Figtree, sans-serif;
   font-size: 1.1em;
   text-transform: uppercase;

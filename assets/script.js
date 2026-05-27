@@ -1,45 +1,29 @@
 'use strict';
 
-var links = document.querySelectorAll('a[href$=".pdf"]'),
-    docs = [];
-
-if (typeof links.forEach !== 'function')
-    links = Array.prototype.slice.call(links);
+var links = Array.prototype.slice.call(
+    document.querySelectorAll('a[href$=".pdf"]')
+);
 
 links.forEach(function(link) {
-    var parts = link.href.split('/'),
-        lastPart = parts.pop() || parts.pop(),
-        canvas = document.createElement('canvas');
+    var filename = link.getAttribute('href');
 
-    canvas.id = lastPart;
-    document.body.appendChild(canvas);
-    docs.push(lastPart);
-});
-
-docs.forEach(function(doc) {
-    pdfjsLib.getDocument(doc).promise
-    .then(function(pdf) {
-        return pdf.getPage(1);
-    })
+    pdfjsLib.getDocument(filename).promise
+    .then(function(pdf) { return pdf.getPage(1); })
     .then(function(page) {
-        var selector = 'a[href^="' + doc + '"]',
-            el = document.querySelector(selector),
-            elStyle = window.getComputedStyle(el),
+        var elStyle = window.getComputedStyle(link),
             scale = parseFloat(elStyle.height) / parseFloat(elStyle.width) * window.devicePixelRatio,
             viewport = page.getViewport({ scale: scale }),
-            canvas = document.getElementById(doc),
-            context = canvas.getContext('2d'),
-            task = page.render({ canvasContext: context, viewport: viewport });
+            canvas = document.createElement('canvas'),
+            context = canvas.getContext('2d');
 
         canvas.height = viewport.height;
         canvas.width = viewport.width;
+        canvas.style.display = 'none';
+        document.body.appendChild(canvas);
 
-        task.promise.then(function() {
-            var css = document.createElement('style');
-            css.appendChild(document.createTextNode(
-                selector + ' { background-image: url(' + canvas.toDataURL() + ') };'
-            ));
-            document.querySelector('head').appendChild(css);
+        page.render({ canvasContext: context, viewport: viewport }).promise
+        .then(function() {
+            link.style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
             canvas.parentNode.removeChild(canvas);
         });
     });
