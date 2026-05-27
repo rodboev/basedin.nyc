@@ -1,6 +1,6 @@
 'use strict';
 
-var links = document.querySelectorAll('a'),
+var links = document.querySelectorAll('a[href$=".pdf"]'),
     docs = [];
 
 if (typeof links.forEach !== 'function')

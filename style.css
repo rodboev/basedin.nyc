@@ -32,8 +32,10 @@ a {
 }
 .home body {
   display: flex;
+  position: relative;
 }
-.home a {
+.home body > canvas { display: none; }
+.home a:not(.btn) {
   background: #fff url('assets/loading.svg') center no-repeat;
   background-size: contain;
   border-radius: 8px;
@@ -47,14 +49,14 @@ a {
 .home a:first-child {
   margin-right: 5vw;
 }
-.home a canvas {
+.home a:not(.btn) canvas {
   display: none;
 }
-.home a:hover, .home a:focus, .home a:active {
+.home a:not(.btn):hover, .home a:not(.btn):focus, .home a:not(.btn):active {
   box-shadow: 0 4px 0 #444, 0 0 30px rgba(0, 0, 0, 0.6);
   transform: translate(0, 5px);
 }
-.home a > span {
+.home a:not(.btn) > span {
   display: flex;
   border-radius: 8px;
   height: 100%;
@@ -64,10 +66,10 @@ a {
   justify-content: center;
   transition: background-color 0.2s ease-in-out;
 }
-.home a:hover > span, .home a:focus > span, .home a:active > span {
+.home a:not(.btn):hover > span, .home a:not(.btn):focus > span, .home a:not(.btn):active > span {
   background: rgba(0, 0, 0, 0.6);
 }
-.home a > span > span {
+.home a:not(.btn) > span > span {
   display: inline-block;
   opacity: 0;
   font: 2.4vh var(--font);
@@ -76,13 +78,20 @@ a {
   text-shadow: 0 1px 0 #333, 0 0 10px black;
   transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
-.home a:hover > span > span, .home a:focus > span > span, .home a:active > span > span {
+.home a:not(.btn):hover > span > span, .home a:not(.btn):focus > span > span, .home a:not(.btn):active > span > span {
   opacity: 1;
   transform: translate(0, 0);
 }
+.home .btn {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: clamp(2vh, 5vh, 5vw);
+}
 
 @media (min-width: 1136px) and (min-height: 600px) {
-  .home a {
+  .home a:not(.btn) {
     height: 65vh;
     width: calc(65vh * 8.5 / 11);
   }
@@ -93,7 +102,7 @@ a {
 
 @media (max-width: 768px) and (-webkit-min-device-pixel-ratio: 2),
 (max-width: 768px) and (min-resolution: 192dpi) {
-  .home a {
+  .home a:not(.btn) {
     height: 80vh;
     width: calc(80vh * 8.5 / 11);
   }
@@ -104,7 +113,7 @@ a {
     display: block;
     text-align: center;
   }
-  .home a {
+  .home a:not(.btn) {
     height: 39vh;
     width: 39vh;
     margin-left: auto;
@@ -113,10 +122,15 @@ a {
   .home a:first-child {
     margin-bottom: 4vh;
   }
+  .home .btn {
+    position: static;
+    transform: none;
+    margin: 3vh auto 0;
+  }
 }
 
 @media (max-height: 45vw) {
-  .home a > span > span {
+  .home a:not(.btn) > span > span {
     font-size: 1.25vw;
   }
 }
