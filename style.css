@@ -58,7 +58,9 @@ a {
   transform: translate(0, 5px);
 }
 .home a:not(.btn) > span {
+  position: relative;
   display: flex;
+  flex-direction: column;
   border-radius: 8px;
   height: 100%;
   width: 100%;
@@ -70,20 +72,44 @@ a {
 .home a:not(.btn):hover > span, .home a:not(.btn):focus > span, .home a:not(.btn):active > span {
   background: rgba(0, 0, 0, 0.6);
 }
-.home a:not(.btn) > span > span {
-  display: inline-block;
+.home a:not(.btn) > span > span:first-child {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 33%;
   opacity: 0;
-  font: 2.4vh var(--font);
+  font: 2.8vh var(--font);
   color: white;
-  transform: translate(0, 8px);
   text-shadow: 0 1px 0 #333, 0 0 10px black;
   transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+  transform: translate(0, 8px);
 }
-.home a:not(.btn):hover > span > span, .home a:not(.btn):focus > span > span, .home a:not(.btn):active > span > span {
+.home .download {
+  position: absolute;
+  top: 62%;
+  left: 50%;
+  transform: translate(-50%, 8px);
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+  display: none;
+  background: rgba(0, 0, 0, 0.25);
+  box-shadow: none;
+  border: 1px solid rgba(107, 163, 232, 0.35);
+  padding: 0.2m 0.5em;
+}
+.home a:not(.btn):hover > span > span:first-child,
+.home a:not(.btn):focus > span > span:first-child,
+.home a:not(.btn):active > span > span:first-child {
   opacity: 1;
   transform: translate(0, 0);
 }
-.home .btn {
+.home a:not(.btn):hover .download,
+.home a:not(.btn):focus .download,
+.home a:not(.btn):active .download {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.home > body > .btn {
   position: absolute;
   top: 100%;
   left: 50%;
@@ -98,6 +124,9 @@ a {
   }
   .home a:first-child {
     margin-right: 10vw;
+  }
+  .home .download {
+    display: block;
   }
 }
 
@@ -143,7 +172,7 @@ a {
   .home a:first-child {
     margin-bottom: 4vh;
   }
-  .home .btn {
+  .home > body > .btn {
     transform: none;
     margin: 4vh auto 0;
     position: relative;
@@ -153,7 +182,7 @@ a {
 }
 
 @media (max-height: 45vw) {
-  .home a:not(.btn) > span > span {
+  .home a:not(.btn) > span > span:first-child {
     font-size: 1.25vw;
   }
 }
