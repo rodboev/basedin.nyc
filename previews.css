@@ -1,7 +1,7 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: #333; display: flex; flex-direction: column; align-items: center; padding: 2vh 0; gap: 2vh; }
 canvas { display: block; max-width: 96vw; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-.download { position: sticky; top: 1vh; z-index: 1; }
+.download { position: fixed; background: white; top: calc(1.5em + 2vh); }
 
 @media print {
   @page { margin: 0; }
