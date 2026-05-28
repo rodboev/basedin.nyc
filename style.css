@@ -109,12 +109,14 @@ a {
 }
 
 .projects h1 .back {
+  display: inline-flex;
+  align-items: center;
   margin: 0;
-  padding-left: 7pt;
-  padding-right: 7pt;
+  padding: 0.55em 7pt;
   margin-right: 10pt;
+  vertical-align: middle;
   position: relative;
-  top: -2pt;
+  top: -1.5pt;
 }
 
 @media (min-width: 1136px) {
@@ -191,6 +193,7 @@ a {
   text-transform: initial;
   font-weight: initial;
   letter-spacing: initial;
+  margin-left: 0.15em;
 }
 
 .projects a {
