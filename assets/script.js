@@ -4,19 +4,6 @@ var links = Array.prototype.slice.call(
     document.querySelectorAll('a.preview')
 );
 
-document.querySelectorAll('.download[data-href]').forEach(function(el) {
-    el.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        var a = document.createElement('a');
-        a.href = el.getAttribute('data-href');
-        a.download = '';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-    });
-});
-
 links.forEach(function(link) {
     var filename = link.getAttribute('href').replace(/\/$/, '') + '.pdf';
 

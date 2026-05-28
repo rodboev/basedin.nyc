@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Resume — Rod Boev</title>
+    <title>Resume &mdash; Rod Boev</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="darkreader-lock" />
     <meta property="og:title" content="Resume - Rod Boev">
     <meta property="og:image" content="https://basedin.nyc/resume/thumb.jpg">
     <meta property="og:url" content="https://basedin.nyc/resume">
     <meta property="og:type" content="website">
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { background: #333; display: flex; flex-direction: column; align-items: center; padding: 2vh 0; gap: 2vh; }
-      canvas { display: block; max-width: 96vw; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-    </style>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/previews.css" />
   </head>
   <body>
+    <a class="btn download" href="/resume.pdf" download>Download PDF</a>
     <script src="/pdfjs-dist/build/pdf.min.js"></script>
     <script>
       pdfjsLib.getDocument('/resume.pdf').promise.then(function(pdf) {

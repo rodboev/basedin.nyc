@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Recommendations — Rod Boev</title>
+    <title>Recommendations &mdash; Rod Boev</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="darkreader-lock" />
     <meta name="description" content="Recommendations from colleagues and clients across NBC Sports, Victoria's Secret, agency partnerships, and direct engagements." />
@@ -10,13 +10,11 @@
     <meta property="og:image" content="https://basedin.nyc/recommendations/thumb.jpg">
     <meta property="og:url" content="https://basedin.nyc/recommendations">
     <meta property="og:type" content="website">
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { background: #333; display: flex; flex-direction: column; align-items: center; padding: 2vh 0; gap: 2vh; }
-      canvas { display: block; max-width: 96vw; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-    </style>
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/previews.css" />
   </head>
   <body>
+    <a class="btn download" href="/recommendations.pdf" download>Download PDF</a>
     <script src="/pdfjs-dist/build/pdf.min.js"></script>
     <script>
       pdfjsLib.getDocument('/recommendations.pdf').promise.then(function(pdf) {
