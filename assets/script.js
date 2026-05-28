@@ -1,11 +1,11 @@
 'use strict';
 
 var links = Array.prototype.slice.call(
-    document.querySelectorAll('a[href$=".pdf"]')
+    document.querySelectorAll('a.preview')
 );
 
 links.forEach(function(link) {
-    var filename = link.getAttribute('href');
+    var filename = link.getAttribute('href').replace(/\/$/, '') + '.pdf';
 
     pdfjsLib.getDocument(filename).promise
     .then(function(pdf) { return pdf.getPage(1); })
