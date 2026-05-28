@@ -123,7 +123,7 @@ a {
     width: calc(65vh * 8.5 / 11);
   }
   .home a:first-child {
-    margin-right: 10vw;
+    margin-right: 3.5vw;
   }
   .home .download {
     display: block;
