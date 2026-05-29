@@ -25,22 +25,23 @@ a {
 
 /* ── homepage ── */
 
-.home {
+html:has(body.home) {
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.home body {
+body.home {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   position: relative;
 }
-.home body > canvas { display: none; }
-.home a:not(.btn) {
+body.home a:not(.btn) {
   background: #fff url('assets/loading.svg') center no-repeat;
   background-size: contain;
+  position: relative;
+  overflow: hidden;
   border-radius: 8px;
   box-shadow: 0 8px 0 #ddd, 0 15px 20px rgba(0, 0, 0, 0.35);
   transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
@@ -49,18 +50,21 @@ a {
   display: block;
   color: inherit;
 }
-.home a:first-child {
+body.home a:first-child {
   margin-right: 5vw;
 }
-.home a:not(.btn) canvas {
-  display: none;
+body.home a:not(.btn) > svg {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: white;
 }
-.home a:not(.btn):hover, .home a:not(.btn):focus, .home a:not(.btn):active,
-.home a:not(.btn).hover {
+body.home a:not(.btn):hover, body.home a:not(.btn):focus, body.home a:not(.btn):active,
+body.home a:not(.btn).hover {
   box-shadow: 0 4px 0 #444, 0 0 30px rgba(0, 0, 0, 0.6);
   transform: translate(0, 5px);
 }
-.home a:not(.btn) > span {
+body.home a:not(.btn) > span {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -72,11 +76,11 @@ a {
   justify-content: center;
   transition: background-color 0.2s ease-in-out;
 }
-.home a:not(.btn):hover > span, .home a:not(.btn):focus > span, .home a:not(.btn):active > span,
-.home a:not(.btn).hover > span {
+body.home a:not(.btn):hover > span, body.home a:not(.btn):focus > span, body.home a:not(.btn):active > span,
+body.home a:not(.btn).hover > span {
   background: rgba(0, 0, 0, 0.6);
 }
-.home a:not(.btn) > span > span:first-child {
+body.home a:not(.btn) > span > span:first-child {
   position: absolute;
   left: 0;
   right: 0;
@@ -88,14 +92,14 @@ a {
   transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
   transform: translate(0, 8px);
 }
-.home a:not(.btn):hover > span > span:first-child,
-.home a:not(.btn):focus > span > span:first-child,
-.home a:not(.btn):active > span > span:first-child,
-.home a:not(.btn).hover > span > span:first-child {
+body.home a:not(.btn):hover > span > span:first-child,
+body.home a:not(.btn):focus > span > span:first-child,
+body.home a:not(.btn):active > span > span:first-child,
+body.home a:not(.btn).hover > span > span:first-child {
   opacity: 1;
   transform: translate(0, 0);
 }
-.home > body > .btn {
+body.home > .btn {
   position: absolute;
   bottom: calc(-0.6em - 1vh);
   left: 50%;
@@ -103,24 +107,24 @@ a {
 }
 
 @media (min-width: 1136px) and (min-height: 600px) {
-  .home a:not(.btn) {
+  body.home a:not(.btn) {
     height: 65vh;
     width: calc(65vh * 8.5 / 11);
   }
-  .home a:first-child {
+  body.home a:first-child {
     margin-right: 3.5vw;
   }
-  .home body {
+  body.home {
     padding-bottom: 0;
   }
-  .home > body > .btn {
+  body.home > .btn {
     bottom: auto;
     top: 100%;
     margin-top: clamp(2vh, 8vh, 5vw);
   }
 }
 
-.projects h1 .back {
+body.projects h1 .back {
   display: inline-flex;
   align-items: center;
   margin: 0;
@@ -132,7 +136,7 @@ a {
 }
 
 @media (min-width: 1136px) {
-  .projects h1 .back {
+  body.projects h1 .back {
     position: absolute;
     left: -4em;
     top: 0;
@@ -143,21 +147,21 @@ a {
 }
 
 @media (max-width: 768px) {
-  .home body {
+  body.home {
     display: block;
     text-align: center;
     padding-bottom: 0;
   }
-  .home a:not(.btn) {
+  body.home a:not(.btn) {
     height: 39vh;
     width: 30.5vh;
     margin-left: auto;
     margin-right: auto !important;
   }
-  .home a:first-child {
+  body.home a:first-child {
     margin-bottom: 4vh;
   }
-  .home > body > .btn {
+  body.home > .btn {
     position: relative;
     bottom: auto;
     left: 0;
@@ -168,20 +172,20 @@ a {
 }
 
 @media (min-width: 769px) and (max-width: 1135px) {
-  .home body {
+  body.home {
     padding-bottom: 7vh;
   }
 }
 
 @media (max-height: 45vw) {
-  .home a:not(.btn) > span > span:first-child {
+  body.home a:not(.btn) > span > span:first-child {
     font-size: 1.25vw;
   }
 }
 
 /* ── projects ── */
 
-.projects body {
+body.projects {
   color: rgba(255,255,255,0.88);
   max-width: 1020px;
   width: calc(100% - 10vw);
@@ -189,7 +193,7 @@ a {
   padding-bottom: 3rem;
 }
 
-.projects h1 {
+body.projects h1 {
   position: relative;
   font-family: Figtree, sans-serif;
   font-size: 1.1em;
@@ -201,17 +205,17 @@ a {
   font-weight: 550;
   letter-spacing: -0.01em;
 }
-.projects h1 small {
+body.projects h1 small {
   text-transform: initial;
   font-weight: initial;
   letter-spacing: initial;
   margin-left: 0.15em;
 }
 
-.projects a {
+body.projects a {
   color: #6ba3e8;
 }
-.projects a:not(.btn):hover { text-decoration: underline; }
+body.projects a:not(.btn):hover { text-decoration: underline; }
 
 .project {
   display: flex;
@@ -254,14 +258,14 @@ a {
   margin-top: -0.2em;
 }
 
-.projects h2 {
+body.projects h2 {
   font-size: 1.05rem;
   font-weight: 500;
   margin: 0 0 0.15em;
   line-height: 1.3;
 }
-.projects h2 a { color: inherit; }
-.projects h2 a:hover { text-decoration: underline; }
+body.projects h2 a { color: inherit; }
+body.projects h2 a:hover { text-decoration: underline; }
 
 .year {
   font-size: 0.7em;
@@ -312,11 +316,11 @@ a {
 
 @media (prefers-color-scheme: light) {
   html { background: #f6f5f3; background-image: none; }
-  .projects body { color: #1a1a1a; }
-  .projects h1 { color: #888; border-bottom-color: #888; }
+  body.projects { color: #1a1a1a; }
+  body.projects h1 { color: #888; border-bottom-color: #888; }
   .project { border-bottom-color: #e0deda; }
   .thumb { box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
-  .projects a { color: #3376d2; }
+  body.projects a { color: #3376d2; }
   .link { opacity: 1; }
   .copy { color: #555; }
   .btn {
@@ -332,4 +336,22 @@ a {
   .thumb { flex-basis: auto; width: 100%; }
   .thumb:not(.capped) img { width: 100%; height: auto; }
   .thumb.capped { height: auto; aspect-ratio: 280 / 143; }
+}
+
+/* ── preview ── */
+
+body.preview { background: #333; display: flex; flex-direction: column; align-items: center; padding: 2vh 0; gap: 2vh; }
+body.preview > svg { display: block; max-width: 96vw; height: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.4); background: white; user-select: none; }
+.download { position: fixed; background: white; top: calc(1.5em + 2vh); }
+
+@media (orientation: portrait) and (max-width: 768px) {
+  .download { display: none; }
+}
+
+@media print {
+  @page { margin: 0; }
+  .download { display: none; }
+  body.preview { background: none; padding: 0; gap: 0; display: block; }
+  body.preview > svg { box-shadow: none; max-width: none; width: 100% !important; height: 100vh; object-fit: contain; break-after: page; }
+  body.preview > svg:last-of-type { break-after: auto; }
 }

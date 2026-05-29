@@ -10,31 +10,30 @@
     <meta property="og:image" content="https://basedin.nyc/recommendations/thumb.jpg">
     <meta property="og:url" content="https://basedin.nyc/recommendations">
     <meta property="og:type" content="website">
-    <link rel="stylesheet" href="/style.css" />
-    <link rel="stylesheet" href="/previews.css" />
+    <link rel="stylesheet" href="/style.css?v=0d9b38a1" />
   </head>
-  <body>
-    <a class="btn download" href="/recommendations.pdf" download>Download PDF</a>
-    <script src="/pdfjs-dist/build/pdf.min.js"></script>
+  <body class="preview">
+    <a class="btn download" href="/recommendations.pdf?v=d2aded26" download>Download PDF</a>
+    <script src="/pdfjs-dist/build/pdf.min.js?v=0f328678"></script>
     <script>
-      pdfjsLib.getDocument('/recommendations.pdf').promise.then(function(pdf) {
+      pdfjsLib.getDocument('/recommendations.pdf?v=d2aded26').promise.then(function(pdf) {
         var pages = [];
         for (var i = 1; i <= pdf.numPages; i++) pages.push(i);
         pages.reduce(function(chain, pageNum) {
           return chain.then(function() {
             return pdf.getPage(pageNum).then(function(page) {
-              var displayWidth = Math.min(1600 / window.devicePixelRatio, window.innerWidth * 0.96);
-              var scale = (displayWidth * 4) / page.getViewport({ scale: 1 }).width;
+              var dpr = window.devicePixelRatio || 1;
+              var displayWidth = Math.min(1600 / dpr, window.innerWidth * 0.96);
+              var scale = displayWidth / page.getViewport({ scale: 1 }).width;
               var viewport = page.getViewport({ scale: scale });
-              var canvas = document.createElement('canvas');
-              canvas.width = viewport.width;
-              canvas.height = viewport.height;
-              return page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise
-              .then(function() {
-                var img = document.createElement('img');
-                img.src = canvas.toDataURL();
-                img.style.width = displayWidth + 'px';
-                document.body.appendChild(img);
+              return page.getOperatorList().then(function(opList) {
+                var svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs);
+                return svgGfx.getSVG(opList, viewport).then(function(svg) {
+                  svg.removeAttribute('width');
+                  svg.removeAttribute('height');
+                  svg.style.width = displayWidth + 'px';
+                  document.body.appendChild(svg);
+                });
               });
             });
           });
