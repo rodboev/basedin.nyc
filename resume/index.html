@@ -12,7 +12,7 @@
   </head>
   <body class="preview">
     <a class="btn download" href="/resume.pdf?v=6e022126" download>Download PDF</a>
-    <script src="/pdfjs-dist/build/pdf.min.js?v=0f328678"></script>
+    <script src="/assets/pdf.min.js?v=0f328678"></script>
     <script>
       pdfjsLib.getDocument('/resume.pdf?v=6e022126').promise.then(function(pdf) {
         var pages = [];
@@ -25,7 +25,7 @@
               var scale = displayWidth / page.getViewport({ scale: 1 }).width;
               var viewport = page.getViewport({ scale: scale });
               return page.getOperatorList().then(function(opList) {
-                var svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs);
+                var svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs, true);
                 return svgGfx.getSVG(opList, viewport).then(function(svg) {
                   svg.removeAttribute('width');
                   svg.removeAttribute('height');

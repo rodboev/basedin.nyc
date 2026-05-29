@@ -19,7 +19,7 @@ links.forEach(function(link) {
         var viewport = page.getViewport({ scale: scale });
 
         return page.getOperatorList().then(function(opList) {
-            var svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs);
+            var svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs, true);
             return svgGfx.getSVG(opList, viewport);
         });
     })
