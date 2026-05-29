@@ -1,0 +1,30 @@
+import glob, hashlib, re
+
+def file_hash(path):
+    with open(path, 'rb') as f:
+        return hashlib.md5(f.read()).hexdigest()[:8]
+
+def bust(html_path):
+    with open(html_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+
+    def replace(m):
+        attr, path = m.group(1), m.group(2)
+        clean = re.sub(r'\?.*', '', path)
+        try:
+            resolved = clean.lstrip('/')
+            h = file_hash(resolved)
+        except FileNotFoundError:
+            return m.group(0)
+        return f'{attr}"{clean}?v={h}"'
+
+    updated = re.sub(r'((?:href|src)=)"([^"]+\.(?:css|js))(?:\?[^"]*)?"', replace, content)
+    if updated != content:
+        with open(html_path, 'w', encoding='utf-8') as f:
+            f.write(updated)
+        print(f'  {html_path}')
+
+print('Cache-busted:')
+for f in glob.glob('**/*.html', recursive=True):
+    if 'pdfjs' not in f:
+        bust(f)
