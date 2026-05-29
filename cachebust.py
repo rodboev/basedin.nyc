@@ -1,10 +1,11 @@
-import glob, hashlib, re
+import glob, hashlib, os, re
 
 def file_hash(path):
     with open(path, 'rb') as f:
         return hashlib.md5(f.read()).hexdigest()[:8]
 
 def bust(html_path):
+    html_dir = os.path.dirname(html_path)
     with open(html_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
@@ -12,7 +13,10 @@ def bust(html_path):
         attr, path = m.group(1), m.group(2)
         clean = re.sub(r'\?.*', '', path)
         try:
-            resolved = clean.lstrip('/')
+            if clean.startswith('/'):
+                resolved = clean.lstrip('/')
+            else:
+                resolved = os.path.normpath(os.path.join(html_dir, clean))
             h = file_hash(resolved)
         except FileNotFoundError:
             return m.group(0)
