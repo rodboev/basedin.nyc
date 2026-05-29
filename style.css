@@ -28,14 +28,13 @@ a {
 html:has(body.home) {
   height: 100%;
   display: flex;
-  align-items: center;
-  justify-content: center;
 }
 body.home {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   position: relative;
+  margin: auto;
 }
 body.home a:not(.btn) {
   background: #fff url('assets/loading.svg') center no-repeat;
@@ -45,8 +44,8 @@ body.home a:not(.btn) {
   border-radius: 8px;
   box-shadow: 0 8px 0 #ddd, 0 15px 20px rgba(0, 0, 0, 0.35);
   transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
-  height: 80vh;
-  width: calc(80vh * 8.5 / 11);
+  height: min(80vh, calc(45vw * 11 / 8.5));
+  width: min(calc(80vh * 8.5 / 11), 45vw);
   display: block;
   color: inherit;
 }
@@ -106,10 +105,19 @@ body.home > .btn {
   transform: translateX(-50%);
 }
 
+@media (min-aspect-ratio: 2.5/1) {
+  body.home a:first-child {
+    margin-right: 15vw;
+  }
+  body.home > .btn {
+    bottom: calc(7.5vh - 1px);
+  }
+}
+
 @media (min-width: 1136px) and (min-height: 600px) {
   body.home a:not(.btn) {
-    height: 65vh;
-    width: calc(65vh * 8.5 / 11);
+    height: min(65vh, calc(46vw * 11 / 8.5));
+    width: min(calc(65vh * 8.5 / 11), 46vw);
   }
   body.home a:first-child {
     margin-right: 3.5vw;
