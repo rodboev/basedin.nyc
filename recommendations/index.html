@@ -25,7 +25,7 @@
               var displayWidth = Math.min(1600 / dpr, window.innerWidth * 0.96);
               var scale = displayWidth / page.getViewport({ scale: 1 }).width;
               var viewport = page.getViewport({ scale: scale });
-              var hiDpiViewport = page.getViewport({ scale: scale * dpr * 4 });
+              var hiDpiViewport = page.getViewport({ scale: scale * dpr * 2 });
               var fullCanvas = document.createElement('canvas');
               fullCanvas.width = hiDpiViewport.width;
               fullCanvas.height = hiDpiViewport.height;
