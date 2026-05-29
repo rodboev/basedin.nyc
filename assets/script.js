@@ -5,6 +5,10 @@ var links = Array.prototype.slice.call(
 );
 
 links.forEach(function(link) {
+    link.addEventListener('touchstart', function() { link.classList.add('hover'); }, { passive: true });
+    link.addEventListener('touchend', function() { link.classList.remove('hover'); });
+    link.addEventListener('touchcancel', function() { link.classList.remove('hover'); });
+
     var filename = link.getAttribute('href').replace(/\/$/, '') + '.pdf';
 
     pdfjsLib.getDocument(filename).promise
