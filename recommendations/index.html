@@ -15,7 +15,7 @@
   <body class="preview">
     <script src="/assets/pdf.min.js?v=0f328678"></script>
     <script>
-      pdfjsLib.getDocument('/recommendations.pdf?v=d2aded26').promise.then(function(pdf) {
+      pdfjsLib.getDocument('/recommendations.pdf').promise.then(function(pdf) {
         var pages = [];
         for (var i = 1; i <= pdf.numPages; i++) pages.push(i);
         pages.reduce(function(chain, pageNum) {

@@ -12,12 +12,12 @@
   </head>
   <body class="preview">
     <div class="downloads">
-      <a class="btn" href="/resume.pdf?v=6e022126" download>Download PDF</a>
+      <a class="btn" href="/resume.pdf" download>Download PDF</a>
       <a class="btn" href="/resume.docx" download>DOCX</a>
     </div>
     <script src="/assets/pdf.min.js?v=0f328678"></script>
     <script>
-      pdfjsLib.getDocument('/resume.pdf?v=6e022126').promise.then(function(pdf) {
+      pdfjsLib.getDocument('/resume.pdf').promise.then(function(pdf) {
         var pages = [];
         for (var i = 1; i <= pdf.numPages; i++) pages.push(i);
         pages.reduce(function(chain, pageNum) {

@@ -6,21 +6,65 @@
     <meta name="darkreader-lock" />
     <meta name="color-scheme" content="dark light" />
     <link rel="stylesheet" href="style.css?v=0d9b38a1" />
-    <link rel="mask-icon" href="safari-pinned-tab.svg" color="white" />
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="mask-icon" href="assets/safari-pinned-tab.svg" color="white" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
     <link rel="manifest" href="manifest.json" />
     <meta name="msapplication-TileColor" content="black" />
     <meta
       name="description"
       content="Full-stack development. Technology strategy and technical architecture. AI-driven BI, e-commerce, and engaging digital marketing for Fortune Global 500 clients."
     />
-    <meta property="og:image" content="/share.png" />
+    <meta property="og:image" content="/assets/share.png" />
   </head>
   <body class="home">
     <a class="preview" href="resume/"><span><span>Resume</span></span></a>
     <a class="preview" href="recommendations/"><span><span>Recommendations</span></span></a>
     <a class="btn" href="projects/">See projects</a>
     <script src="assets/pdf.min.js?v=0f328678"></script>
-    <script src="assets/script.js?v=5a754dfb"></script>
+    <script>
+      var links = Array.prototype.slice.call(
+        document.querySelectorAll('a.preview')
+      );
+
+      links.forEach(function(link) {
+        link.addEventListener('touchstart', function() { link.classList.add('hover'); }, { passive: true });
+        link.addEventListener('touchend', function() { link.classList.remove('hover'); });
+        link.addEventListener('touchcancel', function() { link.classList.remove('hover'); });
+
+        var filename = link.getAttribute('href').replace(/\/$/, '') + '.pdf';
+
+        pdfjsLib.getDocument(filename).promise
+        .then(function(pdf) { return pdf.getPage(1); })
+        .then(function(page) {
+          var elStyle = window.getComputedStyle(link),
+              scale = parseFloat(elStyle.height) / parseFloat(elStyle.width) * window.devicePixelRatio,
+              viewport = page.getViewport({ scale: scale }),
+              canvas = document.createElement('canvas'),
+              context = canvas.getContext('2d');
+
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          canvas.style.display = 'none';
+          document.body.appendChild(canvas);
+
+          page.render({ canvasContext: context, viewport: viewport }).promise
+          .then(function() {
+            link.style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
+            canvas.parentNode.removeChild(canvas);
+          });
+        });
+      });
+
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-114825587-1', 'auto');
+      ga('send', 'pageview');
+
+      if (Boolean(window.location.search))
+        history.replaceState({}, '', '/');
+    </script>
   </body>
 </html>
