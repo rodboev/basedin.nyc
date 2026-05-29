@@ -25,13 +25,13 @@
               var scale = displayWidth / page.getViewport({ scale: 1 }).width;
               var viewport = page.getViewport({ scale: scale });
               return page.getOperatorList().then(function(opList) {
-                var svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs, true);
-                return svgGfx.getSVG(opList, viewport).then(function(svg) {
-                  svg.removeAttribute('width');
-                  svg.removeAttribute('height');
-                  svg.style.width = displayWidth + 'px';
-                  document.body.appendChild(svg);
-                });
+                var svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs);
+                return svgGfx.getSVG(opList, viewport);
+              }).then(function(svg) {
+                svg.removeAttribute('width');
+                svg.removeAttribute('height');
+                svg.style.width = displayWidth + 'px';
+                document.body.appendChild(svg);
               });
             });
           });

@@ -41,8 +41,8 @@ body.home a:not(.btn) {
   background-size: contain;
   position: relative;
   overflow: hidden;
-  border-radius: 8px;
-  box-shadow: 0 8px 0 #ddd, 0 15px 20px rgba(0, 0, 0, 0.35);
+  border-radius: min(1vh, 0.75vw);
+  box-shadow: 0 min(1vh, 0.75vw) 0 #ddd, 0 15px 20px rgba(0, 0, 0, 0.35);
   transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
   height: min(80vh, calc(45vw * 11 / 8.5));
   width: min(calc(80vh * 8.5 / 11), 45vw);
@@ -67,7 +67,7 @@ body.home a:not(.btn) > span {
   position: relative;
   display: flex;
   flex-direction: column;
-  border-radius: 8px;
+  border-radius: min(1vh, 0.75vw);
   height: 100%;
   width: 100%;
   text-align: center;
@@ -86,7 +86,7 @@ body.home a:not(.btn) > span > span:first-child {
   color: white;
   text-shadow: 0 1px 0 #333, 0 0 10px black;
   transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-  transform: translate(0, 8px);
+  transform: translate(0, min(1vh, 0.75vw));
 }
 body.home a:not(.btn):hover > span > span:first-child,
 body.home a:not(.btn):focus > span > span:first-child,
@@ -127,8 +127,16 @@ body.home > .btn {
     top: 100%;
     margin-top: clamp(2vh, 8vh, 5vw);
   }
+  body.home a:not(.btn) {
+    border-radius: min(0.85vh, 0.75vw);
+    box-shadow: 0 min(0.85vh, 0.75vw) 0 #ddd, 0 15px 20px rgba(0, 0, 0, 0.35);
+  }
+  body.home a:not(.btn) > span {
+    border-radius: min(0.85vh, 0.75vw);
+  }
   body.home a:not(.btn) > span > span:first-child {
     font-size: 2.4vh;
+    transform: translate(0, min(0.85vh, 0.75vw));
   }
 }
 
@@ -349,7 +357,7 @@ body.projects h2 a:hover { text-decoration: underline; }
 /* ── preview ── */
 
 body.preview { background: #333; display: flex; flex-direction: column; align-items: center; padding: 2vh 0; gap: 2vh; }
-body.preview > svg { display: block; max-width: 96vw; height: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.4); background: white; user-select: none; }
+body.preview > svg, body.preview > div { display: block; max-width: 96vw; height: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.4); background: white; user-select: none; }
 .download { position: fixed; background: white; top: calc(1.5em + 2vh); }
 
 @media (orientation: portrait) and (max-width: 768px) {
@@ -360,6 +368,8 @@ body.preview > svg { display: block; max-width: 96vw; height: auto; box-shadow: 
   @page { margin: 0; }
   .download { display: none; }
   body.preview { background: none; padding: 0; gap: 0; display: block; }
-  body.preview > svg { box-shadow: none; max-width: none; width: 100% !important; height: 100vh; object-fit: contain; break-after: page; }
-  body.preview > svg:last-of-type { break-after: auto; }
+  body.preview > svg, body.preview > div { box-shadow: none; max-width: none; width: 100% !important; height: 100vh; overflow: hidden; break-after: page; }
+  body.preview > svg:last-of-type, body.preview > div:last-of-type { break-after: auto; }
+  body.preview > div > svg { width: 100% !important; height: 100%; }
+  body.preview > div > canvas { display: none !important; }
 }

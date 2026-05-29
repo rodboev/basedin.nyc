@@ -14,20 +14,22 @@ links.forEach(function(link) {
     pdfjsLib.getDocument(filename).promise
     .then(function(pdf) { return pdf.getPage(1); })
     .then(function(page) {
-        var scale = parseFloat(window.getComputedStyle(link).width) /
-            page.getViewport({ scale: 1 }).width;
-        var viewport = page.getViewport({ scale: scale });
+        var elStyle = window.getComputedStyle(link),
+            scale = parseFloat(elStyle.height) / parseFloat(elStyle.width) * window.devicePixelRatio,
+            viewport = page.getViewport({ scale: scale }),
+            canvas = document.createElement('canvas'),
+            context = canvas.getContext('2d');
 
-        return page.getOperatorList().then(function(opList) {
-            var svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs, true);
-            return svgGfx.getSVG(opList, viewport);
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        canvas.style.display = 'none';
+        document.body.appendChild(canvas);
+
+        page.render({ canvasContext: context, viewport: viewport }).promise
+        .then(function() {
+            link.style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
+            canvas.parentNode.removeChild(canvas);
         });
-    })
-    .then(function(svg) {
-        svg.style.width = '100%';
-        svg.style.height = '100%';
-        svg.style.borderRadius = 'inherit';
-        link.insertBefore(svg, link.firstChild);
     });
 });
 
