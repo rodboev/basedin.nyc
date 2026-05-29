@@ -1,11 +1,12 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 body { background: #333; display: flex; flex-direction: column; align-items: center; padding: 2vh 0; gap: 2vh; }
-canvas { display: block; max-width: 96vw; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+canvas { display: none; }
+img { display: block; max-width: 96vw; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
 .download { position: fixed; background: white; top: calc(1.5em + 2vh); }
 
 @media print {
   @page { margin: 0; }
   .download { display: none; }
-  body { background: none; padding: 0; gap: 0; }
-  canvas { box-shadow: none; width: 100% !important; height: auto; break-after: page; }
+  body { background: none; padding: 0; gap: 0; display: block; }
+  img { box-shadow: none; max-width: none; width: 100% !important; height: 100vh; object-fit: contain; break-after: page; }
 }

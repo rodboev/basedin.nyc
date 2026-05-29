@@ -23,14 +23,19 @@
         pages.reduce(function(chain, pageNum) {
           return chain.then(function() {
             return pdf.getPage(pageNum).then(function(page) {
-              var scale = Math.min(1600, window.innerWidth * 0.96 * window.devicePixelRatio) / page.getViewport({ scale: 1 }).width;
+              var displayWidth = Math.min(1600 / window.devicePixelRatio, window.innerWidth * 0.96);
+              var scale = (displayWidth * 4) / page.getViewport({ scale: 1 }).width;
               var viewport = page.getViewport({ scale: scale });
               var canvas = document.createElement('canvas');
               canvas.width = viewport.width;
               canvas.height = viewport.height;
-              canvas.style.width = (viewport.width / window.devicePixelRatio) + 'px';
-              document.body.appendChild(canvas);
-              return page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+              return page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise
+              .then(function() {
+                var img = document.createElement('img');
+                img.src = canvas.toDataURL();
+                img.style.width = displayWidth + 'px';
+                document.body.appendChild(img);
+              });
             });
           });
         }, Promise.resolve());
