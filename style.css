@@ -357,19 +357,20 @@ body.projects h2 a:hover { text-decoration: underline; }
 /* ── preview ── */
 
 body.preview { background: #333; display: flex; flex-direction: column; align-items: center; padding: 2vh 0; gap: 2vh; }
-body.preview > svg, body.preview > div { display: block; max-width: 96vw; height: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.4); background: white; user-select: none; }
-.download { position: fixed; background: white; top: calc(1.5em + 2vh); }
+body.preview > svg, body.preview > div:not(.downloads) { display: block; max-width: 96vw; height: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.4); background: white; user-select: none; }
+.downloads { position: fixed; top: calc(1.5em + 2vh); left: 50%; transform: translateX(-50%); display: flex; gap: 0.4em; z-index: 1; }
+.downloads a { background: white; }
 
 @media (orientation: portrait) and (max-width: 768px) {
-  .download { display: none; }
+  .downloads { display: none; }
 }
 
 @media print {
   @page { margin: 0; }
-  .download { display: none; }
+  .downloads { display: none; }
   body.preview { background: none; padding: 0; gap: 0; display: block; }
-  body.preview > svg, body.preview > div { box-shadow: none; max-width: none; width: 100% !important; height: 100vh; overflow: hidden; break-after: page; }
-  body.preview > svg:last-of-type, body.preview > div:last-of-type { break-after: auto; }
+  body.preview > svg, body.preview > div:not(.downloads) { box-shadow: none; max-width: none; width: 100% !important; height: 100vh; overflow: hidden; break-after: page; }
+  body.preview > svg:last-of-type, body.preview > div:not(.downloads):last-of-type { break-after: auto; }
   body.preview > div > svg { width: 100% !important; height: 100%; }
   body.preview > div > canvas { display: none !important; }
 }
