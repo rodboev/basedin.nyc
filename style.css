@@ -326,7 +326,7 @@ body.projects h2 a:hover { text-decoration: underline; }
 }
 .btn:hover {
   background: #6ba3e8;
-  color: #1a1a1a;
+  color: white;
   text-decoration: none;
 }
 
@@ -356,6 +356,7 @@ body.projects h2 a:hover { text-decoration: underline; }
 
 /* ── preview ── */
 
+html:has(body.preview) { background: #333; }
 body.preview { background: #333; display: flex; flex-direction: column; align-items: center; padding: 2vh 0; gap: 2vh; }
 body.preview > svg, body.preview > div:not(.downloads) { display: block; max-width: 96vw; height: auto; box-shadow: 0 4px 20px rgba(0,0,0,0.4); background: white; user-select: none; }
 .downloads { position: fixed; top: calc(1.5em + 2vh); left: 50%; transform: translateX(-50%); display: flex; gap: 0.4em; z-index: 1; }
