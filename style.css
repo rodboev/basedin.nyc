@@ -326,8 +326,11 @@ body.projects h2 a:hover { text-decoration: underline; }
 }
 .btn:hover {
   background: #6ba3e8;
-  color: white;
+  color: #1a1a1a;
   text-decoration: none;
+}
+body.preview .btn:hover {
+  color: white;
 }
 
 @media (prefers-color-scheme: light) {
