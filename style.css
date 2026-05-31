@@ -164,11 +164,13 @@ body.home > .btn {
   }
 }
 
-body.projects h1 .back {
+.btn.back {
   display: inline-flex;
   align-items: center;
-  margin: 0;
   padding: 0.55em 7pt;
+}
+body.projects h1 .back {
+  margin: 0;
   margin-right: 10pt;
   vertical-align: middle;
   position: relative;
@@ -386,7 +388,7 @@ body.preview .btn {
 body.preview .btn:hover {
   color: white;
 }
-body.preview .btn svg {
+body.preview .downloads .btn svg {
   position: relative;
   top: 0.25em;
 }
@@ -491,12 +493,21 @@ body.preview > div:not(.downloads) {
 .downloads a {
   background: white;
 }
+body.preview > .back {
+  position: fixed;
+  top: 1.5em;
+  left: calc(50% - min(360px, 48vw) - 3.75em);
+  z-index: 2;
+  font-size: 13pt;
+  padding: 0.55em 10pt;
+}
 
 @media print {
   @page {
     margin: 0;
   }
-  .downloads {
+  .downloads,
+  body.preview > .back {
     display: none;
   }
   body.preview {
