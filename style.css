@@ -28,7 +28,8 @@ a {
   text-decoration: none;
   color: var(--link-color);
 }
-a:hover {
+a:hover,
+a.hover {
   text-decoration: underline;
 }
 
@@ -292,7 +293,8 @@ body.projects a {
   height: 100%;
   transition: transform 0.4s ease-out;
 }
-.project:has(a:hover) .thumb a {
+.project:has(a:hover) .thumb a,
+.project:has(a.hover) .thumb a {
   transform: scale(1.075);
 }
 .thumb.capped {
@@ -324,7 +326,8 @@ body.projects h2 {
 body.projects h2 a {
   color: inherit;
 }
-.project:has(a:hover) h2 a {
+.project:has(a:hover) h2 a,
+.project:has(a.hover) h2 a {
   text-decoration: underline;
 }
 
@@ -377,7 +380,8 @@ body.projects h2 a {
   width: fit-content;
   margin-top: 0.6em;
 }
-.btn:hover {
+.btn:hover,
+.btn.hover {
   background: #6ba3e8;
   color: #1a1a1a;
   text-decoration: none;
@@ -385,7 +389,8 @@ body.projects h2 a {
 body.preview .btn {
   display: flex;
 }
-body.preview .btn:hover {
+body.preview .btn:hover,
+body.preview .btn.hover {
   color: white;
 }
 body.preview .downloads .btn svg {
@@ -430,7 +435,8 @@ body.preview .btn span {
       0 0 0 1px rgb(71 83 102 / 10%),
       0 1px 2px rgb(0 0 0 / 5%);
   }
-  .btn:hover {
+  .btn:hover,
+  .btn.hover {
     background: #3376d2;
     color: #fff;
   }

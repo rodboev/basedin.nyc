@@ -21,6 +21,7 @@
     <a class="preview" href="resume/"><span><span>Resume</span></span></a>
     <a class="preview" href="recommendations/"><span><span>Recommendations</span></span></a>
     <a class="btn" href="projects/">See projects</a>
+    <script src="assets/touch.js"></script>
     <script src="assets/pdf.min.js?v=0f328678"></script>
     <script>
       var links = Array.prototype.slice.call(
@@ -28,10 +29,6 @@
       );
 
       links.forEach(function(link) {
-        link.addEventListener('touchstart', function() { link.classList.add('hover'); }, { passive: true });
-        link.addEventListener('touchend', function() { link.classList.remove('hover'); });
-        link.addEventListener('touchcancel', function() { link.classList.remove('hover'); });
-
         var filename = link.getAttribute('href').replace(/\/$/, '') + '.pdf';
 
         pdfjsLib.getDocument(filename).promise
