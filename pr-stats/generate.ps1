@@ -172,30 +172,28 @@ $html = @"
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="darkreader-lock" />
 <meta name="color-scheme" content="dark light" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css?v=0d9b38a1" />
 <style>
   :root {
-    --font: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    --bg: #161616;
-    --card: #1e1e1e;
-    --border: rgba(255,255,255,0.08);
-    --text: rgba(255,255,255,0.88);
-    --dim: rgba(255,255,255,0.45);
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --dim: #8b949e;
     --link: #6ba3e8;
     --green: #3fb950;
     --red: #f85149;
     --yellow: #d29922;
-    --blue: #6ba3e8;
+    --blue: #58a6ff;
     --purple: #bc8cff;
   }
   @media (prefers-color-scheme: light) {
     :root {
       --bg: #f6f5f3;
       --card: #fff;
-      --border: rgba(0,0,0,0.08);
+      --border: #e0deda;
       --text: #1a1a1a;
-      --dim: #888;
+      --dim: #555;
       --link: #3376d2;
       --green: #1a7f37;
       --red: #cf222e;
@@ -206,10 +204,10 @@ $html = @"
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { background: var(--bg); color-scheme: dark light; }
-  body { font: 1rem/1.55 var(--font); color: var(--text); max-width: 960px; width: calc(100% - 3rem); margin: 2rem auto; padding-bottom: 3rem; -webkit-font-smoothing: antialiased; }
+  body { font: 1.1rem/1.55 var(--font); color: var(--text); max-width: 960px; width: calc(100% - 10vw); margin: min(2vw, 2rem) auto; padding-bottom: 3rem; -webkit-font-smoothing: antialiased; }
   a { color: var(--link); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.15rem; }
+  h1 { font-family: Figtree, sans-serif; font-size: 1.5rem; font-weight: 600; margin-bottom: 0.15rem; }
   .subtitle { color: var(--dim); font-size: 0.9rem; margin-bottom: 2rem; }
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
   .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem 1.25rem; }
@@ -221,7 +219,7 @@ $html = @"
   .purple { color: var(--purple); }
   .red { color: var(--red); }
   .dim { color: var(--dim); font-size: 0.8em; }
-  h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+  h2 { font-family: Figtree, sans-serif; font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
   table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 1.25rem; }
   th { text-align: left; padding: 0.55rem 0.9rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--dim); border-bottom: 1px solid var(--border); }
   td { padding: 0.45rem 0.9rem; border-top: 1px solid var(--border); font-size: 0.85rem; }
