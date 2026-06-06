@@ -229,7 +229,7 @@ $html = @"
 <body>
 
 <h1>PR Pipeline Stats</h1>
-<p class="subtitle">$Author contributions to $($Repos -join ' + ')</p>
+<p class="subtitle">$Author contributions to NousResearch/hermes-agent + nesquena/hermes-webui</p>
 
 <div class="grid">
   <div class="stat-card"><div class="number">$($allPRs.Count)</div><div class="label">Total PRs</div></div>
