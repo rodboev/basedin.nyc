@@ -53,6 +53,7 @@
   .note { color: var(--dim); font-size: 0.8rem; margin-top: 0.5rem; }
   .section { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem; margin-bottom: 1.25rem; }
   .section p + p { margin-top: 0.4rem; }
+  details summary { cursor: pointer; font-size: 0.85rem; color: var(--dim); }
   .footer { text-align: center; color: var(--dim); font-size: 0.75rem; margin-top: 2.5rem; }
   @media (max-width: 600px) {
     .grid { grid-template-columns: repeat(2, 1fr); }
@@ -109,6 +110,48 @@
   <tr><td><span class="tag tag-withdrawn">Withdrawn</span></td><td>1</td><td>Closed without maintainer action</td></tr>
   <tr><td><span class="tag tag-rejected">Rejected</span></td><td>0</td><td>None</td></tr>
 </table>
+
+
+<h2>hermes-webui Leaderboard</h2>
+<table>
+  <tr><th>Rank</th><th>Contributor</th><th>Credited</th><th>Open</th><th>Rate</th><th>Status</th></tr>
+  <tr style="font-weight:600; background:rgba(63,185,80,0.06)"><td>#1</td><td><a href="https://github.com/rodboev">rodboev</a></td><td>37</td><td>32</td><td>21.1/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#2</td><td><a href="https://github.com/AJV20">AJV20</a></td><td>23</td><td>6</td><td>0.7/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#3</td><td><a href="https://github.com/franksong2702">franksong2702</a></td><td>22</td><td>1</td><td>3.5/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#4</td><td><a href="https://github.com/ai-ag2026">ai-ag2026</a></td><td>17</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#5</td><td><a href="https://github.com/pamnard">pamnard</a></td><td>13</td><td>3</td><td>2.2/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#6</td><td><a href="https://github.com/mysoul12138">mysoul12138</a></td><td>11</td><td>1</td><td>1/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#7</td><td><a href="https://github.com/mibrohimsulaeman-a11y">mibrohimsulaeman-a11y</a></td><td>9</td><td>0</td><td>1.6/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#8</td><td><a href="https://github.com/Sanjays2402">Sanjays2402</a></td><td>8</td><td>0</td><td>0.5/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#9</td><td><a href="https://github.com/zapabob">zapabob</a></td><td>6</td><td>0</td><td>0.5/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#10</td><td><a href="https://github.com/Hinotoi-agent">Hinotoi-agent</a></td><td>5</td><td>1</td><td>1/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#11</td><td><a href="https://github.com/andrewkangkr">andrewkangkr</a></td><td>4</td><td>1</td><td>0/d</td><td><span class="yellow">Slowing</span></td></tr>
+</table>
+<p style="margin-top:0.75rem; font-size:0.85rem; color:var(--dim)">Rank #1 at 21.1/day</p>
+<h2>hermes-agent Leaderboard</h2>
+<table>
+  <tr><th>Rank</th><th>Contributor</th><th>Credited</th><th>Open</th><th>Rate</th><th>Status</th></tr>
+  <tr><td>#1</td><td><a href="https://github.com/teknium1">teknium1</a></td><td>14</td><td>47</td><td>10.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#2</td><td><a href="https://github.com/OutThisLife">OutThisLife</a></td><td>11</td><td>5</td><td>2.8/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#3</td><td><a href="https://github.com/HeLLGURD">HeLLGURD</a></td><td>5</td><td>14</td><td>3.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr style="font-weight:600; background:rgba(63,185,80,0.06)"><td>#4</td><td><a href="https://github.com/rodboev">rodboev</a></td><td>4</td><td>2</td><td>15.7/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#5</td><td><a href="https://github.com/annguyenNous">annguyenNous</a></td><td>4</td><td>6</td><td>1.7/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#6</td><td><a href="https://github.com/helix4u">helix4u</a></td><td>4</td><td>2</td><td>1/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#7</td><td><a href="https://github.com/liuhao1024">liuhao1024</a></td><td>4</td><td>35</td><td>6.7/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#8</td><td><a href="https://github.com/kshitijk4poor">kshitijk4poor</a></td><td>3</td><td>1</td><td>0.7/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#9</td><td><a href="https://github.com/hdarwish">hdarwish</a></td><td>2</td><td>0</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#10</td><td><a href="https://github.com/nittatomonori-star">nittatomonori-star</a></td><td>2</td><td>1</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#11</td><td><a href="https://github.com/jeeves-assistant">jeeves-assistant</a></td><td>2</td><td>0</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+</table>
+<details style="margin-top:0.75rem">
+<summary style="cursor:pointer; font-size:0.85rem; color:var(--dim)">Projections (you @ 15.7/day, rank #4)</summary>
+<table style="margin-top:0.5rem">
+  <tr><th>Contributor</th><th>Credited</th><th>Rate</th><th>Catch-up</th></tr>
+  <tr><td>teknium1</td><td>14 (+10)</td><td>10.5/d</td><td>1.9d (Jun 8)</td></tr>
+  <tr><td>OutThisLife</td><td>11 (+7)</td><td>2.8/d</td><td>0.5d (Jun 7)</td></tr>
+  <tr><td>HeLLGURD</td><td>5 (+1)</td><td>3.3/d</td><td>0.1d (Jun 6)</td></tr>
+</table>
+</details>
 
 
 <h2>Representative PRs</h2>
@@ -174,6 +217,7 @@
 <div class="section">
   <p>Both repos use a cherry-pick workflow: the maintainer picks commits and closes the PR without GitHub's merge button, so <code>mergedAt</code> is always null. "Shipped" is determined from maintainer comments referencing a release version.</p>
   <p>PRs classified as "withdrawn" had no maintainer interaction beyond automated bot reviews (Greptile). "Accepted indirectly" means the fix was cherry-picked into a follow-up PR or consolidated with a duplicate.</p>
+  <p>"Credited" in the leaderboard counts closed + merged PRs. For rodboev, this is refined to shipped + accepted indirectly (comment-based classification). Other contributors use raw closed count as a proxy since comment scanning at scale would hit API rate limits.</p>
 </div>
 
 <p class="footer">Generated June 6, 2026 from GitHub API. Source: <a href="https://github.com/rodboev/pr-sweep">rodboev/pr-sweep</a></p>

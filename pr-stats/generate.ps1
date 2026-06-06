@@ -2,7 +2,8 @@ param(
     [string]$Author = "rodboev",
     [string[]]$Repos = @("nesquena/hermes-webui", "NousResearch/hermes-agent"),
     [string]$ReadmeRepo = "rodboev/pr-sweep",
-    [string]$OutFile = "$PSScriptRoot\index.html"
+    [string]$OutFile = "$PSScriptRoot\index.html",
+    [int]$LeaderboardTop = 10
 )
 
 $shippedPatterns = @("Shipped", "shipped", "cherry-picked", "merged-via", "Salvaged into", "salvaged into")
@@ -76,6 +77,135 @@ foreach ($pr in $closed) {
 $totalAccepted = $shipped.Count + $acceptedIndirect.Count
 $totalResolved = $closed.Count
 $acceptanceRate = if ($rejected.Count -eq 0 -and $totalResolved -gt 0) { "100" } elseif ($totalResolved -gt 0) { [math]::Round(($totalAccepted / $totalResolved) * 100) } else { "N/A" }
+
+# Build per-repo leaderboards
+Write-Host "`nBuilding leaderboards..." -ForegroundColor DarkGray
+$now = Get-Date
+$jun1 = [datetime]"2026-06-01"
+$daysSinceJun1 = ($now - $jun1).TotalDays
+
+$leaderboardHtml = ""
+foreach ($repo in $Repos) {
+    $repoShort = ($repo -split '/')[-1]
+    Write-Host "  $repoShort contributors..." -ForegroundColor DarkGray
+
+    $raw = gh pr list --repo $repo --state all --limit 500 --json author,number,createdAt,state 2>$null
+    if (-not $raw) { continue }
+    $repoPRs = @(($raw | ConvertFrom-Json) | ForEach-Object { $_ })
+
+    $byAuthor = @{}
+    foreach ($pr in $repoPRs) {
+        $login = $pr.author.login
+        if (-not $login -or $login -eq "nesquena-hermes") { continue }
+        if (-not $byAuthor.ContainsKey($login)) { $byAuthor[$login] = @() }
+        $byAuthor[$login] += $pr
+    }
+
+    $topLogins = $byAuthor.GetEnumerator() |
+        Where-Object { $_.Key -ne $Author } |
+        Sort-Object { @($_.Value | Where-Object { $_.state -eq "CLOSED" -or $_.state -eq "MERGED" }).Count } -Descending |
+        Select-Object -First $LeaderboardTop |
+        ForEach-Object { $_.Key }
+    $authors = @($Author) + $topLogins | Select-Object -Unique
+
+    $stats = @{}
+    foreach ($a in $authors) {
+        $prs = if ($byAuthor.ContainsKey($a)) { $byAuthor[$a] } else { @() }
+
+        $dates = @()
+        foreach ($pr in $prs) {
+            if ($pr.createdAt) { try { $dates += [datetime]$pr.createdAt } catch {} }
+        }
+        $dates = @($dates | Sort-Object)
+
+        $closedCount = @($prs | Where-Object { $_.state -eq "CLOSED" }).Count
+        $openCount = @($prs | Where-Object { $_.state -eq "OPEN" }).Count
+        $mergedCount = @($prs | Where-Object { $_.state -eq "MERGED" }).Count
+
+        $sinceJun1 = 0
+        foreach ($pr in $prs) {
+            if ($pr.createdAt) { try { if ([datetime]$pr.createdAt -gt $jun1) { $sinceJun1++ } } catch {} }
+        }
+
+        $rate = if ($daysSinceJun1 -gt 0) { [math]::Round($sinceJun1 / $daysSinceJun1, 1) } else { 0 }
+        $span = if ($dates.Count -ge 2) { ($dates[-1] - $dates[0]).TotalDays } else { 0 }
+        $last = if ($dates.Count -gt 0) { $dates[-1] } else { $null }
+        $idle = if ($last) { [math]::Round(($now - $last).TotalDays, 1) } else { 999 }
+        $credited = $closedCount + $mergedCount
+
+        $stats[$a] = @{ credited = $credited; open = $openCount; total = $prs.Count; rate = $rate; idle = $idle; span = $span }
+    }
+
+    # Use my classified count for this repo instead of raw closed
+    $myRepoShipped = @($shipped | Where-Object { $_.repo -eq $repo }).Count
+    $myRepoIndirect = @($acceptedIndirect | Where-Object { $_.repo -eq $repo }).Count
+    $myRepoCredited = $myRepoShipped + $myRepoIndirect
+    if ($stats.ContainsKey($Author)) {
+        $stats[$Author].credited = $myRepoCredited
+        if ($stats[$Author].span -gt 0) {
+            $stats[$Author].rate = [math]::Round($stats[$Author].total / $stats[$Author].span, 1)
+        }
+    }
+
+    $sorted = $stats.GetEnumerator() | Sort-Object { $_.Value.credited } -Descending
+    $myRank = 1
+    foreach ($entry in $sorted) { if ($entry.Key -eq $Author) { break }; $myRank++ }
+
+    $leaderboardRows = ""
+    $rank = 1
+    foreach ($entry in $sorted) {
+        $s = $entry.Value
+        $name = $entry.Key
+        $isMe = $name -eq $Author
+        $statusLabel = if ($s.idle -lt 1) { "Active" } elseif ($s.idle -lt 3) { "Recent" } elseif ($s.idle -lt 7) { "Slowing" } elseif ($s.idle -lt 14) { "Quiet" } else { "Gone" }
+        $statusClass = if ($s.idle -lt 3) { "green" } elseif ($s.idle -lt 7) { "yellow" } else { "dim" }
+        $rowClass = if ($isMe) { " style=`"font-weight:600; background:rgba(63,185,80,0.06)`"" } else { "" }
+        $nameDisplay = if ($isMe) { "$name" } else { $name }
+        $leaderboardRows += "  <tr$rowClass><td>#$rank</td><td><a href=`"https://github.com/$name`">$nameDisplay</a></td><td>$($s.credited)</td><td>$($s.open)</td><td>$($s.rate)/d</td><td><span class=`"$statusClass`">$statusLabel</span></td></tr>`n"
+        $rank++
+    }
+
+    # Build projections for contributors ahead of me
+    $projectionsHtml = ""
+    $myCredited = if ($stats.ContainsKey($Author)) { $stats[$Author].credited } else { 0 }
+    $myRate = if ($stats.ContainsKey($Author)) { $stats[$Author].rate } else { 0 }
+    $ahead = @($sorted | Where-Object { $_.Value.credited -gt $myCredited })
+
+    if ($ahead.Count -gt 0 -and $myRate -gt 0) {
+        $projRows = ""
+        foreach ($entry in $ahead) {
+            $s = $entry.Value
+            $gap = $s.credited - $myCredited
+            $netRate = $myRate - $s.rate
+            if ($netRate -le 0) {
+                $projRows += "  <tr><td>$($entry.Key)</td><td>$($s.credited) (+$gap)</td><td>$($s.rate)/d</td><td class=`"red`">not at current rates</td></tr>`n"
+            } else {
+                $days = [math]::Round($gap / $netRate, 1)
+                $when = $now.AddDays($days)
+                $projRows += "  <tr><td>$($entry.Key)</td><td>$($s.credited) (+$gap)</td><td>$($s.rate)/d</td><td>${days}d ($($when.ToString("MMM d")))</td></tr>`n"
+            }
+        }
+        $projectionsHtml = @"
+<details style="margin-top:0.75rem">
+<summary style="cursor:pointer; font-size:0.85rem; color:var(--dim)">Projections (you @ $myRate/day, rank #$myRank)</summary>
+<table style="margin-top:0.5rem">
+  <tr><th>Contributor</th><th>Credited</th><th>Rate</th><th>Catch-up</th></tr>
+$projRows</table>
+</details>
+"@
+    } elseif ($myRank -eq 1) {
+        $projectionsHtml = "<p style=`"margin-top:0.75rem; font-size:0.85rem; color:var(--dim)`">Rank #1 at $myRate/day</p>"
+    }
+
+    $leaderboardHtml += @"
+<h2>$repoShort Leaderboard</h2>
+<table>
+  <tr><th>Rank</th><th>Contributor</th><th>Credited</th><th>Open</th><th>Rate</th><th>Status</th></tr>
+$leaderboardRows</table>
+$projectionsHtml
+
+"@
+}
 
 Write-Host "`nFetching representative PRs from $ReadmeRepo README..." -ForegroundColor DarkGray
 $readmeB64 = gh api "repos/$ReadmeRepo/contents/README.md" --jq '.content' 2>$null
@@ -154,7 +284,6 @@ $(if ($repoDups -gt 0) { "  <tr><td><span class=`"tag tag-dup`">Duplicate</span>
 "@
 }
 
-$now = Get-Date
 $dateStr = $now.ToString("MMMM d, yyyy")
 
 $barShipped = [math]::Round(($shipped.Count / $allPRs.Count) * 100, 1)
@@ -219,6 +348,7 @@ $html = @"
   .note { color: var(--dim); font-size: 0.8rem; margin-top: 0.5rem; }
   .section { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem; margin-bottom: 1.25rem; }
   .section p + p { margin-top: 0.4rem; }
+  details summary { cursor: pointer; font-size: 0.85rem; color: var(--dim); }
   .footer { text-align: center; color: var(--dim); font-size: 0.75rem; margin-top: 2.5rem; }
   @media (max-width: 600px) {
     .grid { grid-template-columns: repeat(2, 1fr); }
@@ -260,6 +390,8 @@ $html = @"
 
 $repoSections
 
+$leaderboardHtml
+
 $representativeHtml
 
 <h2>Shipped PRs ($totalAccepted)</h2>
@@ -271,6 +403,7 @@ $shippedRows</table>
 <div class="section">
   <p>Both repos use a cherry-pick workflow: the maintainer picks commits and closes the PR without GitHub's merge button, so <code>mergedAt</code> is always null. "Shipped" is determined from maintainer comments referencing a release version.</p>
   <p>PRs classified as "withdrawn" had no maintainer interaction beyond automated bot reviews (Greptile). "Accepted indirectly" means the fix was cherry-picked into a follow-up PR or consolidated with a duplicate.</p>
+  <p>"Credited" in the leaderboard counts closed + merged PRs. For $Author, this is refined to shipped + accepted indirectly (comment-based classification). Other contributors use raw closed count as a proxy since comment scanning at scale would hit API rate limits.</p>
 </div>
 
 <p class="footer">Generated $dateStr from GitHub API. Source: <a href="https://github.com/$ReadmeRepo">$ReadmeRepo</a></p>
@@ -282,3 +415,5 @@ $shippedRows</table>
 $html | Out-File -FilePath $OutFile -Encoding utf8
 Write-Host "`nWritten to $OutFile" -ForegroundColor Green
 Write-Host "  Total: $($allPRs.Count) | Shipped: $totalAccepted | Open: $($open.Count) | Rejected: $($rejected.Count) | Rate: ${acceptanceRate}%"
+
+Start-Process $OutFile
