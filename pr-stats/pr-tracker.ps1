@@ -22,31 +22,21 @@ foreach ($repo in $Repos) {
     Write-Host "`n  === $repoShort ===" -ForegroundColor Cyan
     Write-Host "  Discovering contributors..." -ForegroundColor DarkGray
 
-    $raw = gh pr list --repo $repo --state all --limit 500 --json author,number,createdAt,state 2>$null
+    # Discover unique authors from the most recent 500 PRs, then fetch full counts per-author
+    $raw = gh pr list --repo $repo --state all --limit 500 --json author 2>$null
     if (-not $raw) { Write-Host "  No data for $repo" -ForegroundColor Red; continue }
     $allRepoPRs = @(($raw | ConvertFrom-Json) | ForEach-Object { $_ })
+    $uniqueLogins = @($allRepoPRs | ForEach-Object { $_.author.login } | Where-Object { $_ -and $_ -ne "nesquena-hermes" } | Select-Object -Unique)
+    if ($uniqueLogins -notcontains $Me) { $uniqueLogins = @($Me) + $uniqueLogins }
 
-    # Group by author
-    $byAuthor = @{}
-    foreach ($pr in $allRepoPRs) {
-        $login = $pr.author.login
-        if (-not $login -or $login -eq "nesquena-hermes") { continue }
-        if (-not $byAuthor.ContainsKey($login)) { $byAuthor[$login] = @() }
-        $byAuthor[$login] += $pr
-    }
+    Write-Host "  $($uniqueLogins.Count) contributors found, fetching per-author..." -ForegroundColor DarkGray
 
-    # Pick top contributors + always include me
-    $topLogins = $byAuthor.GetEnumerator() |
-        Where-Object { $_.Key -ne $Me } |
-        Sort-Object { $_.Value.Count } -Descending |
-        Select-Object -First $Top |
-        ForEach-Object { $_.Key }
-    $authors = @($Me) + $topLogins | Select-Object -Unique
-
-    # Build stats per author
     $stats = @{}
-    foreach ($a in $authors) {
-        $prs = if ($byAuthor.ContainsKey($a)) { $byAuthor[$a] } else { @() }
+    foreach ($a in $uniqueLogins) {
+        $aRaw = gh pr list --repo $repo --author $a --state all --limit 500 --json number,createdAt,state 2>$null
+        if (-not $aRaw) { continue }
+        $prs = @(($aRaw | ConvertFrom-Json) | ForEach-Object { $_ })
+        if ($prs.Count -eq 0) { continue }
 
         $dates = @()
         foreach ($pr in $prs) {
@@ -78,9 +68,8 @@ foreach ($repo in $Repos) {
 
     # Classify my closed PRs in this repo
     $myShipped = 0; $myIndirect = 0; $myDuplicate = 0; $myWithdrawn = 0
-    $myClosedPRs = @($prs | Where-Object { $_.state -eq "CLOSED" })
-    if (-not $byAuthor.ContainsKey($Me)) { $myClosedPRs = @() }
-    else { $myClosedPRs = @($byAuthor[$Me] | Where-Object { $_.state -eq "CLOSED" }) }
+    $myRaw = gh pr list --repo $repo --author $Me --state closed --limit 500 --json number,state 2>$null
+    $myClosedPRs = if ($myRaw) { @(($myRaw | ConvertFrom-Json) | ForEach-Object { $_ }) } else { @() }
 
     if ($myClosedPRs.Count -gt 0) {
         Write-Host "  Classifying $($myClosedPRs.Count) closed PRs..." -ForegroundColor DarkGray
@@ -109,7 +98,7 @@ foreach ($repo in $Repos) {
         $stats[$Me].rate = [math]::Round($stats[$Me].total / $stats[$Me].span, 1)
     }
 
-    $sorted = $stats.GetEnumerator() | Sort-Object { $_.Value.credited } -Descending
+    $sorted = @($stats.GetEnumerator() | Sort-Object { $_.Value.credited } -Descending)
     $rank = 1
 
     Write-Host ""
@@ -119,6 +108,7 @@ foreach ($repo in $Repos) {
     foreach ($entry in $sorted) {
         $s = $entry.Value
         $name = $entry.Key
+        if ($rank -gt $Top -and $name -ne $Me) { $rank++; continue }
         $marker = if ($name -eq $Me) { " <--" } else { "" }
         $color = if ($name -eq $Me) { "Green" } else { "White" }
         Write-Host ("{0,4} {1,-18} {2,8} {3,7} {4,8} {5,8} {6,-8}{7}" -f "#$rank", $name, $s.credited, $s.open, "$($s.rate)/d", $s.idle, $s.status, $marker) -ForegroundColor $color

@@ -89,28 +89,21 @@ foreach ($repo in $Repos) {
     $repoShort = ($repo -split '/')[-1]
     Write-Host "  $repoShort contributors..." -ForegroundColor DarkGray
 
-    $raw = gh pr list --repo $repo --state all --limit 500 --json author,number,createdAt,state 2>$null
+    # Discover unique authors from the most recent 500 PRs, then fetch full counts per-author
+    $raw = gh pr list --repo $repo --state all --limit 500 --json author 2>$null
     if (-not $raw) { continue }
     $repoPRs = @(($raw | ConvertFrom-Json) | ForEach-Object { $_ })
+    $uniqueLogins = @($repoPRs | ForEach-Object { $_.author.login } | Where-Object { $_ -and $_ -ne "nesquena-hermes" } | Select-Object -Unique)
+    if ($uniqueLogins -notcontains $Author) { $uniqueLogins = @($Author) + $uniqueLogins }
 
-    $byAuthor = @{}
-    foreach ($pr in $repoPRs) {
-        $login = $pr.author.login
-        if (-not $login -or $login -eq "nesquena-hermes") { continue }
-        if (-not $byAuthor.ContainsKey($login)) { $byAuthor[$login] = @() }
-        $byAuthor[$login] += $pr
-    }
-
-    $topLogins = $byAuthor.GetEnumerator() |
-        Where-Object { $_.Key -ne $Author } |
-        Sort-Object { @($_.Value | Where-Object { $_.state -eq "CLOSED" -or $_.state -eq "MERGED" }).Count } -Descending |
-        Select-Object -First $LeaderboardTop |
-        ForEach-Object { $_.Key }
-    $authors = @($Author) + $topLogins | Select-Object -Unique
+    Write-Host "    $($uniqueLogins.Count) contributors found, fetching per-author..." -ForegroundColor DarkGray
 
     $stats = @{}
-    foreach ($a in $authors) {
-        $prs = if ($byAuthor.ContainsKey($a)) { $byAuthor[$a] } else { @() }
+    foreach ($a in $uniqueLogins) {
+        $aRaw = gh pr list --repo $repo --author $a --state all --limit 500 --json number,createdAt,state 2>$null
+        if (-not $aRaw) { continue }
+        $prs = @(($aRaw | ConvertFrom-Json) | ForEach-Object { $_ })
+        if ($prs.Count -eq 0) { continue }
 
         $dates = @()
         foreach ($pr in $prs) {
@@ -135,6 +128,13 @@ foreach ($repo in $Repos) {
 
         $stats[$a] = @{ credited = $credited; open = $openCount; total = $prs.Count; rate = $rate; idle = $idle; span = $span }
     }
+
+    $topLogins = $stats.GetEnumerator() |
+        Where-Object { $_.Key -ne $Author } |
+        Sort-Object { $_.Value.credited } -Descending |
+        Select-Object -First $LeaderboardTop |
+        ForEach-Object { $_.Key }
+    $authors = @($Author) + $topLogins | Select-Object -Unique
 
     # Use my classified count for this repo instead of raw closed
     $myRepoShipped = @($shipped | Where-Object { $_.repo -eq $repo }).Count
