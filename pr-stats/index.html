@@ -1,0 +1,207 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PR Pipeline Stats</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="dark light" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --bg: #161616;
+    --card: #1e1e1e;
+    --border: rgba(255,255,255,0.08);
+    --text: rgba(255,255,255,0.88);
+    --dim: rgba(255,255,255,0.45);
+    --link: #6ba3e8;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --blue: #6ba3e8;
+    --purple: #bc8cff;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f6f5f3;
+      --card: #fff;
+      --border: rgba(0,0,0,0.08);
+      --text: #1a1a1a;
+      --dim: #888;
+      --link: #3376d2;
+      --green: #1a7f37;
+      --red: #cf222e;
+      --yellow: #9a6700;
+      --blue: #3376d2;
+      --purple: #8250df;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { background: var(--bg); color-scheme: dark light; }
+  body { font: 1rem/1.55 var(--font); color: var(--text); max-width: 960px; width: calc(100% - 3rem); margin: 2rem auto; padding-bottom: 3rem; -webkit-font-smoothing: antialiased; }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.15rem; }
+  .subtitle { color: var(--dim); font-size: 0.9rem; margin-bottom: 2rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem 1.25rem; }
+  .stat-card .number { font-size: 2.25rem; font-weight: 700; line-height: 1.1; }
+  .stat-card .label { color: var(--dim); font-size: 0.8rem; margin-top: 0.3rem; }
+  .green { color: var(--green); }
+  .yellow { color: var(--yellow); }
+  .blue { color: var(--blue); }
+  .purple { color: var(--purple); }
+  .red { color: var(--red); }
+  .dim { color: var(--dim); font-size: 0.8em; }
+  h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 1.25rem; }
+  th { text-align: left; padding: 0.55rem 0.9rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--dim); border-bottom: 1px solid var(--border); }
+  td { padding: 0.45rem 0.9rem; border-top: 1px solid var(--border); font-size: 0.85rem; }
+  tr:first-child td { border-top: none; }
+  .tag { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
+  .tag-shipped { background: rgba(63,185,80,0.15); color: var(--green); }
+  .tag-open { background: rgba(210,153,34,0.15); color: var(--yellow); }
+  .tag-dup { background: rgba(107,163,232,0.15); color: var(--blue); }
+  .tag-withdrawn { background: rgba(128,128,128,0.15); color: var(--dim); }
+  .tag-rejected { background: rgba(248,81,73,0.15); color: var(--red); }
+  .bar-container { display: flex; height: 22px; border-radius: 6px; overflow: hidden; margin: 0.5rem 0; }
+  .bar-segment { display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 600; color: #fff; min-width: 2px; }
+  .bar-shipped { background: var(--green); }
+  .bar-accepted { background: var(--purple); }
+  .bar-dup { background: var(--blue); }
+  .bar-withdrawn { background: #666; }
+  .bar-open { background: var(--yellow); }
+  .legend { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-top: 0.4rem; font-size: 0.75rem; color: var(--dim); }
+  .legend-item { display: flex; align-items: center; gap: 0.3rem; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; }
+  .note { color: var(--dim); font-size: 0.8rem; margin-top: 0.5rem; }
+  .section { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem; margin-bottom: 1.25rem; }
+  .section p + p { margin-top: 0.4rem; }
+  .footer { text-align: center; color: var(--dim); font-size: 0.75rem; margin-top: 2.5rem; }
+  @media (max-width: 600px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+    body { width: calc(100% - 2rem); }
+  }
+</style>
+</head>
+<body>
+
+<h1>PR Pipeline Stats</h1>
+<p class="subtitle">rodboev contributions to nesquena/hermes-webui + NousResearch/hermes-agent</p>
+
+<div class="grid">
+  <div class="stat-card"><div class="number">150</div><div class="label">Total PRs</div></div>
+  <div class="stat-card"><div class="number green">40</div><div class="label">Shipped</div></div>
+  <div class="stat-card"><div class="number yellow">103</div><div class="label">Open</div></div>
+  <div class="stat-card"><div class="number">0</div><div class="label red">Rejected</div></div>
+</div>
+<div class="grid">
+  <div class="stat-card"><div class="number green">100%</div><div class="label">Acceptance rate on resolved PRs (40 accepted, 0 rejected out of 47 closed)</div></div>
+</div>
+
+<h2>Breakdown</h2>
+
+<div class="bar-container">
+  <div class="bar-segment bar-shipped" style="width:24.7%" title="37">37</div>
+  <div class="bar-segment bar-accepted" style="width:2%"></div>
+  <div class="bar-segment bar-dup" style="width:0.7%"></div>
+  <div class="bar-segment bar-withdrawn" style="width:4%"></div>
+  <div class="bar-segment bar-open" style="width:68.7%" title="103">103</div>
+</div>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Shipped (37)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div> Accepted indirectly (3)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Duplicate (1)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#666"></div> Withdrawn (6)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div> Open (103)</div>
+</div>
+
+<h2>hermes-webui (75 PRs)</h2>
+<table>
+  <tr><th>Status</th><th>Count</th><th>Details</th></tr>
+  <tr><td><span class="tag tag-shipped">Shipped</span></td><td>36</td><td>36 confirmed shipped</td></tr>
+  <tr><td><span class="tag tag-open">Open</span></td><td>33</td><td>Awaiting maintainer review</td></tr>
+  <tr><td><span class="tag tag-dup">Duplicate</span></td><td>1</td><td>Consolidated into other PRs</td></tr>
+  <tr><td><span class="tag tag-withdrawn">Withdrawn</span></td><td>5</td><td>Closed without maintainer action</td></tr>
+  <tr><td><span class="tag tag-rejected">Rejected</span></td><td>0</td><td>None</td></tr>
+</table>
+<h2>hermes-agent (75 PRs)</h2>
+<table>
+  <tr><th>Status</th><th>Count</th><th>Details</th></tr>
+  <tr><td><span class="tag tag-shipped">Shipped</span></td><td>4</td><td>1 confirmed shipped, 3 accepted indirectly</td></tr>
+  <tr><td><span class="tag tag-open">Open</span></td><td>70</td><td>Awaiting maintainer review</td></tr>
+  <tr><td><span class="tag tag-withdrawn">Withdrawn</span></td><td>1</td><td>Closed without maintainer action</td></tr>
+  <tr><td><span class="tag tag-rejected">Rejected</span></td><td>0</td><td>None</td></tr>
+</table>
+
+
+<h2>Representative PRs</h2>
+<table>
+  <tr><th>PR</th><th>Description</th><th>Release</th></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3605">#3605</a> <span class="dim">webui</span></td><td>intermediate reasoning persistence in multi-turn tool flows; re-work demonstrates feedback loop</td><td>v0.51.266</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3606">#3606</a> <span class="dim">webui</span></td><td>diagnosis + fix for 31-second TTS playback delay caused by missing HTTP header on stream</td><td>v0.51.259</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3449">#3449</a> <span class="dim">webui</span></td><td>deep systems work onbootstrap and terminal; maintainer's first "Phase 3 deep-review" release</td><td>v0.51.236</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3448">#3448</a> <span class="dim">webui</span></td><td>three-round adversarial fix for profile provider routing; maintainer held through three changes-requested cycles as each release gate found a sibling resolution path the previous fix missed</td><td>v0.51.290</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3667">#3667</a> <span class="dim">webui</span></td><td>conflict-safe self-update recovery; sprint-candidate data-loss fix</td><td>v0.51.272</td></tr>
+  <tr><td><a href="https://github.com/NousResearch/hermes-agent/pull/39806">#39806</a> <span class="dim">agent</span></td><td>concurrency guard on the harnes loop with (<a href="https://github.com/NousResearch/hermes-agent/pull/39806#issuecomment-4631685466">community review</a>) confirming the snapshot-token design</td><td>pending</td></tr>
+  <tr><td><a href="https://github.com/NousResearch/hermes-agent/pull/39003">#39003</a> <span class="dim">agent</span></td><td>scrub credential env vars from subprocess environments across 6 gateway files (hermes-agent, pending)</td><td>pending</td></tr>
+  <tr><td><a href="https://github.com/NousResearch/hermes-agent/pull/39001">#39001</a> <span class="dim">agent</span></td><td>scoped secret redaction to stop corrupting code output (hermes-agent, pending)</td><td>pending</td></tr>
+</table>
+
+<h2>Shipped PRs (40)</h2>
+<table>
+  <tr><th>PR</th><th>Repo</th><th>Release</th></tr>
+  <tr><td><a href="https://github.com/NousResearch/hermes-agent/pull/40410">#40410</a></td><td>agent</td><td></td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3444">#3444</a></td><td>webui</td><td>v0.51.223</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3448">#3448</a></td><td>webui</td><td>v0.51.224</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3447">#3447</a></td><td>webui</td><td>v0.51.225</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3446">#3446</a></td><td>webui</td><td>v0.51.234</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3449">#3449</a></td><td>webui</td><td>v0.51.236</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3502">#3502</a></td><td>webui</td><td>v0.51.245</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3504">#3504</a></td><td>webui</td><td>v0.51.246</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3501">#3501</a></td><td>webui</td><td>v0.51.248</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3503">#3503</a></td><td>webui</td><td>v0.51.249</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3520">#3520</a></td><td>webui</td><td>v0.51.252</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3519">#3519</a></td><td>webui</td><td>v0.51.252</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3537">#3537</a></td><td>webui</td><td>v0.51.253</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3538">#3538</a></td><td>webui</td><td>v0.51.253</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3584">#3584</a></td><td>webui</td><td>v0.51.253</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3580">#3580</a></td><td>webui</td><td>v0.51.253</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3561">#3561</a></td><td>webui</td><td>v0.51.255</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3565">#3565</a></td><td>webui</td><td>v0.51.257</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3609">#3609</a></td><td>webui</td><td>v0.51.258</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3603">#3603</a></td><td>webui</td><td>v0.51.258</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3604">#3604</a></td><td>webui</td><td>v0.51.258</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3608">#3608</a></td><td>webui</td><td>v0.51.258</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3610">#3610</a></td><td>webui</td><td>v0.51.259</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3605">#3605</a></td><td>webui</td><td>v0.51.259</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3606">#3606</a></td><td>webui</td><td>v0.51.259</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3562">#3562</a></td><td>webui</td><td>v0.51.260</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3516">#3516</a></td><td>webui</td><td>v0.51.262</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3607">#3607</a></td><td>webui</td><td>v0.51.263</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3572">#3572</a></td><td>webui</td><td>v0.51.268</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3627">#3627</a></td><td>webui</td><td>v0.51.268</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3670">#3670</a></td><td>webui</td><td>v0.51.269</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3517">#3517</a></td><td>webui</td><td>v0.51.270</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3602">#3602</a></td><td>webui</td><td>v0.51.281</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3544">#3544</a></td><td>webui</td><td>v0.51.282</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3514">#3514</a></td><td>webui</td><td>v0.51.284</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3662">#3662</a></td><td>webui</td><td>v0.51.287</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3515">#3515</a></td><td>webui</td><td>v0.51.288</td></tr>
+  <tr><td><a href="https://github.com/NousResearch/hermes-agent/pull/40144">#40144</a></td><td>agent</td><td>indirect</td></tr>
+  <tr><td><a href="https://github.com/NousResearch/hermes-agent/pull/39793">#39793</a></td><td>agent</td><td>indirect</td></tr>
+  <tr><td><a href="https://github.com/NousResearch/hermes-agent/pull/39391">#39391</a></td><td>agent</td><td>indirect</td></tr>
+</table>
+
+<h2>Methodology</h2>
+<div class="section">
+  <p>Both repos use a cherry-pick workflow: the maintainer picks commits and closes the PR without GitHub's merge button, so <code>mergedAt</code> is always null. "Shipped" is determined from maintainer comments referencing a release version.</p>
+  <p>PRs classified as "withdrawn" had no maintainer interaction beyond automated bot reviews (Greptile). "Accepted indirectly" means the fix was cherry-picked into a follow-up PR or consolidated with a duplicate.</p>
+</div>
+
+<p class="footer">Generated June 6, 2026 from GitHub API. Source: <a href="https://github.com/rodboev/pr-sweep">rodboev/pr-sweep</a></p>
+
+</body>
+</html>
