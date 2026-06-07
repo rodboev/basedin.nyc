@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="darkreader-lock" />
 <meta name="color-scheme" content="light dark" />
-<link rel="stylesheet" href="../style.css?v=9314fc28">
+<link rel="stylesheet" href="../style.css?v=20260607a">
 </head>
 <body class="pr">
 
@@ -261,6 +261,11 @@ function score(d, w) {
          w.contrib * d.contrib +
          w.size * normalizeStars(d.stars);
 }
+function syncLandscapeStickyOffset() {
+  var row = document.querySelector('.landscape-row');
+  if (!row) return;
+  document.body.style.setProperty('--landscape-row-offset', row.getBoundingClientRect().height + 'px');
+}
 
 function formatStars(n) {
   if (n >= 1000) return (n / 1000).toFixed(n >= 100000 ? 0 : 1) + 'K';
@@ -338,6 +343,14 @@ document.getElementById('sort-pills').addEventListener('click', function(e) {
   renderTable(sortKey);
 });
 
+syncLandscapeStickyOffset();
+if (typeof ResizeObserver !== 'undefined') {
+  var landscapeRow = document.querySelector('.landscape-row');
+  if (landscapeRow) {
+    new ResizeObserver(syncLandscapeStickyOffset).observe(landscapeRow);
+  }
+}
+window.addEventListener('resize', syncLandscapeStickyOffset);
 renderTable('composite');
 </script>
 

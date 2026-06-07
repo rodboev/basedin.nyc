@@ -446,7 +446,7 @@ foreach ($repo in $Repos) {
             }
         }
         $projectionsHtml = @"
-<details class="projections" open>
+<details class="projections">
 <summary>Projections (rodboev @ $myRate/day, rank #$myRank)</summary>
 <table>
   <tr><th>Contributor</th><th>Credited</th><th>Rate</th><th>Catch-up</th></tr>
@@ -596,7 +596,7 @@ $prStatusFilters = @(
 
 $prFilterPills = ""
 foreach ($filter in $prStatusFilters) {
-    $activeClass = if ($filter.key -eq "all") { " active" } else { "" }
+    $activeClass = if ($filter.key -eq "shipped") { " active" } else { "" }
     $prFilterPills += "    <div class=`"sort-pill$activeClass`" data-status=`"$($filter.key)`">$($filter.label) ($($filter.count))</div>`n"
 }
 
@@ -675,7 +675,7 @@ $html = @"
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="darkreader-lock" />
 <meta name="color-scheme" content="light dark" />
-<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../style.css?v=20260607a">
 </head>
 <body class="pr">
 
@@ -730,7 +730,7 @@ $representativeHtml
 $prFilterPills  </div>
 </div>
 <table class="targets-table pr-list-table" id="pr-list-table">
-  <thead><tr><th>PR</th><th>Repo</th><th>Status</th><th>Title</th><th>Date</th><th>Release</th><th>Via</th></tr></thead>
+  <thead><tr><th>PR</th><th>Repo</th><th>Status</th><th>Date</th><th>Release</th><th>Via</th></tr></thead>
   <tbody id="pr-list-body"></tbody>
 </table>
 
@@ -761,6 +761,11 @@ function escapeHtml(text) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+function syncLandscapeStickyOffset() {
+  var row = document.querySelector('.landscape-row');
+  if (!row) return;
+  document.body.style.setProperty('--landscape-row-offset', row.getBoundingClientRect().height + 'px');
+}
 function renderPrTable(statusKey) {
   var tbody = document.getElementById('pr-list-body');
   if (!tbody) return;
@@ -773,18 +778,21 @@ function renderPrTable(statusKey) {
     if (item.viaLabel) {
       via = item.viaUrl ? '<a href="' + item.viaUrl + '">' + item.viaLabel + '</a>' : item.viaLabel;
     }
-    html += '<tr>' +
+    html += '<tr class="pr-main-row">' +
       '<td><a href="' + item.url + '">#' + item.number + '</a></td>' +
       '<td>' + item.repoLabel + '</td>' +
       '<td><span class="tag ' + item.statusClass + '">' + item.statusLabel + '</span></td>' +
-      '<td class="pr-title" title="' + escapeHtml(item.title || '') + '">' + escapeHtml(item.title || '') + '</td>' +
       '<td>' + item.dateLabel + '</td>' +
       '<td>' + (item.releaseLabel || '') + '</td>' +
       '<td>' + via + '</td>' +
+    '</tr>' +
+    '<tr class="pr-title-row">' +
+      '<td></td>' +
+      '<td colspan="5"><div class="pr-title-text" title="' + escapeHtml(item.title || '') + '">' + escapeHtml(item.title || '') + '</div></td>' +
     '</tr>';
   });
   if (!html) {
-    html = '<tr><td colspan="7" class="empty-state">No PRs in this status.</td></tr>';
+    html = '<tr><td colspan="6" class="empty-state">No PRs in this status.</td></tr>';
   }
   tbody.innerHTML = html;
 }
@@ -837,7 +845,15 @@ document.getElementById('pr-filter-pills').addEventListener('click', function(e)
   renderPrTable(statusKey);
 });
 setBarWidths();
-renderPrTable('all');
+syncLandscapeStickyOffset();
+if (typeof ResizeObserver !== 'undefined') {
+  var landscapeRow = document.querySelector('.landscape-row');
+  if (landscapeRow) {
+    new ResizeObserver(syncLandscapeStickyOffset).observe(landscapeRow);
+  }
+}
+window.addEventListener('resize', syncLandscapeStickyOffset);
+renderPrTable('shipped');
 updateCollapsedOverlays();
 document.addEventListener('scroll', updateCollapsedOverlays, { passive: true });
 </script>
