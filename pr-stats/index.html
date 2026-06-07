@@ -2,520 +2,483 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>PR Pipeline Stats</title>
+<title>pr-sweeps Stats</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="darkreader-lock" />
 <meta name="color-scheme" content="light dark" />
-<style>
-  :root { --bg: #fff; --card: #fff; --border: rgba(0,0,0,0.08); --text: #1a1a1a; --dim: #888; --link: #3376d2; --green: #1a7f37; --red: #cf222e; --yellow: #9a6700; --blue: #3376d2; --purple: #8250df; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #161616; --card: #1e1e1e; --border: rgba(255,255,255,0.08); --text: rgba(255,255,255,0.88); --dim: rgba(255,255,255,0.45); --link: #6ba3e8; --green: #3fb950; --red: #f85149; --yellow: #d29922; --blue: #58a6ff; --purple: #bc8cff; }
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { background: var(--bg); color-scheme: light dark; }
-  html[data-darkreader-mode] { filter: none !important; background: var(--bg) !important; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; color: var(--text); max-width: 960px; width: calc(100% - 10vw); margin: min(2vw, 2rem) auto; padding-bottom: 3rem; line-height: 1.55; -webkit-font-smoothing: antialiased; }
-  a { color: var(--link); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  h1 { font-size: 1.75rem; font-weight: 600; margin-bottom: 0.15rem; }
-  .subtitle { color: var(--dim); font-size: 0.9rem; margin-bottom: 2rem; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
-  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem 1.25rem; }
-  .stat-card .number { font-size: 2.25rem; font-weight: 700; line-height: 1.1; }
-  .stat-card .label { color: var(--dim); font-size: 0.8rem; margin-top: 0.3rem; }
-  .green { color: var(--green); }
-  .yellow { color: var(--yellow); }
-  .blue { color: var(--blue); }
-  .purple { color: var(--purple); }
-  .red { color: var(--red); }
-  .dim { color: var(--dim); font-size: 0.8em; }
-  h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
-  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 1.25rem; }
-  th { text-align: left; padding: 0.55rem 0.9rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--dim); border-bottom: 1px solid var(--border); }
-  td { padding: 0.45rem 0.9rem; border-top: 1px solid var(--border); font-size: 0.85rem; }
-  tr:first-child td { border-top: none; }
-  .tag { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
-  .tag-shipped { background: rgba(63,185,80,0.15); color: var(--green); }
-  .tag-open { background: rgba(210,153,34,0.15); color: var(--yellow); }
-  .tag-dup { background: rgba(88,166,255,0.15); color: var(--blue); }
-  .tag-withdrawn { background: rgba(128,128,128,0.15); color: var(--dim); }
-  .tag-rejected { background: rgba(248,81,73,0.15); color: var(--red); }
-  .bar-container { display: flex; height: 22px; border-radius: 6px; overflow: hidden; margin: 0.5rem 0; }
-  .bar-segment { display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 600; color: #fff; min-width: 2px; }
-  .bar-shipped { background: var(--green); }
-  .bar-accepted { background: var(--purple); }
-  .bar-dup { background: var(--blue); }
-  .bar-withdrawn { background: #666; }
-  .bar-open { background: var(--yellow); }
-  .legend { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-top: 0.4rem; font-size: 0.75rem; color: var(--dim); }
-  .legend-item { display: flex; align-items: center; gap: 0.3rem; }
-  .legend-dot { width: 9px; height: 9px; border-radius: 50%; }
-  .note { color: var(--dim); font-size: 0.8rem; margin-top: 0.5rem; }
-  .section { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem; margin-bottom: 1.25rem; }
-  .section p + p { margin-top: 0.4rem; }
-  details summary { cursor: pointer; font-size: 0.85rem; color: var(--dim); }
-  .footer { text-align: center; color: var(--dim); font-size: 0.75rem; margin-top: 2.5rem; }
-  @media (max-width: 600px) {
-    .grid { grid-template-columns: repeat(2, 1fr); }
-    body { width: calc(100% - 2rem); }
-  }
-</style>
+<link rel="stylesheet" href="../style.css?v=af441714">
 </head>
-<body>
+<body class="pr">
 
-<h1>PR Pipeline Stats</h1>
-<p class="subtitle">rodboev contributions to NousResearch/hermes-agent + nesquena/hermes-webui</p>
+<div class="top-row">
+  <h1><a class="back-link" href="../"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>pr-sweeps Stats</h1>
+  <nav class="nav-links">
+    <a href="../pr-targets/">Targets</a>
+    <span class="nav-sep">/</span>
+    <span class="current">Stats</span>
+    <span class="nav-sep">/</span>
+    <a href="https://github.com/rodboev/pr-sweep">pr-sweep</a> <span class="private">(private)</span>
+  </nav>
+</div>
+<p class="subtitle">rodboev contributions to nesquena/hermes-webui + NousResearch/hermes-agent</p>
 
 <div class="grid">
   <div class="stat-card"><div class="number">150</div><div class="label">Total PRs</div></div>
-  <div class="stat-card"><div class="number green">41</div><div class="label">Shipped</div></div>
-  <div class="stat-card"><div class="number yellow">102</div><div class="label">Open</div></div>
-  <div class="stat-card"><div class="number">0</div><div class="label red">Rejected</div></div>
+  <div class="stat-card"><div class="number green">42</div><div class="label">Shipped</div></div>
+  <div class="stat-card"><div class="number yellow">95</div><div class="label">Open</div></div>
+  <div class="stat-card"><div class="number">4</div><div class="label">Lost</div></div>
 </div>
 <div class="grid">
-  <div class="stat-card"><div class="number green">100%</div><div class="label">Acceptance rate on resolved PRs (41 accepted, 0 rejected out of 48 closed)</div></div>
+  <div class="stat-card"><div class="number green">91%</div><div class="label">Acceptance rate on resolved PRs (42 shipped, 4 lost out of 46 resolved)</div></div>
+  <div class="stat-card"><div class="number blue">4 days</div><div class="label">Time span (June 2-June 6, 2026)</div></div>
 </div>
 
 <h2>Breakdown</h2>
 
 <div class="bar-container">
-  <div class="bar-segment bar-shipped" style="width:25.3%" title="38">38</div>
-  <div class="bar-segment bar-accepted" style="width:2%"></div>
-  <div class="bar-segment bar-dup" style="width:0.7%"></div>
-  <div class="bar-segment bar-withdrawn" style="width:4%"></div>
-  <div class="bar-segment bar-open" style="width:68%" title="102">102</div>
+  <div class="bar-segment bar-shipped" data-width="28" title="42">42</div>
+  <div class="bar-segment bar-accepted" data-width="0"></div>
+  <div class="bar-segment bar-lost" data-width="2.7"></div>
+  <div class="bar-segment bar-withdrawn" data-width="6">9</div>
+  <div class="bar-segment bar-open" data-width="63.3" title="95">95</div>
 </div>
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Shipped (38)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div> Accepted indirectly (3)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Duplicate (1)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#666"></div> Withdrawn (6)</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div> Open (102)</div>
+  <div class="legend-item"><div class="legend-dot legend-dot-shipped"></div> Shipped (42)</div>
+  <div class="legend-item"><div class="legend-dot legend-dot-lost"></div> Lost (4)</div>
+  <div class="legend-item"><div class="legend-dot legend-dot-withdrawn"></div> Withdrawn (9)</div>
+  <div class="legend-item"><div class="legend-dot legend-dot-open"></div> Open (95)</div>
 </div>
 
 <h2>hermes-webui (75 PRs)</h2>
 <table>
   <tr><th>Status</th><th>Count</th><th>Details</th></tr>
-  <tr><td><span class="tag tag-shipped">Shipped</span></td><td>37</td><td>37 confirmed shipped</td></tr>
-  <tr><td><span class="tag tag-open">Open</span></td><td>32</td><td>Awaiting maintainer review</td></tr>
-  <tr><td><span class="tag tag-dup">Duplicate</span></td><td>1</td><td>Consolidated into other PRs</td></tr>
-  <tr><td><span class="tag tag-withdrawn">Withdrawn</span></td><td>5</td><td>Closed without maintainer action</td></tr>
-  <tr><td><span class="tag tag-rejected">Rejected</span></td><td>0</td><td>None</td></tr>
+  <tr><td><span class="tag tag-shipped">Shipped</span></td><td>41</td><td>41 confirmed shipped</td></tr>
+  <tr><td><span class="tag tag-open">Open</span></td><td>25</td><td>Awaiting maintainer review</td></tr>
+  <tr><td><span class="tag tag-rejected">Lost</span></td><td>1</td><td>Competing PR won</td></tr>
+  <tr><td><span class="tag tag-withdrawn">Withdrawn</span></td><td>8</td><td>Closed without maintainer action</td></tr>
 </table>
 <h2>hermes-agent (75 PRs)</h2>
 <table>
   <tr><th>Status</th><th>Count</th><th>Details</th></tr>
-  <tr><td><span class="tag tag-shipped">Shipped</span></td><td>4</td><td>1 confirmed shipped, 3 accepted indirectly</td></tr>
+  <tr><td><span class="tag tag-shipped">Shipped</span></td><td>1</td><td>1 confirmed shipped</td></tr>
   <tr><td><span class="tag tag-open">Open</span></td><td>70</td><td>Awaiting maintainer review</td></tr>
+  <tr><td><span class="tag tag-rejected">Lost</span></td><td>3</td><td>Competing PR won</td></tr>
   <tr><td><span class="tag tag-withdrawn">Withdrawn</span></td><td>1</td><td>Closed without maintainer action</td></tr>
-  <tr><td><span class="tag tag-rejected">Rejected</span></td><td>0</td><td>None</td></tr>
 </table>
 
 
 <h2>hermes-webui Leaderboard</h2>
+<div class="collapsible-table leaderboard collapsed" id="lb-hermes-webui">
+<div class="overlay-row" onclick="toggleCollapsedTable('lb-hermes-webui')">Collapse <span class="caret">&#9650;</span></div>
 <table>
-  <tr><th>Rank</th><th>Contributor</th><th>Credited</th><th>Open</th><th>Rate</th><th>Status</th></tr>
-  <tr><td>#1</td><td><a href="https://github.com/franksong2702">franksong2702</a></td><td>244</td><td>4</td><td>3.4/d</td><td><span class="green">Recent</span></td></tr>
+  <thead><tr><th>Rank</th><th>Contributor</th><th>Credited</th><th>Open</th><th>Rate</th><th>Status</th></tr></thead>
+  <tbody>
+  <tr><td>#1</td><td><a href="https://github.com/franksong2702">franksong2702</a></td><td>245</td><td>4</td><td>3.3/d</td><td><span class="green">Active</span></td></tr>
   <tr><td>#2</td><td><a href="https://github.com/Michaelyklam">Michaelyklam</a></td><td>199</td><td>1</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#3</td><td><a href="https://github.com/ai-ag2026">ai-ag2026</a></td><td>129</td><td>3</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#4</td><td><a href="https://github.com/AJV20">AJV20</a></td><td>66</td><td>6</td><td>0.7/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr style="font-weight:600; background:rgba(63,185,80,0.06)"><td>#5</td><td><a href="https://github.com/rodboev">rodboev</a></td><td>37</td><td>32</td><td>21.1/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#3</td><td><a href="https://github.com/ai-ag2026">ai-ag2026</a></td><td>130</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#4</td><td><a href="https://github.com/AJV20">AJV20</a></td><td>67</td><td>5</td><td>0.6/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr class="is-self"><td>#5</td><td><a href="https://github.com/rodboev">rodboev</a></td><td>41</td><td>25</td><td>21.1/d</td><td><span class="green">Recent</span></td></tr>
   <tr><td>#6</td><td><a href="https://github.com/dso2ng">dso2ng</a></td><td>34</td><td>1</td><td>0.3/d</td><td><span class="green">Recent</span></td></tr>
   <tr><td>#7</td><td><a href="https://github.com/starship-s">starship-s</a></td><td>32</td><td>2</td><td>0.5/d</td><td><span class="green">Recent</span></td></tr>
   <tr><td>#8</td><td><a href="https://github.com/jasonjcwu">jasonjcwu</a></td><td>27</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
   <tr><td>#9</td><td><a href="https://github.com/Sanjays2402">Sanjays2402</a></td><td>18</td><td>2</td><td>0.5/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#10</td><td><a href="https://github.com/pamnard">pamnard</a></td><td>13</td><td>3</td><td>2.2/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#11</td><td><a href="https://github.com/mysoul12138">mysoul12138</a></td><td>12</td><td>1</td><td>1/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#12</td><td><a href="https://github.com/Hinotoi-agent">Hinotoi-agent</a></td><td>11</td><td>1</td><td>1/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#10</td><td><a href="https://github.com/mysoul12138">mysoul12138</a></td><td>13</td><td>0</td><td>0.9/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#11</td><td><a href="https://github.com/pamnard">pamnard</a></td><td>13</td><td>3</td><td>2.1/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#12</td><td><a href="https://github.com/Hinotoi-agent">Hinotoi-agent</a></td><td>12</td><td>1</td><td>1.1/d</td><td><span class="green">Active</span></td></tr>
   <tr><td>#13</td><td><a href="https://github.com/AlexeyDsov">AlexeyDsov</a></td><td>10</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#14</td><td><a href="https://github.com/v2psv">v2psv</a></td><td>9</td><td>0</td><td>0.3/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#15</td><td><a href="https://github.com/mibrohimsulaeman-a11y">mibrohimsulaeman-a11y</a></td><td>9</td><td>0</td><td>1.6/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#14</td><td><a href="https://github.com/mibrohimsulaeman-a11y">mibrohimsulaeman-a11y</a></td><td>9</td><td>0</td><td>1.4/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#15</td><td><a href="https://github.com/v2psv">v2psv</a></td><td>9</td><td>0</td><td>0.3/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr class="expand-row" onclick="toggleCollapsedTable('lb-hermes-webui')"><td colspan="6">Show all 90 contributors <span class="caret">&#9660;</span></td></tr>
   <tr><td>#16</td><td><a href="https://github.com/happy5318">happy5318</a></td><td>8</td><td>0</td><td>0.3/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#17</td><td><a href="https://github.com/lucasrc">lucasrc</a></td><td>7</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
-  <tr><td>#18</td><td><a href="https://github.com/Carry00">Carry00</a></td><td>6</td><td>1</td><td>0.7/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#19</td><td><a href="https://github.com/zapabob">zapabob</a></td><td>6</td><td>0</td><td>0.5/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#20</td><td><a href="https://github.com/b3nw">b3nw</a></td><td>6</td><td>1</td><td>0.9/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#21</td><td><a href="https://github.com/chouzz">chouzz</a></td><td>4</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
-  <tr><td>#22</td><td><a href="https://github.com/PINKIIILQWQ">PINKIIILQWQ</a></td><td>4</td><td>0</td><td>0.3/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#23</td><td><a href="https://github.com/someaka">someaka</a></td><td>4</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#24</td><td><a href="https://github.com/andrewkangkr">andrewkangkr</a></td><td>4</td><td>1</td><td>0/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#25</td><td><a href="https://github.com/xz-dev">xz-dev</a></td><td>4</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#26</td><td><a href="https://github.com/mvanhorn">mvanhorn</a></td><td>4</td><td>0</td><td>0.5/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#27</td><td><a href="https://github.com/allenliang2022">allenliang2022</a></td><td>3</td><td>0</td><td>0/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#28</td><td><a href="https://github.com/Mubashirrrr">Mubashirrrr</a></td><td>3</td><td>0</td><td>0.5/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#29</td><td><a href="https://github.com/plerohellec">plerohellec</a></td><td>3</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
-  <tr><td>#30</td><td><a href="https://github.com/gavinssr">gavinssr</a></td><td>3</td><td>2</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#31</td><td><a href="https://github.com/aether-agent">aether-agent</a></td><td>2</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#32</td><td><a href="https://github.com/vanshaj-pahwa">vanshaj-pahwa</a></td><td>2</td><td>1</td><td>0.5/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#33</td><td><a href="https://github.com/pix0127">pix0127</a></td><td>2</td><td>1</td><td>0.3/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#34</td><td><a href="https://github.com/koshikai">koshikai</a></td><td>2</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#35</td><td><a href="https://github.com/theherrovn-sys">theherrovn-sys</a></td><td>2</td><td>0</td><td>0.3/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#36</td><td><a href="https://github.com/starGazerK">starGazerK</a></td><td>2</td><td>0</td><td>0.3/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#37</td><td><a href="https://github.com/tonywongk">tonywongk</a></td><td>2</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#17</td><td><a href="https://github.com/Carry00">Carry00</a></td><td>7</td><td>0</td><td>0.6/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#18</td><td><a href="https://github.com/lucasrc">lucasrc</a></td><td>7</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
+  <tr><td>#19</td><td><a href="https://github.com/b3nw">b3nw</a></td><td>6</td><td>1</td><td>0.8/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#20</td><td><a href="https://github.com/zapabob">zapabob</a></td><td>6</td><td>0</td><td>0.5/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#21</td><td><a href="https://github.com/someaka">someaka</a></td><td>4</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#22</td><td><a href="https://github.com/xz-dev">xz-dev</a></td><td>4</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#23</td><td><a href="https://github.com/PINKIIILQWQ">PINKIIILQWQ</a></td><td>4</td><td>0</td><td>0.3/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#24</td><td><a href="https://github.com/mvanhorn">mvanhorn</a></td><td>4</td><td>0</td><td>0.5/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#25</td><td><a href="https://github.com/andrewkangkr">andrewkangkr</a></td><td>4</td><td>1</td><td>0/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#26</td><td><a href="https://github.com/Mubashirrrr">Mubashirrrr</a></td><td>3</td><td>0</td><td>0.5/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#27</td><td><a href="https://github.com/plerohellec">plerohellec</a></td><td>3</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
+  <tr><td>#28</td><td><a href="https://github.com/gavinssr">gavinssr</a></td><td>3</td><td>2</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#29</td><td><a href="https://github.com/allenliang2022">allenliang2022</a></td><td>3</td><td>0</td><td>0/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#30</td><td><a href="https://github.com/reinocheong">reinocheong</a></td><td>2</td><td>0</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#31</td><td><a href="https://github.com/vanshaj-pahwa">vanshaj-pahwa</a></td><td>2</td><td>1</td><td>0.5/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#32</td><td><a href="https://github.com/tonywongk">tonywongk</a></td><td>2</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#33</td><td><a href="https://github.com/aether-agent">aether-agent</a></td><td>2</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#34</td><td><a href="https://github.com/timlawrenz">timlawrenz</a></td><td>2</td><td>0</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#35</td><td><a href="https://github.com/koshikai">koshikai</a></td><td>2</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#36</td><td><a href="https://github.com/theherrovn-sys">theherrovn-sys</a></td><td>2</td><td>0</td><td>0.3/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#37</td><td><a href="https://github.com/pix0127">pix0127</a></td><td>2</td><td>1</td><td>0.3/d</td><td><span class="green">Recent</span></td></tr>
   <tr><td>#38</td><td><a href="https://github.com/RobinAngele">RobinAngele</a></td><td>2</td><td>1</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
-  <tr><td>#39</td><td><a href="https://github.com/octo-patch">octo-patch</a></td><td>2</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#40</td><td><a href="https://github.com/camr">camr</a></td><td>2</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#41</td><td><a href="https://github.com/JayC-L">JayC-L</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#42</td><td><a href="https://github.com/t3chn0pr13st">t3chn0pr13st</a></td><td>1</td><td>1</td><td>0.3/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#43</td><td><a href="https://github.com/thanhtoantnt">thanhtoantnt</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#44</td><td><a href="https://github.com/heagandev">heagandev</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#45</td><td><a href="https://github.com/viraatdas">viraatdas</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#46</td><td><a href="https://github.com/TomBanksAU">TomBanksAU</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#47</td><td><a href="https://github.com/emanon312">emanon312</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#48</td><td><a href="https://github.com/timlawrenz">timlawrenz</a></td><td>1</td><td>1</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#49</td><td><a href="https://github.com/PatrickNoFilter">PatrickNoFilter</a></td><td>1</td><td>1</td><td>0.3/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#50</td><td><a href="https://github.com/toanalien">toanalien</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#51</td><td><a href="https://github.com/hugginsc10">hugginsc10</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
-  <tr><td>#52</td><td><a href="https://github.com/puneetdixit200">puneetdixit200</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#53</td><td><a href="https://github.com/antoniocarlos97ss">antoniocarlos97ss</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
-  <tr><td>#54</td><td><a href="https://github.com/lambyangzhao">lambyangzhao</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#55</td><td><a href="https://github.com/mailbobg">mailbobg</a></td><td>1</td><td>2</td><td>0/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#56</td><td><a href="https://github.com/cnogrin">cnogrin</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#57</td><td><a href="https://github.com/evanclan">evanclan</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#58</td><td><a href="https://github.com/DavidRutkevich">DavidRutkevich</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
-  <tr><td>#59</td><td><a href="https://github.com/lurebat">lurebat</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#60</td><td><a href="https://github.com/PeterDaveHello">PeterDaveHello</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#61</td><td><a href="https://github.com/JOE-Z-L">JOE-Z-L</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#62</td><td><a href="https://github.com/tcconnally">tcconnally</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
-  <tr><td>#63</td><td><a href="https://github.com/jja881">jja881</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#64</td><td><a href="https://github.com/Karlineal">Karlineal</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#65</td><td><a href="https://github.com/xx77yy">xx77yy</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#66</td><td><a href="https://github.com/lizhihao-99">lizhihao-99</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
-  <tr><td>#67</td><td><a href="https://github.com/kuishou68">kuishou68</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#68</td><td><a href="https://github.com/jianongHe">jianongHe</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#69</td><td><a href="https://github.com/rly09">rly09</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#70</td><td><a href="https://github.com/mkg0908">mkg0908</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#71</td><td><a href="https://github.com/Lyr-GW">Lyr-GW</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#72</td><td><a href="https://github.com/wind-chant">wind-chant</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
-  <tr><td>#73</td><td><a href="https://github.com/gsurenull">gsurenull</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#74</td><td><a href="https://github.com/jamie-dit">jamie-dit</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#75</td><td><a href="https://github.com/sjh9714">sjh9714</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#76</td><td><a href="https://github.com/byrdboykins-a11y">byrdboykins-a11y</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#77</td><td><a href="https://github.com/mikael-johansson">mikael-johansson</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
-  <tr><td>#78</td><td><a href="https://github.com/luanxu-dev">luanxu-dev</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#79</td><td><a href="https://github.com/hayriodabas">hayriodabas</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
-  <tr><td>#80</td><td><a href="https://github.com/gavintsengtw">gavintsengtw</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#81</td><td><a href="https://github.com/midnightmoodboard">midnightmoodboard</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#82</td><td><a href="https://github.com/0zzy-tech">0zzy-tech</a></td><td>0</td><td>1</td><td>0/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#83</td><td><a href="https://github.com/alvistar">alvistar</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#84</td><td><a href="https://github.com/reinocheong">reinocheong</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#85</td><td><a href="https://github.com/linux-fertxo">linux-fertxo</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#86</td><td><a href="https://github.com/BitofShoe">BitofShoe</a></td><td>0</td><td>1</td><td>0/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#87</td><td><a href="https://github.com/fuzhyperblue">fuzhyperblue</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#88</td><td><a href="https://github.com/Frankstar">Frankstar</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#89</td><td><a href="https://github.com/Chukwuebuka-2003">Chukwuebuka-2003</a></td><td>0</td><td>2</td><td>0/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#90</td><td><a href="https://github.com/psanger">psanger</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#91</td><td><a href="https://github.com/kristapskristaps">kristapskristaps</a></td><td>0</td><td>1</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
-  <tr><td>#92</td><td><a href="https://github.com/DanielMaly">DanielMaly</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#93</td><td><a href="https://github.com/aaronjmars">aaronjmars</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
-  <tr><td>#94</td><td><a href="https://github.com/yuanhun">yuanhun</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
-  <tr><td>#95</td><td><a href="https://github.com/noahbare">noahbare</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#39</td><td><a href="https://github.com/starGazerK">starGazerK</a></td><td>2</td><td>0</td><td>0.3/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#40</td><td><a href="https://github.com/octo-patch">octo-patch</a></td><td>2</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#41</td><td><a href="https://github.com/camr">camr</a></td><td>2</td><td>1</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#42</td><td><a href="https://github.com/TomBanksAU">TomBanksAU</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#43</td><td><a href="https://github.com/toanalien">toanalien</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#44</td><td><a href="https://github.com/emanon312">emanon312</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
+  <tr><td>#45</td><td><a href="https://github.com/gavintsengtw">gavintsengtw</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#46</td><td><a href="https://github.com/tcconnally">tcconnally</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
+  <tr><td>#47</td><td><a href="https://github.com/JOE-Z-L">JOE-Z-L</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#48</td><td><a href="https://github.com/jja881">jja881</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#49</td><td><a href="https://github.com/puneetdixit200">puneetdixit200</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#50</td><td><a href="https://github.com/thanhtoantnt">thanhtoantnt</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#51</td><td><a href="https://github.com/heagandev">heagandev</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#52</td><td><a href="https://github.com/t3chn0pr13st">t3chn0pr13st</a></td><td>1</td><td>1</td><td>0.3/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#53</td><td><a href="https://github.com/lambyangzhao">lambyangzhao</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#54</td><td><a href="https://github.com/PeterDaveHello">PeterDaveHello</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#55</td><td><a href="https://github.com/JayC-L">JayC-L</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#56</td><td><a href="https://github.com/viraatdas">viraatdas</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#57</td><td><a href="https://github.com/gsurenull">gsurenull</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#58</td><td><a href="https://github.com/lurebat">lurebat</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#59</td><td><a href="https://github.com/PatrickNoFilter">PatrickNoFilter</a></td><td>1</td><td>1</td><td>0.3/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#60</td><td><a href="https://github.com/byrdboykins-a11y">byrdboykins-a11y</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#61</td><td><a href="https://github.com/mkg0908">mkg0908</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#62</td><td><a href="https://github.com/alvistar">alvistar</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#63</td><td><a href="https://github.com/Lyr-GW">Lyr-GW</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#64</td><td><a href="https://github.com/jianongHe">jianongHe</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#65</td><td><a href="https://github.com/kuishou68">kuishou68</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#66</td><td><a href="https://github.com/luanxu-dev">luanxu-dev</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#67</td><td><a href="https://github.com/evanclan">evanclan</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#68</td><td><a href="https://github.com/wind-chant">wind-chant</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
+  <tr><td>#69</td><td><a href="https://github.com/sjh9714">sjh9714</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#70</td><td><a href="https://github.com/cnogrin">cnogrin</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#71</td><td><a href="https://github.com/rly09">rly09</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#72</td><td><a href="https://github.com/jamie-dit">jamie-dit</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#73</td><td><a href="https://github.com/mikael-johansson">mikael-johansson</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
+  <tr><td>#74</td><td><a href="https://github.com/xx77yy">xx77yy</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#75</td><td><a href="https://github.com/hayriodabas">hayriodabas</a></td><td>1</td><td>0</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
+  <tr><td>#76</td><td><a href="https://github.com/mailbobg">mailbobg</a></td><td>1</td><td>2</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
+  <tr><td>#77</td><td><a href="https://github.com/DanielMaly">DanielMaly</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#78</td><td><a href="https://github.com/Karlineal">Karlineal</a></td><td>1</td><td>1</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#79</td><td><a href="https://github.com/fantasticsquirrel">fantasticsquirrel</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#80</td><td><a href="https://github.com/noahbare">noahbare</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#81</td><td><a href="https://github.com/0zzy-tech">0zzy-tech</a></td><td>0</td><td>1</td><td>0/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#82</td><td><a href="https://github.com/fuzhyperblue">fuzhyperblue</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#83</td><td><a href="https://github.com/BitofShoe">BitofShoe</a></td><td>0</td><td>1</td><td>0/d</td><td><span class="dim">Quiet</span></td></tr>
+  <tr><td>#84</td><td><a href="https://github.com/aaronjmars">aaronjmars</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#85</td><td><a href="https://github.com/yuanhun">yuanhun</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#86</td><td><a href="https://github.com/psanger">psanger</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#87</td><td><a href="https://github.com/Chukwuebuka-2003">Chukwuebuka-2003</a></td><td>0</td><td>2</td><td>0/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#88</td><td><a href="https://github.com/linux-fertxo">linux-fertxo</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#89</td><td><a href="https://github.com/midnightmoodboard">midnightmoodboard</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  <tr><td>#90</td><td><a href="https://github.com/Frankstar">Frankstar</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="yellow">Slowing</span></td></tr>
+  </tbody>
 </table>
-<details style="margin-top:0.75rem">
-<summary style="cursor:pointer; font-size:0.85rem; color:var(--dim)">Projections (you @ 21.1/day, rank #5)</summary>
-<table style="margin-top:0.5rem">
+</div>
+<details class="projections">
+<summary>Projections (you @ 21.1/day, rank #5)</summary>
+<table>
   <tr><th>Contributor</th><th>Credited</th><th>Rate</th><th>Catch-up</th></tr>
-  <tr><td>franksong2702</td><td>244 (+207)</td><td>3.4/d</td><td>11.7d (Jun 18)</td></tr>
-  <tr><td>Michaelyklam</td><td>199 (+162)</td><td>0.2/d</td><td>7.8d (Jun 14)</td></tr>
-  <tr><td>ai-ag2026</td><td>129 (+92)</td><td>0.3/d</td><td>4.4d (Jun 11)</td></tr>
-  <tr><td>AJV20</td><td>66 (+29)</td><td>0.7/d</td><td>1.4d (Jun 8)</td></tr>
+  <tr><td>franksong2702</td><td>245 (+204)</td><td>3.3/d</td><td>11.5d (Jun 18)</td></tr>
+  <tr><td>Michaelyklam</td><td>199 (+158)</td><td>0.2/d</td><td>7.6d (Jun 14)</td></tr>
+  <tr><td>ai-ag2026</td><td>130 (+89)</td><td>0.5/d</td><td>4.3d (Jun 11)</td></tr>
+  <tr><td>AJV20</td><td>67 (+26)</td><td>0.6/d</td><td>1.3d (Jun 8)</td></tr>
 </table>
 </details>
-<h2>hermes-agent Leaderboard</h2>
+<details>
+<summary><h2>hermes-agent Leaderboard</h2></summary>
+<div class="collapsible-table leaderboard collapsed" id="lb-hermes-agent">
+<div class="overlay-row" onclick="toggleCollapsedTable('lb-hermes-agent')">Collapse <span class="caret">&#9650;</span></div>
 <table>
-  <tr><th>Rank</th><th>Contributor</th><th>Credited</th><th>Open</th><th>Rate</th><th>Status</th></tr>
-  <tr><td>#1</td><td><a href="https://github.com/teknium1">teknium1</a></td><td>431</td><td>69</td><td>44.8/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#2</td><td><a href="https://github.com/kshitijk4poor">kshitijk4poor</a></td><td>388</td><td>37</td><td>4.8/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#3</td><td><a href="https://github.com/briandevans">briandevans</a></td><td>272</td><td>68</td><td>4/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#4</td><td><a href="https://github.com/OutThisLife">OutThisLife</a></td><td>227</td><td>15</td><td>11.9/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#5</td><td><a href="https://github.com/helix4u">helix4u</a></td><td>180</td><td>19</td><td>2.8/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#6</td><td><a href="https://github.com/konsisumer">konsisumer</a></td><td>167</td><td>75</td><td>6.4/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#7</td><td><a href="https://github.com/alt-glitch">alt-glitch</a></td><td>114</td><td>11</td><td>1.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#8</td><td><a href="https://github.com/liuhao1024">liuhao1024</a></td><td>114</td><td>315</td><td>24.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#9</td><td><a href="https://github.com/LeonSGP43">LeonSGP43</a></td><td>105</td><td>395</td><td>5.7/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#10</td><td><a href="https://github.com/Tranquil-Flow">Tranquil-Flow</a></td><td>105</td><td>178</td><td>6.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#11</td><td><a href="https://github.com/benbarclay">benbarclay</a></td><td>90</td><td>5</td><td>7.1/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#12</td><td><a href="https://github.com/alaamohanad169-ship-it">alaamohanad169-ship-it</a></td><td>86</td><td>0</td><td>4.7/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#13</td><td><a href="https://github.com/Dusk1e">Dusk1e</a></td><td>50</td><td>109</td><td>5.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#14</td><td><a href="https://github.com/xxxigm">xxxigm</a></td><td>35</td><td>117</td><td>4/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#15</td><td><a href="https://github.com/Linux2010">Linux2010</a></td><td>34</td><td>10</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#16</td><td><a href="https://github.com/kyssta-exe">kyssta-exe</a></td><td>30</td><td>27</td><td>9.7/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#17</td><td><a href="https://github.com/r266-tech">r266-tech</a></td><td>28</td><td>28</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#18</td><td><a href="https://github.com/nftpoetrist">nftpoetrist</a></td><td>23</td><td>25</td><td>1/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#19</td><td><a href="https://github.com/Kewe63">Kewe63</a></td><td>21</td><td>22</td><td>1.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#20</td><td><a href="https://github.com/BROCCOLO1D">BROCCOLO1D</a></td><td>18</td><td>12</td><td>0.7/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#21</td><td><a href="https://github.com/OmarB97">OmarB97</a></td><td>18</td><td>57</td><td>5.9/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#22</td><td><a href="https://github.com/annguyenNous">annguyenNous</a></td><td>16</td><td>106</td><td>6.7/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#23</td><td><a href="https://github.com/hdarwish">hdarwish</a></td><td>15</td><td>0</td><td>2.4/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#24</td><td><a href="https://github.com/solovision24">solovision24</a></td><td>13</td><td>10</td><td>1/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#25</td><td><a href="https://github.com/ashishpatel26">ashishpatel26</a></td><td>13</td><td>15</td><td>4.8/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#26</td><td><a href="https://github.com/zerone0x">zerone0x</a></td><td>12</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#27</td><td><a href="https://github.com/sharziki">sharziki</a></td><td>11</td><td>5</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#28</td><td><a href="https://github.com/Que0x">Que0x</a></td><td>10</td><td>16</td><td>1.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#29</td><td><a href="https://github.com/erhnysr">erhnysr</a></td><td>10</td><td>5</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#30</td><td><a href="https://github.com/Frowtek">Frowtek</a></td><td>10</td><td>17</td><td>2.1/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#31</td><td><a href="https://github.com/BeliefanX">BeliefanX</a></td><td>9</td><td>7</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#32</td><td><a href="https://github.com/AJV20">AJV20</a></td><td>9</td><td>15</td><td>0.9/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#33</td><td><a href="https://github.com/zapabob">zapabob</a></td><td>8</td><td>43</td><td>2.4/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#34</td><td><a href="https://github.com/davidgut1982">davidgut1982</a></td><td>8</td><td>24</td><td>4/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#35</td><td><a href="https://github.com/highland0971">highland0971</a></td><td>8</td><td>9</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#36</td><td><a href="https://github.com/HeLLGURD">HeLLGURD</a></td><td>7</td><td>30</td><td>6.4/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#37</td><td><a href="https://github.com/mohamedorigami-jpg">mohamedorigami-jpg</a></td><td>7</td><td>48</td><td>5.7/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#38</td><td><a href="https://github.com/Hinotoi-agent">Hinotoi-agent</a></td><td>7</td><td>15</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#39</td><td><a href="https://github.com/maxmilian">maxmilian</a></td><td>6</td><td>8</td><td>1.6/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#40</td><td><a href="https://github.com/yoniebans">yoniebans</a></td><td>5</td><td>3</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#41</td><td><a href="https://github.com/fabiosiqueira">fabiosiqueira</a></td><td>5</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#42</td><td><a href="https://github.com/hanzckernel">hanzckernel</a></td><td>5</td><td>15</td><td>0.7/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#43</td><td><a href="https://github.com/AxDSan">AxDSan</a></td><td>5</td><td>3</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#44</td><td><a href="https://github.com/blut-agent">blut-agent</a></td><td>5</td><td>7</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#45</td><td><a href="https://github.com/flooryyyy">flooryyyy</a></td><td>5</td><td>7</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#46</td><td><a href="https://github.com/rudi193-cmd">rudi193-cmd</a></td><td>4</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr style="font-weight:600; background:rgba(63,185,80,0.06)"><td>#47</td><td><a href="https://github.com/rodboev">rodboev</a></td><td>4</td><td>70</td><td>20.4/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#48</td><td><a href="https://github.com/xy200303">xy200303</a></td><td>4</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#49</td><td><a href="https://github.com/dangelo352">dangelo352</a></td><td>4</td><td>3</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#50</td><td><a href="https://github.com/Carry00">Carry00</a></td><td>4</td><td>4</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#51</td><td><a href="https://github.com/mrlufepines">mrlufepines</a></td><td>3</td><td>2</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#52</td><td><a href="https://github.com/TechNickAI">TechNickAI</a></td><td>3</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#53</td><td><a href="https://github.com/Kyzcreig">Kyzcreig</a></td><td>3</td><td>32</td><td>2.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#54</td><td><a href="https://github.com/jeeves-assistant">jeeves-assistant</a></td><td>3</td><td>1</td><td>0.7/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#55</td><td><a href="https://github.com/verybigdog">verybigdog</a></td><td>3</td><td>5</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#56</td><td><a href="https://github.com/sarvesh1327">sarvesh1327</a></td><td>2</td><td>6</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#57</td><td><a href="https://github.com/Yosef-Bunick">Yosef-Bunick</a></td><td>2</td><td>1</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#58</td><td><a href="https://github.com/shivros">shivros</a></td><td>2</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#59</td><td><a href="https://github.com/ezutfen">ezutfen</a></td><td>2</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#60</td><td><a href="https://github.com/govtech42">govtech42</a></td><td>2</td><td>0</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#61</td><td><a href="https://github.com/skylarbpayne">skylarbpayne</a></td><td>2</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#62</td><td><a href="https://github.com/Saurav0989">Saurav0989</a></td><td>2</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#63</td><td><a href="https://github.com/k176060444-lgtm">k176060444-lgtm</a></td><td>2</td><td>2</td><td>0.7/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#64</td><td><a href="https://github.com/simonvanlaak">simonvanlaak</a></td><td>2</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#65</td><td><a href="https://github.com/seamusmore">seamusmore</a></td><td>2</td><td>3</td><td>0.9/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#66</td><td><a href="https://github.com/psionic73">psionic73</a></td><td>2</td><td>2</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#67</td><td><a href="https://github.com/flyer103">flyer103</a></td><td>2</td><td>1</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#68</td><td><a href="https://github.com/dmnkhorvath">dmnkhorvath</a></td><td>2</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#69</td><td><a href="https://github.com/ricardoroche">ricardoroche</a></td><td>2</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#70</td><td><a href="https://github.com/nittatomonori-star">nittatomonori-star</a></td><td>2</td><td>1</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#71</td><td><a href="https://github.com/KeyArgo">KeyArgo</a></td><td>2</td><td>4</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#72</td><td><a href="https://github.com/daesungkiim">daesungkiim</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#73</td><td><a href="https://github.com/Eddybang72">Eddybang72</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#74</td><td><a href="https://github.com/responseops-ai">responseops-ai</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#75</td><td><a href="https://github.com/teixeirazeus">teixeirazeus</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#76</td><td><a href="https://github.com/xushibo">xushibo</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#77</td><td><a href="https://github.com/gauravsaxena1997">gauravsaxena1997</a></td><td>1</td><td>4</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#78</td><td><a href="https://github.com/PhBassin">PhBassin</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#79</td><td><a href="https://github.com/Slyker">Slyker</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#80</td><td><a href="https://github.com/DF-Technical">DF-Technical</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#81</td><td><a href="https://github.com/gu87">gu87</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#82</td><td><a href="https://github.com/hallbchris">hallbchris</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#83</td><td><a href="https://github.com/sasan1200">sasan1200</a></td><td>1</td><td>5</td><td>1/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#84</td><td><a href="https://github.com/echocanhelp">echocanhelp</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#85</td><td><a href="https://github.com/tfournet">tfournet</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#86</td><td><a href="https://github.com/piyush97">piyush97</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#87</td><td><a href="https://github.com/mosaiq-systems">mosaiq-systems</a></td><td>1</td><td>3</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#88</td><td><a href="https://github.com/grzywajk-beep">grzywajk-beep</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#89</td><td><a href="https://github.com/vmavromatis">vmavromatis</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#90</td><td><a href="https://github.com/jimjsong">jimjsong</a></td><td>1</td><td>1</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#91</td><td><a href="https://github.com/Mootz88">Mootz88</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#92</td><td><a href="https://github.com/qianwu007">qianwu007</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#93</td><td><a href="https://github.com/joe102084">joe102084</a></td><td>1</td><td>16</td><td>1/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#94</td><td><a href="https://github.com/cmw-creator">cmw-creator</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#95</td><td><a href="https://github.com/c0nSpIc0uS7uRk3r">c0nSpIc0uS7uRk3r</a></td><td>1</td><td>3</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#96</td><td><a href="https://github.com/Budescu-Eftimie">Budescu-Eftimie</a></td><td>1</td><td>1</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#97</td><td><a href="https://github.com/EulaEzio">EulaEzio</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#98</td><td><a href="https://github.com/vladimir-voinea">vladimir-voinea</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#99</td><td><a href="https://github.com/josefthottamson">josefthottamson</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#100</td><td><a href="https://github.com/maxpetrusenkoagent">maxpetrusenkoagent</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#101</td><td><a href="https://github.com/xuezhaolan">xuezhaolan</a></td><td>1</td><td>5</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#102</td><td><a href="https://github.com/jiangkoumo">jiangkoumo</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#103</td><td><a href="https://github.com/YUNBROAI">YUNBROAI</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#104</td><td><a href="https://github.com/l37525778-coder">l37525778-coder</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#105</td><td><a href="https://github.com/s-ai-alpha">s-ai-alpha</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#106</td><td><a href="https://github.com/rgoza1996">rgoza1996</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#107</td><td><a href="https://github.com/ClaraStudio">ClaraStudio</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#108</td><td><a href="https://github.com/Sunwo0u">Sunwo0u</a></td><td>1</td><td>3</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#109</td><td><a href="https://github.com/Love-JourneY">Love-JourneY</a></td><td>1</td><td>1</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#110</td><td><a href="https://github.com/Marcodelic">Marcodelic</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#111</td><td><a href="https://github.com/BKmanli">BKmanli</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#112</td><td><a href="https://github.com/tedburner">tedburner</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#113</td><td><a href="https://github.com/Ganesh0690">Ganesh0690</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#114</td><td><a href="https://github.com/ziwon">ziwon</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#115</td><td><a href="https://github.com/SNooZyy2">SNooZyy2</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#116</td><td><a href="https://github.com/tjboudreaux">tjboudreaux</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#117</td><td><a href="https://github.com/Netplus5415">Netplus5415</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#118</td><td><a href="https://github.com/pdmartins">pdmartins</a></td><td>1</td><td>1</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#119</td><td><a href="https://github.com/trader318">trader318</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#120</td><td><a href="https://github.com/992939504">992939504</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#121</td><td><a href="https://github.com/izumi0uu">izumi0uu</a></td><td>1</td><td>6</td><td>1.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#122</td><td><a href="https://github.com/pdzzzzzzzzz">pdzzzzzzzzz</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#123</td><td><a href="https://github.com/cnfi">cnfi</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#124</td><td><a href="https://github.com/ruslanvasylev">ruslanvasylev</a></td><td>1</td><td>3</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#125</td><td><a href="https://github.com/synapsesx">synapsesx</a></td><td>1</td><td>1</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#126</td><td><a href="https://github.com/aniketan">aniketan</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#127</td><td><a href="https://github.com/fuckbroccoli">fuckbroccoli</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#128</td><td><a href="https://github.com/yubingz">yubingz</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#129</td><td><a href="https://github.com/freqyfreqy">freqyfreqy</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#130</td><td><a href="https://github.com/zero-two-rafaeltab">zero-two-rafaeltab</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#131</td><td><a href="https://github.com/alex-heritier">alex-heritier</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#132</td><td><a href="https://github.com/Meapri">Meapri</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#133</td><td><a href="https://github.com/ubxty">ubxty</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#134</td><td><a href="https://github.com/Pommelle">Pommelle</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#135</td><td><a href="https://github.com/kurom1ii">kurom1ii</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#136</td><td><a href="https://github.com/Xue-1997">Xue-1997</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#137</td><td><a href="https://github.com/mari-meiji">mari-meiji</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#138</td><td><a href="https://github.com/ariffazil">ariffazil</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#139</td><td><a href="https://github.com/Ragingwasabi">Ragingwasabi</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#140</td><td><a href="https://github.com/BrySi">BrySi</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#141</td><td><a href="https://github.com/bishuan">bishuan</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#142</td><td><a href="https://github.com/kernel-t1">kernel-t1</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#143</td><td><a href="https://github.com/bpasquini">bpasquini</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#144</td><td><a href="https://github.com/XXX-2026">XXX-2026</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#145</td><td><a href="https://github.com/andrebrassfield">andrebrassfield</a></td><td>0</td><td>4</td><td>0.7/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#146</td><td><a href="https://github.com/oryn-oryn">oryn-oryn</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#147</td><td><a href="https://github.com/seleron">seleron</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#148</td><td><a href="https://github.com/ramazangur">ramazangur</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#149</td><td><a href="https://github.com/chrislazar25">chrislazar25</a></td><td>0</td><td>8</td><td>1.4/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#150</td><td><a href="https://github.com/yubeilengzhi">yubeilengzhi</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#151</td><td><a href="https://github.com/TheGardenGallery">TheGardenGallery</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#152</td><td><a href="https://github.com/tentfair">tentfair</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#153</td><td><a href="https://github.com/rrevenanttt">rrevenanttt</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#154</td><td><a href="https://github.com/agentswe">agentswe</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#155</td><td><a href="https://github.com/pprism13">pprism13</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#156</td><td><a href="https://github.com/septiss">septiss</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#157</td><td><a href="https://github.com/losewayy">losewayy</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#158</td><td><a href="https://github.com/channkim">channkim</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#159</td><td><a href="https://github.com/tonychuang738-lang">tonychuang738-lang</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#160</td><td><a href="https://github.com/babatorik">babatorik</a></td><td>0</td><td>5</td><td>0.9/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#161</td><td><a href="https://github.com/E-R-Butch">E-R-Butch</a></td><td>0</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#162</td><td><a href="https://github.com/dalgme">dalgme</a></td><td>0</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#163</td><td><a href="https://github.com/xinlifoobar">xinlifoobar</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#164</td><td><a href="https://github.com/thisisagentkim">thisisagentkim</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#165</td><td><a href="https://github.com/Justlrnal4">Justlrnal4</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#166</td><td><a href="https://github.com/AMIK-coorporations">AMIK-coorporations</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#167</td><td><a href="https://github.com/sarangsohail">sarangsohail</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#168</td><td><a href="https://github.com/bmoore210">bmoore210</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#169</td><td><a href="https://github.com/briepala">briepala</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#170</td><td><a href="https://github.com/kamonspecial">kamonspecial</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#171</td><td><a href="https://github.com/petrichor-op">petrichor-op</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#172</td><td><a href="https://github.com/UncleFruit">UncleFruit</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#173</td><td><a href="https://github.com/HassanAlsheikh">HassanAlsheikh</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#174</td><td><a href="https://github.com/guinnessmax">guinnessmax</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#175</td><td><a href="https://github.com/leetalley-ambientmuse">leetalley-ambientmuse</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#176</td><td><a href="https://github.com/jackroofan">jackroofan</a></td><td>0</td><td>4</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#177</td><td><a href="https://github.com/szzhangkkk">szzhangkkk</a></td><td>0</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#178</td><td><a href="https://github.com/adntgv">adntgv</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#179</td><td><a href="https://github.com/Yuki-14544869">Yuki-14544869</a></td><td>0</td><td>4</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#180</td><td><a href="https://github.com/jiangliushi666">jiangliushi666</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#181</td><td><a href="https://github.com/yesiran">yesiran</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <thead><tr><th>Rank</th><th>Contributor</th><th>Credited</th><th>Open</th><th>Rate</th><th>Status</th></tr></thead>
+  <tbody>
+  <tr><td>#1</td><td><a href="https://github.com/teknium1">teknium1</a></td><td>448</td><td>52</td><td>45.9/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#2</td><td><a href="https://github.com/kshitijk4poor">kshitijk4poor</a></td><td>392</td><td>41</td><td>5.7/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#3</td><td><a href="https://github.com/OutThisLife">OutThisLife</a></td><td>228</td><td>15</td><td>11.1/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#4</td><td><a href="https://github.com/Bartok9">Bartok9</a></td><td>224</td><td>65</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#5</td><td><a href="https://github.com/helix4u">helix4u</a></td><td>185</td><td>16</td><td>2.8/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#6</td><td><a href="https://github.com/liuhao1024">liuhao1024</a></td><td>133</td><td>311</td><td>24.7/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#7</td><td><a href="https://github.com/Tranquil-Flow">Tranquil-Flow</a></td><td>107</td><td>178</td><td>6.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#8</td><td><a href="https://github.com/LeonSGP43">LeonSGP43</a></td><td>102</td><td>398</td><td>6.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#9</td><td><a href="https://github.com/luyao618">luyao618</a></td><td>102</td><td>17</td><td>2.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#10</td><td><a href="https://github.com/alaamohanad169-ship-it">alaamohanad169-ship-it</a></td><td>86</td><td>2</td><td>4.6/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#11</td><td><a href="https://github.com/Dusk1e">Dusk1e</a></td><td>50</td><td>109</td><td>4.7/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#12</td><td><a href="https://github.com/xxxigm">xxxigm</a></td><td>37</td><td>116</td><td>3.8/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#13</td><td><a href="https://github.com/kyssta-exe">kyssta-exe</a></td><td>31</td><td>31</td><td>9.7/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#14</td><td><a href="https://github.com/r266-tech">r266-tech</a></td><td>28</td><td>30</td><td>0.6/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#15</td><td><a href="https://github.com/nftpoetrist">nftpoetrist</a></td><td>23</td><td>26</td><td>1.1/d</td><td><span class="green">Active</span></td></tr>
+  <tr class="expand-row" onclick="toggleCollapsedTable('lb-hermes-agent')"><td colspan="6">Show all 218 contributors <span class="caret">&#9660;</span></td></tr>
+  <tr><td>#16</td><td><a href="https://github.com/Kewe63">Kewe63</a></td><td>22</td><td>22</td><td>1.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#17</td><td><a href="https://github.com/OmarB97">OmarB97</a></td><td>18</td><td>57</td><td>5.4/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#18</td><td><a href="https://github.com/annguyenNous">annguyenNous</a></td><td>16</td><td>115</td><td>7.6/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#19</td><td><a href="https://github.com/mehmetkr-31">mehmetkr-31</a></td><td>16</td><td>7</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#20</td><td><a href="https://github.com/solovision24">solovision24</a></td><td>13</td><td>10</td><td>0.9/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#21</td><td><a href="https://github.com/zerone0x">zerone0x</a></td><td>12</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#22</td><td><a href="https://github.com/yunuenmf">yunuenmf</a></td><td>12</td><td>11</td><td>1.6/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#23</td><td><a href="https://github.com/sharziki">sharziki</a></td><td>11</td><td>5</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#24</td><td><a href="https://github.com/EdderTalmor">EdderTalmor</a></td><td>11</td><td>11</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#25</td><td><a href="https://github.com/Que0x">Que0x</a></td><td>10</td><td>16</td><td>1.1/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#26</td><td><a href="https://github.com/Frowtek">Frowtek</a></td><td>10</td><td>20</td><td>2.4/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#27</td><td><a href="https://github.com/erhnysr">erhnysr</a></td><td>10</td><td>5</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#28</td><td><a href="https://github.com/AJV20">AJV20</a></td><td>9</td><td>15</td><td>0.8/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#29</td><td><a href="https://github.com/rylena">rylena</a></td><td>8</td><td>4</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#30</td><td><a href="https://github.com/HeLLGURD">HeLLGURD</a></td><td>7</td><td>36</td><td>6.8/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#31</td><td><a href="https://github.com/maxmilian">maxmilian</a></td><td>7</td><td>10</td><td>1.9/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#32</td><td><a href="https://github.com/worlldz">worlldz</a></td><td>7</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#33</td><td><a href="https://github.com/mohamedorigami-jpg">mohamedorigami-jpg</a></td><td>7</td><td>48</td><td>5.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#34</td><td><a href="https://github.com/flooryyyy">flooryyyy</a></td><td>5</td><td>7</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#35</td><td><a href="https://github.com/batumilove">batumilove</a></td><td>5</td><td>2</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#36</td><td><a href="https://github.com/AxDSan">AxDSan</a></td><td>5</td><td>3</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#37</td><td><a href="https://github.com/Yuki-14544869">Yuki-14544869</a></td><td>5</td><td>0</td><td>0.6/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#38</td><td><a href="https://github.com/fabiosiqueira">fabiosiqueira</a></td><td>5</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#39</td><td><a href="https://github.com/yoniebans">yoniebans</a></td><td>5</td><td>3</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#40</td><td><a href="https://github.com/hanzckernel">hanzckernel</a></td><td>5</td><td>15</td><td>0.6/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#41</td><td><a href="https://github.com/harjothkhara">harjothkhara</a></td><td>4</td><td>2</td><td>0.9/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#42</td><td><a href="https://github.com/Meapri">Meapri</a></td><td>4</td><td>1</td><td>0.8/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#43</td><td><a href="https://github.com/islam666">islam666</a></td><td>4</td><td>19</td><td>3.6/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#44</td><td><a href="https://github.com/rudi193-cmd">rudi193-cmd</a></td><td>4</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#45</td><td><a href="https://github.com/ibrhmuyls">ibrhmuyls</a></td><td>4</td><td>2</td><td>0.9/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#46</td><td><a href="https://github.com/leavrcn">leavrcn</a></td><td>4</td><td>5</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#47</td><td><a href="https://github.com/xy200303">xy200303</a></td><td>4</td><td>5</td><td>0.8/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#48</td><td><a href="https://github.com/TechNickAI">TechNickAI</a></td><td>3</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#49</td><td><a href="https://github.com/mrlufepines">mrlufepines</a></td><td>3</td><td>2</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#50</td><td><a href="https://github.com/sasan1200">sasan1200</a></td><td>3</td><td>3</td><td>0.9/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#51</td><td><a href="https://github.com/oxngon">oxngon</a></td><td>3</td><td>2</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#52</td><td><a href="https://github.com/jeeves-assistant">jeeves-assistant</a></td><td>3</td><td>1</td><td>0.6/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#53</td><td><a href="https://github.com/iamlukethedev">iamlukethedev</a></td><td>2</td><td>20</td><td>3.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#54</td><td><a href="https://github.com/meng93">meng93</a></td><td>2</td><td>6</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#55</td><td><a href="https://github.com/arimu1">arimu1</a></td><td>2</td><td>12</td><td>0.9/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#56</td><td><a href="https://github.com/snaplap">snaplap</a></td><td>2</td><td>2</td><td>0.6/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#57</td><td><a href="https://github.com/sanidhyasin">sanidhyasin</a></td><td>2</td><td>0</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#58</td><td><a href="https://github.com/Yosef-Bunick">Yosef-Bunick</a></td><td>2</td><td>1</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#59</td><td><a href="https://github.com/k176060444-lgtm">k176060444-lgtm</a></td><td>2</td><td>3</td><td>0.8/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#60</td><td><a href="https://github.com/cmcejas">cmcejas</a></td><td>2</td><td>3</td><td>0.8/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#61</td><td><a href="https://github.com/seamusmore">seamusmore</a></td><td>2</td><td>3</td><td>0.8/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#62</td><td><a href="https://github.com/ferminquant">ferminquant</a></td><td>2</td><td>3</td><td>0.8/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#63</td><td><a href="https://github.com/ricardoroche">ricardoroche</a></td><td>2</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#64</td><td><a href="https://github.com/qxxaa">qxxaa</a></td><td>2</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#65</td><td><a href="https://github.com/nittatomonori-star">nittatomonori-star</a></td><td>2</td><td>1</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#66</td><td><a href="https://github.com/jethac">jethac</a></td><td>2</td><td>3</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#67</td><td><a href="https://github.com/zhao0112">zhao0112</a></td><td>2</td><td>3</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#68</td><td><a href="https://github.com/metamon-p">metamon-p</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#69</td><td><a href="https://github.com/synapsesx">synapsesx</a></td><td>1</td><td>2</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#70</td><td><a href="https://github.com/hanZeng-08">hanZeng-08</a></td><td>1</td><td>2</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#71</td><td><a href="https://github.com/mosaiq-systems">mosaiq-systems</a></td><td>1</td><td>3</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#72</td><td><a href="https://github.com/jisuren">jisuren</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#73</td><td><a href="https://github.com/gavinssr">gavinssr</a></td><td>1</td><td>1</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#74</td><td><a href="https://github.com/freqyfreqy">freqyfreqy</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#75</td><td><a href="https://github.com/holynn-q">holynn-q</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#76</td><td><a href="https://github.com/izumi0uu">izumi0uu</a></td><td>1</td><td>8</td><td>1.4/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#77</td><td><a href="https://github.com/Ganesh0690">Ganesh0690</a></td><td>1</td><td>2</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#78</td><td><a href="https://github.com/kurom1ii">kurom1ii</a></td><td>1</td><td>2</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#79</td><td><a href="https://github.com/c0nSpIc0uS7uRk3r">c0nSpIc0uS7uRk3r</a></td><td>1</td><td>3</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#80</td><td><a href="https://github.com/jarvis-macmini">jarvis-macmini</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#81</td><td><a href="https://github.com/Pommelle">Pommelle</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr class="is-self"><td>#82</td><td><a href="https://github.com/rodboev">rodboev</a></td><td>1</td><td>70</td><td>20.4/d</td><td><span class="green">Recent</span></td></tr>
+  <tr><td>#83</td><td><a href="https://github.com/skyc1e">skyc1e</a></td><td>1</td><td>10</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#84</td><td><a href="https://github.com/Intouch-dev">Intouch-dev</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#85</td><td><a href="https://github.com/joe102084">joe102084</a></td><td>1</td><td>16</td><td>0.9/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#86</td><td><a href="https://github.com/yubingz">yubingz</a></td><td>1</td><td>1</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#87</td><td><a href="https://github.com/rwitte42">rwitte42</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#88</td><td><a href="https://github.com/vladimir-voinea">vladimir-voinea</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#89</td><td><a href="https://github.com/ackalanka">ackalanka</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#90</td><td><a href="https://github.com/ZishiW">ZishiW</a></td><td>1</td><td>2</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#91</td><td><a href="https://github.com/DF-Technical">DF-Technical</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#92</td><td><a href="https://github.com/ruslanvasylev">ruslanvasylev</a></td><td>1</td><td>3</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#93</td><td><a href="https://github.com/teixeirazeus">teixeirazeus</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#94</td><td><a href="https://github.com/wzgrx">wzgrx</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#95</td><td><a href="https://github.com/yashau">yashau</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#96</td><td><a href="https://github.com/dchenk">dchenk</a></td><td>1</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#97</td><td><a href="https://github.com/ClaraStudio">ClaraStudio</a></td><td>1</td><td>0</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#98</td><td><a href="https://github.com/sarangsohail">sarangsohail</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#99</td><td><a href="https://github.com/andrebrassfield">andrebrassfield</a></td><td>0</td><td>4</td><td>0.6/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#100</td><td><a href="https://github.com/McHerpes">McHerpes</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#101</td><td><a href="https://github.com/ashu1800">ashu1800</a></td><td>0</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#102</td><td><a href="https://github.com/yxr1995-maker">yxr1995-maker</a></td><td>0</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#103</td><td><a href="https://github.com/pprism13">pprism13</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#104</td><td><a href="https://github.com/mycotrip">mycotrip</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#105</td><td><a href="https://github.com/mrparker0980">mrparker0980</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#106</td><td><a href="https://github.com/Chameleon-Chaos">Chameleon-Chaos</a></td><td>0</td><td>5</td><td>0.8/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#107</td><td><a href="https://github.com/Waylish">Waylish</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#108</td><td><a href="https://github.com/aimanmalib">aimanmalib</a></td><td>0</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#109</td><td><a href="https://github.com/tanebrae-yz">tanebrae-yz</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#110</td><td><a href="https://github.com/moijafcor">moijafcor</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#111</td><td><a href="https://github.com/eliaschofo">eliaschofo</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#112</td><td><a href="https://github.com/flug">flug</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#113</td><td><a href="https://github.com/dragocz1995">dragocz1995</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#114</td><td><a href="https://github.com/andthezhang">andthezhang</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#115</td><td><a href="https://github.com/seleron">seleron</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#116</td><td><a href="https://github.com/rrevenanttt">rrevenanttt</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#117</td><td><a href="https://github.com/richmale-cmyk">richmale-cmyk</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#118</td><td><a href="https://github.com/imistore">imistore</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#119</td><td><a href="https://github.com/HeimdallStrategy">HeimdallStrategy</a></td><td>0</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#120</td><td><a href="https://github.com/Hung2124">Hung2124</a></td><td>0</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#121</td><td><a href="https://github.com/xiaolongzhao2015">xiaolongzhao2015</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#122</td><td><a href="https://github.com/PinableAgents">PinableAgents</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#123</td><td><a href="https://github.com/longXboy">longXboy</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#124</td><td><a href="https://github.com/linseapay">linseapay</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#125</td><td><a href="https://github.com/friendshipisover">friendshipisover</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#126</td><td><a href="https://github.com/twodogegg">twodogegg</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#127</td><td><a href="https://github.com/UncleFruit">UncleFruit</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#128</td><td><a href="https://github.com/superposition">superposition</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#129</td><td><a href="https://github.com/alias8818">alias8818</a></td><td>0</td><td>3</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#130</td><td><a href="https://github.com/oryn-oryn">oryn-oryn</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#131</td><td><a href="https://github.com/TheGardenGallery">TheGardenGallery</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#132</td><td><a href="https://github.com/kmukul123">kmukul123</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#133</td><td><a href="https://github.com/ariffazil">ariffazil</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#134</td><td><a href="https://github.com/Markusxmr">Markusxmr</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#135</td><td><a href="https://github.com/HODL-Community">HODL-Community</a></td><td>0</td><td>3</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#136</td><td><a href="https://github.com/leeclouddragon">leeclouddragon</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#137</td><td><a href="https://github.com/kingcharleslzy-ai">kingcharleslzy-ai</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#138</td><td><a href="https://github.com/xiaoxingitee11">xiaoxingitee11</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#139</td><td><a href="https://github.com/pedrommaiaa">pedrommaiaa</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#140</td><td><a href="https://github.com/courage-zero">courage-zero</a></td><td>0</td><td>2</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#141</td><td><a href="https://github.com/crazythinking">crazythinking</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#142</td><td><a href="https://github.com/adamclover76">adamclover76</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#143</td><td><a href="https://github.com/peilisong">peilisong</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#144</td><td><a href="https://github.com/k2d5rqjpkg-art">k2d5rqjpkg-art</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#145</td><td><a href="https://github.com/entropy-0x">entropy-0x</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#146</td><td><a href="https://github.com/koishi70">koishi70</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#147</td><td><a href="https://github.com/chaneegyu1892">chaneegyu1892</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#148</td><td><a href="https://github.com/rizcns">rizcns</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#149</td><td><a href="https://github.com/angus-young">angus-young</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#150</td><td><a href="https://github.com/wasimat404">wasimat404</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#151</td><td><a href="https://github.com/cjroth">cjroth</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#152</td><td><a href="https://github.com/joelbrilliant1-beep">joelbrilliant1-beep</a></td><td>0</td><td>5</td><td>0.8/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#153</td><td><a href="https://github.com/benigeri">benigeri</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#154</td><td><a href="https://github.com/hanbinnoh">hanbinnoh</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#155</td><td><a href="https://github.com/a249169329-cpu">a249169329-cpu</a></td><td>0</td><td>7</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#156</td><td><a href="https://github.com/Paraguanads">Paraguanads</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#157</td><td><a href="https://github.com/hittanshu">hittanshu</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#158</td><td><a href="https://github.com/Vesna-9">Vesna-9</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#159</td><td><a href="https://github.com/chhuang789">chhuang789</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#160</td><td><a href="https://github.com/jackroofan">jackroofan</a></td><td>0</td><td>6</td><td>0.8/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#161</td><td><a href="https://github.com/ake117">ake117</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#162</td><td><a href="https://github.com/saturnkras-maker">saturnkras-maker</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#163</td><td><a href="https://github.com/theBigGavin">theBigGavin</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#164</td><td><a href="https://github.com/zephexMCP">zephexMCP</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#165</td><td><a href="https://github.com/alteon-ltd">alteon-ltd</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#166</td><td><a href="https://github.com/TabooHarmony">TabooHarmony</a></td><td>0</td><td>2</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#167</td><td><a href="https://github.com/leetalley-ambientmuse">leetalley-ambientmuse</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#168</td><td><a href="https://github.com/agentswe">agentswe</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#169</td><td><a href="https://github.com/chrislazar25">chrislazar25</a></td><td>0</td><td>8</td><td>1.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#170</td><td><a href="https://github.com/XXX-2026">XXX-2026</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#171</td><td><a href="https://github.com/narendra-babu-m">narendra-babu-m</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#172</td><td><a href="https://github.com/wachoo">wachoo</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#173</td><td><a href="https://github.com/Kartik33">Kartik33</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#174</td><td><a href="https://github.com/veradim">veradim</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#175</td><td><a href="https://github.com/szzhangkkk">szzhangkkk</a></td><td>0</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#176</td><td><a href="https://github.com/ramazangur">ramazangur</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#177</td><td><a href="https://github.com/kernel-t1">kernel-t1</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#178</td><td><a href="https://github.com/airmonitor">airmonitor</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#179</td><td><a href="https://github.com/dalgme">dalgme</a></td><td>0</td><td>4</td><td>0.6/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#180</td><td><a href="https://github.com/ponkalapon">ponkalapon</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#181</td><td><a href="https://github.com/dephnor">dephnor</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
   <tr><td>#182</td><td><a href="https://github.com/zsaimen">zsaimen</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#183</td><td><a href="https://github.com/PatrickNoFilter">PatrickNoFilter</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#184</td><td><a href="https://github.com/sasquatch9818">sasquatch9818</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#185</td><td><a href="https://github.com/TabooHarmony">TabooHarmony</a></td><td>0</td><td>2</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#186</td><td><a href="https://github.com/cch1rag">cch1rag</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#187</td><td><a href="https://github.com/pmm20221102">pmm20221102</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#188</td><td><a href="https://github.com/xre217">xre217</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#189</td><td><a href="https://github.com/angus-young">angus-young</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#190</td><td><a href="https://github.com/yxr1995-maker">yxr1995-maker</a></td><td>0</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#191</td><td><a href="https://github.com/alteon-ltd">alteon-ltd</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#192</td><td><a href="https://github.com/Markusxmr">Markusxmr</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#193</td><td><a href="https://github.com/vondelomlo">vondelomlo</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#194</td><td><a href="https://github.com/hanZeng-08">hanZeng-08</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#195</td><td><a href="https://github.com/ponkalapon">ponkalapon</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#196</td><td><a href="https://github.com/ZishiW">ZishiW</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#197</td><td><a href="https://github.com/Ted-cheung">Ted-cheung</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#198</td><td><a href="https://github.com/xiaoxingitee11">xiaoxingitee11</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#199</td><td><a href="https://github.com/sjyang18">sjyang18</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#200</td><td><a href="https://github.com/itswane">itswane</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#201</td><td><a href="https://github.com/nathanBurg">nathanBurg</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#202</td><td><a href="https://github.com/benigeri">benigeri</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#203</td><td><a href="https://github.com/grimmjoww">grimmjoww</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#204</td><td><a href="https://github.com/manishbyatroy">manishbyatroy</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#205</td><td><a href="https://github.com/lost9999">lost9999</a></td><td>0</td><td>6</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#206</td><td><a href="https://github.com/hanbinnoh">hanbinnoh</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#207</td><td><a href="https://github.com/saturnkras-maker">saturnkras-maker</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#208</td><td><a href="https://github.com/sanidhyasin">sanidhyasin</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#209</td><td><a href="https://github.com/nalepy">nalepy</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#210</td><td><a href="https://github.com/him007">him007</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#211</td><td><a href="https://github.com/aimanmalib">aimanmalib</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#212</td><td><a href="https://github.com/jibot3">jibot3</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#213</td><td><a href="https://github.com/llljjjwww333">llljjjwww333</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#214</td><td><a href="https://github.com/tanebrae-yz">tanebrae-yz</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#215</td><td><a href="https://github.com/pedrommaiaa">pedrommaiaa</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#216</td><td><a href="https://github.com/chaneegyu1892">chaneegyu1892</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#217</td><td><a href="https://github.com/Intouch-dev">Intouch-dev</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#218</td><td><a href="https://github.com/flo1t">flo1t</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#219</td><td><a href="https://github.com/57ar7up-singularity">57ar7up-singularity</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#220</td><td><a href="https://github.com/friendshipisover">friendshipisover</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#221</td><td><a href="https://github.com/masamorishita">masamorishita</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#222</td><td><a href="https://github.com/entropy-0x">entropy-0x</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#223</td><td><a href="https://github.com/alias8818">alias8818</a></td><td>0</td><td>2</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#224</td><td><a href="https://github.com/OoSunoO">OoSunoO</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#225</td><td><a href="https://github.com/sankuri">sankuri</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#226</td><td><a href="https://github.com/almer-eng">almer-eng</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#227</td><td><a href="https://github.com/daoom">daoom</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#228</td><td><a href="https://github.com/HeimdallStrategy">HeimdallStrategy</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#229</td><td><a href="https://github.com/Vesna-9">Vesna-9</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#230</td><td><a href="https://github.com/cryptopafi">cryptopafi</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#231</td><td><a href="https://github.com/bumsoft">bumsoft</a></td><td>0</td><td>2</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#232</td><td><a href="https://github.com/Waylish">Waylish</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#233</td><td><a href="https://github.com/Explorer1092">Explorer1092</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#234</td><td><a href="https://github.com/eddremonts86">eddremonts86</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#235</td><td><a href="https://github.com/mycotrip">mycotrip</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#236</td><td><a href="https://github.com/peilisong">peilisong</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#237</td><td><a href="https://github.com/NextDoorLaoHuang-HF">NextDoorLaoHuang-HF</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#238</td><td><a href="https://github.com/Kumario1">Kumario1</a></td><td>0</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#239</td><td><a href="https://github.com/Shura0307">Shura0307</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#240</td><td><a href="https://github.com/flug">flug</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
-  <tr><td>#241</td><td><a href="https://github.com/Paraguanads">Paraguanads</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#183</td><td><a href="https://github.com/losewayy">losewayy</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#184</td><td><a href="https://github.com/BrySi">BrySi</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#185</td><td><a href="https://github.com/nalepy">nalepy</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#186</td><td><a href="https://github.com/infoechoes">infoechoes</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#187</td><td><a href="https://github.com/JoshPaulie">JoshPaulie</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#188</td><td><a href="https://github.com/mari-meiji">mari-meiji</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#189</td><td><a href="https://github.com/ryan9611">ryan9611</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#190</td><td><a href="https://github.com/Explorer1092">Explorer1092</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#191</td><td><a href="https://github.com/daoom">daoom</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#192</td><td><a href="https://github.com/DidneyWhorl">DidneyWhorl</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#193</td><td><a href="https://github.com/AMIK-coorporations">AMIK-coorporations</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#194</td><td><a href="https://github.com/FayaaDev">FayaaDev</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#195</td><td><a href="https://github.com/sankuri">sankuri</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#196</td><td><a href="https://github.com/SpikeJulia">SpikeJulia</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#197</td><td><a href="https://github.com/themirzaalibaig">themirzaalibaig</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#198</td><td><a href="https://github.com/vexclawx31">vexclawx31</a></td><td>0</td><td>2</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#199</td><td><a href="https://github.com/KaiShaoCheng">KaiShaoCheng</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#200</td><td><a href="https://github.com/almer-eng">almer-eng</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#201</td><td><a href="https://github.com/sasquatch9818">sasquatch9818</a></td><td>0</td><td>4</td><td>0.6/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#202</td><td><a href="https://github.com/heshamkhaledd">heshamkhaledd</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#203</td><td><a href="https://github.com/CHYJ1227">CHYJ1227</a></td><td>0</td><td>4</td><td>0.6/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#204</td><td><a href="https://github.com/dw214">dw214</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#205</td><td><a href="https://github.com/bumsoft">bumsoft</a></td><td>0</td><td>2</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#206</td><td><a href="https://github.com/Throokie">Throokie</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#207</td><td><a href="https://github.com/petrichor-op">petrichor-op</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#208</td><td><a href="https://github.com/vondelomlo">vondelomlo</a></td><td>0</td><td>3</td><td>0.5/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#209</td><td><a href="https://github.com/kellylinopenclaw-design">kellylinopenclaw-design</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#210</td><td><a href="https://github.com/tvy14">tvy14</a></td><td>0</td><td>5</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#211</td><td><a href="https://github.com/adntgv">adntgv</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#212</td><td><a href="https://github.com/cch1rag">cch1rag</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#213</td><td><a href="https://github.com/dcain2336">dcain2336</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#214</td><td><a href="https://github.com/rjshrjndrn">rjshrjndrn</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#215</td><td><a href="https://github.com/ViezeVingertjes">ViezeVingertjes</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#216</td><td><a href="https://github.com/bpasquini">bpasquini</a></td><td>0</td><td>1</td><td>0.2/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#217</td><td><a href="https://github.com/pixu-bd">pixu-bd</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  <tr><td>#218</td><td><a href="https://github.com/itswane">itswane</a></td><td>0</td><td>2</td><td>0.3/d</td><td><span class="green">Active</span></td></tr>
+  </tbody>
 </table>
-<details style="margin-top:0.75rem">
-<summary style="cursor:pointer; font-size:0.85rem; color:var(--dim)">Projections (you @ 20.4/day, rank #47)</summary>
-<table style="margin-top:0.5rem">
+</div>
+<details class="projections">
+<summary>Projections (you @ 20.4/day, rank #82)</summary>
+<table>
   <tr><th>Contributor</th><th>Credited</th><th>Rate</th><th>Catch-up</th></tr>
-  <tr><td>teknium1</td><td>431 (+427)</td><td>44.8/d</td><td class="red">not at current rates</td></tr>
-  <tr><td>kshitijk4poor</td><td>388 (+384)</td><td>4.8/d</td><td>24.6d (Jul 1)</td></tr>
-  <tr><td>briandevans</td><td>272 (+268)</td><td>4/d</td><td>16.3d (Jun 23)</td></tr>
-  <tr><td>OutThisLife</td><td>227 (+223)</td><td>11.9/d</td><td>26.2d (Jul 3)</td></tr>
-  <tr><td>helix4u</td><td>180 (+176)</td><td>2.8/d</td><td>10d (Jun 16)</td></tr>
-  <tr><td>konsisumer</td><td>167 (+163)</td><td>6.4/d</td><td>11.6d (Jun 18)</td></tr>
-  <tr><td>alt-glitch</td><td>114 (+110)</td><td>1.2/d</td><td>5.7d (Jun 12)</td></tr>
-  <tr><td>liuhao1024</td><td>114 (+110)</td><td>24.3/d</td><td class="red">not at current rates</td></tr>
-  <tr><td>LeonSGP43</td><td>105 (+101)</td><td>5.7/d</td><td>6.9d (Jun 13)</td></tr>
-  <tr><td>Tranquil-Flow</td><td>105 (+101)</td><td>6.5/d</td><td>7.3d (Jun 14)</td></tr>
-  <tr><td>benbarclay</td><td>90 (+86)</td><td>7.1/d</td><td>6.5d (Jun 13)</td></tr>
-  <tr><td>alaamohanad169-ship-it</td><td>86 (+82)</td><td>4.7/d</td><td>5.2d (Jun 12)</td></tr>
-  <tr><td>Dusk1e</td><td>50 (+46)</td><td>5.2/d</td><td>3d (Jun 9)</td></tr>
-  <tr><td>xxxigm</td><td>35 (+31)</td><td>4/d</td><td>1.9d (Jun 8)</td></tr>
-  <tr><td>Linux2010</td><td>34 (+30)</td><td>0.2/d</td><td>1.5d (Jun 8)</td></tr>
-  <tr><td>kyssta-exe</td><td>30 (+26)</td><td>9.7/d</td><td>2.4d (Jun 9)</td></tr>
-  <tr><td>r266-tech</td><td>28 (+24)</td><td>0.3/d</td><td>1.2d (Jun 8)</td></tr>
-  <tr><td>nftpoetrist</td><td>23 (+19)</td><td>1/d</td><td>1d (Jun 7)</td></tr>
-  <tr><td>Kewe63</td><td>21 (+17)</td><td>1.2/d</td><td>0.9d (Jun 7)</td></tr>
-  <tr><td>BROCCOLO1D</td><td>18 (+14)</td><td>0.7/d</td><td>0.7d (Jun 7)</td></tr>
-  <tr><td>OmarB97</td><td>18 (+14)</td><td>5.9/d</td><td>1d (Jun 7)</td></tr>
-  <tr><td>annguyenNous</td><td>16 (+12)</td><td>6.7/d</td><td>0.9d (Jun 7)</td></tr>
-  <tr><td>hdarwish</td><td>15 (+11)</td><td>2.4/d</td><td>0.6d (Jun 7)</td></tr>
-  <tr><td>solovision24</td><td>13 (+9)</td><td>1/d</td><td>0.5d (Jun 7)</td></tr>
-  <tr><td>ashishpatel26</td><td>13 (+9)</td><td>4.8/d</td><td>0.6d (Jun 7)</td></tr>
-  <tr><td>zerone0x</td><td>12 (+8)</td><td>0.3/d</td><td>0.4d (Jun 7)</td></tr>
-  <tr><td>sharziki</td><td>11 (+7)</td><td>0.3/d</td><td>0.3d (Jun 7)</td></tr>
-  <tr><td>Que0x</td><td>10 (+6)</td><td>1.2/d</td><td>0.3d (Jun 7)</td></tr>
-  <tr><td>erhnysr</td><td>10 (+6)</td><td>0.3/d</td><td>0.3d (Jun 7)</td></tr>
-  <tr><td>Frowtek</td><td>10 (+6)</td><td>2.1/d</td><td>0.3d (Jun 7)</td></tr>
-  <tr><td>BeliefanX</td><td>9 (+5)</td><td>0.3/d</td><td>0.2d (Jun 7)</td></tr>
-  <tr><td>AJV20</td><td>9 (+5)</td><td>0.9/d</td><td>0.3d (Jun 7)</td></tr>
-  <tr><td>zapabob</td><td>8 (+4)</td><td>2.4/d</td><td>0.2d (Jun 7)</td></tr>
-  <tr><td>davidgut1982</td><td>8 (+4)</td><td>4/d</td><td>0.2d (Jun 7)</td></tr>
-  <tr><td>highland0971</td><td>8 (+4)</td><td>0.5/d</td><td>0.2d (Jun 7)</td></tr>
-  <tr><td>HeLLGURD</td><td>7 (+3)</td><td>6.4/d</td><td>0.2d (Jun 7)</td></tr>
-  <tr><td>mohamedorigami-jpg</td><td>7 (+3)</td><td>5.7/d</td><td>0.2d (Jun 7)</td></tr>
-  <tr><td>Hinotoi-agent</td><td>7 (+3)</td><td>0.2/d</td><td>0.1d (Jun 6)</td></tr>
-  <tr><td>maxmilian</td><td>6 (+2)</td><td>1.6/d</td><td>0.1d (Jun 6)</td></tr>
-  <tr><td>yoniebans</td><td>5 (+1)</td><td>0.3/d</td><td>0d (Jun 6)</td></tr>
-  <tr><td>fabiosiqueira</td><td>5 (+1)</td><td>0.3/d</td><td>0d (Jun 6)</td></tr>
-  <tr><td>hanzckernel</td><td>5 (+1)</td><td>0.7/d</td><td>0.1d (Jun 6)</td></tr>
-  <tr><td>AxDSan</td><td>5 (+1)</td><td>0.2/d</td><td>0d (Jun 6)</td></tr>
-  <tr><td>blut-agent</td><td>5 (+1)</td><td>0.5/d</td><td>0.1d (Jun 6)</td></tr>
-  <tr><td>flooryyyy</td><td>5 (+1)</td><td>0.2/d</td><td>0d (Jun 6)</td></tr>
+  <tr><td>teknium1</td><td>448 (+447)</td><td>45.9/d</td><td class="red">not at current rates</td></tr>
+  <tr><td>kshitijk4poor</td><td>392 (+391)</td><td>5.7/d</td><td>26.6d (Jul 3)</td></tr>
+  <tr><td>OutThisLife</td><td>228 (+227)</td><td>11.1/d</td><td>24.4d (Jul 1)</td></tr>
+  <tr><td>Bartok9</td><td>224 (+223)</td><td>0.2/d</td><td>11d (Jun 18)</td></tr>
+  <tr><td>helix4u</td><td>185 (+184)</td><td>2.8/d</td><td>10.5d (Jun 17)</td></tr>
+  <tr><td>liuhao1024</td><td>133 (+132)</td><td>24.7/d</td><td class="red">not at current rates</td></tr>
+  <tr><td>Tranquil-Flow</td><td>107 (+106)</td><td>6.3/d</td><td>7.5d (Jun 14)</td></tr>
+  <tr><td>LeonSGP43</td><td>102 (+101)</td><td>6.2/d</td><td>7.1d (Jun 14)</td></tr>
+  <tr><td>luyao618</td><td>102 (+101)</td><td>2.5/d</td><td>5.6d (Jun 12)</td></tr>
+  <tr><td>alaamohanad169-ship-it</td><td>86 (+85)</td><td>4.6/d</td><td>5.4d (Jun 12)</td></tr>
+  <tr><td>Dusk1e</td><td>50 (+49)</td><td>4.7/d</td><td>3.1d (Jun 10)</td></tr>
+  <tr><td>xxxigm</td><td>37 (+36)</td><td>3.8/d</td><td>2.2d (Jun 9)</td></tr>
+  <tr><td>kyssta-exe</td><td>31 (+30)</td><td>9.7/d</td><td>2.8d (Jun 10)</td></tr>
+  <tr><td>r266-tech</td><td>28 (+27)</td><td>0.6/d</td><td>1.4d (Jun 8)</td></tr>
+  <tr><td>nftpoetrist</td><td>23 (+22)</td><td>1.1/d</td><td>1.1d (Jun 8)</td></tr>
+  <tr><td>Kewe63</td><td>22 (+21)</td><td>1.3/d</td><td>1.1d (Jun 8)</td></tr>
+  <tr><td>OmarB97</td><td>18 (+17)</td><td>5.4/d</td><td>1.1d (Jun 8)</td></tr>
+  <tr><td>annguyenNous</td><td>16 (+15)</td><td>7.6/d</td><td>1.2d (Jun 8)</td></tr>
+  <tr><td>mehmetkr-31</td><td>16 (+15)</td><td>0.5/d</td><td>0.8d (Jun 8)</td></tr>
+  <tr><td>solovision24</td><td>13 (+12)</td><td>0.9/d</td><td>0.6d (Jun 7)</td></tr>
+  <tr><td>zerone0x</td><td>12 (+11)</td><td>0.3/d</td><td>0.5d (Jun 7)</td></tr>
+  <tr><td>yunuenmf</td><td>12 (+11)</td><td>1.6/d</td><td>0.6d (Jun 7)</td></tr>
+  <tr><td>sharziki</td><td>11 (+10)</td><td>0.3/d</td><td>0.5d (Jun 7)</td></tr>
+  <tr><td>EdderTalmor</td><td>11 (+10)</td><td>0.2/d</td><td>0.5d (Jun 7)</td></tr>
+  <tr><td>Que0x</td><td>10 (+9)</td><td>1.1/d</td><td>0.5d (Jun 7)</td></tr>
+  <tr><td>Frowtek</td><td>10 (+9)</td><td>2.4/d</td><td>0.5d (Jun 7)</td></tr>
+  <tr><td>erhnysr</td><td>10 (+9)</td><td>0.3/d</td><td>0.4d (Jun 7)</td></tr>
+  <tr><td>AJV20</td><td>9 (+8)</td><td>0.8/d</td><td>0.4d (Jun 7)</td></tr>
+  <tr><td>rylena</td><td>8 (+7)</td><td>0.5/d</td><td>0.4d (Jun 7)</td></tr>
+  <tr><td>HeLLGURD</td><td>7 (+6)</td><td>6.8/d</td><td>0.4d (Jun 7)</td></tr>
+  <tr><td>maxmilian</td><td>7 (+6)</td><td>1.9/d</td><td>0.3d (Jun 7)</td></tr>
+  <tr><td>worlldz</td><td>7 (+6)</td><td>0.5/d</td><td>0.3d (Jun 7)</td></tr>
+  <tr><td>mohamedorigami-jpg</td><td>7 (+6)</td><td>5.2/d</td><td>0.4d (Jun 7)</td></tr>
+  <tr><td>flooryyyy</td><td>5 (+4)</td><td>0.2/d</td><td>0.2d (Jun 7)</td></tr>
+  <tr><td>batumilove</td><td>5 (+4)</td><td>0.2/d</td><td>0.2d (Jun 7)</td></tr>
+  <tr><td>AxDSan</td><td>5 (+4)</td><td>0.2/d</td><td>0.2d (Jun 7)</td></tr>
+  <tr><td>Yuki-14544869</td><td>5 (+4)</td><td>0.6/d</td><td>0.2d (Jun 7)</td></tr>
+  <tr><td>fabiosiqueira</td><td>5 (+4)</td><td>0.3/d</td><td>0.2d (Jun 7)</td></tr>
+  <tr><td>yoniebans</td><td>5 (+4)</td><td>0.3/d</td><td>0.2d (Jun 7)</td></tr>
+  <tr><td>hanzckernel</td><td>5 (+4)</td><td>0.6/d</td><td>0.2d (Jun 7)</td></tr>
+  <tr><td>harjothkhara</td><td>4 (+3)</td><td>0.9/d</td><td>0.2d (Jun 7)</td></tr>
+  <tr><td>Meapri</td><td>4 (+3)</td><td>0.8/d</td><td>0.2d (Jun 7)</td></tr>
+  <tr><td>islam666</td><td>4 (+3)</td><td>3.6/d</td><td>0.2d (Jun 7)</td></tr>
+  <tr><td>rudi193-cmd</td><td>4 (+3)</td><td>0.2/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>ibrhmuyls</td><td>4 (+3)</td><td>0.9/d</td><td>0.2d (Jun 7)</td></tr>
+  <tr><td>leavrcn</td><td>4 (+3)</td><td>0.2/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>xy200303</td><td>4 (+3)</td><td>0.8/d</td><td>0.2d (Jun 7)</td></tr>
+  <tr><td>TechNickAI</td><td>3 (+2)</td><td>0.2/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>mrlufepines</td><td>3 (+2)</td><td>0.5/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>sasan1200</td><td>3 (+2)</td><td>0.9/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>oxngon</td><td>3 (+2)</td><td>0.2/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>jeeves-assistant</td><td>3 (+2)</td><td>0.6/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>iamlukethedev</td><td>2 (+1)</td><td>3.5/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>meng93</td><td>2 (+1)</td><td>0.2/d</td><td>0d (Jun 7)</td></tr>
+  <tr><td>arimu1</td><td>2 (+1)</td><td>0.9/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>snaplap</td><td>2 (+1)</td><td>0.6/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>sanidhyasin</td><td>2 (+1)</td><td>0.3/d</td><td>0d (Jun 7)</td></tr>
+  <tr><td>Yosef-Bunick</td><td>2 (+1)</td><td>0.5/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>k176060444-lgtm</td><td>2 (+1)</td><td>0.8/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>cmcejas</td><td>2 (+1)</td><td>0.8/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>seamusmore</td><td>2 (+1)</td><td>0.8/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>ferminquant</td><td>2 (+1)</td><td>0.8/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>ricardoroche</td><td>2 (+1)</td><td>0.2/d</td><td>0d (Jun 7)</td></tr>
+  <tr><td>qxxaa</td><td>2 (+1)</td><td>0.2/d</td><td>0d (Jun 7)</td></tr>
+  <tr><td>nittatomonori-star</td><td>2 (+1)</td><td>0.5/d</td><td>0.1d (Jun 7)</td></tr>
+  <tr><td>jethac</td><td>2 (+1)</td><td>0.3/d</td><td>0d (Jun 7)</td></tr>
+  <tr><td>zhao0112</td><td>2 (+1)</td><td>0.2/d</td><td>0d (Jun 7)</td></tr>
 </table>
+</details>
 </details>
 
 
@@ -532,60 +495,106 @@
   <tr><td><a href="https://github.com/NousResearch/hermes-agent/pull/39001">#39001</a> <span class="dim">agent</span></td><td>scoped secret redaction to stop corrupting code output (hermes-agent, pending)</td><td>pending</td></tr>
 </table>
 
-<h2>Shipped PRs (41)</h2>
+<h2>Shipped PRs (42)</h2>
+<div class="collapsible-table shipped-prs collapsed" id="shipped-prs">
+<div class="overlay-row" onclick="toggleCollapsedTable('shipped-prs')">Collapse <span class="caret">&#9650;</span></div>
 <table>
-  <tr><th>PR</th><th>Repo</th><th>Release</th></tr>
-  <tr><td><a href="https://github.com/NousResearch/hermes-agent/pull/40410">#40410</a></td><td>agent</td><td></td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3444">#3444</a></td><td>webui</td><td>v0.51.223</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3448">#3448</a></td><td>webui</td><td>v0.51.224</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3447">#3447</a></td><td>webui</td><td>v0.51.225</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3446">#3446</a></td><td>webui</td><td>v0.51.234</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3449">#3449</a></td><td>webui</td><td>v0.51.236</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3502">#3502</a></td><td>webui</td><td>v0.51.245</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3504">#3504</a></td><td>webui</td><td>v0.51.246</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3501">#3501</a></td><td>webui</td><td>v0.51.248</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3503">#3503</a></td><td>webui</td><td>v0.51.249</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3520">#3520</a></td><td>webui</td><td>v0.51.252</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3519">#3519</a></td><td>webui</td><td>v0.51.252</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3580">#3580</a></td><td>webui</td><td>v0.51.253</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3538">#3538</a></td><td>webui</td><td>v0.51.253</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3537">#3537</a></td><td>webui</td><td>v0.51.253</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3584">#3584</a></td><td>webui</td><td>v0.51.253</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3561">#3561</a></td><td>webui</td><td>v0.51.255</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3565">#3565</a></td><td>webui</td><td>v0.51.257</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3604">#3604</a></td><td>webui</td><td>v0.51.258</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3603">#3603</a></td><td>webui</td><td>v0.51.258</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3608">#3608</a></td><td>webui</td><td>v0.51.258</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3609">#3609</a></td><td>webui</td><td>v0.51.258</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3605">#3605</a></td><td>webui</td><td>v0.51.259</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3610">#3610</a></td><td>webui</td><td>v0.51.259</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3606">#3606</a></td><td>webui</td><td>v0.51.259</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3562">#3562</a></td><td>webui</td><td>v0.51.260</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3516">#3516</a></td><td>webui</td><td>v0.51.262</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3607">#3607</a></td><td>webui</td><td>v0.51.263</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3627">#3627</a></td><td>webui</td><td>v0.51.268</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3572">#3572</a></td><td>webui</td><td>v0.51.268</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3670">#3670</a></td><td>webui</td><td>v0.51.269</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3517">#3517</a></td><td>webui</td><td>v0.51.270</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3602">#3602</a></td><td>webui</td><td>v0.51.281</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3544">#3544</a></td><td>webui</td><td>v0.51.282</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3514">#3514</a></td><td>webui</td><td>v0.51.284</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3662">#3662</a></td><td>webui</td><td>v0.51.287</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3515">#3515</a></td><td>webui</td><td>v0.51.288</td></tr>
-  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3724">#3724</a></td><td>webui</td><td>v0.51.294</td></tr>
-  <tr><td><a href="https://github.com/NousResearch/hermes-agent/pull/40144">#40144</a></td><td>agent</td><td>indirect</td></tr>
-  <tr><td><a href="https://github.com/NousResearch/hermes-agent/pull/39793">#39793</a></td><td>agent</td><td>indirect</td></tr>
-  <tr><td><a href="https://github.com/NousResearch/hermes-agent/pull/39391">#39391</a></td><td>agent</td><td>indirect</td></tr>
+  <thead><tr><th>PR</th><th>Repo</th><th>Status</th><th>ET</th><th>Release</th></tr></thead>
+  <tbody>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3726">#3726</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/6/26 7:28 PM</td><td>v0.51.300</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3710">#3710</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/6/26 7:25 PM</td><td>v0.51.301</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3713">#3713</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/6/26 7:25 PM</td><td>v0.51.299</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3711">#3711</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/6/26 7:25 PM</td><td>v0.51.297</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3724">#3724</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/6/26 6:11 PM</td><td>v0.51.294</td></tr>
+  <tr><td><a href="https://github.com/NousResearch/hermes-agent/pull/40410">#40410</a></td><td>agent</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/6/26 11:14 AM</td><td></td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3448">#3448</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/6/26 1:17 AM</td><td>v0.51.224</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3515">#3515</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/5/26 10:53 PM</td><td>v0.51.288</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3662">#3662</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/5/26 9:57 PM</td><td>v0.51.287</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3514">#3514</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/5/26 8:48 PM</td><td>v0.51.284</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3544">#3544</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/5/26 7:17 PM</td><td>v0.51.282</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3602">#3602</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/5/26 6:28 PM</td><td>v0.51.281</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3517">#3517</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/5/26 2:35 PM</td><td>v0.51.270</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3670">#3670</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/5/26 1:53 PM</td><td>v0.51.269</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3572">#3572</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/5/26 1:44 PM</td><td>v0.51.268</td></tr>
+  <tr class="expand-row" onclick="toggleCollapsedTable('shipped-prs')"><td colspan="5">Show all 42 shipped PRs <span class="caret">&#9660;</span></td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3627">#3627</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/5/26 1:44 PM</td><td>v0.51.268</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3605">#3605</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/5/26 3:44 AM</td><td>v0.51.259</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3603">#3603</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/5/26 3:12 AM</td><td>v0.51.258</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3604">#3604</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/5/26 3:12 AM</td><td>v0.51.258</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3607">#3607</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/5/26 2:57 AM</td><td>v0.51.263</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3516">#3516</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/4/26 8:16 PM</td><td>v0.51.262</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3562">#3562</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/4/26 6:22 PM</td><td>v0.51.260</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3538">#3538</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/4/26 6:22 PM</td><td>v0.51.253</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3610">#3610</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/4/26 6:05 PM</td><td>v0.51.259</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3606">#3606</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/4/26 6:05 PM</td><td>v0.51.259</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3609">#3609</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/4/26 5:28 PM</td><td>v0.51.258</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3608">#3608</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/4/26 5:28 PM</td><td>v0.51.258</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3565">#3565</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/4/26 4:04 PM</td><td>v0.51.257</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3561">#3561</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/4/26 2:24 PM</td><td>v0.51.255</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3584">#3584</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/4/26 1:51 PM</td><td>v0.51.253</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3580">#3580</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/4/26 1:50 PM</td><td>v0.51.253</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3537">#3537</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/4/26 1:50 PM</td><td>v0.51.253</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3519">#3519</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/4/26 12:41 AM</td><td>v0.51.252</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3520">#3520</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/4/26 12:41 AM</td><td>v0.51.252</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3502">#3502</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/3/26 11:35 PM</td><td>v0.51.245</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3503">#3503</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/3/26 11:16 PM</td><td>v0.51.249</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3501">#3501</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/3/26 10:41 PM</td><td>v0.51.248</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3504">#3504</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/3/26 9:56 PM</td><td>v0.51.246</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3449">#3449</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/3/26 1:46 PM</td><td>v0.51.236</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3446">#3446</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/3/26 12:54 PM</td><td>v0.51.234</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3447">#3447</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/2/26 9:56 PM</td><td>v0.51.225</td></tr>
+  <tr><td><a href="https://github.com/nesquena/hermes-webui/pull/3444">#3444</a></td><td>webui</td><td><span class="tag tag-shipped">Shipped</span></td><td>6/2/26 9:08 PM</td><td>v0.51.223</td></tr>
+  </tbody>
 </table>
+</div>
 
 <h2>Methodology</h2>
 <div class="section">
   <p>Both repos use a cherry-pick workflow: the maintainer picks commits and closes the PR without GitHub's merge button, so <code>mergedAt</code> is always null. "Shipped" is determined from maintainer comments referencing a release version.</p>
-  <p>PRs classified as "withdrawn" had no maintainer interaction beyond automated bot reviews (Greptile). "Accepted indirectly" means the fix was cherry-picked into a follow-up PR or consolidated with a duplicate.</p>
-  <p>"Credited" in the leaderboard counts closed + merged PRs. For rodboev, this is refined to shipped + accepted indirectly (comment-based classification). Other contributors use raw closed count as a proxy since comment scanning at scale would hit API rate limits.</p>
+  <p>PRs classified as "withdrawn" had no maintainer interaction beyond automated bot reviews (Greptile). "Lost" means a competing PR addressing the same issue was accepted instead (superseded or consolidated by another contributor's PR).</p>
+  <p>"Credited" in the leaderboard counts closed + merged PRs. For rodboev, this is refined to shipped only (comment-based classification). Other contributors use raw closed count as a proxy since comment scanning at scale would hit API rate limits.</p>
 </div>
 
-<p class="footer">Generated June 6, 2026 from GitHub API. Source: <a href="https://github.com/rodboev/pr-sweep">rodboev/pr-sweep</a></p>
+<p class="footer">Generated June 7, 2026 from GitHub API. Source: <a href="https://github.com/rodboev/pr-sweep">rodboev/pr-sweep</a></p>
+
+<script>
+function setBarWidths() {
+  document.querySelectorAll('.bar-segment[data-width]').forEach(function(segment) {
+    segment.style.width = segment.getAttribute('data-width') + '%';
+  });
+}
+function updateCollapsedOverlays() {
+  document.querySelectorAll('.collapsible-table:not(.collapsed)').forEach(function(block) {
+    var tbody = block.querySelector('tbody');
+    if (!tbody) return;
+    var firstRow = tbody.querySelector('tr:not(.expand-row)');
+    if (!firstRow) return;
+    var overlay = block.querySelector('.overlay-row');
+    if (!overlay) return;
+    var rect = firstRow.getBoundingClientRect();
+    var headerTh = block.querySelector('thead th');
+    var headerBottom = headerTh ? headerTh.getBoundingClientRect().bottom : 0;
+    if (rect.bottom < headerBottom) {
+      overlay.classList.add('visible');
+    } else {
+      overlay.classList.remove('visible');
+    }
+  });
+}
+function toggleCollapsedTable(id) {
+  var el = document.getElementById(id);
+  var wasExpanded = !el.classList.contains('collapsed');
+  el.classList.toggle('collapsed');
+  if (wasExpanded) el.scrollIntoView({ block: 'start', behavior: 'auto' });
+  updateCollapsedOverlays();
+}
+function toggleLeaderboard(id) {
+  toggleCollapsedTable(id);
+}
+setBarWidths();
+updateCollapsedOverlays();
+document.addEventListener('scroll', updateCollapsedOverlays, { passive: true });
+</script>
 
 </body>
 </html>

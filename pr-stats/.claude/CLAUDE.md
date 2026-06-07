@@ -4,8 +4,7 @@ Public stats page and leaderboard for Rod Boev's open source contributions. Host
 
 ## Scripts
 
-- `generate.ps1`: Fetches PR data from GitHub API, classifies closed PRs by reading maintainer comments, builds per-repo leaderboards with projections, generates `index.html`, and opens it in the browser. This is the single source of truth; run it to update everything.
-- `pr-tracker.ps1`: CLI-only leaderboard with the same per-repo, per-author logic. Useful for quick terminal checks but redundant with generate.ps1.
+- `generate.ps1`: Fetches PR data from GitHub API, classifies closed PRs by reading maintainer comments, builds per-repo leaderboards with projections, generates `index.html`, and opens it in the browser. Backport changes from index.html to generate.ps1 only when explicitly asked; do not update generate.ps1 on every index.html edit.
 
 PR pipeline skills (sweep, cleanup, implement, rework, review) live in the pr-sweep repo at `C:\Apps\hermes\.claude\skills\pr\`.
 
@@ -18,9 +17,8 @@ Nathan Esquenazi (nesquena) is co-founder of CodePath.org, based in San Francisc
 **Cherry-pick workflow:** nesquena never uses GitHub's merge button. He cherry-picks commits from contributor PRs into staging branches, then his bot account `nesquena-hermes` opens "Release vX.Y.Z" PRs that get merged. Contributor PRs are closed (not merged), so `mergedAt` is always null. "Shipped" is determined by maintainer comments containing patterns like "Shipped", "cherry-picked", "merged-via", or "Salvaged into".
 
 **Classification categories:**
-- Shipped: maintainer comment references a release version
-- Accepted indirectly: "Superseded by", "consolidated" (changes absorbed into another PR)
-- Duplicate: "Duplicate" in comments
+- Shipped: maintainer comment contains "Shipped", "cherry-picked", "merged-via", or "Salvaged into"
+- Lost: competing PR won ("Superseded by", "consolidated", "Consolidating", "Duplicate")
 - Withdrawn: closed with no maintainer interaction (only Greptile bot reviews)
 
 **Current standing (2026-06-06):** Rod is #5 on webui with 37 shipped, 32 open, 100% acceptance on resolved PRs. Top contributors are franksong2702 (244 credited), Michaelyklam (200), ai-ag2026 (148), AJV20 (75).
@@ -33,7 +31,7 @@ Nathan Esquenazi (nesquena) is co-founder of CodePath.org, based in San Francisc
 
 Maintained by teknium1 (NousResearch founder) and a small team. 184K stars but the repo has ~11K open PRs with only 3 maintainers, so review throughput is very low.
 
-**Current standing (2026-06-06):** Rod is #47 on hermes-agent with 4 credited (1 shipped, 3 indirect), 70 open. teknium1 leads at 431 credited. Review rate for external contributors is poor: hundreds of PRs sit open indefinitely.
+**Current standing (2026-06-06):** Rod is #47 on hermes-agent with 2 shipped (#40410 salvaged by teknium1 into #40573, 1 earlier), 3 lost (competing PRs won), 70 open. teknium1 leads at 431 credited. Review rate for external contributors is poor: hundreds of PRs sit open indefinitely.
 
 **Pain point:** Submitting PRs here is a poor investment. The maintainer-to-PR ratio means most contributions wait weeks or months for review. The repo is listed in Tier C ("Skipped") in the contribution targets analysis.
 

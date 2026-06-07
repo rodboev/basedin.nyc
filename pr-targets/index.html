@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Contribution Targets</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<link rel="stylesheet" href="../style.css?v=af441714">
+</head>
+<body class="pr">
+
+<div class="top-row">
+  <h1><a class="back-link" href="../"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>Contribution Targets</h1>
+  <nav class="nav-links">
+    <span class="current">Targets</span>
+    <span class="nav-sep">/</span>
+    <a href="../pr-stats/">Stats</a>
+    <span class="nav-sep">/</span>
+    <a href="https://github.com/rodboev/pr-sweep">pr-sweep</a> <span class="private">(private)</span>
+  </nav>
+</div>
+<p class="subtitle">Open source landscape for Rod Boev, ranked by strategic fit</p>
+
+<h2>Scoring Dimensions</h2>
+<div class="grid scoring-grid">
+  <div class="stat-card"><div class="number">CI Support</div><div class="label">First-class Windows, Node-native, or none</div></div>
+  <div class="stat-card"><div class="number purple">Domain Fit</div><div class="label">Alignment with skills &amp; interests</div></div>
+  <div class="stat-card"><div class="number green">Velocity</div><div class="label">Stars/day since creation</div></div>
+  <div class="stat-card"><div class="number yellow">Contribution</div><div class="label">Do they merge external PRs?</div></div>
+  <div class="stat-card"><div class="number blue">Size</div><div class="label">GitHub stars (absolute)</div></div>
+</div>
+
+<div class="landscape-row">
+  <h2>Full Landscape</h2>
+  <div class="sort-pills" id="sort-pills">
+    <div class="sort-pill active" data-sort="composite">Composite</div>
+    <div class="sort-pill" data-sort="ci">CI</div>
+    <div class="sort-pill" data-sort="domain">Domain</div>
+    <div class="sort-pill" data-sort="velocity">Velocity</div>
+    <div class="sort-pill" data-sort="size">Size</div>
+  </div>
+</div>
+
+<table class="targets-table" id="targets-table">
+<thead>
+<tr>
+  <th>Project</th>
+  <th>Stars</th>
+  <th>Tier</th>
+  <th>Velocity</th>
+  <th>Domain</th>
+  <th>Contrib.</th>
+  <th>CI</th>
+</tr>
+</thead>
+<tbody id="targets-body">
+</tbody>
+</table>
+
+<h2>Methodology</h2>
+<div class="section">
+  <p>Targets curated by <a href="https://github.com/NousResearch/hermes-agent">Hermes Agent</a> for an AI/LLM integration specialist with React/Next.js/TypeScript/Node full-stack and Windows-native development. Composite ranking weights CI support highest, followed by domain fit, velocity, contribution culture, and size.</p>
+  <p>CI support status determined by reading actual GitHub Actions workflow files. "First-class" means <code>windows-latest</code> appears in the CI matrix. "Node-native" means the project is TypeScript/Node (inherently cross-platform) but CI only runs on Ubuntu.</p>
+</div>
+
+<p class="footer">Generated June 6, 2026 from GitHub data. <a href="/pr-stats/">pr-sweeps Stats</a></p>
+
+<script>
+var DATA = [
+  {
+    id: "github-mcp-server", name: "github/github-mcp-server", url: "https://github.com/github/github-mcp-server",
+    stars: 30464, starsDay: 66, tier: "focused", lang: "Go", license: "MIT",
+    domain: 4, contrib: 5, ci: "yes",
+    desc: "GitHub's official MCP server. Gives AI agents the ability to read repos, manage issues and PRs, analyze code, and automate workflows through the Model Context Protocol.",
+    why: "Your pr-sweep proves you understand agent-to-GitHub better than almost anyone. Go is a new language for you but the codebase is well-structured. Contributing here has outsized visibility. CI explicitly tests on Windows.",
+    created: "March 2025", contributors: 140, issues: 285,
+    mergedPRs: "11 recently merged from 10 unique external contributors"
+  },
+  {
+    id: "mempalace", name: "MemPalace/mempalace", url: "https://github.com/MemPalace/mempalace",
+    stars: 53956, starsDay: 884, tier: "focused", lang: "Python", license: "MIT",
+    domain: 5, contrib: 4, ci: "yes",
+    desc: "Best-benchmarked open-source AI memory system. 96.6% R@5 on LongMemEval, zero API calls. Local-first, pluggable backends (ChromaDB, SQLite, Qdrant, pgvector).",
+    why: "Hottest project in the exact niche you've already claimed. Demonstrated track record in AI memory systems via mcp-memory-service and claude-mem. Project is young enough that early contributors shape the architecture.",
+    created: "April 2026", contributors: 30, issues: 569,
+    mergedPRs: "7 recently merged from 7 unique external contributors"
+  },
+  {
+    id: "continue", name: "continuedev/continue", url: "https://github.com/continuedev/continue",
+    stars: 33557, starsDay: 0, tier: "focused", lang: "TypeScript", license: "Apache 2.0",
+    domain: 4, contrib: 4, ci: "yes",
+    desc: "Open-source AI code assistant: IDE extension (VS Code, JetBrains) and CLI. Source-controlled AI checks enforceable in CI. Multi-model support.",
+    why: "Full Windows CI matrix including arm64. TypeScript is your daily stack. VS Code extension architecture means the codebase is inherently cross-platform.",
+    created: "", contributors: 170, issues: 0,
+    mergedPRs: "Good first issues tagged, active community"
+  },
+  {
+    id: "nanobot", name: "HKUDS/nanobot", url: "https://github.com/HKUDS/nanobot",
+    stars: 43747, starsDay: 353, tier: "focused", lang: "Python", license: "MIT",
+    domain: 4, contrib: 3, ci: "yes",
+    desc: "Lightweight AI agent runtime: WebUI, chat channels (Telegram, Discord, Slack, Teams), tools, memory, MCP, model routing, and deployment.",
+    why: "Agent runtime with WebUI, Telegram integration, memory, MCP; very close to what you do with Hermes. Growing fast. Windows CI confirmed. Primary development community is Chinese-speaking.",
+    created: "February 2026", contributors: 300, issues: 0,
+    mergedPRs: "12 recently merged from 6 unique external contributors"
+  },
+  {
+    id: "copilotkit", name: "CopilotKit/CopilotKit", url: "https://github.com/CopilotKit/CopilotKit",
+    stars: 32791, starsDay: 30, tier: "a", lang: "TypeScript", license: "MIT",
+    domain: 5, contrib: 5, ci: "node",
+    desc: "Frontend stack for AI agents and generative UI. React + Angular. Makers of the AG-UI Protocol. Build agent-powered copilots with streaming responses, tool calling, and generative UI.",
+    why: "React, TypeScript, Next.js, streaming, agent UIs: literally your daily stack. Best merge culture on this list. 525 open issues, tons of UI/UX work.",
+    created: "June 2023", contributors: 170, issues: 525,
+    mergedPRs: "18 recently merged from 5+ unique external contributors"
+  },
+  {
+    id: "vercel-ai", name: "vercel/ai", url: "https://github.com/vercel/ai",
+    stars: 24685, starsDay: 0, tier: "a", lang: "TypeScript", license: "Edge",
+    domain: 5, contrib: 3, ci: "node",
+    desc: "The AI Toolkit for TypeScript from the creators of Next.js. Streaming, tool calling, generative UI, multi-model support.",
+    why: "Next.js, TypeScript, streaming responses, React hooks for AI: your exact stack. The useChat and useCompletion hooks solve problems you've built manually.",
+    created: "", contributors: 0, issues: 0,
+    mergedPRs: "Vercel merges external contributions but review cycle is slower"
+  },
+  {
+    id: "cline", name: "cline/cline", url: "https://github.com/cline/cline",
+    stars: 62815, starsDay: 0, tier: "a", lang: "TypeScript", license: "Apache 2.0",
+    domain: 4, contrib: 3, ci: "node",
+    desc: "Autonomous coding agent as a VS Code extension. Full terminal and browser access for Claude/GPT. SDK available for building custom agents.",
+    why: "Coding agent, MCP support, tool use: adjacent to your pr-sweep work. VS Code is cross-platform by design. Large codebase but the core team moves fast.",
+    created: "", contributors: 0, issues: 0,
+    mergedPRs: "External PRs get merged but core team moves fast"
+  },
+  {
+    id: "crewai", name: "crewAIInc/crewAI", url: "https://github.com/crewAIInc/crewAI",
+    stars: 52910, starsDay: 56, tier: "b", lang: "Python", license: "MIT",
+    domain: 3, contrib: 4, ci: "no",
+    desc: "Framework for orchestrating role-playing, autonomous AI agents. Agents work together as crews with goals, tools, and delegation.",
+    why: "Multi-agent orchestration patterns are relevant, but Python-heavy and less aligned with your TypeScript/frontend strengths.",
+    created: "October 2023", contributors: 0, issues: 0,
+    mergedPRs: "17 recently merged from 7 unique external contributors"
+  },
+  {
+    id: "smolagents", name: "huggingface/smolagents", url: "https://github.com/huggingface/smolagents",
+    stars: 27724, starsDay: 51, tier: "b", lang: "Python", license: "Apache 2.0",
+    domain: 3, contrib: 3, ci: "no",
+    desc: "Barebones library for agents that think in code. HuggingFace's minimal agent framework (~1000 lines). CodeAgent writes actions as Python code, not JSON blobs.",
+    why: "Interesting agent architecture but Python-centric. HuggingFace has good contribution culture.",
+    created: "December 2024", contributors: 0, issues: 0,
+    mergedPRs: "8 merged PRs"
+  },
+  {
+    id: "genericagent", name: "lsdefine/GenericAgent", url: "https://github.com/lsdefine/GenericAgent",
+    stars: 12618, starsDay: 90, tier: "b", lang: "Python", license: "MIT",
+    domain: 3, contrib: 3, ci: "special",
+    desc: "Self-evolving autonomous agent: grows a skill tree from 3K lines of seed code. 9 atomic tools + 100-line Agent Loop. Automatically crystallizes each solved task into a reusable Skill.",
+    why: "No CI at all, but README has 10 Windows mentions, PowerShell install scripts. Developer clearly uses Windows. TUI has known Windows rendering issues.",
+    created: "January 2026", contributors: 0, issues: 0,
+    mergedPRs: "10 merged from 4 external authors"
+  },
+  {
+    id: "mem0", name: "mem0ai/mem0", url: "https://github.com/mem0ai/mem0",
+    stars: 57836, starsDay: 54, tier: "b", lang: "Python", license: "Apache 2.0",
+    domain: 4, contrib: 3, ci: "no",
+    desc: "Universal memory layer for AI Agents. Persistent context across sessions. Production-ready with multi-provider support.",
+    why: "AI memory is your domain, but you're already in this niche via mcp-memory-service and claude-mem. Contributing here means competing with your own projects.",
+    created: "June 2023", contributors: 0, issues: 0,
+    mergedPRs: "Active but large codebase"
+  },
+  {
+    id: "letta", name: "letta-ai/letta", url: "https://github.com/letta-ai/letta",
+    stars: 23162, starsDay: 24, tier: "b", lang: "Python", license: "Apache 2.0",
+    domain: 4, contrib: 3, ci: "no",
+    desc: "Platform for building stateful agents: AI with advanced memory that can learn and self-improve over time. Introduces Agent Files (.af) for portable memory.",
+    why: "Stateful agents, memory systems, self-improvement: conceptually aligned. Docker-centric deployment.",
+    created: "October 2023", contributors: 0, issues: 54,
+    mergedPRs: "54 open issues, Docker-centric"
+  },
+  {
+    id: "browser-use", name: "browser-use/browser-use", url: "https://github.com/browser-use/browser-use",
+    stars: 97396, starsDay: 167, tier: "b", lang: "Python", license: "MIT",
+    domain: 3, contrib: 3, ci: "no",
+    desc: "Make websites accessible for AI agents. Automate tasks online with ease. Browser automation library used by Manus and other agent platforms.",
+    why: "Browser automation for agents. Adjacent to web development background but not core.",
+    created: "October 2024", contributors: 0, issues: 0,
+    mergedPRs: "Large and fast-moving"
+  },
+  {
+    id: "autogen", name: "microsoft/autogen", url: "https://github.com/microsoft/autogen",
+    stars: 58723, starsDay: 58, tier: "b", lang: "Python", license: "MIT",
+    domain: 3, contrib: 2, ci: "no",
+    desc: "Microsoft's multi-agent conversation framework for collaborative AI.",
+    why: "Multi-agent patterns but Microsoft bureaucracy for external contributors. Appears in a lull (last push April 15, 2026).",
+    created: "August 2023", contributors: 0, issues: 0,
+    mergedPRs: "Microsoft review process"
+  },
+  {
+    id: "hermes-agent", name: "NousResearch/hermes-agent", url: "https://github.com/NousResearch/hermes-agent",
+    stars: 184000, starsDay: 0, tier: "c", lang: "Python", license: "",
+    domain: 5, contrib: 1, ci: "no",
+    desc: "Maintainers rarely merge external PRs. ~11K open PRs with only 3 maintainers.",
+    why: "Great project, bad investment for contributions. Poor review throughput.",
+    created: "", contributors: 0, issues: 0,
+    mergedPRs: ""
+  },
+  {
+    id: "langchain", name: "langchain-ai/langchain", url: "https://github.com/langchain-ai/langchain",
+    stars: 139000, starsDay: 0, tier: "c", lang: "Python", license: "",
+    domain: 3, contrib: 1, ci: "no",
+    desc: "Massive, slow review cycles, corporate governance. Hard to make meaningful contributions.",
+    why: "",
+    created: "", contributors: 0, issues: 0,
+    mergedPRs: ""
+  },
+  {
+    id: "autogpt", name: "Significant-Gravitas/AutoGPT", url: "https://github.com/Significant-Gravitas/AutoGPT",
+    stars: 185000, starsDay: 0, tier: "c", lang: "Python", license: "",
+    domain: 2, contrib: 1, ci: "no",
+    desc: "Pioneer but declining velocity. Complex codebase, hard to break in.",
+    why: "",
+    created: "", contributors: 0, issues: 0,
+    mergedPRs: ""
+  }
+];
+
+var WEIGHTS = {
+  composite: { ci: 5, domain: 4, velocity: 3, contrib: 2, size: 1 },
+  ci:        { ci: 10, domain: 1, velocity: 1, contrib: 1, size: 1 },
+  domain:    { ci: 1, domain: 10, velocity: 1, contrib: 1, size: 1 },
+  velocity:  { ci: 1, domain: 1, velocity: 10, contrib: 1, size: 1 },
+  size:      { ci: 1, domain: 1, velocity: 1, contrib: 1, size: 10 }
+};
+
+function ciScore(ci) {
+  if (ci === 'yes') return 5;
+  if (ci === 'node') return 3;
+  if (ci === 'special') return 2;
+  return 1;
+}
+
+function normalizeStars(s) {
+  if (s >= 100000) return 5;
+  if (s >= 50000) return 4;
+  if (s >= 25000) return 3;
+  if (s >= 10000) return 2;
+  return 1;
+}
+
+function normalizeVelocity(v) {
+  if (v >= 200) return 5;
+  if (v >= 80) return 4;
+  if (v >= 40) return 3;
+  if (v >= 15) return 2;
+  return 1;
+}
+
+function score(d, w) {
+  return w.ci * ciScore(d.ci) +
+         w.domain * d.domain +
+         w.velocity * normalizeVelocity(d.starsDay) +
+         w.contrib * d.contrib +
+         w.size * normalizeStars(d.stars);
+}
+
+function formatStars(n) {
+  if (n >= 1000) return (n / 1000).toFixed(n >= 100000 ? 0 : 1) + 'K';
+  return n.toString();
+}
+
+function ciLabel(ci) {
+  if (ci === 'yes') return '<span class="win-yes">First-class</span>';
+  if (ci === 'node') return '<span class="win-node">Node-native</span>';
+  if (ci === 'special') return '<span class="win-special">Special</span>';
+  return '<span class="win-no">None</span>';
+}
+
+function tierLabel(t) {
+  if (t === 'focused') return '<span class="tier-badge tier-focused">FOCUSED</span>';
+  if (t === 'a') return '<span class="tier-badge tier-a">TIER A</span>';
+  if (t === 'b') return '<span class="tier-badge tier-b">TIER B</span>';
+  return '<span class="tier-badge tier-c">TIER C</span>';
+}
+
+function scoreBar(val, max) {
+  var pct = (val / max) * 100;
+  var fillClass = 'score-fill-' + pct;
+  var colorClass = val >= 4 ? 'score-color-green' : val >= 3 ? 'score-color-blue' : val >= 2 ? 'score-color-yellow' : 'score-color-dim';
+  return '<span class="score-bar ' + fillClass + ' ' + colorClass + '"></span><span class="score-num ' + colorClass + '">' + val + '</span>';
+}
+
+function renderTable(sortKey) {
+  var w = WEIGHTS[sortKey];
+  var sorted = DATA.slice().sort(function(a, b) { return score(b, w) - score(a, w); });
+  var tbody = document.getElementById('targets-body');
+  var html = '';
+  var prevTier = '';
+
+  for (var i = 0; i < sorted.length; i++) {
+    var d = sorted[i];
+    var showSep = (d.tier !== prevTier && i > 0);
+    prevTier = d.tier;
+
+    html += '<tr' + (showSep ? ' class="separator-row"' : '') + '>' +
+      '<td class="repo-name"><a href="' + d.url + '">' + d.name + '</a>' +
+        (d.lang ? ' <span class="dim">' + d.lang + '</span>' : '') +
+      '</td>' +
+      '<td class="stars">' + formatStars(d.stars) + (d.starsDay > 0 ? ' <span class="dim dim-plain">' + d.starsDay + '/d</span>' : '') + '</td>' +
+      '<td>' + tierLabel(d.tier) + '</td>' +
+      '<td>' + scoreBar(normalizeVelocity(d.starsDay), 5) + '</td>' +
+      '<td>' + scoreBar(d.domain, 5) + '</td>' +
+      '<td>' + scoreBar(d.contrib, 5) + '</td>' +
+      '<td>' + ciLabel(d.ci) + '</td>' +
+    '</tr>';
+
+    if (d.desc) {
+      html += '<tr class="detail-row"><td colspan="7"><span class="detail-text">' + d.desc + '</span></td></tr>';
+    }
+    if (d.why || d.mergedPRs) {
+      html += '<tr class="detail-hr"><td colspan="7"><hr></td></tr>';
+    }
+    if (d.why) {
+      html += '<tr class="detail-row"><td colspan="7"><div class="detail-meta"><span class="detail-label">Fit</span> <span class="detail-text">' + d.why + '</span></div></td></tr>';
+    }
+    if (d.mergedPRs) {
+      html += '<tr class="detail-row"><td colspan="7"><div class="detail-meta"><span class="detail-label">PR culture</span> <span class="detail-text">' + d.mergedPRs + '</span></div></td></tr>';
+    }
+  }
+
+  tbody.innerHTML = html;
+}
+
+document.getElementById('sort-pills').addEventListener('click', function(e) {
+  var pill = e.target.closest('.sort-pill');
+  if (!pill) return;
+  var sortKey = pill.getAttribute('data-sort');
+  document.querySelectorAll('.sort-pill').forEach(function(p) { p.classList.remove('active'); });
+  pill.classList.add('active');
+  renderTable(sortKey);
+});
+
+renderTable('composite');
+</script>
+
+</body>
+</html>

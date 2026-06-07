@@ -3,12 +3,27 @@ param(
     [string[]]$Repos = @("nesquena/hermes-webui", "NousResearch/hermes-agent"),
     [string]$ReadmeRepo = "rodboev/pr-sweep",
     [string]$OutFile = "$PSScriptRoot\index.html",
-    [int]$LeaderboardTop = 10
+    [int]$LeaderboardTop = 10,
+    [switch]$OpenOutput
 )
 
 $shippedPatterns = @("Shipped", "shipped", "cherry-picked", "merged-via", "Salvaged into", "salvaged into")
-$acceptedPatterns = @("Superseded by", "superseded by", "consolidated", "Consolidating")
+$acceptedPatterns = @()
 $duplicatePatterns = @("Duplicate", "duplicate")
+$lostPatterns = @("Superseded by", "superseded by", "consolidated", "Consolidating")
+
+$EasternTimeZone = [System.TimeZoneInfo]::FindSystemTimeZoneById("Eastern Standard Time")
+
+function Format-EasternDate([string]$IsoDate) {
+    if (-not $IsoDate) { return "" }
+    try {
+        $utc = [datetime]::Parse($IsoDate, $null, [System.Globalization.DateTimeStyles]::AdjustToUniversal)
+        $eastern = [System.TimeZoneInfo]::ConvertTimeFromUtc($utc.ToUniversalTime(), $EasternTimeZone)
+        return $eastern.ToString("M/d/yy h:mm tt")
+    } catch {
+        return ""
+    }
+}
 
 Write-Host "Fetching PRs from $($Repos.Count) repos..." -ForegroundColor DarkGray
 
@@ -31,7 +46,7 @@ $open = @($allPRs | Where-Object { $_.state -eq "OPEN" })
 
 Write-Host "Classifying $($closed.Count) closed PRs..." -ForegroundColor DarkGray
 
-$shipped = @(); $acceptedIndirect = @(); $duplicates = @(); $withdrawn = @(); $rejected = @()
+$shipped = @(); $acceptedIndirect = @(); $duplicates = @(); $lost = @(); $withdrawn = @(); $rejected = @()
 
 foreach ($pr in $closed) {
     Write-Host "  #$($pr.number) ($($pr.repoShort))..." -ForegroundColor DarkGray -NoNewline
@@ -51,6 +66,9 @@ foreach ($pr in $closed) {
     $isDuplicate = $false
     foreach ($p in $duplicatePatterns) { if ($comments -match [regex]::Escape($p)) { $isDuplicate = $true; break } }
 
+    $isLost = $false
+    foreach ($p in $lostPatterns) { if ($comments -match [regex]::Escape($p)) { $isLost = $true; break } }
+
     if ($isShipped) {
         $pr.classification = "shipped"
         $shipped += $pr
@@ -59,10 +77,10 @@ foreach ($pr in $closed) {
         $pr.classification = "accepted-indirect"
         $acceptedIndirect += $pr
         Write-Host " accepted (indirect)" -ForegroundColor Cyan
-    } elseif ($isDuplicate) {
-        $pr.classification = "duplicate"
-        $duplicates += $pr
-        Write-Host " duplicate" -ForegroundColor Blue
+    } elseif ($isDuplicate -or $isLost) {
+        $pr.classification = "lost"
+        $lost += $pr
+        Write-Host " lost (competing PR won)" -ForegroundColor Red
     } elseif (-not $comments -or $comments.Trim().Length -eq 0) {
         $pr.classification = "withdrawn"
         $withdrawn += $pr
@@ -75,8 +93,8 @@ foreach ($pr in $closed) {
 }
 
 $totalAccepted = $shipped.Count + $acceptedIndirect.Count
-$totalResolved = $closed.Count
-$acceptanceRate = if ($rejected.Count -eq 0 -and $totalResolved -gt 0) { "100" } elseif ($totalResolved -gt 0) { [math]::Round(($totalAccepted / $totalResolved) * 100) } else { "N/A" }
+$totalResolved = $totalAccepted + $lost.Count
+$acceptanceRate = if ($totalResolved -gt 0) { [math]::Round(($totalAccepted / $totalResolved) * 100) } else { "N/A" }
 
 # Build per-repo leaderboards
 Write-Host "`nBuilding leaderboards..." -ForegroundColor DarkGray
@@ -152,6 +170,7 @@ foreach ($repo in $Repos) {
     foreach ($entry in $sorted) { if ($entry.Key -eq $Author) { break }; $myRank++ }
 
     $leaderboardRows = ""
+    $totalContributors = $sorted.Count
     $rank = 1
     foreach ($entry in $sorted) {
         $s = $entry.Value
@@ -159,9 +178,12 @@ foreach ($repo in $Repos) {
         $isMe = $name -eq $Author
         $statusLabel = if ($s.idle -lt 1) { "Active" } elseif ($s.idle -lt 3) { "Recent" } elseif ($s.idle -lt 7) { "Slowing" } elseif ($s.idle -lt 14) { "Quiet" } else { "Gone" }
         $statusClass = if ($s.idle -lt 3) { "green" } elseif ($s.idle -lt 7) { "yellow" } else { "dim" }
-        $rowClass = if ($isMe) { " style=`"font-weight:600; background:rgba(63,185,80,0.06)`"" } else { "" }
+        $rowClass = if ($isMe) { " class=`"is-self`"" } else { "" }
         $nameDisplay = if ($isMe) { "$name" } else { $name }
         $leaderboardRows += "  <tr$rowClass><td>#$rank</td><td><a href=`"https://github.com/$name`">$nameDisplay</a></td><td>$($s.credited)</td><td>$($s.open)</td><td>$($s.rate)/d</td><td><span class=`"$statusClass`">$statusLabel</span></td></tr>`n"
+        if ($rank -eq 15 -and $totalContributors -gt 15) {
+            $leaderboardRows += "  <tr class=`"expand-row`" onclick=`"toggleCollapsedTable('lb-$repoShort')`"><td colspan=`"6`">Show all $totalContributors contributors <span class=`"caret`">&#9660;</span></td></tr>`n"
+        }
         $rank++
     }
 
@@ -186,25 +208,49 @@ foreach ($repo in $Repos) {
             }
         }
         $projectionsHtml = @"
-<details style="margin-top:0.75rem">
-<summary style="cursor:pointer; font-size:0.85rem; color:var(--dim)">Projections (you @ $myRate/day, rank #$myRank)</summary>
-<table style="margin-top:0.5rem">
+<details class="projections">
+<summary>Projections (you @ $myRate/day, rank #$myRank)</summary>
+<table>
   <tr><th>Contributor</th><th>Credited</th><th>Rate</th><th>Catch-up</th></tr>
 $projRows</table>
 </details>
 "@
     } elseif ($myRank -eq 1) {
-        $projectionsHtml = "<p style=`"margin-top:0.75rem; font-size:0.85rem; color:var(--dim)`">Rank #1 at $myRate/day</p>"
+        $projectionsHtml = "<p class=`"note projections-note`">Rank #1 at $myRate/day</p>"
     }
 
-    $leaderboardHtml += @"
+    $collapsedClass = if ($totalContributors -gt 15) { " collapsed" } else { "" }
+    $overlayHtml = if ($totalContributors -gt 15) { "<div class=`"overlay-row`" onclick=`"toggleCollapsedTable('lb-$repoShort')`">Collapse <span class=`"caret`">&#9650;</span></div>`n" } else { "" }
+    $isAgent = $repoShort -eq "hermes-agent"
+    if ($isAgent) {
+        $leaderboardHtml += @"
+<details>
+<summary><h2>$repoShort Leaderboard</h2></summary>
+<div class="collapsible-table leaderboard$collapsedClass" id="lb-$repoShort">
+$overlayHtml<table>
+  <thead><tr><th>Rank</th><th>Contributor</th><th>Credited</th><th>Open</th><th>Rate</th><th>Status</th></tr></thead>
+  <tbody>
+$leaderboardRows  </tbody>
+</table>
+</div>
+$projectionsHtml
+</details>
+
+"@
+    } else {
+        $leaderboardHtml += @"
 <h2>$repoShort Leaderboard</h2>
-<table>
-  <tr><th>Rank</th><th>Contributor</th><th>Credited</th><th>Open</th><th>Rate</th><th>Status</th></tr>
-$leaderboardRows</table>
+<div class="collapsible-table leaderboard$collapsedClass" id="lb-$repoShort">
+$overlayHtml<table>
+  <thead><tr><th>Rank</th><th>Contributor</th><th>Credited</th><th>Open</th><th>Rate</th><th>Status</th></tr></thead>
+  <tbody>
+$leaderboardRows  </tbody>
+</table>
+</div>
 $projectionsHtml
 
 "@
+    }
 }
 
 Write-Host "`nFetching representative PRs from $ReadmeRepo README..." -ForegroundColor DarkGray
@@ -250,16 +296,47 @@ if ($mdLines.Count -gt 0) {
 
 Write-Host "Generating HTML..." -ForegroundColor DarkGray
 
-$shippedRows = ""
-foreach ($pr in ($shipped | Sort-Object { $_.release })) {
+$shippedItems = @()
+foreach ($pr in $shipped) {
     $repoLabel = if ($pr.repo -match "hermes-agent") { "agent" } else { "webui" }
-    $rel = if ($pr.release) { $pr.release } else { "" }
-    $shippedRows += "  <tr><td><a href=`"https://github.com/$($pr.repo)/pull/$($pr.number)`">#$($pr.number)</a></td><td>$repoLabel</td><td>$rel</td></tr>`n"
+    $shippedItems += [pscustomobject]@{
+        pr = $pr
+        repoLabel = $repoLabel
+        statusLabel = "Shipped"
+        statusClass = "tag-shipped"
+        releaseLabel = if ($pr.release) { $pr.release } else { "" }
+        sortDate = if ($pr.closedAt) { [datetime]$pr.closedAt } elseif ($pr.createdAt) { [datetime]$pr.createdAt } else { [datetime]::MinValue }
+        displayDate = if ($pr.closedAt) { Format-EasternDate $pr.closedAt } else { Format-EasternDate $pr.createdAt }
+    }
 }
 foreach ($pr in $acceptedIndirect) {
     $repoLabel = if ($pr.repo -match "hermes-agent") { "agent" } else { "webui" }
-    $shippedRows += "  <tr><td><a href=`"https://github.com/$($pr.repo)/pull/$($pr.number)`">#$($pr.number)</a></td><td>$repoLabel</td><td>indirect</td></tr>`n"
+    $shippedItems += [pscustomobject]@{
+        pr = $pr
+        repoLabel = $repoLabel
+        statusLabel = "Indirect"
+        statusClass = "tag-accepted"
+        releaseLabel = "indirect"
+        sortDate = if ($pr.closedAt) { [datetime]$pr.closedAt } elseif ($pr.createdAt) { [datetime]$pr.createdAt } else { [datetime]::MinValue }
+        displayDate = if ($pr.closedAt) { Format-EasternDate $pr.closedAt } else { Format-EasternDate $pr.createdAt }
+    }
 }
+$shippedItems = @($shippedItems | Sort-Object sortDate -Descending)
+
+$shippedRows = ""
+$shippedCount = $shippedItems.Count
+$shipIndex = 1
+foreach ($item in $shippedItems) {
+    $pr = $item.pr
+    $shippedRows += "  <tr><td><a href=`"https://github.com/$($pr.repo)/pull/$($pr.number)`">#$($pr.number)</a></td><td>$($item.repoLabel)</td><td><span class=`"tag $($item.statusClass)`">$($item.statusLabel)</span></td><td>$($item.displayDate)</td><td>$($item.releaseLabel)</td></tr>`n"
+    if ($shipIndex -eq 15 -and $shippedCount -gt 15) {
+        $shippedRows += "  <tr class=`"expand-row`" onclick=`"toggleCollapsedTable('shipped-prs')`"><td colspan=`"5`">Show all $shippedCount shipped PRs <span class=`"caret`">&#9660;</span></td></tr>`n"
+    }
+    $shipIndex++
+}
+
+$shippedCollapsedClass = if ($shippedCount -gt 15) { " collapsed" } else { "" }
+$shippedOverlayHtml = if ($shippedCount -gt 15) { "<div class=`"overlay-row`" onclick=`"toggleCollapsedTable('shipped-prs')`">Collapse <span class=`"caret`">&#9650;</span></div>`n" } else { "" }
 
 $repoSections = ""
 foreach ($repo in $Repos) {
@@ -268,7 +345,7 @@ foreach ($repo in $Repos) {
     $repoOpen = @($repoPRs | Where-Object { $_.state -eq "OPEN" }).Count
     $repoShipped = @($shipped | Where-Object { $_.repo -eq $repo }).Count
     $repoAccepted = @($acceptedIndirect | Where-Object { $_.repo -eq $repo }).Count
-    $repoDups = @($duplicates | Where-Object { $_.repo -eq $repo }).Count
+    $repoLost = @($lost | Where-Object { $_.repo -eq $repo }).Count
     $repoWithdrawn = @($withdrawn | Where-Object { $_.repo -eq $repo }).Count
     $repoRejected = @($rejected | Where-Object { $_.repo -eq $repo }).Count
 
@@ -278,17 +355,31 @@ foreach ($repo in $Repos) {
   <tr><th>Status</th><th>Count</th><th>Details</th></tr>
   <tr><td><span class="tag tag-shipped">Shipped</span></td><td>$($repoShipped + $repoAccepted)</td><td>$repoShipped confirmed shipped$(if ($repoAccepted -gt 0) { ", $repoAccepted accepted indirectly" })</td></tr>
   <tr><td><span class="tag tag-open">Open</span></td><td>$repoOpen</td><td>Awaiting maintainer review</td></tr>
-$(if ($repoDups -gt 0) { "  <tr><td><span class=`"tag tag-dup`">Duplicate</span></td><td>$repoDups</td><td>Consolidated into other PRs</td></tr>`n" })$(if ($repoWithdrawn -gt 0) { "  <tr><td><span class=`"tag tag-withdrawn`">Withdrawn</span></td><td>$repoWithdrawn</td><td>Closed without maintainer action</td></tr>`n" })  <tr><td><span class="tag tag-rejected">Rejected</span></td><td>$repoRejected</td><td>$(if ($repoRejected -eq 0) { 'None' })</td></tr>
-</table>
+$(if ($repoLost -gt 0) { "  <tr><td><span class=`"tag tag-rejected`">Lost</span></td><td>$repoLost</td><td>Competing PR won</td></tr>`n" })$(if ($repoWithdrawn -gt 0) { "  <tr><td><span class=`"tag tag-withdrawn`">Withdrawn</span></td><td>$repoWithdrawn</td><td>Closed without maintainer action</td></tr>`n" })</table>
 
 "@
 }
 
 $dateStr = $now.ToString("MMMM d, yyyy")
 
+# Calculate time span from earliest to latest PR
+$allDates = @()
+foreach ($pr in $allPRs) {
+    if ($pr.createdAt) { try { $allDates += [datetime]$pr.createdAt } catch {} }
+}
+$allDates = @($allDates | Sort-Object)
+if ($allDates.Count -ge 2) {
+    $spanDays = [math]::Ceiling(($allDates[-1] - $allDates[0]).TotalDays)
+    $timeSpan = "$spanDays days"
+    $timeRange = "$($allDates[0].ToString('MMMM d'))-$($allDates[-1].ToString('MMMM d, yyyy'))"
+} else {
+    $timeSpan = "N/A"
+    $timeRange = ""
+}
+
 $barShipped = [math]::Round(($shipped.Count / $allPRs.Count) * 100, 1)
 $barAccepted = [math]::Round(($acceptedIndirect.Count / $allPRs.Count) * 100, 1)
-$barDup = [math]::Round(($duplicates.Count / $allPRs.Count) * 100, 1)
+$barLost = [math]::Round(($lost.Count / $allPRs.Count) * 100, 1)
 $barWithdrawn = [math]::Round(($withdrawn.Count / $allPRs.Count) * 100, 1)
 $barOpen = [math]::Round(($open.Count / $allPRs.Count) * 100, 1)
 
@@ -297,95 +388,51 @@ $html = @"
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>PR Pipeline Stats</title>
+<title>pr-sweeps Stats</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="darkreader-lock" />
 <meta name="color-scheme" content="light dark" />
-<style>
-  :root { --bg: #fff; --card: #fff; --border: rgba(0,0,0,0.08); --text: #1a1a1a; --dim: #888; --link: #3376d2; --green: #1a7f37; --red: #cf222e; --yellow: #9a6700; --blue: #3376d2; --purple: #8250df; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #161616; --card: #1e1e1e; --border: rgba(255,255,255,0.08); --text: rgba(255,255,255,0.88); --dim: rgba(255,255,255,0.45); --link: #6ba3e8; --green: #3fb950; --red: #f85149; --yellow: #d29922; --blue: #58a6ff; --purple: #bc8cff; }
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { background: var(--bg); color-scheme: light dark; }
-  html[data-darkreader-mode] { filter: none !important; background: var(--bg) !important; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; color: var(--text); max-width: 960px; width: calc(100% - 10vw); margin: min(2vw, 2rem) auto; padding-bottom: 3rem; line-height: 1.55; -webkit-font-smoothing: antialiased; }
-  a { color: var(--link); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  h1 { font-size: 1.75rem; font-weight: 600; margin-bottom: 0.15rem; }
-  .subtitle { color: var(--dim); font-size: 0.9rem; margin-bottom: 2rem; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
-  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem 1.25rem; }
-  .stat-card .number { font-size: 2.25rem; font-weight: 700; line-height: 1.1; }
-  .stat-card .label { color: var(--dim); font-size: 0.8rem; margin-top: 0.3rem; }
-  .green { color: var(--green); }
-  .yellow { color: var(--yellow); }
-  .blue { color: var(--blue); }
-  .purple { color: var(--purple); }
-  .red { color: var(--red); }
-  .dim { color: var(--dim); font-size: 0.8em; }
-  h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); }
-  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 1.25rem; }
-  th { text-align: left; padding: 0.55rem 0.9rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--dim); border-bottom: 1px solid var(--border); }
-  td { padding: 0.45rem 0.9rem; border-top: 1px solid var(--border); font-size: 0.85rem; }
-  tr:first-child td { border-top: none; }
-  .tag { display: inline-block; padding: 0.1rem 0.45rem; border-radius: 10px; font-size: 0.7rem; font-weight: 600; }
-  .tag-shipped { background: rgba(63,185,80,0.15); color: var(--green); }
-  .tag-open { background: rgba(210,153,34,0.15); color: var(--yellow); }
-  .tag-dup { background: rgba(88,166,255,0.15); color: var(--blue); }
-  .tag-withdrawn { background: rgba(128,128,128,0.15); color: var(--dim); }
-  .tag-rejected { background: rgba(248,81,73,0.15); color: var(--red); }
-  .bar-container { display: flex; height: 22px; border-radius: 6px; overflow: hidden; margin: 0.5rem 0; }
-  .bar-segment { display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 600; color: #fff; min-width: 2px; }
-  .bar-shipped { background: var(--green); }
-  .bar-accepted { background: var(--purple); }
-  .bar-dup { background: var(--blue); }
-  .bar-withdrawn { background: #666; }
-  .bar-open { background: var(--yellow); }
-  .legend { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-top: 0.4rem; font-size: 0.75rem; color: var(--dim); }
-  .legend-item { display: flex; align-items: center; gap: 0.3rem; }
-  .legend-dot { width: 9px; height: 9px; border-radius: 50%; }
-  .note { color: var(--dim); font-size: 0.8rem; margin-top: 0.5rem; }
-  .section { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.1rem; margin-bottom: 1.25rem; }
-  .section p + p { margin-top: 0.4rem; }
-  details summary { cursor: pointer; font-size: 0.85rem; color: var(--dim); }
-  .footer { text-align: center; color: var(--dim); font-size: 0.75rem; margin-top: 2.5rem; }
-  @media (max-width: 600px) {
-    .grid { grid-template-columns: repeat(2, 1fr); }
-    body { width: calc(100% - 2rem); }
-  }
-</style>
+<link rel="stylesheet" href="../style.css">
 </head>
-<body>
+<body class="pr">
 
-<h1>PR Pipeline Stats</h1>
-<p class="subtitle">$Author contributions to NousResearch/hermes-agent + nesquena/hermes-webui</p>
+<div class="top-row">
+  <h1><a class="back-link" href="../"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>pr-sweeps Stats</h1>
+  <nav class="nav-links">
+    <a href="../pr-targets/">Targets</a>
+    <span class="nav-sep">/</span>
+    <span class="current">Stats</span>
+    <span class="nav-sep">/</span>
+    <a href="https://github.com/rodboev/pr-sweep">pr-sweep</a> <span class="private">(private)</span>
+  </nav>
+</div>
+<p class="subtitle">$Author contributions to nesquena/hermes-webui + NousResearch/hermes-agent</p>
 
 <div class="grid">
   <div class="stat-card"><div class="number">$($allPRs.Count)</div><div class="label">Total PRs</div></div>
   <div class="stat-card"><div class="number green">$totalAccepted</div><div class="label">Shipped</div></div>
   <div class="stat-card"><div class="number yellow">$($open.Count)</div><div class="label">Open</div></div>
-  <div class="stat-card"><div class="number">$($rejected.Count)</div><div class="label red">Rejected</div></div>
+  <div class="stat-card"><div class="number">$($lost.Count)</div><div class="label">Lost</div></div>
 </div>
 <div class="grid">
-  <div class="stat-card"><div class="number green">${acceptanceRate}%</div><div class="label">Acceptance rate on resolved PRs ($totalAccepted accepted, $($rejected.Count) rejected out of $totalResolved closed)</div></div>
+  <div class="stat-card"><div class="number green">${acceptanceRate}%</div><div class="label">Acceptance rate on resolved PRs ($totalAccepted shipped, $($lost.Count) lost out of $totalResolved resolved)</div></div>
+  <div class="stat-card"><div class="number blue">$timeSpan</div><div class="label">Time span ($timeRange)</div></div>
 </div>
 
 <h2>Breakdown</h2>
 
 <div class="bar-container">
-  <div class="bar-segment bar-shipped" style="width:${barShipped}%"$(if ($barShipped -gt 4) { " title=`"$($shipped.Count)`"" })>$(if ($barShipped -gt 4) { $shipped.Count })</div>
-  <div class="bar-segment bar-accepted" style="width:${barAccepted}%"></div>
-  <div class="bar-segment bar-dup" style="width:${barDup}%"></div>
-  <div class="bar-segment bar-withdrawn" style="width:${barWithdrawn}%"></div>
-  <div class="bar-segment bar-open" style="width:${barOpen}%" title="$($open.Count)">$($open.Count)</div>
+  <div class="bar-segment bar-shipped" data-width="${barShipped}"$(if ($barShipped -gt 4) { " title=`"$($shipped.Count)`"" })>$(if ($barShipped -gt 4) { $shipped.Count })</div>
+  <div class="bar-segment bar-accepted" data-width="${barAccepted}">$(if ($barAccepted -gt 4) { $acceptedIndirect.Count })</div>
+  <div class="bar-segment bar-lost" data-width="${barLost}">$(if ($barLost -gt 4) { $lost.Count })</div>
+  <div class="bar-segment bar-withdrawn" data-width="${barWithdrawn}">$(if ($barWithdrawn -gt 4) { $withdrawn.Count })</div>
+  <div class="bar-segment bar-open" data-width="${barOpen}" title="$($open.Count)">$($open.Count)</div>
 </div>
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Shipped ($($shipped.Count))</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div> Accepted indirectly ($($acceptedIndirect.Count))</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Duplicate ($($duplicates.Count))</div>
-  <div class="legend-item"><div class="legend-dot" style="background:#666"></div> Withdrawn ($($withdrawn.Count))</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div> Open ($($open.Count))</div>
+  <div class="legend-item"><div class="legend-dot legend-dot-shipped"></div> Shipped ($($shipped.Count))</div>
+$(if ($acceptedIndirect.Count -gt 0) { "  <div class=`"legend-item`"><div class=`"legend-dot legend-dot-accepted`"></div> Accepted indirectly ($($acceptedIndirect.Count))</div>`n" })  <div class="legend-item"><div class="legend-dot legend-dot-lost"></div> Lost ($($lost.Count))</div>
+  <div class="legend-item"><div class="legend-dot legend-dot-withdrawn"></div> Withdrawn ($($withdrawn.Count))</div>
+  <div class="legend-item"><div class="legend-dot legend-dot-open"></div> Open ($($open.Count))</div>
 </div>
 
 $repoSections
@@ -395,18 +442,61 @@ $leaderboardHtml
 $representativeHtml
 
 <h2>Shipped PRs ($totalAccepted)</h2>
-<table>
-  <tr><th>PR</th><th>Repo</th><th>Release</th></tr>
-$shippedRows</table>
+<div class="collapsible-table shipped-prs$shippedCollapsedClass" id="shipped-prs">
+$shippedOverlayHtml<table>
+  <thead><tr><th>PR</th><th>Repo</th><th>Status</th><th>ET</th><th>Release</th></tr></thead>
+  <tbody>
+$shippedRows  </tbody>
+</table>
+</div>
 
 <h2>Methodology</h2>
 <div class="section">
   <p>Both repos use a cherry-pick workflow: the maintainer picks commits and closes the PR without GitHub's merge button, so <code>mergedAt</code> is always null. "Shipped" is determined from maintainer comments referencing a release version.</p>
-  <p>PRs classified as "withdrawn" had no maintainer interaction beyond automated bot reviews (Greptile). "Accepted indirectly" means the fix was cherry-picked into a follow-up PR or consolidated with a duplicate.</p>
-  <p>"Credited" in the leaderboard counts closed + merged PRs. For $Author, this is refined to shipped + accepted indirectly (comment-based classification). Other contributors use raw closed count as a proxy since comment scanning at scale would hit API rate limits.</p>
+  <p>PRs classified as "withdrawn" had no maintainer interaction beyond automated bot reviews (Greptile). "Lost" means a competing PR addressing the same issue was accepted instead (superseded or consolidated by another contributor's PR).</p>
+  <p>"Credited" in the leaderboard counts closed + merged PRs. For $Author, this is refined to shipped only (comment-based classification). Other contributors use raw closed count as a proxy since comment scanning at scale would hit API rate limits.</p>
 </div>
 
 <p class="footer">Generated $dateStr from GitHub API. Source: <a href="https://github.com/$ReadmeRepo">$ReadmeRepo</a></p>
+
+<script>
+function setBarWidths() {
+  document.querySelectorAll('.bar-segment[data-width]').forEach(function(segment) {
+    segment.style.width = segment.getAttribute('data-width') + '%';
+  });
+}
+function updateCollapsedOverlays() {
+  document.querySelectorAll('.collapsible-table:not(.collapsed)').forEach(function(block) {
+    var tbody = block.querySelector('tbody');
+    if (!tbody) return;
+    var firstRow = tbody.querySelector('tr:not(.expand-row)');
+    if (!firstRow) return;
+    var overlay = block.querySelector('.overlay-row');
+    if (!overlay) return;
+    var rect = firstRow.getBoundingClientRect();
+    var headerTh = block.querySelector('thead th');
+    var headerBottom = headerTh ? headerTh.getBoundingClientRect().bottom : 0;
+    if (rect.bottom < headerBottom) {
+      overlay.classList.add('visible');
+    } else {
+      overlay.classList.remove('visible');
+    }
+  });
+}
+function toggleCollapsedTable(id) {
+  var el = document.getElementById(id);
+  var wasExpanded = !el.classList.contains('collapsed');
+  el.classList.toggle('collapsed');
+  if (wasExpanded) el.scrollIntoView({ block: 'start', behavior: 'auto' });
+  updateCollapsedOverlays();
+}
+function toggleLeaderboard(id) {
+  toggleCollapsedTable(id);
+}
+setBarWidths();
+updateCollapsedOverlays();
+document.addEventListener('scroll', updateCollapsedOverlays, { passive: true });
+</script>
 
 </body>
 </html>
@@ -414,6 +504,8 @@ $shippedRows</table>
 
 $html | Out-File -FilePath $OutFile -Encoding utf8
 Write-Host "`nWritten to $OutFile" -ForegroundColor Green
-Write-Host "  Total: $($allPRs.Count) | Shipped: $totalAccepted | Open: $($open.Count) | Rejected: $($rejected.Count) | Rate: ${acceptanceRate}%"
+Write-Host "  Total: $($allPRs.Count) | Shipped: $totalAccepted | Open: $($open.Count) | Lost: $($lost.Count) | Rate: ${acceptanceRate}%"
 
-Start-Process $OutFile
+if ($OpenOutput) {
+    Start-Process $OutFile
+}
