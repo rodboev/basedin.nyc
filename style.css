@@ -910,10 +910,25 @@ body.pr .collapsible-table th {
   background: var(--pr-card);
   z-index: 2;
   border-bottom: none;
-  box-shadow: inset 0 -1px 0 var(--pr-border);
+  box-shadow:
+    inset 0 1px 0 var(--pr-border),
+    inset 0 -1px 0 var(--pr-border),
+    inset -1px 0 0 var(--pr-border);
 }
 
-body.pr .collapsible-table.collapsed tbody tr:not(.expand-row):nth-child(n + 16) {
+body.pr .collapsible-table th:first-child {
+  box-shadow:
+    inset 1px 0 0 var(--pr-border),
+    inset 0 1px 0 var(--pr-border),
+    inset 0 -1px 0 var(--pr-border),
+    inset -1px 0 0 var(--pr-border);
+}
+
+body.pr .collapsible-table.collapsed[data-collapse-mode="top"] tbody tr:not(.expand-row):nth-child(n + 11) {
+  display: none;
+}
+
+body.pr .collapsible-table.collapsed[data-collapse-mode="context"] tbody tr.context-hidden {
   display: none;
 }
 
@@ -952,18 +967,19 @@ body.pr .collapsible-table:not(.collapsed) .expand-row {
 
 body.pr .overlay-row {
   position: sticky;
-  top: 35px;
+  bottom: 0;
   z-index: 3;
   display: none;
   cursor: pointer;
   background: var(--pr-card);
   border: 1px solid var(--pr-border);
-  border-top: none;
+  border-bottom: none;
   padding: 0.45rem 0.9rem;
   text-align: center;
   color: var(--pr-dim);
   font-size: 0.85rem;
   user-select: none;
+  box-shadow: 0 -1px 0 var(--pr-border);
 }
 
 body.pr .overlay-row:hover {
@@ -982,6 +998,46 @@ body.pr .shipped-prs td:nth-child(4),
 body.pr .shipped-prs th:nth-child(4),
 body.pr .shipped-prs td:nth-child(5),
 body.pr .shipped-prs th:nth-child(5) {
+  white-space: nowrap;
+}
+
+body.pr .pr-list-table .empty-state {
+  white-space: normal;
+  text-align: center;
+  color: var(--pr-dim);
+}
+
+body.pr .pr-list-table {
+  table-layout: fixed;
+}
+
+body.pr .pr-list-table td:nth-child(1),
+body.pr .pr-list-table th:nth-child(1) {
+  width: 5.25rem;
+}
+
+body.pr .pr-list-table td:nth-child(2),
+body.pr .pr-list-table th:nth-child(2) {
+  width: 4.75rem;
+}
+
+body.pr .pr-list-table td:nth-child(3),
+body.pr .pr-list-table th:nth-child(3) {
+  width: 6rem;
+}
+
+body.pr .pr-list-table td:nth-child(5),
+body.pr .pr-list-table th:nth-child(5),
+body.pr .pr-list-table td:nth-child(6),
+body.pr .pr-list-table th:nth-child(6),
+body.pr .pr-list-table td:nth-child(7),
+body.pr .pr-list-table th:nth-child(7) {
+  white-space: nowrap;
+}
+
+body.pr .pr-list-table .pr-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -1020,7 +1076,7 @@ body.pr .landscape-row {
   top: 0;
   z-index: 4;
   background: var(--pr-bg);
-  padding: 0.6rem 0 0.4rem;
+  padding: 0.6rem 0;
   margin: 0;
   border-bottom: 1px solid var(--pr-border);
 }
@@ -1071,8 +1127,19 @@ body.pr .targets-table th {
   background: var(--pr-card);
   z-index: 3;
   white-space: nowrap;
-  box-shadow: inset 0 -1px 0 var(--pr-border);
+  box-shadow:
+    inset 0 1px 0 var(--pr-border),
+    inset 0 -1px 0 var(--pr-border),
+    inset -1px 0 0 var(--pr-border);
   border-bottom: none;
+}
+
+body.pr .targets-table th:first-child {
+  box-shadow:
+    inset 1px 0 0 var(--pr-border),
+    inset 0 1px 0 var(--pr-border),
+    inset 0 -1px 0 var(--pr-border),
+    inset -1px 0 0 var(--pr-border);
 }
 
 body.pr .targets-table td {

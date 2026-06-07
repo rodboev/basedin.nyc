@@ -11,8 +11,11 @@ $shippedPatterns = @("Shipped", "shipped", "cherry-picked", "merged-via", "Salva
 $acceptedPatterns = @()
 $duplicatePatterns = @("Duplicate", "duplicate")
 $lostPatterns = @("Superseded by", "superseded by", "consolidated", "Consolidating")
+$DefaultLeaderboardVisible = 10
 
 $EasternTimeZone = [System.TimeZoneInfo]::FindSystemTimeZoneById("Eastern Standard Time")
+$script:PullRequestStateCache = @{}
+$script:PullRequestEvidenceCache = @{}
 
 function Format-EasternDate([string]$IsoDate) {
     if (-not $IsoDate) { return "" }
@@ -23,6 +26,149 @@ function Format-EasternDate([string]$IsoDate) {
     } catch {
         return ""
     }
+}
+
+function Get-ReleaseTag([string]$Text) {
+    if (-not $Text) { return "" }
+    if ($Text -match "v\d+\.\d+\.\d+") { return $Matches[0] }
+    return ""
+}
+
+function Test-IsReleaseTitle([string]$Text) {
+    return [bool](Get-ReleaseTag $Text)
+}
+
+function Select-BestCrossReference {
+    param(
+        [object[]]$Candidates,
+        [string]$ClosedAt
+    )
+
+    if ($Candidates.Count -eq 1 -and $Candidates[0] -is [System.Array]) {
+        $Candidates = @($Candidates[0])
+    }
+    if (-not $Candidates -or $Candidates.Count -eq 0) { return $null }
+    if (-not $ClosedAt) { return ($Candidates | Select-Object -Last 1).source }
+
+    try {
+        $closedAtDate = [datetime]$ClosedAt
+    } catch {
+        return ($Candidates | Select-Object -Last 1).source
+    }
+
+    return ($Candidates |
+        Sort-Object @{
+            Expression = {
+                try {
+                    [math]::Abs(($closedAtDate - [datetime]$_.createdAt).TotalSeconds)
+                } catch {
+                    [double]::PositiveInfinity
+                }
+            }
+        } |
+        Select-Object -First 1).source
+}
+
+function Get-PullRequestEvidence([string]$Repo, [int]$Number) {
+    $cacheKey = "$Repo#$Number"
+    if ($script:PullRequestEvidenceCache.ContainsKey($cacheKey)) {
+        return $script:PullRequestEvidenceCache[$cacheKey]
+    }
+
+    $commentResult = @()
+    try {
+        $commentResult = @(gh api "repos/$Repo/issues/$Number/comments?per_page=100" 2>$null | ConvertFrom-Json)
+    } catch {}
+
+    $timelineResult = @()
+    try {
+        $timelineResult = @(gh api "repos/$Repo/issues/$Number/timeline?per_page=100" -H "Accept: application/vnd.github+json" 2>$null | ConvertFrom-Json)
+    } catch {}
+
+    $commentNodes = foreach ($comment in $commentResult) {
+        [pscustomobject]@{
+            body = $comment.body
+            author = [pscustomobject]@{
+                login = $comment.user.login
+            }
+        }
+    }
+
+    $timelineNodes = foreach ($event in $timelineResult) {
+        if ($event.event -eq "cross-referenced" -and $event.source -and $event.source.issue -and $event.source.issue.pull_request) {
+            [pscustomobject]@{
+                __typename = "CrossReferencedEvent"
+                createdAt = $event.created_at
+                source = [pscustomobject]@{
+                    __typename = "PullRequest"
+                    number = $event.source.issue.number
+                    title = $event.source.issue.title
+                    state = if ($event.source.issue.pull_request.merged_at) { "MERGED" } else { "CLOSED" }
+                    merged = [bool]$event.source.issue.pull_request.merged_at
+                    mergedAt = $event.source.issue.pull_request.merged_at
+                    url = $event.source.issue.html_url
+                }
+            }
+        } elseif ($event.event -eq "referenced" -and $event.commit_id) {
+            [pscustomobject]@{
+                __typename = "ReferencedEvent"
+                createdAt = $event.created_at
+                commit = [pscustomobject]@{
+                    oid = $event.commit_id
+                    messageHeadline = ""
+                    url = $event.commit_url
+                }
+            }
+        } elseif ($event.event -eq "closed") {
+            [pscustomobject]@{
+                __typename = "ClosedEvent"
+                createdAt = $event.created_at
+                closer = [pscustomobject]@{
+                    __typename = ""
+                }
+            }
+        }
+    }
+
+    $evidence = [pscustomobject]@{
+        comments = [pscustomobject]@{ nodes = @($commentNodes) }
+        timelineItems = [pscustomobject]@{ nodes = @($timelineNodes | Where-Object { $_ }) }
+    }
+
+    $script:PullRequestEvidenceCache[$cacheKey] = $evidence
+    return $evidence
+}
+
+function Get-ScalarValue([object]$Value) {
+    if ($null -eq $Value) { return "" }
+    if ($Value -is [System.Array]) { return Get-ScalarValue ($Value | Select-Object -First 1) }
+    return $Value
+}
+
+function Get-PullRequestState([string]$Repo, [int]$Number) {
+    $cacheKey = "$Repo#$Number"
+    if ($script:PullRequestStateCache.ContainsKey($cacheKey)) {
+        return $script:PullRequestStateCache[$cacheKey]
+    }
+    $result = gh pr view $Number --repo $Repo --json number,state,mergedAt,title,url 2>$null | ConvertFrom-Json
+    $script:PullRequestStateCache[$cacheKey] = $result
+    return $result
+}
+
+function Get-ReferencedMergedPullRequest([string]$Repo, [string]$Text) {
+    if (-not $Text) { return $null }
+    $matches = [regex]::Matches($Text, '#(\d+)')
+    $seen = @{}
+    foreach ($match in $matches) {
+        $num = [int]$match.Groups[1].Value
+        if ($seen.ContainsKey($num)) { continue }
+        $seen[$num] = $true
+        $pr = Get-PullRequestState -Repo $Repo -Number $num
+        if ($pr -and ($pr.state -eq "MERGED" -or $pr.mergedAt)) {
+            return $pr
+        }
+    }
+    return $null
 }
 
 Write-Host "Fetching PRs from $($Repos.Count) repos..." -ForegroundColor DarkGray
@@ -37,12 +183,17 @@ foreach ($repo in $Repos) {
         $pr | Add-Member -NotePropertyName repoShort -NotePropertyValue $repoShort -Force
         $pr | Add-Member -NotePropertyName classification -NotePropertyValue "" -Force
         $pr | Add-Member -NotePropertyName release -NotePropertyValue "" -Force
+        $pr | Add-Member -NotePropertyName viaLabel -NotePropertyValue "" -Force
+        $pr | Add-Member -NotePropertyName viaUrl -NotePropertyValue "" -Force
         $allPRs += $pr
     }
 }
 
-$closed = @($allPRs | Where-Object { $_.state -eq "CLOSED" })
+$closed = @($allPRs | Where-Object { $_.state -eq "CLOSED" -or $_.state -eq "MERGED" })
 $open = @($allPRs | Where-Object { $_.state -eq "OPEN" })
+foreach ($pr in $open) {
+    $pr.classification = "open"
+}
 
 Write-Host "Classifying $($closed.Count) closed PRs..." -ForegroundColor DarkGray
 
@@ -50,12 +201,56 @@ $shipped = @(); $acceptedIndirect = @(); $duplicates = @(); $lost = @(); $withdr
 
 foreach ($pr in $closed) {
     Write-Host "  #$($pr.number) ($($pr.repoShort))..." -ForegroundColor DarkGray -NoNewline
-    $raw = gh pr view $pr.number --repo $pr.repo --json comments 2>$null | ConvertFrom-Json
-    $comments = ($raw.comments | Where-Object { $_.author.login -ne "greptile-apps" } | ForEach-Object { $_.body }) -join "`n---`n"
+    $raw = Get-PullRequestEvidence -Repo $pr.repo -Number $pr.number
+    $comments = ($raw.comments.nodes | Where-Object { $_.author.login -ne "greptile-apps" } | ForEach-Object { $_.body }) -join "`n---`n"
+    $timelineNodes = @($raw.timelineItems.nodes)
+    $closedEvent = @($timelineNodes | Where-Object { $_.__typename -eq "ClosedEvent" }) | Select-Object -First 1
+    $mergedReleaseCloser = $null
+    if ($closedEvent -and $closedEvent.closer.__typename -eq "PullRequest" -and $closedEvent.closer.merged -and (Test-IsReleaseTitle $closedEvent.closer.title)) {
+        $mergedReleaseCloser = $closedEvent.closer
+    }
+    $mergedReleaseCrossRef = Select-BestCrossReference -Candidates @($timelineNodes |
+            Where-Object {
+                $_.__typename -eq "CrossReferencedEvent" -and
+                $_.source.__typename -eq "PullRequest" -and
+                $_.source.merged -and
+                (Test-IsReleaseTitle $_.source.title)
+            }) -ClosedAt $closedEvent.createdAt
+    $mergedPullRequestCloser = $null
+    if ($closedEvent -and $closedEvent.closer.__typename -eq "PullRequest" -and $closedEvent.closer.merged) {
+        $mergedPullRequestCloser = $closedEvent.closer
+    }
+    $mergedPullRequestCrossRef = Select-BestCrossReference -Candidates @($timelineNodes |
+            Where-Object {
+                $_.__typename -eq "CrossReferencedEvent" -and
+                $_.source.__typename -eq "PullRequest" -and
+                $_.source.merged
+            }) -ClosedAt $closedEvent.createdAt
+    $releaseRefCommit = ($timelineNodes |
+            Where-Object {
+                $_.__typename -eq "ReferencedEvent" -and
+                (Test-IsReleaseTitle $_.commit.messageHeadline)
+            } |
+            ForEach-Object { $_.commit } |
+            Select-Object -First 1)
 
     $release = ""
-    if ($comments -match "v\d+\.\d+\.\d+") { $release = $Matches[0] }
+    foreach ($candidate in @(
+        $comments,
+        $(if ($mergedReleaseCloser) { $mergedReleaseCloser.title }),
+        $(if ($mergedReleaseCrossRef) { $mergedReleaseCrossRef.title }),
+        $(if ($releaseRefCommit) { $releaseRefCommit.messageHeadline })
+    )) {
+        $release = Get-ReleaseTag $candidate
+        if ($release) { break }
+    }
     $pr.release = $release
+
+    $isDirectMerged = $pr.state -eq "MERGED" -or [bool]$pr.mergedAt
+    $isTimelineShipped = $false
+    if ($mergedReleaseCloser -or $mergedReleaseCrossRef -or $mergedPullRequestCloser -or $mergedPullRequestCrossRef -or $releaseRefCommit) {
+        $isTimelineShipped = $true
+    }
 
     $isShipped = $false
     foreach ($p in $shippedPatterns) { if ($comments -match [regex]::Escape($p)) { $isShipped = $true; break } }
@@ -69,14 +264,54 @@ foreach ($pr in $closed) {
     $isLost = $false
     foreach ($p in $lostPatterns) { if ($comments -match [regex]::Escape($p)) { $isLost = $true; break } }
 
-    if ($isShipped) {
+    $acceptedSibling = $null
+    if ($isDuplicate -or $isLost) {
+        $acceptedSibling = Get-ReferencedMergedPullRequest -Repo $pr.repo -Text $comments
+    }
+
+    if ($isDirectMerged -or $isTimelineShipped -or $isShipped) {
         $pr.classification = "shipped"
         $shipped += $pr
-        Write-Host " shipped" -ForegroundColor Green
-    } elseif ($isAccepted) {
+        if ($isDirectMerged) {
+            $pr.viaLabel = "direct"
+            $pr.viaUrl = "https://github.com/$($pr.repo)/pull/$($pr.number)"
+            Write-Host " shipped (merged directly)" -ForegroundColor Green
+        } elseif ($isTimelineShipped) {
+            $sourceLabel = if ($mergedReleaseCloser) {
+                $pr.viaLabel = "#$($mergedReleaseCloser.number)"
+                $pr.viaUrl = $mergedReleaseCloser.url
+                "released via #$($mergedReleaseCloser.number)"
+            } elseif ($mergedReleaseCrossRef) {
+                $pr.viaLabel = "#$($mergedReleaseCrossRef.number)"
+                $pr.viaUrl = $mergedReleaseCrossRef.url
+                "referenced by merged #$($mergedReleaseCrossRef.number)"
+            } elseif ($mergedPullRequestCloser) {
+                $pr.viaLabel = "#$($mergedPullRequestCloser.number)"
+                $pr.viaUrl = $mergedPullRequestCloser.url
+                "closed by merged #$($mergedPullRequestCloser.number)"
+            } elseif ($mergedPullRequestCrossRef) {
+                $pr.viaLabel = "#$($mergedPullRequestCrossRef.number)"
+                $pr.viaUrl = $mergedPullRequestCrossRef.url
+                "referenced by merged #$($mergedPullRequestCrossRef.number)"
+            } else {
+                $pr.viaLabel = $releaseRefCommit.oid.Substring(0, 7)
+                $pr.viaUrl = $releaseRefCommit.url
+                "referenced by release commit"
+            }
+            Write-Host " shipped ($sourceLabel)" -ForegroundColor Green
+        } else {
+            Write-Host " shipped" -ForegroundColor Green
+        }
+    } elseif ($isAccepted -or $acceptedSibling) {
         $pr.classification = "accepted-indirect"
         $acceptedIndirect += $pr
-        Write-Host " accepted (indirect)" -ForegroundColor Cyan
+        if ($acceptedSibling) {
+            $pr.viaLabel = "#$($acceptedSibling.number)"
+            $pr.viaUrl = $acceptedSibling.url
+            Write-Host " accepted indirectly via #$($acceptedSibling.number)" -ForegroundColor Cyan
+        } else {
+            Write-Host " accepted (indirect)" -ForegroundColor Cyan
+        }
     } elseif ($isDuplicate -or $isLost) {
         $pr.classification = "lost"
         $lost += $pr
@@ -147,22 +382,12 @@ foreach ($repo in $Repos) {
         $stats[$a] = @{ credited = $credited; open = $openCount; total = $prs.Count; rate = $rate; idle = $idle; span = $span }
     }
 
-    $topLogins = $stats.GetEnumerator() |
-        Where-Object { $_.Key -ne $Author } |
-        Sort-Object { $_.Value.credited } -Descending |
-        Select-Object -First $LeaderboardTop |
-        ForEach-Object { $_.Key }
-    $authors = @($Author) + $topLogins | Select-Object -Unique
-
     # Use my classified count for this repo instead of raw closed
     $myRepoShipped = @($shipped | Where-Object { $_.repo -eq $repo }).Count
     $myRepoIndirect = @($acceptedIndirect | Where-Object { $_.repo -eq $repo }).Count
     $myRepoCredited = $myRepoShipped + $myRepoIndirect
     if ($stats.ContainsKey($Author)) {
         $stats[$Author].credited = $myRepoCredited
-        if ($stats[$Author].span -gt 0) {
-            $stats[$Author].rate = [math]::Round($stats[$Author].total / $stats[$Author].span, 1)
-        }
     }
 
     $sorted = $stats.GetEnumerator() | Sort-Object { $_.Value.credited } -Descending
@@ -171,6 +396,14 @@ foreach ($repo in $Repos) {
 
     $leaderboardRows = ""
     $totalContributors = $sorted.Count
+    $visibleStart = 1
+    $visibleEnd = [math]::Min($DefaultLeaderboardVisible, $totalContributors)
+    $collapseMode = "top"
+    if ($repoShort -eq "hermes-agent" -and $totalContributors -gt $DefaultLeaderboardVisible) {
+        $visibleStart = [math]::Max(1, [math]::Min($myRank - 4, $totalContributors - $DefaultLeaderboardVisible + 1))
+        $visibleEnd = [math]::Min($totalContributors, $visibleStart + $DefaultLeaderboardVisible - 1)
+        $collapseMode = "context"
+    }
     $rank = 1
     foreach ($entry in $sorted) {
         $s = $entry.Value
@@ -178,10 +411,15 @@ foreach ($repo in $Repos) {
         $isMe = $name -eq $Author
         $statusLabel = if ($s.idle -lt 1) { "Active" } elseif ($s.idle -lt 3) { "Recent" } elseif ($s.idle -lt 7) { "Slowing" } elseif ($s.idle -lt 14) { "Quiet" } else { "Gone" }
         $statusClass = if ($s.idle -lt 3) { "green" } elseif ($s.idle -lt 7) { "yellow" } else { "dim" }
-        $rowClass = if ($isMe) { " class=`"is-self`"" } else { "" }
+        $rowClasses = @()
+        if ($isMe) { $rowClasses += "is-self" }
+        if ($collapseMode -eq "context" -and ($rank -lt $visibleStart -or $rank -gt $visibleEnd)) { $rowClasses += "context-hidden" }
+        $rowClass = if ($rowClasses.Count -gt 0) { " class=`"$($rowClasses -join ' ')`"" } else { "" }
         $nameDisplay = if ($isMe) { "$name" } else { $name }
-        $leaderboardRows += "  <tr$rowClass><td>#$rank</td><td><a href=`"https://github.com/$name`">$nameDisplay</a></td><td>$($s.credited)</td><td>$($s.open)</td><td>$($s.rate)/d</td><td><span class=`"$statusClass`">$statusLabel</span></td></tr>`n"
-        if ($rank -eq 15 -and $totalContributors -gt 15) {
+        $leaderboardRows += "  <tr$rowClass data-rank=`"$rank`"><td>#$rank</td><td><a href=`"https://github.com/$name`">$nameDisplay</a></td><td>$($s.credited)</td><td>$($s.open)</td><td>$($s.rate)/d</td><td><span class=`"$statusClass`">$statusLabel</span></td></tr>`n"
+        if ($collapseMode -eq "top" -and $rank -eq $DefaultLeaderboardVisible -and $totalContributors -gt $DefaultLeaderboardVisible) {
+            $leaderboardRows += "  <tr class=`"expand-row`" onclick=`"toggleCollapsedTable('lb-$repoShort')`"><td colspan=`"6`">Show all $totalContributors contributors <span class=`"caret`">&#9660;</span></td></tr>`n"
+        } elseif ($collapseMode -eq "context" -and $rank -eq $visibleEnd -and $totalContributors -gt $DefaultLeaderboardVisible) {
             $leaderboardRows += "  <tr class=`"expand-row`" onclick=`"toggleCollapsedTable('lb-$repoShort')`"><td colspan=`"6`">Show all $totalContributors contributors <span class=`"caret`">&#9660;</span></td></tr>`n"
         }
         $rank++
@@ -208,8 +446,8 @@ foreach ($repo in $Repos) {
             }
         }
         $projectionsHtml = @"
-<details class="projections">
-<summary>Projections (you @ $myRate/day, rank #$myRank)</summary>
+<details class="projections" open>
+<summary>Projections (rodboev @ $myRate/day, rank #$myRank)</summary>
 <table>
   <tr><th>Contributor</th><th>Credited</th><th>Rate</th><th>Catch-up</th></tr>
 $projRows</table>
@@ -219,38 +457,22 @@ $projRows</table>
         $projectionsHtml = "<p class=`"note projections-note`">Rank #1 at $myRate/day</p>"
     }
 
-    $collapsedClass = if ($totalContributors -gt 15) { " collapsed" } else { "" }
-    $overlayHtml = if ($totalContributors -gt 15) { "<div class=`"overlay-row`" onclick=`"toggleCollapsedTable('lb-$repoShort')`">Collapse <span class=`"caret`">&#9650;</span></div>`n" } else { "" }
+    $collapsedClass = if ($totalContributors -gt $DefaultLeaderboardVisible) { " collapsed" } else { "" }
+    $overlayHtml = if ($totalContributors -gt $DefaultLeaderboardVisible) { "<div class=`"overlay-row`" onclick=`"toggleCollapsedTable('lb-$repoShort')`">Collapse <span class=`"caret`">&#9650;</span></div>`n" } else { "" }
     $isAgent = $repoShort -eq "hermes-agent"
-    if ($isAgent) {
-        $leaderboardHtml += @"
-<details>
-<summary><h2>$repoShort Leaderboard</h2></summary>
-<div class="collapsible-table leaderboard$collapsedClass" id="lb-$repoShort">
-$overlayHtml<table>
-  <thead><tr><th>Rank</th><th>Contributor</th><th>Credited</th><th>Open</th><th>Rate</th><th>Status</th></tr></thead>
-  <tbody>
-$leaderboardRows  </tbody>
-</table>
-</div>
-$projectionsHtml
-</details>
-
-"@
-    } else {
-        $leaderboardHtml += @"
+    $leaderboardHtml += @"
 <h2>$repoShort Leaderboard</h2>
-<div class="collapsible-table leaderboard$collapsedClass" id="lb-$repoShort">
-$overlayHtml<table>
+<div class="collapsible-table leaderboard$collapsedClass" id="lb-$repoShort" data-collapse-mode="$collapseMode">
+<table>
   <thead><tr><th>Rank</th><th>Contributor</th><th>Credited</th><th>Open</th><th>Rate</th><th>Status</th></tr></thead>
   <tbody>
 $leaderboardRows  </tbody>
 </table>
+$overlayHtml
 </div>
 $projectionsHtml
 
 "@
-    }
 }
 
 Write-Host "`nFetching representative PRs from $ReadmeRepo README..." -ForegroundColor DarkGray
@@ -296,47 +518,108 @@ if ($mdLines.Count -gt 0) {
 
 Write-Host "Generating HTML..." -ForegroundColor DarkGray
 
-$shippedItems = @()
-foreach ($pr in $shipped) {
-    $repoLabel = if ($pr.repo -match "hermes-agent") { "agent" } else { "webui" }
-    $shippedItems += [pscustomobject]@{
-        pr = $pr
-        repoLabel = $repoLabel
-        statusLabel = "Shipped"
-        statusClass = "tag-shipped"
-        releaseLabel = if ($pr.release) { $pr.release } else { "" }
-        sortDate = if ($pr.closedAt) { [datetime]$pr.closedAt } elseif ($pr.createdAt) { [datetime]$pr.createdAt } else { [datetime]::MinValue }
-        displayDate = if ($pr.closedAt) { Format-EasternDate $pr.closedAt } else { Format-EasternDate $pr.createdAt }
-    }
-}
-foreach ($pr in $acceptedIndirect) {
-    $repoLabel = if ($pr.repo -match "hermes-agent") { "agent" } else { "webui" }
-    $shippedItems += [pscustomobject]@{
-        pr = $pr
-        repoLabel = $repoLabel
-        statusLabel = "Indirect"
-        statusClass = "tag-accepted"
-        releaseLabel = "indirect"
-        sortDate = if ($pr.closedAt) { [datetime]$pr.closedAt } elseif ($pr.createdAt) { [datetime]$pr.createdAt } else { [datetime]::MinValue }
-        displayDate = if ($pr.closedAt) { Format-EasternDate $pr.closedAt } else { Format-EasternDate $pr.createdAt }
-    }
-}
-$shippedItems = @($shippedItems | Sort-Object sortDate -Descending)
+$allPRItems = @()
+foreach ($pr in $allPRs) {
+    $statusKey = if ($pr.classification) { $pr.classification } else { "open" }
+    $statusLabel = ""
+    $statusClass = ""
+    $releaseLabel = ""
 
-$shippedRows = ""
-$shippedCount = $shippedItems.Count
-$shipIndex = 1
-foreach ($item in $shippedItems) {
-    $pr = $item.pr
-    $shippedRows += "  <tr><td><a href=`"https://github.com/$($pr.repo)/pull/$($pr.number)`">#$($pr.number)</a></td><td>$($item.repoLabel)</td><td><span class=`"tag $($item.statusClass)`">$($item.statusLabel)</span></td><td>$($item.displayDate)</td><td>$($item.releaseLabel)</td></tr>`n"
-    if ($shipIndex -eq 15 -and $shippedCount -gt 15) {
-        $shippedRows += "  <tr class=`"expand-row`" onclick=`"toggleCollapsedTable('shipped-prs')`"><td colspan=`"5`">Show all $shippedCount shipped PRs <span class=`"caret`">&#9660;</span></td></tr>`n"
+    switch ($statusKey) {
+        "shipped" {
+            $statusLabel = "Shipped"
+            $statusClass = "tag-shipped"
+            $releaseLabel = if ($pr.release) { $pr.release } else { "" }
+        }
+        "accepted-indirect" {
+            $statusLabel = "Indirect"
+            $statusClass = "tag-accepted"
+            $releaseLabel = "indirect"
+        }
+        "lost" {
+            $statusLabel = "Lost"
+            $statusClass = "tag-rejected"
+        }
+        "withdrawn" {
+            $statusLabel = "Withdrawn"
+            $statusClass = "tag-withdrawn"
+        }
+        default {
+            $statusLabel = "Open"
+            $statusClass = "tag-open"
+        }
     }
-    $shipIndex++
+
+    $sortDate = if ($statusKey -eq "open") {
+        if ($pr.createdAt) { [datetime]$pr.createdAt } else { [datetime]::MinValue }
+    } elseif ($pr.closedAt) {
+        [datetime]$pr.closedAt
+    } elseif ($pr.createdAt) {
+        [datetime]$pr.createdAt
+    } else {
+        [datetime]::MinValue
+    }
+
+    $displayDate = if ($statusKey -eq "open") {
+        Format-EasternDate $pr.createdAt
+    } elseif ($pr.closedAt) {
+        Format-EasternDate $pr.closedAt
+    } else {
+        Format-EasternDate $pr.createdAt
+    }
+
+    $allPRItems += [pscustomobject][ordered]@{
+        number = $pr.number
+        repo = $pr.repo
+        repoLabel = if ($pr.repo -match "hermes-agent") { "agent" } else { "webui" }
+        title = $pr.title
+        statusKey = $statusKey
+        statusLabel = $statusLabel
+        statusClass = $statusClass
+        dateLabel = $displayDate
+        releaseLabel = Get-ScalarValue $releaseLabel
+        viaLabel = Get-ScalarValue $pr.viaLabel
+        viaUrl = Get-ScalarValue $pr.viaUrl
+        sortDate = $sortDate
+    }
+}
+$allPRItems = @($allPRItems | Sort-Object sortDate -Descending)
+
+$prStatusFilters = @(
+    [pscustomobject][ordered]@{ key = "all"; label = "All"; count = $allPRItems.Count },
+    [pscustomobject][ordered]@{ key = "shipped"; label = "Shipped"; count = $shipped.Count },
+    [pscustomobject][ordered]@{ key = "accepted-indirect"; label = "Indirect"; count = $acceptedIndirect.Count },
+    [pscustomobject][ordered]@{ key = "open"; label = "Open"; count = $open.Count },
+    [pscustomobject][ordered]@{ key = "lost"; label = "Lost"; count = $lost.Count },
+    [pscustomobject][ordered]@{ key = "withdrawn"; label = "Withdrawn"; count = $withdrawn.Count }
+) | Where-Object { $_.key -eq "all" -or $_.count -gt 0 }
+
+$prFilterPills = ""
+foreach ($filter in $prStatusFilters) {
+    $activeClass = if ($filter.key -eq "all") { " active" } else { "" }
+    $prFilterPills += "    <div class=`"sort-pill$activeClass`" data-status=`"$($filter.key)`">$($filter.label) ($($filter.count))</div>`n"
 }
 
-$shippedCollapsedClass = if ($shippedCount -gt 15) { " collapsed" } else { "" }
-$shippedOverlayHtml = if ($shippedCount -gt 15) { "<div class=`"overlay-row`" onclick=`"toggleCollapsedTable('shipped-prs')`">Collapse <span class=`"caret`">&#9650;</span></div>`n" } else { "" }
+$prDataJson = @(
+    $allPRItems | ForEach-Object {
+        [pscustomobject][ordered]@{
+            number = $_.number
+            url = "https://github.com/$($_.repo)/pull/$($_.number)"
+            repoLabel = $_.repoLabel
+            title = $_.title
+            statusKey = $_.statusKey
+            statusLabel = $_.statusLabel
+            statusClass = $_.statusClass
+            dateLabel = $_.dateLabel
+            releaseLabel = $_.releaseLabel
+            viaLabel = $_.viaLabel
+            viaUrl = $_.viaUrl
+        }
+    }
+) | ConvertTo-Json -Depth 4 -Compress
+$prDataJson = $prDataJson -replace '</script', '<\/script'
+$prFiltersJson = @($prStatusFilters) | ConvertTo-Json -Compress
+$prFiltersJson = $prFiltersJson -replace '</script', '<\/script'
 
 $repoSections = ""
 foreach ($repo in $Repos) {
@@ -353,8 +636,8 @@ foreach ($repo in $Repos) {
 <h2>$repoShort ($($repoPRs.Count) PRs)</h2>
 <table>
   <tr><th>Status</th><th>Count</th><th>Details</th></tr>
-  <tr><td><span class="tag tag-shipped">Shipped</span></td><td>$($repoShipped + $repoAccepted)</td><td>$repoShipped confirmed shipped$(if ($repoAccepted -gt 0) { ", $repoAccepted accepted indirectly" })</td></tr>
-  <tr><td><span class="tag tag-open">Open</span></td><td>$repoOpen</td><td>Awaiting maintainer review</td></tr>
+  <tr><td><span class="tag tag-shipped">Shipped</span></td><td>$repoShipped</td><td>Verified via merged release PR or maintainer release evidence</td></tr>
+$(if ($repoAccepted -gt 0) { "  <tr><td><span class=`"tag tag-accepted`">Indirect</span></td><td>$repoAccepted</td><td>Accepted indirectly without direct shipped classification</td></tr>`n" })  <tr><td><span class="tag tag-open">Open</span></td><td>$repoOpen</td><td>Awaiting maintainer review</td></tr>
 $(if ($repoLost -gt 0) { "  <tr><td><span class=`"tag tag-rejected`">Lost</span></td><td>$repoLost</td><td>Competing PR won</td></tr>`n" })$(if ($repoWithdrawn -gt 0) { "  <tr><td><span class=`"tag tag-withdrawn`">Withdrawn</span></td><td>$repoWithdrawn</td><td>Closed without maintainer action</td></tr>`n" })</table>
 
 "@
@@ -403,7 +686,7 @@ $html = @"
     <span class="nav-sep">/</span>
     <span class="current">Stats</span>
     <span class="nav-sep">/</span>
-    <a href="https://github.com/rodboev/pr-sweep">pr-sweep</a> <span class="private">(private)</span>
+    <a href="https://github.com/rodboev/pr-sweep">Repo</a> <span class="private">(private)</span>
   </nav>
 </div>
 <p class="subtitle">$Author contributions to nesquena/hermes-webui + NousResearch/hermes-agent</p>
@@ -441,42 +724,80 @@ $leaderboardHtml
 
 $representativeHtml
 
-<h2>Shipped PRs ($totalAccepted)</h2>
-<div class="collapsible-table shipped-prs$shippedCollapsedClass" id="shipped-prs">
-$shippedOverlayHtml<table>
-  <thead><tr><th>PR</th><th>Repo</th><th>Status</th><th>ET</th><th>Release</th></tr></thead>
-  <tbody>
-$shippedRows  </tbody>
-</table>
+<div class="landscape-row">
+  <h2>PRs</h2>
+  <div class="sort-pills" id="pr-filter-pills">
+$prFilterPills  </div>
 </div>
+<table class="targets-table pr-list-table" id="pr-list-table">
+  <thead><tr><th>PR</th><th>Repo</th><th>Status</th><th>Title</th><th>Date</th><th>Release</th><th>Via</th></tr></thead>
+  <tbody id="pr-list-body"></tbody>
+</table>
 
 <h2>Methodology</h2>
 <div class="section">
-  <p>Both repos use a cherry-pick workflow: the maintainer picks commits and closes the PR without GitHub's merge button, so <code>mergedAt</code> is always null. "Shipped" is determined from maintainer comments referencing a release version.</p>
+  <p>Both repos use a cherry-pick workflow: the maintainer picks commits and closes the PR without GitHub's merge button, so <code>mergedAt</code> is usually null on the original author PR. "Shipped" is determined first from GitHub timeline evidence such as a merged release PR closing or referencing the author PR, then from maintainer release comments when timeline evidence is absent.</p>
   <p>PRs classified as "withdrawn" had no maintainer interaction beyond automated bot reviews (Greptile). "Lost" means a competing PR addressing the same issue was accepted instead (superseded or consolidated by another contributor's PR).</p>
-  <p>"Credited" in the leaderboard counts closed + merged PRs. For $Author, this is refined to shipped only (comment-based classification). Other contributors use raw closed count as a proxy since comment scanning at scale would hit API rate limits.</p>
+  <p>The PR table is filterable by status and sorted newest-first, using close time for closed PRs and creation time for open PRs.</p>
+  <p>"Rate" is the same for everyone: PRs opened since June 1 divided by days elapsed since June 1. "Credited" is not the same for everyone: most contributors use raw closed + merged PR counts as a proxy, while $Author uses the evidence-based shipped + accepted-indirect classification from this page.</p>
 </div>
 
 <p class="footer">Generated $dateStr from GitHub API. Source: <a href="https://github.com/$ReadmeRepo">$ReadmeRepo</a></p>
 
 <script>
+var PR_FILTERS = $prFiltersJson;
+var PR_DATA = $prDataJson;
+
 function setBarWidths() {
   document.querySelectorAll('.bar-segment[data-width]').forEach(function(segment) {
     segment.style.width = segment.getAttribute('data-width') + '%';
   });
 }
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+function renderPrTable(statusKey) {
+  var tbody = document.getElementById('pr-list-body');
+  if (!tbody) return;
+  var filtered = PR_DATA.filter(function(item) {
+    return statusKey === 'all' || item.statusKey === statusKey;
+  });
+  var html = '';
+  filtered.forEach(function(item) {
+    var via = '';
+    if (item.viaLabel) {
+      via = item.viaUrl ? '<a href="' + item.viaUrl + '">' + item.viaLabel + '</a>' : item.viaLabel;
+    }
+    html += '<tr>' +
+      '<td><a href="' + item.url + '">#' + item.number + '</a></td>' +
+      '<td>' + item.repoLabel + '</td>' +
+      '<td><span class="tag ' + item.statusClass + '">' + item.statusLabel + '</span></td>' +
+      '<td class="pr-title" title="' + escapeHtml(item.title || '') + '">' + escapeHtml(item.title || '') + '</td>' +
+      '<td>' + item.dateLabel + '</td>' +
+      '<td>' + (item.releaseLabel || '') + '</td>' +
+      '<td>' + via + '</td>' +
+    '</tr>';
+  });
+  if (!html) {
+    html = '<tr><td colspan="7" class="empty-state">No PRs in this status.</td></tr>';
+  }
+  tbody.innerHTML = html;
+}
 function updateCollapsedOverlays() {
   document.querySelectorAll('.collapsible-table:not(.collapsed)').forEach(function(block) {
     var tbody = block.querySelector('tbody');
     if (!tbody) return;
-    var firstRow = tbody.querySelector('tr:not(.expand-row)');
-    if (!firstRow) return;
+    var rows = Array.from(tbody.querySelectorAll('tr:not(.expand-row)'));
+    if (!rows.length) return;
     var overlay = block.querySelector('.overlay-row');
     if (!overlay) return;
-    var rect = firstRow.getBoundingClientRect();
-    var headerTh = block.querySelector('thead th');
-    var headerBottom = headerTh ? headerTh.getBoundingClientRect().bottom : 0;
-    if (rect.bottom < headerBottom) {
+    var lastRow = rows[rows.length - 1];
+    if (lastRow.getBoundingClientRect().bottom > window.innerHeight) {
       overlay.classList.add('visible');
     } else {
       overlay.classList.remove('visible');
@@ -485,15 +806,38 @@ function updateCollapsedOverlays() {
 }
 function toggleCollapsedTable(id) {
   var el = document.getElementById(id);
-  var wasExpanded = !el.classList.contains('collapsed');
+  var wasCollapsed = el.classList.contains('collapsed');
+  var collapseMode = el.getAttribute('data-collapse-mode');
+  var anchor = null;
+  var anchorTop = 0;
+  if (collapseMode === 'context') {
+    anchor = el.querySelector('tr.is-self') || el.querySelector('tr[data-rank]');
+    if (anchor) anchorTop = anchor.getBoundingClientRect().top;
+  }
   el.classList.toggle('collapsed');
-  if (wasExpanded) el.scrollIntoView({ block: 'start', behavior: 'auto' });
+  if (collapseMode === 'context' && anchor) {
+    var newTop = anchor.getBoundingClientRect().top;
+    window.scrollBy({ top: newTop - anchorTop, behavior: 'auto' });
+  } else if (!wasCollapsed) {
+    el.scrollIntoView({ block: 'start', behavior: 'auto' });
+  }
   updateCollapsedOverlays();
 }
 function toggleLeaderboard(id) {
   toggleCollapsedTable(id);
 }
+document.getElementById('pr-filter-pills').addEventListener('click', function(e) {
+  var pill = e.target.closest('.sort-pill');
+  if (!pill) return;
+  var statusKey = pill.getAttribute('data-status');
+  document.querySelectorAll('#pr-filter-pills .sort-pill').forEach(function(p) {
+    p.classList.remove('active');
+  });
+  pill.classList.add('active');
+  renderPrTable(statusKey);
+});
 setBarWidths();
+renderPrTable('all');
 updateCollapsedOverlays();
 document.addEventListener('scroll', updateCollapsedOverlays, { passive: true });
 </script>
