@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Contribution Targets</title>
+<title>pr-targets</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="darkreader-lock" />
 <meta name="color-scheme" content="light dark" />
@@ -11,7 +11,7 @@
 <body class="pr">
 
 <div class="top-row">
-  <h1><a class="back-link" href="../"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>Contribution Targets</h1>
+  <h1><a class="back-link" href="../"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>pr-targets</h1>
   <nav class="nav-links">
     <span class="current">Targets</span>
     <span class="nav-sep">/</span>
@@ -42,7 +42,7 @@
   </div>
 </div>
 
-<table class="targets-table" id="targets-table">
+<table class="targets-table">
 <thead>
 <tr>
   <th>Project</th>
@@ -59,7 +59,7 @@
 </table>
 
 <h2>Methodology</h2>
-<div class="section">
+<div class="section methodology-section">
   <p>Targets curated by <a href="https://github.com/NousResearch/hermes-agent">Hermes Agent</a> for an AI/LLM integration specialist with React/Next.js/TypeScript/Node full-stack and Windows-native development. Composite ranking weights CI support highest, followed by domain fit, velocity, contribution culture, and size.</p>
   <p>CI support status determined by reading actual GitHub Actions workflow files. "First-class" means <code>windows-latest</code> appears in the CI matrix. "Node-native" means the project is TypeScript/Node (inherently cross-platform) but CI only runs on Ubuntu.</p>
 </div>
@@ -76,7 +76,7 @@ var DATA = [
     why: "Your pr-sweep proves you understand agent-to-GitHub better than almost anyone. Go is a new language for you but the codebase is well-structured. Contributing here has outsized visibility. CI explicitly tests on Windows.",
     created: "March 2025", contributors: 140, issues: 285,
     mergedPRs: "11 recently merged from 10 unique external contributors",
-    angle: "Add a new tool for issue dependency fetching (#950) or wiki page access (#694) — the REST endpoints exist and the tool-wiring pattern is formulaic from existing tools. Comment on the issue before starting; the stale bot is aggressive."
+    angle: "Build native issue-dependency support (<a href='https://github.com/github/github-mcp-server/issues/2391'>#2391</a>) or Projects V2 helper tooling (<a href='https://github.com/github/github-mcp-server/issues/2603'>#2603</a>) — both expand the MCP surface in ways agents actually need, with real schema and permission-design work rather than another thin endpoint wrapper."
   },
   {
     id: "mempalace", name: "MemPalace/mempalace", url: "https://github.com/MemPalace/mempalace",
@@ -86,7 +86,7 @@ var DATA = [
     why: "Hottest project in the exact niche you've already claimed. Demonstrated track record in AI memory systems via mcp-memory-service and claude-mem. Project is young enough that early contributors shape the architecture.",
     created: "April 2026", contributors: 30, issues: 569,
     mergedPRs: "7 recently merged from 7 unique external contributors",
-    angle: "The hooks.json Windows path bug (issue #1660) has an open fix PR (#1713) you can extend or supersede. If that closes, new test coverage for embedding/search edge cases is the cleanest entry — CI requires 80% coverage and new code needs tests."
+    angle: "Take an RFC-001 follow-up: make searcher.py backend-neutral with metric-aware ranking and lexical fallback (<a href='https://github.com/MemPalace/mempalace/issues/1726'>#1726</a>), or implement embedder identity enforcement (<a href='https://github.com/MemPalace/mempalace/issues/1724'>#1724</a>). Both are architectural memory-system work with real leverage."
   },
   {
     id: "continue", name: "continuedev/continue", url: "https://github.com/continuedev/continue",
@@ -96,7 +96,7 @@ var DATA = [
     why: "Full Windows CI matrix including arm64. TypeScript is your daily stack. VS Code extension architecture means the codebase is inherently cross-platform.",
     created: "", contributors: 170, issues: 0,
     mergedPRs: "Good first issues tagged, active community",
-    angle: "Issue #12568 (Turkish locale crash: toLowerCase() on an HTTP header name produces ı instead of i, which the HTTP spec rejects) is a one-liner fix — change to toLocaleLowerCase('en-US'). Labeled size:XS, no competing PR, directly reproducible."
+    angle: "Skip the Turkish-locale one-liner. Better angles are custom HTTP headers for streamable-http MCP servers (<a href='https://github.com/continuedev/continue/issues/12572'>#12572</a>) or the package-manager typosquat detector gap in terminal security (<a href='https://github.com/continuedev/continue/issues/12573'>#12573</a>) — both touch real integration and security boundaries."
   },
   {
     id: "nanobot", name: "HKUDS/nanobot", url: "https://github.com/HKUDS/nanobot",
@@ -106,7 +106,7 @@ var DATA = [
     why: "Agent runtime with WebUI, Telegram integration, memory, MCP; very close to what you do with Hermes. Growing fast. Windows CI confirmed. Primary development community is Chinese-speaking.",
     created: "February 2026", contributors: 300, issues: 0,
     mergedPRs: "12 recently merged from 6 unique external contributors",
-    angle: "Issue #4233 is labeled good first issue: surface the version number in the Settings UI. The /status endpoint already returns it; this is a pure React touch with no agent runtime knowledge required. Claim it before it's taken."
+    angle: "Go after a product or system gap: WebUI cron job management (<a href='https://github.com/HKUDS/nanobot/issues/4218'>#4218</a>), or the dream.enabled history-injection leak that still feeds full chat history into the system prompt (<a href='https://github.com/HKUDS/nanobot/issues/4242'>#4242</a>). Both are meaningfully deeper than UI polish."
   },
   {
     id: "copilotkit", name: "CopilotKit/CopilotKit", url: "https://github.com/CopilotKit/CopilotKit",
@@ -116,7 +116,7 @@ var DATA = [
     why: "React, TypeScript, Next.js, streaming, agent UIs: literally your daily stack. Best merge culture on this list. 525 open issues, tons of UI/UX work.",
     created: "June 2023", contributors: 170, issues: 525,
     mergedPRs: "18 recently merged from 5+ unique external contributors",
-    angle: "Issue #5072 (Streamdown markdown unstyled in non-Tailwind consumers — cpk: utility prefix only resolves if Tailwind scans CopilotKit's node_modules) is a React/CSS bug with a clear fix surface. Alternatively issue #5282 (headers dropped on /threads API calls) is a TypeScript fetch-layer bug."
+    angle: "Target runtime correctness, not CSS: fix useFrontendTool tools being dropped when openGenerativeUI is enabled (<a href='https://github.com/CopilotKit/CopilotKit/issues/4952'>#4952</a>), or make useHumanInTheLoop work under the default multi-route transport (<a href='https://github.com/CopilotKit/CopilotKit/issues/4953'>#4953</a>). Both hit core generative-UI and agent-runtime behavior."
   },
   {
     id: "vercel-ai", name: "vercel/ai", url: "https://github.com/vercel/ai",
@@ -126,7 +126,7 @@ var DATA = [
     why: "Next.js, TypeScript, streaming responses, React hooks for AI: your exact stack. The useChat and useCompletion hooks solve problems you've built manually.",
     created: "", contributors: 0, issues: 0,
     mergedPRs: "Vercel merges external contributions but review cycle is slower",
-    angle: "Issue #15873 (stale closure in use-chat.ts subscribeToMessages) is a React hooks bug in packages/react/src/use-chat.ts. Bar is high — write a minimal, well-tested patch with a reproduction case; almost all merged PRs are from the Vercel team."
+    angle: "Aim for concurrency or HITL internals: fix overlapping resume-streams in useChat causing activeResponse state crashes (<a href='https://github.com/vercel/ai/issues/15870'>#15870</a>), or add dynamic per-call context for tool approval requests (<a href='https://github.com/vercel/ai/issues/15733'>#15733</a>) so human-in-the-loop cards can carry richer approval state."
   },
   {
     id: "cline", name: "cline/cline", url: "https://github.com/cline/cline",
@@ -136,7 +136,7 @@ var DATA = [
     why: "Coding agent, MCP support, tool use: adjacent to your pr-sweep work. VS Code is cross-platform by design. Large codebase but the core team moves fast.",
     created: "", contributors: 0, issues: 0,
     mergedPRs: "External PRs get merged but core team moves fast",
-    angle: "Issue #4932 (plan/act toggle buttons missing role=\"radio\" and aria-checked ARIA attributes) is labeled good first issue — a pure React webview fix in webview-gui/. No pre-approval needed for accessibility bugs; features require an approved issue first."
+    angle: "Better angles are the remote-SSH terminal deadlock after commands (<a href='https://github.com/cline/cline/issues/11295'>#11295</a>) or the infinite JSON tool loop on Ollama and other non-tool streamed models (<a href='https://github.com/cline/cline/issues/11263'>#11263</a>). Both sit in the agent/runtime core, not surface-level webview cleanup."
   },
   {
     id: "crewai", name: "crewAIInc/crewAI", url: "https://github.com/crewAIInc/crewAI",
@@ -146,7 +146,7 @@ var DATA = [
     why: "Multi-agent orchestration patterns are relevant, but Python-heavy and less aligned with your TypeScript/frontend strengths.",
     created: "October 2023", contributors: 0, issues: 0,
     mergedPRs: "17 recently merged from 7 unique external contributors",
-    angle: "Issue #5886 (cache_breakpoint key injected into messages for non-Anthropic providers like Groq) has a confirmed root cause in crewai/llms/cache.py — strip_cache_breakpoint() is defined but never called outside Anthropic paths. Fix scoped to cache.py and agent_executor.py."
+    angle: "Take on execution safety rather than provider papercuts: add idempotency guards for task retries so tools do not re-send payments, emails, or trades (<a href='https://github.com/crewAIInc/crewAI/issues/5802'>#5802</a>), or build memory write guards to prevent cross-agent memory poisoning in shared crews (<a href='https://github.com/crewAIInc/crewAI/issues/6043'>#6043</a>)."
   },
   {
     id: "smolagents", name: "huggingface/smolagents", url: "https://github.com/huggingface/smolagents",
@@ -156,7 +156,7 @@ var DATA = [
     why: "Interesting agent architecture but Python-centric. HuggingFace has good contribution culture.",
     created: "December 2024", contributors: 0, issues: 0,
     mergedPRs: "8 merged PRs",
-    angle: "Issue #2339 (PEP 484 type annotations in tools.py) — maintainer explicitly invited contributors to scope a file range and check in first, which is an open door. Comment on the issue, claim a file scope, and proceed. HuggingFace turns around bug fixes quickly."
+    angle: "Go for executor and architecture work: harden LocalPythonExecutor with real defense-in-depth (<a href='https://github.com/huggingface/smolagents/issues/2203'>#2203</a>), or add parallel execution mode so tool latency overlaps agent generation (<a href='https://github.com/huggingface/smolagents/issues/2248'>#2248</a>). Those are substantive contributions to the core runtime."
   },
   {
     id: "genericagent", name: "lsdefine/GenericAgent", url: "https://github.com/lsdefine/GenericAgent",
@@ -166,7 +166,7 @@ var DATA = [
     why: "The most explicit agent loop architecture on this list. Self-directing, self-improving, skill-crystallizing — this is the execution layer that memory projects assume but don't provide. README has 10 Windows mentions with PowerShell install scripts; TUI has known Windows rendering issues worth fixing.",
     created: "January 2026", contributors: 0, issues: 0,
     mergedPRs: "10 merged from 4 external authors",
-    angle: "Repro and fix a TUI Windows rendering bug (search open issues or file one with repro steps from a Windows machine). Follow with a .github/workflows/ci.yml adding ubuntu-latest + windows-latest smoke tests — high-visibility for a solo Windows-native maintainer who currently has zero CI."
+    angle: "The strongest angles are project-context UX (support --cwd, /cd, @file, and project-local GA.md) (<a href='https://github.com/lsdefine/GenericAgent/issues/413'>#413</a>), or Goal Hive resume hardening so interrupted runs do not inherit stale budget windows from goal_state.json (<a href='https://github.com/lsdefine/GenericAgent/issues/536'>#536</a>)."
   },
   {
     id: "mem0", name: "mem0ai/mem0", url: "https://github.com/mem0ai/mem0",
@@ -176,7 +176,7 @@ var DATA = [
     why: "AI memory is your domain, but you're already in this niche via mcp-memory-service and claude-mem. Contributing here means competing with your own projects.",
     created: "June 2023", contributors: 0, issues: 0,
     mergedPRs: "Active but large codebase",
-    angle: "Issue #5413 (add MEM0_BASE_URL support in the mem0-plugin for self-hosted users) maps directly to your Claude Code workflow knowledge. Issue #5361 (one-line fix: S3 index name separator in mem0/memory/main.py:L394) is the fastest possible merge."
+    angle: "Skip the self-hosted convenience knobs. Better work is fully pluggable OSS storage backends (<a href='https://github.com/mem0ai/mem0/issues/5354'>#5354</a>), or fixing silent memory loss when batch embedding partially fails in the v3 add pipeline (<a href='https://github.com/mem0ai/mem0/issues/5245'>#5245</a>). Both materially affect the memory core."
   },
   {
     id: "mastra", name: "mastra-ai/mastra", url: "https://github.com/mastra-ai/mastra",
@@ -186,7 +186,7 @@ var DATA = [
     why: "Fills the loop infrastructure gap directly: DurableAgent runs each LLM and tool call as a traceable step on an evented workflow engine. Suspend/resume survives server restarts; HITL pause/resume is first-class. From the Gatsby/Netlify team with 470 contributors, confirmed Windows CI, and Windows-specific fixes actively merged. TypeScript is your daily stack.",
     created: "August 2024", contributors: 470, issues: 0,
     mergedPRs: "470 contributors; Windows path and shell-spawning fixes confirmed merged; active PR velocity",
-    angle: "Issue #17653 (requestContext warning always printed even when it works correctly) is labeled complexity:low with a paired PR — if that stalls, the fix is in client-sdks/ai-sdk/src/workflow-route.ts. The project labels all issues by complexity, making target selection mechanical."
+    angle: "The high-signal work is in durable-agent internals: fix duplicate background tool dispatches when tool calls are stripped and reissued (<a href='https://github.com/mastra-ai/mastra/issues/17659'>#17659</a>), or tackle 50MB mastra_workflow_snapshot growth under HITL suspend/resume (<a href='https://github.com/mastra-ai/mastra/issues/17284'>#17284</a>)."
   },
   {
     id: "browser-use", name: "browser-use/browser-use", url: "https://github.com/browser-use/browser-use",
@@ -196,7 +196,7 @@ var DATA = [
     why: "Browser automation for agents. Adjacent to web development background but not core.",
     created: "October 2024", contributors: 0, issues: 0,
     mergedPRs: "Large and fast-moving",
-    angle: "Issue #3912 (Windows: os.kill(pid, 0) fails in browser_use/skill_cli/utils.py line 43) — replace with psutil.pid_exists(). Direct Windows-native expertise, underserved by the macOS/Linux core team. Clear root cause, clear fix, no competing PR."
+    angle: "Better than the Windows os.kill papercut: add MCP server trust verification before browser tool execution (<a href='https://github.com/browser-use/browser-use/issues/4903'>#4903</a>), or build session replay and task audit trails for agent runs (<a href='https://github.com/browser-use/browser-use/issues/4860'>#4860</a>). Both deepen the platform rather than patching one branch."
   },
   {
     id: "autogen", name: "microsoft/autogen", url: "https://github.com/microsoft/autogen",
@@ -206,7 +206,7 @@ var DATA = [
     why: "Multi-agent patterns but Microsoft bureaucracy for external contributors. Appears in a lull (last push April 15, 2026).",
     created: "August 2023", contributors: 0, issues: 0,
     mergedPRs: "Microsoft review process",
-    angle: "Issue #3632 (help wanted, medium) asks for exponential backoff retry logic for transient API errors in the chat completion client. The strict:false tool definition leak (#7782) is smaller scope — strict propagates to non-OpenAI providers that reject it."
+    angle: "If you touch AutoGen at all, make it something structural: cross-agent shared memory scopes with on-demand capsule recall (<a href='https://github.com/microsoft/autogen/issues/7748'>#7748</a>), or a governance extension for policy enforcement and agent identity (<a href='https://github.com/microsoft/autogen/issues/7613'>#7613</a>). Those are more worth the latency than small validation fixes."
   },
   {
     id: "hermes-agent", name: "NousResearch/hermes-agent", url: "https://github.com/NousResearch/hermes-agent",

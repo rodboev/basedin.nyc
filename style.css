@@ -796,7 +796,16 @@ body.pr .section {
 }
 
 body.pr .section p + p {
-  margin-top: 0.4rem;
+  margin-top: 0.95rem;
+}
+
+body.pr .methodology-section {
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+body.pr .methodology-section p {
+  margin-top: 0;
 }
 
 body.pr .card {
