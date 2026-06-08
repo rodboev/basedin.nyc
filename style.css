@@ -205,6 +205,7 @@ body.projects h1 .back {
   margin: 0;
   position: relative;
   top: -1.5pt;
+  margin-right: 10pt;
 }
 
 @media (min-width: 1136px) {
