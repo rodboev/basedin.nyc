@@ -129,7 +129,7 @@ body.home > .home-links {
 body.home > .home-links .home-links-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 body.home > .home-links .btn {
   margin-top: 0;
@@ -159,6 +159,21 @@ body.home > .home-links .btn.mixed-case {
   body.home a.preview > span > span:first-child {
     font-size: 2.4vh;
     transform: translate(0, min(0.85vh, 0.75vw));
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1136px) {
+  body.home {
+    --home-preview-height: min(72vh, calc(40vw * 11 / 8.5));
+    --home-preview-width: min(calc(var(--home-preview-height) * 8.5 / 11), 40vw);
+    gap: clamp(1.5rem, 2.5vw, 2.25rem);
+  }
+  body.home a.preview > span > span:first-child {
+    font-size: 2.25vh;
+  }
+  body.home > .home-links,
+  body.home > .home-links .home-links-row {
+    gap: 0.5rem;
   }
 }
 
@@ -234,6 +249,7 @@ body.projects h1 .back {
   }
   body.home > .home-links .home-links-row {
     display: contents;
+    gap: 0.75rem;
   }
 }
 
