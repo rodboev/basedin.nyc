@@ -6,3 +6,4 @@ composer.phar
 # composer.lock
 pdfjs-dist/
 ~$*.docx
+__pycache__/

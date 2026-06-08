@@ -41,6 +41,16 @@ function Format-EasternDate([string]$IsoDate) {
     }
 }
 
+function Get-PullRequestEffectiveIsoDate([object]$PullRequest, [string]$StatusKey) {
+    if ($StatusKey -eq "open") {
+        return $PullRequest.createdAt
+    }
+    if ($PullRequest.closedAt) {
+        return $PullRequest.closedAt
+    }
+    return $PullRequest.createdAt
+}
+
 function Get-ReleaseTag([string]$Text) {
     if (-not $Text) { return "" }
     if ($Text -match "v\d+\.\d+\.\d+") { return $Matches[0] }
@@ -1036,23 +1046,9 @@ foreach ($pr in $allPRs) {
         }
     }
 
-    $sortDate = if ($statusKey -eq "open") {
-        if ($pr.createdAt) { [datetime]$pr.createdAt } else { [datetime]::MinValue }
-    } elseif ($pr.closedAt) {
-        [datetime]$pr.closedAt
-    } elseif ($pr.createdAt) {
-        [datetime]$pr.createdAt
-    } else {
-        [datetime]::MinValue
-    }
-
-    $displayDate = if ($statusKey -eq "open") {
-        Format-EasternDate $pr.createdAt
-    } elseif ($pr.closedAt) {
-        Format-EasternDate $pr.closedAt
-    } else {
-        Format-EasternDate $pr.createdAt
-    }
+    $effectiveDate = Get-PullRequestEffectiveIsoDate -PullRequest $pr -StatusKey $statusKey
+    $sortDate = if ($effectiveDate) { [datetime]$effectiveDate } else { [datetime]::MinValue }
+    $displayDate = Format-EasternDate $effectiveDate
 
     $allPRItems += [pscustomobject][ordered]@{
         number = $pr.number
@@ -1134,13 +1130,16 @@ $dateStr = $now.ToString("MMMM d, yyyy")
 # Calculate time span from earliest to latest PR
 $allDates = @()
 foreach ($pr in $allPRs) {
-    if ($pr.createdAt) { try { $allDates += [datetime]$pr.createdAt } catch {} }
+    $statusKey = if ($pr.classification) { $pr.classification } else { "open" }
+    $effectiveDate = Get-PullRequestEffectiveIsoDate -PullRequest $pr -StatusKey $statusKey
+    if ($effectiveDate) { try { $allDates += [datetime]$effectiveDate } catch {} }
 }
 $allDates = @($allDates | Sort-Object)
 if ($allDates.Count -ge 2) {
-    $spanDays = [math]::Ceiling(($allDates[-1] - $allDates[0]).TotalDays)
-    $timeSpan = "$spanDays days"
-    $timeRange = "$($allDates[0].ToString('MMMM d'))-$($allDates[-1].ToString('MMMM d, yyyy'))"
+    $spanDays = [math]::Floor(($allDates[-1] - $allDates[0]).TotalDays)
+    $timeSpan = if ($spanDays -eq 1) { "1 day" } else { "$spanDays days" }
+    $displayEndDate = $allDates[0].AddDays($spanDays)
+    $timeRange = "$($allDates[0].ToString('MMMM d'))-$($displayEndDate.ToString('MMMM d, yyyy'))"
 } else {
     $timeSpan = "N/A"
     $timeRange = ""
@@ -1157,7 +1156,7 @@ $html = @"
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>pr-sweeps Stats</title>
+<title>pr-stats</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="darkreader-lock" />
 <meta name="color-scheme" content="light dark" />
@@ -1166,7 +1165,7 @@ $html = @"
 <body class="pr">
 
 <div class="top-row">
-  <h1><a class="back-link" href="../"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>pr-sweeps Stats</h1>
+  <h1><a class="back-link" href="../"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>pr-stats</h1>
   <nav class="nav-links">
     <a href="../pr-targets/">Targets</a>
     <span class="nav-sep">/</span>

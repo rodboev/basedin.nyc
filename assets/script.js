@@ -17,6 +17,24 @@ if (document.body.classList.contains('home')) {
   var links = Array.prototype.slice.call(
     document.querySelectorAll('a.preview')
   );
+  var isLocalhost = document.location.hostname === 'localhost';
+  var homeLinks = document.querySelector('.home-links');
+
+  if (isLocalhost && homeLinks) {
+    var localLinksRow = document.createElement('div');
+    localLinksRow.className = 'home-links-row';
+    [
+      { href: 'docs/', label: 'Docs' },
+      { href: 'https://github.com/rodboev/pr-sweep', label: 'Repo' }
+    ].forEach(function(linkData) {
+      var link = document.createElement('a');
+      link.className = 'btn';
+      link.href = linkData.href;
+      link.textContent = linkData.label;
+      localLinksRow.appendChild(link);
+    });
+    homeLinks.appendChild(localLinksRow);
+  }
 
   links.forEach(function(link) {
     var filename = link.getAttribute('href').replace(/\/$/, '') + '.pdf';
