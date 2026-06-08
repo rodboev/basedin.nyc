@@ -253,23 +253,57 @@ body.projects {
   padding-bottom: 3rem;
 }
 
+body.projects .top-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.4rem;
+}
+
 body.projects h1 {
   position: relative;
-  font-family: Figtree, sans-serif;
-  font-size: 1.1em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.35);
-  border-bottom: 0.05em solid rgba(255, 255, 255, 0.12);
-  margin: 0 0 1.2em -0.5em;
-  padding: 0 0 0.3em 0.5em;
-  font-weight: 550;
-  letter-spacing: -0.01em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.88);
+  margin: 0;
+  letter-spacing: 0;
+  text-transform: none;
 }
-body.projects h1 small {
-  text-transform: initial;
-  font-weight: initial;
-  letter-spacing: initial;
-  margin-left: 0.15em;
+
+body.projects .nav-links {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-left: auto;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 0.92rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+body.projects .nav-links a,
+body.projects .nav-links .current {
+  color: rgba(255, 255, 255, 0.56);
+}
+
+body.projects .nav-links a:hover {
+  color: rgba(255, 255, 255, 0.88);
+  text-decoration: none;
+}
+
+body.projects .nav-links .current {
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 600;
+}
+
+body.projects .nav-links .nav-sep {
+  color: rgba(255, 255, 255, 0.22);
 }
 
 body.projects a {
@@ -287,8 +321,9 @@ body.projects a {
   border-bottom: none;
   padding-bottom: 0;
 }
-.project:first-child {
-  padding-top: 0;
+.project:first-of-type {
+  padding-top: 2em;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 .project .btn {
   margin-top: 0.8em;
@@ -428,11 +463,23 @@ body.preview .btn span {
     color: #1a1a1a;
   }
   body.projects h1 {
-    color: #888;
-    border-bottom-color: #888;
+    color: #1a1a1a;
+  }
+  body.projects .nav-links a,
+  body.projects .nav-links .current {
+    color: #777;
+  }
+  body.projects .nav-links a:hover {
+    color: #1a1a1a;
+  }
+  body.projects .nav-links .nav-sep {
+    color: #c6c2bc;
   }
   .project {
     border-bottom-color: #e0deda;
+  }
+  .project:first-of-type {
+    border-top-color: #e0deda;
   }
   .thumb {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
@@ -463,6 +510,9 @@ body.preview .btn span {
 }
 
 @media (max-width: 620px) {
+  body.projects .nav-links {
+    margin-left: 0;
+  }
   .project {
     flex-direction: column;
     gap: 0.8em;
@@ -1055,6 +1105,7 @@ body.pr .nav-links .private {
   font-size: 0.75rem;
   color: var(--pr-dim);
   font-style: italic;
+  margin-left: -0.3rem;
 }
 
 body.pr .nav-sep {
@@ -1345,6 +1396,7 @@ body.pr .pr-list-table td:nth-child(6) a {
 }
 
 body.pr .pr-title-row td {
+  border-top: none;
   padding-top: 0;
   padding-bottom: 0.55rem;
 }

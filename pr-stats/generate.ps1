@@ -16,8 +16,9 @@ $shippedPatterns = @("Shipped", "shipped", "cherry-picked", "merged-via", "Salva
 $acceptedPatterns = @()
 $duplicatePatterns = @("Duplicate", "duplicate")
 $lostPatterns = @("Superseded by", "superseded by", "consolidated", "Consolidating")
+$withdrawnPattern = '(?i)\bwithdraw(?:ing|n)?\b'
 $DefaultLeaderboardVisible = 10
-$ClassificationCacheVersion = 1
+$ClassificationCacheVersion = 2
 
 $EasternTimeZone = [System.TimeZoneInfo]::FindSystemTimeZoneById("Eastern Standard Time")
 $script:PullRequestStateCache = @{}
@@ -173,12 +174,73 @@ function Get-PullRequestState([string]$Repo, [int]$Number) {
     if ($script:PullRequestStateCache.ContainsKey($cacheKey)) {
         return $script:PullRequestStateCache[$cacheKey]
     }
-    $result = gh pr view $Number --repo $Repo --json number,state,mergedAt,title,url 2>$null | ConvertFrom-Json
+    $result = gh pr view $Number --repo $Repo --json number,state,mergedAt,title,url,author,body 2>$null | ConvertFrom-Json
     $script:PullRequestStateCache[$cacheKey] = $result
     return $result
 }
 
-function Get-ReferencedMergedPullRequest([string]$Repo, [string]$Text) {
+function Get-NonBotCommentText([object]$Evidence) {
+    return (@($Evidence.comments.nodes) |
+        Where-Object { $_.author.login -ne "greptile-apps" } |
+        ForEach-Object { $_.body }) -join "`n---`n"
+}
+
+function Test-IsAuthorWithdrawnEvidence([object]$PullRequest, [object]$Evidence) {
+    $authorLogin = Get-ScalarValue $PullRequest.author.login
+    if (-not $authorLogin) { $authorLogin = $Author }
+    if (-not $authorLogin) { return $false }
+
+    foreach ($comment in @($Evidence.comments.nodes)) {
+        if ($comment.author.login -ne $authorLogin) { continue }
+        if ([string]$comment.body -match $withdrawnPattern) {
+            return $true
+        }
+    }
+
+    return $false
+}
+
+function Get-PullRequestReferenceText([string]$Repo, [int]$Number) {
+    $details = Get-PullRequestState -Repo $Repo -Number $Number
+    if (-not $details) { return "" }
+
+    $evidence = Get-PullRequestEvidence -Repo $Repo -Number $Number
+    return @(
+        (Get-ScalarValue $details.title),
+        (Get-ScalarValue $details.body),
+        (Get-NonBotCommentText -Evidence $evidence)
+    ) -join "`n---`n"
+}
+
+function Test-IsCreditedMergedSibling([string]$Repo, [object]$OriginalPr, [object]$MergedPr) {
+    if (-not $MergedPr) { return $false }
+
+    $originalAuthor = Get-ScalarValue $OriginalPr.author.login
+    if (-not $originalAuthor) { $originalAuthor = $Author }
+    $mergedAuthor = Get-ScalarValue $MergedPr.author.login
+    if ($originalAuthor -and $mergedAuthor -and $originalAuthor -eq $mergedAuthor) {
+        return $true
+    }
+
+    $referenceText = Get-PullRequestReferenceText -Repo $Repo -Number $MergedPr.number
+    if (-not $referenceText) { return $false }
+
+    $referenceNeedles = @(
+        "#$($OriginalPr.number)",
+        "https://github.com/$Repo/pull/$($OriginalPr.number)",
+        $(if ($originalAuthor) { "@$originalAuthor" } else { "" })
+    ) | Where-Object { $_ }
+
+    foreach ($needle in $referenceNeedles) {
+        if ($referenceText -match [regex]::Escape($needle)) {
+            return $true
+        }
+    }
+
+    return $false
+}
+
+function Get-ReferencedMergedPullRequest([string]$Repo, [object]$OriginalPr, [string]$Text) {
     if (-not $Text) { return $null }
     $matches = [regex]::Matches($Text, '#(\d+)')
     $seen = @{}
@@ -187,7 +249,7 @@ function Get-ReferencedMergedPullRequest([string]$Repo, [string]$Text) {
         if ($seen.ContainsKey($num)) { continue }
         $seen[$num] = $true
         $pr = Get-PullRequestState -Repo $Repo -Number $num
-        if ($pr -and ($pr.state -eq "MERGED" -or $pr.mergedAt)) {
+        if ($pr -and ($pr.state -eq "MERGED" -or $pr.mergedAt) -and (Test-IsCreditedMergedSibling -Repo $Repo -OriginalPr $OriginalPr -MergedPr $pr)) {
             return $pr
         }
     }
@@ -651,7 +713,7 @@ $allPRs = @()
 foreach ($repo in $Repos) {
     $repoShort = ($repo -split '/')[-1]
     Write-Host "  $repo..." -ForegroundColor DarkGray
-    $prs = gh pr list --repo $repo --author $Author --state all --limit 500 --json number,state,title,createdAt,closedAt,mergedAt,headRefName 2>$null | ConvertFrom-Json
+    $prs = gh pr list --repo $repo --author $Author --state all --limit 500 --json number,state,title,createdAt,closedAt,mergedAt,headRefName,author 2>$null | ConvertFrom-Json
     foreach ($pr in $prs) {
         $pr | Add-Member -NotePropertyName repo -NotePropertyValue $repo -Force
         $pr | Add-Member -NotePropertyName repoShort -NotePropertyValue $repoShort -Force
@@ -712,7 +774,7 @@ foreach ($pr in $closed) {
     }
 
     $raw = Get-PullRequestEvidence -Repo $pr.repo -Number $pr.number
-    $comments = ($raw.comments.nodes | Where-Object { $_.author.login -ne "greptile-apps" } | ForEach-Object { $_.body }) -join "`n---`n"
+    $comments = Get-NonBotCommentText -Evidence $raw
     $timelineNodes = @($raw.timelineItems.nodes)
     $closedEvent = @($timelineNodes | Where-Object { $_.__typename -eq "ClosedEvent" }) | Select-Object -First 1
     $mergedReleaseCloser = $null
@@ -774,9 +836,11 @@ foreach ($pr in $closed) {
     $isLost = $false
     foreach ($p in $lostPatterns) { if ($comments -match [regex]::Escape($p)) { $isLost = $true; break } }
 
+    $isAuthorWithdrawn = Test-IsAuthorWithdrawnEvidence -PullRequest $pr -Evidence $raw
+
     $acceptedSibling = $null
     if ($isDuplicate -or $isLost) {
-        $acceptedSibling = Get-ReferencedMergedPullRequest -Repo $pr.repo -Text $comments
+        $acceptedSibling = Get-ReferencedMergedPullRequest -Repo $pr.repo -OriginalPr $pr -Text $comments
     }
 
     if ($isDirectMerged -or $isTimelineShipped -or $isShipped) {
@@ -814,6 +878,11 @@ foreach ($pr in $closed) {
         }
         $evidenceKind = if ($isDirectMerged) { "direct-merge" } elseif ($isTimelineShipped) { "timeline" } else { "comment" }
         Set-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl -EvidenceKind $evidenceKind
+    } elseif ($isAuthorWithdrawn) {
+        $pr.classification = "withdrawn"
+        $withdrawn += $pr
+        Write-Host " withdrawn (author withdrew)" -ForegroundColor DarkGray
+        Set-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl -EvidenceKind "author-withdrawn"
     } elseif ($isAccepted -or $acceptedSibling) {
         $pr.classification = "accepted-indirect"
         $acceptedIndirect += $pr
@@ -844,8 +913,9 @@ foreach ($pr in $closed) {
 }
 
 $totalAccepted = $shipped.Count + $acceptedIndirect.Count
-$totalResolved = $totalAccepted + $lost.Count
-$acceptanceRate = if ($totalResolved -gt 0) { [math]::Round(($totalAccepted / $totalResolved) * 100) } else { "N/A" }
+$totalLostWithdrawn = $lost.Count + $withdrawn.Count
+$totalClosed = $totalAccepted + $lost.Count + $withdrawn.Count
+$acceptanceRate = if ($totalClosed -gt 0) { [math]::Round(($totalAccepted / $totalClosed) * 100) } else { "N/A" }
 
 # Build per-repo leaderboards
 Write-Host "`nBuilding leaderboards..." -ForegroundColor DarkGray
@@ -1016,20 +1086,21 @@ Write-Host "Generating HTML..." -ForegroundColor DarkGray
 
 $allPRItems = @()
 foreach ($pr in $allPRs) {
-    $statusKey = if ($pr.classification) { $pr.classification } else { "open" }
+    $classificationKey = if ($pr.classification) { $pr.classification } else { "open" }
+    $statusKey = if ($classificationKey -eq "accepted-indirect") { "shipped" } else { $classificationKey }
     $statusLabel = ""
     $statusClass = ""
     $releaseLabel = ""
 
-    switch ($statusKey) {
+    switch ($classificationKey) {
         "shipped" {
             $statusLabel = "Shipped"
             $statusClass = "tag-shipped"
             $releaseLabel = if ($pr.release) { $pr.release } else { "" }
         }
         "accepted-indirect" {
-            $statusLabel = "Indirect"
-            $statusClass = "tag-accepted"
+            $statusLabel = "Shipped"
+            $statusClass = "tag-shipped"
             $releaseLabel = "indirect"
         }
         "lost" {
@@ -1069,8 +1140,7 @@ $allPRItems = @($allPRItems | Sort-Object sortDate -Descending)
 
 $prStatusFilters = @(
     [pscustomobject][ordered]@{ key = "all"; label = "All"; count = $allPRItems.Count },
-    [pscustomobject][ordered]@{ key = "shipped"; label = "Shipped"; count = $shipped.Count },
-    [pscustomobject][ordered]@{ key = "accepted-indirect"; label = "Indirect"; count = $acceptedIndirect.Count },
+    [pscustomobject][ordered]@{ key = "shipped"; label = "Shipped"; count = $totalAccepted },
     [pscustomobject][ordered]@{ key = "open"; label = "Open"; count = $open.Count },
     [pscustomobject][ordered]@{ key = "lost"; label = "Lost"; count = $lost.Count },
     [pscustomobject][ordered]@{ key = "withdrawn"; label = "Withdrawn"; count = $withdrawn.Count }
@@ -1108,8 +1178,7 @@ foreach ($repo in $Repos) {
     $repoShort = ($repo -split '/')[-1]
     $repoPRs = @($allPRs | Where-Object { $_.repo -eq $repo })
     $repoOpen = @($repoPRs | Where-Object { $_.state -eq "OPEN" }).Count
-    $repoShipped = @($shipped | Where-Object { $_.repo -eq $repo }).Count
-    $repoAccepted = @($acceptedIndirect | Where-Object { $_.repo -eq $repo }).Count
+    $repoShipped = @($shipped | Where-Object { $_.repo -eq $repo }).Count + @($acceptedIndirect | Where-Object { $_.repo -eq $repo }).Count
     $repoLost = @($lost | Where-Object { $_.repo -eq $repo }).Count
     $repoWithdrawn = @($withdrawn | Where-Object { $_.repo -eq $repo }).Count
     $repoRejected = @($rejected | Where-Object { $_.repo -eq $repo }).Count
@@ -1118,8 +1187,8 @@ foreach ($repo in $Repos) {
 <h2>$repoShort ($($repoPRs.Count) PRs)</h2>
 <table>
   <tr><th>Status</th><th>Count</th><th>Details</th></tr>
-  <tr><td><span class="tag tag-shipped">Shipped</span></td><td>$repoShipped</td><td>Verified via merged release PR or maintainer release evidence</td></tr>
-$(if ($repoAccepted -gt 0) { "  <tr><td><span class=`"tag tag-accepted`">Indirect</span></td><td>$repoAccepted</td><td>Accepted indirectly without direct shipped classification</td></tr>`n" })  <tr><td><span class="tag tag-open">Open</span></td><td>$repoOpen</td><td>Awaiting maintainer review</td></tr>
+  <tr><td><span class="tag tag-shipped">Shipped</span></td><td>$repoShipped</td><td>Verified via merged release PR, maintainer release evidence, or indirect accepted sibling</td></tr>
+  <tr><td><span class="tag tag-open">Open</span></td><td>$repoOpen</td><td>Awaiting maintainer review</td></tr>
 $(if ($repoLost -gt 0) { "  <tr><td><span class=`"tag tag-rejected`">Lost</span></td><td>$repoLost</td><td>Competing PR won</td></tr>`n" })$(if ($repoWithdrawn -gt 0) { "  <tr><td><span class=`"tag tag-withdrawn`">Withdrawn</span></td><td>$repoWithdrawn</td><td>Closed without maintainer action</td></tr>`n" })</table>
 
 "@
@@ -1145,8 +1214,7 @@ if ($allDates.Count -ge 2) {
     $timeRange = ""
 }
 
-$barShipped = [math]::Round(($shipped.Count / $allPRs.Count) * 100, 1)
-$barAccepted = [math]::Round(($acceptedIndirect.Count / $allPRs.Count) * 100, 1)
+$barShipped = [math]::Round(($totalAccepted / $allPRs.Count) * 100, 1)
 $barLost = [math]::Round(($lost.Count / $allPRs.Count) * 100, 1)
 $barWithdrawn = [math]::Round(($withdrawn.Count / $allPRs.Count) * 100, 1)
 $barOpen = [math]::Round(($open.Count / $allPRs.Count) * 100, 1)
@@ -1154,22 +1222,31 @@ $barOpen = [math]::Round(($open.Count / $allPRs.Count) * 100, 1)
 $html = @"
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<title>pr-stats</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="darkreader-lock" />
-<meta name="color-scheme" content="light dark" />
-<link rel="stylesheet" href="../style.css?v=20260607a">
-</head>
+  <head>
+    <meta charset="utf-8">
+    <title>Open Source Contributions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="darkreader-lock" />
+    <meta name="description" content="150+ PRs across OSS AI projects: provider infrastructure, agent UX, reliability, streaming, and release-linked production work." />
+    <meta property="og:title" content="Open Source Contributions">
+    <meta property="og:description" content="150+ PRs across OSS AI projects: provider infrastructure, agent UX, reliability, streaming, and release-linked production work.">
+    <meta property="og:image" content="https://basedin.nyc/pr-stats/thumb.jpg">
+    <meta property="og:url" content="https://basedin.nyc/pr-stats">
+    <meta property="og:type" content="website">
+    <meta name="darkreader-lock" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="../style.css?v=20260608a">
+  </head>
 <body class="pr">
 
 <div class="top-row">
-  <h1><a class="back-link" href="../"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>pr-stats</h1>
+  <h1><a class="back-link" href="../"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>Open Source Contributions</h1>
   <nav class="nav-links">
-    <a href="../pr-targets/">Targets</a>
+    <a href="../projects/">Projects</a>
     <span class="nav-sep">/</span>
     <span class="current">Stats</span>
+    <span class="nav-sep">/</span>
+    <a href="../pr-targets/">Targets</a>
     <span class="nav-sep">/</span>
     <a href="https://github.com/rodboev/pr-sweep">Repo</a> <span class="private">(private)</span>
   </nav>
@@ -1180,25 +1257,24 @@ $html = @"
   <div class="stat-card"><div class="number">$($allPRs.Count)</div><div class="label">Total PRs</div></div>
   <div class="stat-card"><div class="number green">$totalAccepted</div><div class="label">Shipped</div></div>
   <div class="stat-card"><div class="number yellow">$($open.Count)</div><div class="label">Open</div></div>
-  <div class="stat-card"><div class="number">$($lost.Count)</div><div class="label">Lost</div></div>
+  <div class="stat-card"><div class="number">$totalLostWithdrawn</div><div class="label">Lost/Withdrawn</div></div>
 </div>
 <div class="grid">
-  <div class="stat-card"><div class="number green">${acceptanceRate}%</div><div class="label">Acceptance rate on resolved PRs ($totalAccepted shipped, $($lost.Count) lost out of $totalResolved resolved)</div></div>
+  <div class="stat-card"><div class="number green">${acceptanceRate}%</div><div class="label">Acceptance rate ($totalAccepted shipped, $totalLostWithdrawn lost/withdrawn out of $totalClosed closed PRs)</div></div>
   <div class="stat-card"><div class="number blue">$timeSpan</div><div class="label">Time span ($timeRange)</div></div>
 </div>
 
 <h2>Breakdown</h2>
 
 <div class="bar-container">
-  <div class="bar-segment bar-shipped" data-width="${barShipped}"$(if ($barShipped -gt 4) { " title=`"$($shipped.Count)`"" })>$(if ($barShipped -gt 4) { $shipped.Count })</div>
-  <div class="bar-segment bar-accepted" data-width="${barAccepted}">$(if ($barAccepted -gt 4) { $acceptedIndirect.Count })</div>
+  <div class="bar-segment bar-shipped" data-width="${barShipped}"$(if ($barShipped -gt 4) { " title=`"$totalAccepted`"" })>$(if ($barShipped -gt 4) { $totalAccepted })</div>
   <div class="bar-segment bar-lost" data-width="${barLost}">$(if ($barLost -gt 4) { $lost.Count })</div>
   <div class="bar-segment bar-withdrawn" data-width="${barWithdrawn}">$(if ($barWithdrawn -gt 4) { $withdrawn.Count })</div>
   <div class="bar-segment bar-open" data-width="${barOpen}" title="$($open.Count)">$($open.Count)</div>
 </div>
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot legend-dot-shipped"></div> Shipped ($($shipped.Count))</div>
-$(if ($acceptedIndirect.Count -gt 0) { "  <div class=`"legend-item`"><div class=`"legend-dot legend-dot-accepted`"></div> Accepted indirectly ($($acceptedIndirect.Count))</div>`n" })  <div class="legend-item"><div class="legend-dot legend-dot-lost"></div> Lost ($($lost.Count))</div>
+  <div class="legend-item"><div class="legend-dot legend-dot-shipped"></div> Shipped ($totalAccepted)</div>
+  <div class="legend-item"><div class="legend-dot legend-dot-lost"></div> Lost ($($lost.Count))</div>
   <div class="legend-item"><div class="legend-dot legend-dot-withdrawn"></div> Withdrawn ($($withdrawn.Count))</div>
   <div class="legend-item"><div class="legend-dot legend-dot-open"></div> Open ($($open.Count))</div>
 </div>
@@ -1222,9 +1298,9 @@ $prFilterPills  </div>
 <h2>Methodology</h2>
 <div class="section">
   <p>Both repos use a cherry-pick workflow: the maintainer picks commits and closes the PR without GitHub's merge button, so <code>mergedAt</code> is usually null on the original author PR. "Shipped" is determined first from GitHub timeline evidence such as a merged release PR closing or referencing the author PR, then from maintainer release comments when timeline evidence is absent.</p>
-  <p>PRs classified as "withdrawn" had no maintainer interaction beyond automated bot reviews (Greptile). "Lost" means a competing PR addressing the same issue was accepted instead (superseded or consolidated by another contributor's PR).</p>
+  <p>PRs classified as "withdrawn" were either explicitly withdrawn by the author or closed without meaningful maintainer interaction beyond automated bot reviews (Greptile). "Lost" means a competing PR addressing the same issue was accepted instead without explicit credit back to this PR or author.</p>
   <p>The PR table is filterable by status and sorted newest-first, using close time for closed PRs and creation time for open PRs.</p>
-  <p>"Rate" is the same for everyone: PRs opened since June 1 divided by days elapsed since June 1. "Credited" is not the same for everyone: most contributors use raw closed + merged PR counts as a proxy, while $Author uses the evidence-based shipped + accepted-indirect classification from this page.</p>
+  <p>"Rate" is the same for everyone: PRs opened since June 1 divided by days elapsed since June 1. "Credited" is not the same for everyone: most contributors use raw closed + merged PR counts as a proxy, while $Author uses the evidence-based shipped classification from this page.</p>
 </div>
 
 <p class="footer">Generated $dateStr from GitHub API. Source: <a href="https://github.com/$ReadmeRepo">$ReadmeRepo</a></p>
