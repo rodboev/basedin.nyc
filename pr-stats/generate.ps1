@@ -4,7 +4,8 @@ param(
     [string]$ReadmeRepo = "rodboev/pr-sweep",
     [string]$OutFile = "$PSScriptRoot\index.html",
     [string]$CacheFile = "$PSScriptRoot\.pr-classification-cache.json",
-    [int]$LeaderboardCacheTtlHours = 6,
+    [int]$ClosedClassificationCacheTtlHours = 24 * 30,
+    [int]$LeaderboardCacheTtlHours = 24,
     [int]$LeaderboardTop = 10,
     [switch]$RebuildCache,
     [switch]$RefreshLeaderboardCache,
@@ -360,6 +361,7 @@ function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild) {
                 release = $prop.Value.release
                 viaLabel = $prop.Value.viaLabel
                 viaUrl = $prop.Value.viaUrl
+                evidenceKind = $prop.Value.evidenceKind
                 cachedAt = $prop.Value.cachedAt
             }
         }
@@ -432,14 +434,41 @@ function Get-ClassificationCacheKey([string]$Repo, [int]$Number) {
     return "$Repo#$Number"
 }
 
-function Get-CachedShippedClassification([string]$Repo, [int]$Number) {
+function Get-ExistingClosedClassificationEntry([string]$Repo, [int]$Number) {
+    $cacheKey = Get-ClassificationCacheKey -Repo $Repo -Number $Number
+    if (-not $script:ClassificationCache.entries.ContainsKey($cacheKey)) {
+        return $null
+    }
+    return $script:ClassificationCache.entries[$cacheKey]
+}
+
+function Get-CachedClosedClassification(
+    [string]$Repo,
+    [int]$Number,
+    [datetime]$Now,
+    [int]$TtlHours
+) {
     $cacheKey = Get-ClassificationCacheKey -Repo $Repo -Number $Number
     if (-not $script:ClassificationCache.entries.ContainsKey($cacheKey)) {
         return $null
     }
 
     $entry = $script:ClassificationCache.entries[$cacheKey]
-    if (-not $entry -or $entry.classification -ne "shipped") {
+    if (-not $entry -or -not $entry.classification -or $entry.classification -eq "open") {
+        return $null
+    }
+
+    if (-not $entry.cachedAt) {
+        return $null
+    }
+
+    try {
+        $cachedAt = [datetime]$entry.cachedAt
+    } catch {
+        return $null
+    }
+
+    if (($Now - $cachedAt).TotalHours -gt $TtlHours) {
         return $null
     }
 
@@ -447,26 +476,82 @@ function Get-CachedShippedClassification([string]$Repo, [int]$Number) {
     return $entry
 }
 
-function Set-CachedShippedClassification(
+function Set-CachedClosedClassification(
     [string]$Repo,
     [int]$Number,
     [string]$Classification,
     [string]$Release,
     [string]$ViaLabel,
-    [string]$ViaUrl
+    [string]$ViaUrl,
+    [string]$EvidenceKind
 ) {
     $cacheKey = Get-ClassificationCacheKey -Repo $Repo -Number $Number
 
-    if ($Classification -eq "shipped") {
+    if ($Classification -and $Classification -ne "open") {
         $script:ClassificationCache.entries[$cacheKey] = @{
             classification = $Classification
             release = $Release
             viaLabel = $ViaLabel
             viaUrl = $ViaUrl
+            evidenceKind = $EvidenceKind
             cachedAt = (Get-Date).ToString("o")
         }
     } else {
         $script:ClassificationCache.entries.Remove($cacheKey) | Out-Null
+    }
+}
+
+function Get-ClosedClassificationCacheTtlHours(
+    [object]$PullRequest,
+    [string]$Classification,
+    [string]$EvidenceKind,
+    [datetime]$Now
+) {
+    $closedAt = $null
+    if ($PullRequest.closedAt) {
+        try { $closedAt = [datetime]$PullRequest.closedAt } catch {}
+    }
+
+    $ageDays = if ($closedAt) { ($Now - $closedAt).TotalDays } else { 999 }
+
+    switch ($Classification) {
+        "shipped" {
+            switch ($EvidenceKind) {
+                "direct-merge" {
+                    if ($ageDays -lt 30) { return 24 * 30 }
+                    if ($ageDays -lt 120) { return 24 * 90 }
+                    return 24 * 180
+                }
+                "timeline" {
+                    if ($ageDays -lt 14) { return 24 * 14 }
+                    if ($ageDays -lt 60) { return 24 * 30 }
+                    return 24 * 90
+                }
+                default {
+                    if ($ageDays -lt 14) { return 24 * 7 }
+                    if ($ageDays -lt 60) { return 24 * 30 }
+                    return 24 * 90
+                }
+            }
+        }
+        "accepted-indirect" {
+            if ($ageDays -lt 14) { return 24 * 7 }
+            if ($ageDays -lt 60) { return 24 * 30 }
+            return 24 * 90
+        }
+        "lost" {
+            if ($ageDays -lt 30) { return 24 * 30 }
+            if ($ageDays -lt 120) { return 24 * 90 }
+            return 24 * 180
+        }
+        "withdrawn" {
+            if ($ageDays -lt 30) { return 24 * 30 }
+            if ($ageDays -lt 120) { return 24 * 90 }
+            return 24 * 180
+        }
+        default {
+            return $ClosedClassificationCacheTtlHours
+        }
     }
 }
 
@@ -580,14 +665,39 @@ $shipped = @(); $acceptedIndirect = @(); $duplicates = @(); $lost = @(); $withdr
 
 foreach ($pr in $closed) {
     Write-Host "  #$($pr.number) ($($pr.repoShort))..." -ForegroundColor DarkGray -NoNewline
-    $cachedClassification = Get-CachedShippedClassification -Repo $pr.repo -Number $pr.number
+    $cacheEntry = Get-ExistingClosedClassificationEntry -Repo $pr.repo -Number $pr.number
+    $classificationCacheTtlHours = if ($cacheEntry) {
+        Get-ClosedClassificationCacheTtlHours -PullRequest $pr -Classification $cacheEntry.classification -EvidenceKind $cacheEntry.evidenceKind -Now (Get-Date)
+    } else {
+        $ClosedClassificationCacheTtlHours
+    }
+    $cachedClassification = Get-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Now (Get-Date) -TtlHours $classificationCacheTtlHours
     if ($cachedClassification) {
         $pr.classification = $cachedClassification.classification
         $pr.release = $cachedClassification.release
         $pr.viaLabel = $cachedClassification.viaLabel
         $pr.viaUrl = $cachedClassification.viaUrl
-        $shipped += $pr
-        Write-Host " shipped (cache)" -ForegroundColor Green
+        switch ($pr.classification) {
+            "shipped" {
+                $shipped += $pr
+                Write-Host " shipped (cache)" -ForegroundColor Green
+            }
+            "accepted-indirect" {
+                $acceptedIndirect += $pr
+                Write-Host " accepted indirectly (cache)" -ForegroundColor Cyan
+            }
+            "lost" {
+                $lost += $pr
+                Write-Host " lost (cache)" -ForegroundColor Red
+            }
+            "withdrawn" {
+                $withdrawn += $pr
+                Write-Host " withdrawn (cache)" -ForegroundColor DarkGray
+            }
+            default {
+                Write-Host " $($pr.classification) (cache)" -ForegroundColor DarkGray
+            }
+        }
         continue
     }
 
@@ -692,7 +802,8 @@ foreach ($pr in $closed) {
         } else {
             Write-Host " shipped" -ForegroundColor Green
         }
-        Set-CachedShippedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl
+        $evidenceKind = if ($isDirectMerged) { "direct-merge" } elseif ($isTimelineShipped) { "timeline" } else { "comment" }
+        Set-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl -EvidenceKind $evidenceKind
     } elseif ($isAccepted -or $acceptedSibling) {
         $pr.classification = "accepted-indirect"
         $acceptedIndirect += $pr
@@ -703,22 +814,22 @@ foreach ($pr in $closed) {
         } else {
             Write-Host " accepted (indirect)" -ForegroundColor Cyan
         }
-        Set-CachedShippedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl
+        Set-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl -EvidenceKind "accepted-indirect"
     } elseif ($isDuplicate -or $isLost) {
         $pr.classification = "lost"
         $lost += $pr
         Write-Host " lost (competing PR won)" -ForegroundColor Red
-        Set-CachedShippedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl
+        Set-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl -EvidenceKind "lost"
     } elseif (-not $comments -or $comments.Trim().Length -eq 0) {
         $pr.classification = "withdrawn"
         $withdrawn += $pr
         Write-Host " withdrawn (no maintainer interaction)" -ForegroundColor DarkGray
-        Set-CachedShippedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl
+        Set-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl -EvidenceKind "withdrawn"
     } else {
         $pr.classification = "withdrawn"
         $withdrawn += $pr
         Write-Host " withdrawn" -ForegroundColor DarkGray
-        Set-CachedShippedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl
+        Set-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl -EvidenceKind "withdrawn"
     }
 }
 
@@ -1240,7 +1351,7 @@ document.addEventListener('scroll', updateCollapsedOverlays, { passive: true });
 $html | Out-File -FilePath $OutFile -Encoding utf8
 Write-Host "`nWritten to $OutFile" -ForegroundColor Green
 Write-Host "  Total: $($allPRs.Count) | Shipped: $totalAccepted | Open: $($open.Count) | Lost: $($lost.Count) | Rate: ${acceptanceRate}%"
-Write-Host "  Shipped cache hits: $script:ClassificationCacheHits | Leaderboard cache hits: $script:LeaderboardCacheHits | Cache file: $CacheFile" -ForegroundColor DarkGray
+Write-Host "  Closed classification cache hits: $script:ClassificationCacheHits | Leaderboard cache hits: $script:LeaderboardCacheHits | Cache file: $CacheFile" -ForegroundColor DarkGray
 
 if ($OpenOutput) {
     Start-Process $OutFile
