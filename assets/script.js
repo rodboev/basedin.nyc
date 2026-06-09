@@ -1,6 +1,14 @@
+function setPairHover(pair, on) {
+  var els = document.querySelectorAll('[data-pair="' + pair + '"]');
+  for (var i = 0; i < els.length; i++) els[i].classList.toggle('hover', on);
+}
+
 document.addEventListener('touchstart', function(e) {
   var a = e.target.closest('a');
-  if (a) a.classList.add('hover');
+  if (!a) return;
+  a.classList.add('hover');
+  var pair = a.getAttribute('data-pair');
+  if (pair) setPairHover(pair, true);
 }, { passive: true });
 
 document.addEventListener('touchend', function() {
@@ -21,20 +29,22 @@ if (document.body.classList.contains('home')) {
   var homeLinks = document.querySelector('.home-links');
 
   if (isLocalhost && homeLinks) {
-    var localLinksRow = document.createElement('div');
-    localLinksRow.className = 'home-links-row';
-    [
-      { href: 'docs/', label: 'Docs' },
-      { href: 'https://github.com/rodboev/pr-sweep', label: 'Repo' }
-    ].forEach(function(linkData) {
-      var link = document.createElement('a');
-      link.className = 'btn';
-      link.href = linkData.href;
-      link.textContent = linkData.label;
-      localLinksRow.appendChild(link);
-    });
-    homeLinks.appendChild(localLinksRow);
+    var gap = document.createElement('span');
+    gap.className = 'home-links-gap home-link--desktop';
+    gap.setAttribute('aria-hidden', 'true');
+    homeLinks.appendChild(gap);
+    var docs = document.createElement('a');
+    docs.className = 'home-link--desktop';
+    docs.href = 'docs/';
+    docs.textContent = 'Docs';
+    homeLinks.appendChild(docs);
   }
+
+  document.querySelectorAll('[data-pair]').forEach(function(el) {
+    var pair = el.getAttribute('data-pair');
+    el.addEventListener('mouseenter', function() { setPairHover(pair, true); });
+    el.addEventListener('mouseleave', function() { setPairHover(pair, false); });
+  });
 
   links.forEach(function(link) {
     var filename = link.getAttribute('href').replace(/\/$/, '') + '.pdf';

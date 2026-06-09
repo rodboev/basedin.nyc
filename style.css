@@ -42,11 +42,31 @@ html:has(body.home) {
 body.home {
   --home-preview-height: min(80vh, calc(45vw * 11 / 8.5));
   --home-preview-width: min(calc(var(--home-preview-height) * 8.5 / 11), 45vw);
+  flex: 1;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   gap: 3.5rem;
-  margin: auto;
+  width: 100%;
+  min-height: 100%;
+  padding: min(2vh, 1.25rem) min(2vw, 1.25rem);
+}
+body.home .home-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font: 400 0.92rem var(--font);
+}
+body.home .home-links a {
+  color: rgba(255, 255, 255, 0.56);
+  text-decoration: none;
+}
+body.home .home-links a:is(:hover, .hover) {
+  color: rgba(255, 255, 255, 0.88);
+}
+body.home .home-links-gap {
+  height: 4.5vh;
+  pointer-events: none;
 }
 body.home a.preview {
   background: #fff url("assets/loading.svg") center no-repeat;
@@ -71,10 +91,7 @@ body.home a.preview > svg {
   border-radius: inherit;
   background: white;
 }
-body.home a.preview:hover,
-body.home a.preview:focus,
-body.home a.preview:active,
-body.home a.preview.hover {
+body.home a.preview:is(:hover, :focus, :active, .hover) {
   box-shadow:
     0 4px 0 #444,
     0 0 30px rgba(0, 0, 0, 0.6);
@@ -93,10 +110,7 @@ body.home a.preview > span {
   justify-content: center;
   transition: background-color 0.2s ease-in-out;
 }
-body.home a.preview:hover > span,
-body.home a.preview:focus > span,
-body.home a.preview:active > span,
-body.home a.preview.hover > span {
+body.home a.preview:is(:hover, :focus, :active, .hover) > span {
   background: rgba(0, 0, 0, 0.6);
 }
 body.home a.preview > span > span:first-child {
@@ -112,40 +126,14 @@ body.home a.preview > span > span:first-child {
     transform 0.2s ease-in-out;
   transform: translate(0, min(1vh, 0.75vw));
 }
-body.home a.preview:hover > span > span:first-child,
-body.home a.preview:focus > span > span:first-child,
-body.home a.preview:active > span > span:first-child,
-body.home a.preview.hover > span > span:first-child {
+body.home a.preview:is(:hover, :focus, :active, .hover) > span > span:first-child {
   opacity: 1;
   transform: translate(0, 0);
 }
-body.home > .home-links {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: calc(var(--home-preview-height) / 6);
-}
-body.home > .home-links .home-links-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-body.home > .home-links .btn {
-  margin-top: 0;
-}
-body.home > .home-links .btn.mixed-case {
-  text-transform: none;
-}
-
 @media (min-width: 1136px) and (min-height: 600px) {
   body.home {
     --home-preview-height: min(65vh, calc(46vw * 11 / 8.5));
     --home-preview-width: min(calc(var(--home-preview-height) * 8.5 / 11), 46vw);
-  }
-  body.home a.preview {
-    height: var(--home-preview-height);
-    width: var(--home-preview-width);
   }
   body.home a.preview {
     border-radius: min(0.85vh, 0.75vw);
@@ -160,6 +148,9 @@ body.home > .home-links .btn.mixed-case {
     font-size: 2.4vh;
     transform: translate(0, min(0.85vh, 0.75vw));
   }
+  body.home .home-links {
+    font-size: 10.5pt;
+  }
 }
 
 @media (min-width: 769px) and (max-width: 1136px) {
@@ -170,10 +161,6 @@ body.home > .home-links .btn.mixed-case {
   }
   body.home a.preview > span > span:first-child {
     font-size: 2.25vh;
-  }
-  body.home > .home-links,
-  body.home > .home-links .home-links-row {
-    gap: 0.5rem;
   }
 }
 
@@ -221,11 +208,10 @@ body.projects h1 .back {
 
 @media (max-width: 768px) {
   body.home {
-    display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 0;
     text-align: center;
+    padding: 4vh 1.25rem 0;
   }
   body.home a.preview {
     order: 1;
@@ -240,17 +226,32 @@ body.projects h1 .back {
   body.home a.preview:last-of-type {
     order: 2;
   }
-  body.home > .home-links {
+  body.home .home-links {
     order: 3;
     flex-direction: row;
-    align-items: center;
-    gap: 0.75rem;
-    width: auto;
+    flex-wrap: nowrap;
     margin: 4vh auto 0;
   }
-  body.home > .home-links .home-links-row {
-    display: contents;
-    gap: 0.75rem;
+  body.home .home-link--desktop,
+  body.home .home-links-gap {
+    display: none;
+  }
+  body.home .home-link--slash::after {
+    content: "/";
+    padding: 0 0.65rem;
+    color: rgba(255, 255, 255, 0.22);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body.home .home-links a {
+    color: #777;
+  }
+  body.home .home-links a:is(:hover, .hover) {
+    color: #1a1a1a;
+  }
+  body.home .home-link--slash::after {
+    color: #c6c2bc;
   }
 }
 
@@ -867,12 +868,17 @@ body.pr .section p + p {
 }
 
 body.pr .methodology-section {
-  font-size: 0.9rem;
-  line-height: 1.65;
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--pr-dim);
 }
 
 body.pr .methodology-section p {
   margin-top: 0;
+}
+
+body.pr .methodology-section code {
+  font-size: 0.92em;
 }
 
 body.pr .card {
@@ -1366,49 +1372,24 @@ body.pr .pr-list-table {
   border-top: 0;
 }
 
-body.pr .pr-list-table td:nth-child(1),
-body.pr .pr-list-table th:nth-child(1) {
-  width: 5.25rem;
-}
+body.pr .pr-list-table col.pr-col-pr { width: 5.25rem; }
+body.pr .pr-list-table col.pr-col-status { width: 5.75rem; }
+body.pr .pr-list-table col.pr-col-date { width: 7.25rem; }
+body.pr .pr-list-table col.pr-col-release { width: 6rem; }
+body.pr .pr-list-table col.pr-col-via { width: 5.5rem; }
 
-body.pr .pr-list-table td:nth-child(2),
-body.pr .pr-list-table th:nth-child(2) {
-  width: 4.5rem;
-}
-
-body.pr .pr-list-table td:nth-child(3),
-body.pr .pr-list-table th:nth-child(3) {
-  width: 5.75rem;
-}
-
-body.pr .pr-list-table td:nth-child(4),
-body.pr .pr-list-table th:nth-child(4) {
-  width: 7.25rem;
-}
-
-body.pr .pr-list-table td:nth-child(5),
-body.pr .pr-list-table th:nth-child(5) {
-  width: 6rem;
-}
-
-body.pr .pr-list-table td:nth-child(6),
-body.pr .pr-list-table th:nth-child(6) {
-  width: 5.5rem;
-}
-
-body.pr .pr-list-table td:nth-child(4),
-body.pr .pr-list-table th:nth-child(4),
-body.pr .pr-list-table td:nth-child(5),
-body.pr .pr-list-table th:nth-child(5) {
+body.pr .pr-list-table thead th:nth-child(4),
+body.pr .pr-list-table thead th:nth-child(5),
+body.pr .pr-list-table tr.pr-main-row > td:nth-child(4),
+body.pr .pr-list-table tr.pr-main-row > td:nth-child(5) {
   white-space: nowrap;
 }
 
-body.pr .pr-list-table td:nth-child(6),
-body.pr .pr-list-table th:nth-child(6) {
+body.pr .pr-list-table tr.pr-main-row > td:nth-child(6) {
   white-space: normal;
 }
 
-body.pr .pr-list-table td:nth-child(6) a {
+body.pr .pr-list-table tr.pr-main-row > td:nth-child(6) a {
   overflow-wrap: anywhere;
 }
 
@@ -1416,20 +1397,28 @@ body.pr .pr-title-row td {
   border-top: none;
   padding-top: 0;
   padding-bottom: 0.55rem;
-}
-
-body.pr .pr-title-row td:first-child {
-  padding-right: 0;
-}
-
-body.pr .pr-title-row td:last-child {
   white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+body.pr .pr-list-table .pr-title-gap {
+  width: 5.25rem;
+  max-width: 5.25rem;
+  padding: 0;
+  border-top: none;
+}
+
+body.pr .pr-list-table .pr-title-row td[colspan] {
+  max-width: 0;
 }
 
 body.pr .pr-title-text {
   font-size: 0.84rem;
   line-height: 1.4;
   overflow-wrap: anywhere;
+  word-break: break-word;
+  min-width: 0;
 }
 
 body.pr .projections {
@@ -1487,6 +1476,32 @@ body.pr .sort-pills {
   align-items: flex-start;
   gap: 0.35rem;
   flex-wrap: wrap;
+}
+
+body.pr .pr-filter-groups {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+body.pr .pr-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+body.pr .pr-filter-group-left {
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 1.25rem;
+}
+
+body.pr .pr-filter-group-right {
+  flex: 0 0 auto;
+  justify-content: flex-end;
 }
 
 body.pr .sort-pill {
@@ -1766,30 +1781,67 @@ body.pr .separator-row td {
     font-size: 0.78rem;
   }
 
+  /* Open is the rightmost visible column; table border already draws the edge */
+  body.pr .leaderboard th:nth-child(4) {
+    box-shadow: inset 0 -1px 0 var(--pr-border);
+  }
+
+  body.pr .pr-list-table th:nth-child(5) {
+    box-shadow: inset 0 -1px 0 var(--pr-border);
+  }
+
   body.pr .landscape-row {
     flex-direction: column;
   }
 
-  body.pr .pr-list-table th:nth-child(4),
-  body.pr .pr-list-table td:nth-child(4),
-  body.pr .pr-list-table th:nth-child(5),
-  body.pr .pr-list-table td:nth-child(5),
+  body.pr .pr-filter-group-right {
+    justify-content: flex-start;
+  }
+
   body.pr .pr-list-table th:nth-child(6),
   body.pr .pr-list-table td:nth-child(6) {
     display: none;
   }
 
-  body.pr .targets-table th:nth-child(5),
-  body.pr .targets-table td:nth-child(5),
-  body.pr .targets-table th:nth-child(6),
-  body.pr .targets-table td:nth-child(6),
-  body.pr .targets-table th:nth-child(7),
-  body.pr .targets-table td:nth-child(7) {
+  body.pr .pr-list-table th,
+  body.pr .pr-list-table td {
+    padding: 0.4rem 0.35rem;
+    font-size: 0.78rem;
+  }
+
+  body.pr .pr-list-table col.pr-col-pr { width: 3.25rem; }
+  body.pr .pr-list-table col.pr-col-status { width: 4.75rem; }
+  body.pr .pr-list-table col.pr-col-date { width: 4.25rem; }
+  body.pr .pr-list-table col.pr-col-release { width: 4.75rem; }
+  body.pr .pr-list-table col.pr-col-via { width: 0; }
+
+  body.pr .pr-list-table thead th:nth-child(4),
+  body.pr .pr-list-table tr.pr-main-row > td:nth-child(4) {
+    white-space: normal;
+    font-size: 0.72rem;
+    line-height: 1.25;
+  }
+
+  body.pr .pr-list-table thead th:nth-child(5),
+  body.pr .pr-list-table tr.pr-main-row > td:nth-child(5) {
+    font-size: 0.72rem;
+  }
+
+  body.pr .pr-list-table .pr-title-gap {
     display: none;
   }
 
-  body.pr .targets-table th,
-  body.pr .targets-table td {
+  body.pr .targets-table:not(.pr-list-table) th:nth-child(5),
+  body.pr .targets-table:not(.pr-list-table) td:nth-child(5),
+  body.pr .targets-table:not(.pr-list-table) th:nth-child(6),
+  body.pr .targets-table:not(.pr-list-table) td:nth-child(6),
+  body.pr .targets-table:not(.pr-list-table) th:nth-child(7),
+  body.pr .targets-table:not(.pr-list-table) td:nth-child(7) {
+    display: none;
+  }
+
+  body.pr .targets-table:not(.pr-list-table) th,
+  body.pr .targets-table:not(.pr-list-table) td {
     padding: 0.4rem 0.5rem;
     font-size: 0.78rem;
   }

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="darkreader-lock" />
     <meta name="color-scheme" content="dark light" />
-    <link rel="stylesheet" href="style.css?v=711fa893" />
+    <link rel="stylesheet" href="style.css?v=20260609m" />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="mask-icon" href="assets/safari-pinned-tab.svg" color="white" />
     <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
@@ -18,16 +18,20 @@
     <meta property="og:image" content="/assets/share.png" />
   </head>
   <body class="home">
-    <a class="preview" href="resume/"><span><span>Resume</span></span></a>
+    <a class="preview" href="resume/" data-pair="resume"><span><span>Resume</span></span></a>
     <nav class="home-links">
-      <a class="btn" href="projects/">See Projects</a>
-      <div class="home-links-row">
-        <a class="btn mixed-case" href="pr-stats/">PRs</a>
-        <a class="btn" href="pr-targets/">Targets</a>
-      </div>
+      <a href="resume/" data-pair="resume" class="home-link--desktop">Resume</a>
+      <span class="home-links-gap home-link--desktop" aria-hidden="true"></span>
+      <a href="recommendations/" data-pair="recommendations" class="home-link--desktop">Recommendations</a>
+      <span class="home-links-gap home-link--desktop" aria-hidden="true"></span>
+      <a href="projects/" class="home-link--slash">Projects</a>
+      <span class="home-links-gap" aria-hidden="true"></span>
+      <a href="pr-stats/" class="home-link--slash">Stats</a>
+      <span class="home-links-gap" aria-hidden="true"></span>
+      <a href="https://linkedin.com/in/rodboev">LinkedIn</a>
     </nav>
-    <a class="preview" href="recommendations/"><span><span>Recommendations</span></span></a>
+    <a class="preview" href="recommendations/" data-pair="recommendations"><span><span>Recommendations</span></span></a>
     <script src="assets/pdf.min.js?v=d46dac53"></script>
-    <script src="assets/script.js?v=5e3785e3"></script>
+    <script src="assets/script.js?v=20260609m"></script>
   </body>
 </html>
