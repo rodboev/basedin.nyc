@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="darkreader-lock" />
     <meta name="color-scheme" content="light dark" />
-    <link rel="stylesheet" href="../style.css?v=20260608a">
+    <link rel="stylesheet" href="../style.css?v=20260609aa">
   </head>
 <body class="pr">
 
@@ -19,13 +19,12 @@
     <span class="nav-sep">/</span>
     <span class="current">Targets</span>
     <span class="nav-sep">/</span>
-    <a href="https://github.com/rodboev/pr-sweep">Repo</a> <span class="private">(private)</span>
+    <span class="nav-repo"><a href="https://github.com/rodboev/pr-sweep">Repo</a><span class="private">(private)</span></span>
   </nav>
 </div>
-<p class="subtitle">Open source landscape for Rod Boev, ranked by strategic fit</p>
 
 <h2>Scoring Dimensions</h2>
-<div class="grid scoring-grid">
+<div class="grid grid-dimensions">
   <div class="stat-card"><div class="number">CI Support</div><div class="label">First-class Windows, Node-native, or none</div></div>
   <div class="stat-card"><div class="number purple">Domain Fit</div><div class="label">Alignment with skills &amp; interests</div></div>
   <div class="stat-card"><div class="number green">Velocity</div><div class="label">Stars/day since creation</div></div>
@@ -45,15 +44,24 @@
 </div>
 
 <table class="targets-table">
+<colgroup>
+  <col class="tgt-col-project">
+  <col class="tgt-col-stars">
+  <col class="tgt-col-tier">
+  <col class="tgt-col-score">
+  <col class="tgt-col-score">
+  <col class="tgt-col-score">
+  <col class="tgt-col-ci">
+</colgroup>
 <thead>
 <tr>
-  <th>Project</th>
-  <th>Stars</th>
-  <th>Tier</th>
-  <th>Velocity</th>
-  <th>Domain</th>
-  <th>Contrib.</th>
-  <th>CI</th>
+  <th><span class="tgt-inset">Project</span></th>
+  <th><span class="tgt-inset">Stars</span></th>
+  <th><span class="tgt-inset">Tier</span></th>
+  <th><span class="tgt-inset"><span class="th-long">Velocity</span><span class="th-short">Vel.</span></span></th>
+  <th><span class="tgt-inset"><span class="th-long">Domain</span><span class="th-short">Dom.</span></span></th>
+  <th><span class="tgt-inset"><span class="th-long">Contrib.</span><span class="th-short">Ctrb</span></span></th>
+  <th><span class="tgt-inset">CI</span></th>
 </tr>
 </thead>
 <tbody id="targets-body">
@@ -66,13 +74,13 @@
   <p>CI support status determined by reading actual GitHub Actions workflow files. "First-class" means <code>windows-latest</code> appears in the CI matrix. "Node-native" means the project is TypeScript/Node (inherently cross-platform) but CI only runs on Ubuntu.</p>
 </div>
 
-<p class="footer">Generated June 6, 2026 from GitHub data. <a href="/pr-stats/">pr-sweeps Stats</a></p>
+<p class="footer">Generated June 9, 2026 from GitHub data. <a href="/pr-stats/">pr-sweeps Stats</a></p>
 
 <script>
 var DATA = [
   {
     id: "github-mcp-server", name: "github/github-mcp-server", url: "https://github.com/github/github-mcp-server",
-    stars: 30464, starsDay: 66, tier: "focused", lang: "Go", license: "MIT",
+    stars: 30535, starsDay: 66, tier: "focused", lang: "Go", license: "MIT",
     domain: 4, contrib: 5, ci: "yes",
     desc: "GitHub's official MCP server. Gives AI agents the ability to read repos, manage issues and PRs, analyze code, and automate workflows through the Model Context Protocol.",
     why: "Your pr-sweep proves you understand agent-to-GitHub better than almost anyone. Go is a new language for you but the codebase is well-structured. Contributing here has outsized visibility. CI explicitly tests on Windows.",
@@ -82,7 +90,7 @@ var DATA = [
   },
   {
     id: "mempalace", name: "MemPalace/mempalace", url: "https://github.com/MemPalace/mempalace",
-    stars: 53956, starsDay: 884, tier: "focused", lang: "Python", license: "MIT",
+    stars: 55157, starsDay: 849, tier: "focused", lang: "Python", license: "MIT",
     domain: 5, contrib: 4, ci: "yes",
     desc: "Best-benchmarked open-source AI memory system. 96.6% R@5 on LongMemEval, zero API calls. Local-first, pluggable backends (ChromaDB, SQLite, Qdrant, pgvector).",
     why: "Hottest project in the exact niche you've already claimed. Demonstrated track record in AI memory systems via mcp-memory-service and claude-mem. Project is young enough that early contributors shape the architecture.",
@@ -92,17 +100,17 @@ var DATA = [
   },
   {
     id: "continue", name: "continuedev/continue", url: "https://github.com/continuedev/continue",
-    stars: 33557, starsDay: 0, tier: "focused", lang: "TypeScript", license: "Apache 2.0",
+    stars: 33629, starsDay: 30, tier: "focused", lang: "TypeScript", license: "Apache 2.0",
     domain: 4, contrib: 4, ci: "yes",
     desc: "Open-source AI code assistant: IDE extension (VS Code, JetBrains) and CLI. Source-controlled AI checks enforceable in CI. Multi-model support.",
     why: "Full Windows CI matrix including arm64. TypeScript is your daily stack. VS Code extension architecture means the codebase is inherently cross-platform.",
-    created: "", contributors: 170, issues: 0,
+    created: "May 2023", contributors: 170, issues: 0,
     mergedPRs: "Good first issues tagged, active community",
     angle: "Skip the Turkish-locale one-liner. Better angles are custom HTTP headers for streamable-http MCP servers (<a href='https://github.com/continuedev/continue/issues/12572'>#12572</a>) or the package-manager typosquat detector gap in terminal security (<a href='https://github.com/continuedev/continue/issues/12573'>#12573</a>) — both touch real integration and security boundaries."
   },
   {
     id: "nanobot", name: "HKUDS/nanobot", url: "https://github.com/HKUDS/nanobot",
-    stars: 43747, starsDay: 353, tier: "focused", lang: "Python", license: "MIT",
+    stars: 43943, starsDay: 343, tier: "focused", lang: "Python", license: "MIT",
     domain: 4, contrib: 3, ci: "yes",
     desc: "Lightweight AI agent runtime: WebUI, chat channels (Telegram, Discord, Slack, Teams), tools, memory, MCP, model routing, and deployment.",
     why: "Agent runtime with WebUI, Telegram integration, memory, MCP; very close to what you do with Hermes. Growing fast. Windows CI confirmed. Primary development community is Chinese-speaking.",
@@ -112,7 +120,7 @@ var DATA = [
   },
   {
     id: "copilotkit", name: "CopilotKit/CopilotKit", url: "https://github.com/CopilotKit/CopilotKit",
-    stars: 32791, starsDay: 30, tier: "a", lang: "TypeScript", license: "MIT",
+    stars: 34403, starsDay: 32, tier: "a", lang: "TypeScript", license: "MIT",
     domain: 5, contrib: 5, ci: "node",
     desc: "Frontend stack for AI agents and generative UI. React + Angular. Makers of the AG-UI Protocol. Build agent-powered copilots with streaming responses, tool calling, and generative UI.",
     why: "React, TypeScript, Next.js, streaming, agent UIs: literally your daily stack. Best merge culture on this list. 525 open issues, tons of UI/UX work.",
@@ -122,27 +130,27 @@ var DATA = [
   },
   {
     id: "vercel-ai", name: "vercel/ai", url: "https://github.com/vercel/ai",
-    stars: 24685, starsDay: 0, tier: "a", lang: "TypeScript", license: "Edge",
+    stars: 24751, starsDay: 22, tier: "a", lang: "TypeScript", license: "Edge",
     domain: 5, contrib: 3, ci: "node",
     desc: "The AI Toolkit for TypeScript from the creators of Next.js. Streaming, tool calling, generative UI, multi-model support.",
     why: "Next.js, TypeScript, streaming responses, React hooks for AI: your exact stack. The useChat and useCompletion hooks solve problems you've built manually.",
-    created: "", contributors: 0, issues: 0,
+    created: "May 2023", contributors: 0, issues: 0,
     mergedPRs: "Vercel merges external contributions but review cycle is slower",
     angle: "Aim for concurrency or HITL internals: fix overlapping resume-streams in useChat causing activeResponse state crashes (<a href='https://github.com/vercel/ai/issues/15870'>#15870</a>), or add dynamic per-call context for tool approval requests (<a href='https://github.com/vercel/ai/issues/15733'>#15733</a>) so human-in-the-loop cards can carry richer approval state."
   },
   {
     id: "cline", name: "cline/cline", url: "https://github.com/cline/cline",
-    stars: 62815, starsDay: 0, tier: "a", lang: "TypeScript", license: "Apache 2.0",
+    stars: 62971, starsDay: 90, tier: "a", lang: "TypeScript", license: "Apache 2.0",
     domain: 4, contrib: 3, ci: "node",
     desc: "Autonomous coding agent as a VS Code extension. Full terminal and browser access for Claude/GPT. SDK available for building custom agents.",
     why: "Coding agent, MCP support, tool use: adjacent to your pr-sweep work. VS Code is cross-platform by design. Large codebase but the core team moves fast.",
-    created: "", contributors: 0, issues: 0,
+    created: "July 2024", contributors: 0, issues: 0,
     mergedPRs: "External PRs get merged but core team moves fast",
     angle: "Better angles are the remote-SSH terminal deadlock after commands (<a href='https://github.com/cline/cline/issues/11295'>#11295</a>) or the infinite JSON tool loop on Ollama and other non-tool streamed models (<a href='https://github.com/cline/cline/issues/11263'>#11263</a>). Both sit in the agent/runtime core, not surface-level webview cleanup."
   },
   {
     id: "crewai", name: "crewAIInc/crewAI", url: "https://github.com/crewAIInc/crewAI",
-    stars: 52910, starsDay: 56, tier: "b", lang: "Python", license: "MIT",
+    stars: 53140, starsDay: 56, tier: "b", lang: "Python", license: "MIT",
     domain: 3, contrib: 4, ci: "no",
     desc: "Framework for orchestrating role-playing, autonomous AI agents. Agents work together as crews with goals, tools, and delegation.",
     why: "Multi-agent orchestration patterns are relevant, but Python-heavy and less aligned with your TypeScript/frontend strengths.",
@@ -152,7 +160,7 @@ var DATA = [
   },
   {
     id: "smolagents", name: "huggingface/smolagents", url: "https://github.com/huggingface/smolagents",
-    stars: 27724, starsDay: 51, tier: "b", lang: "Python", license: "Apache 2.0",
+    stars: 27769, starsDay: 50, tier: "b", lang: "Python", license: "Apache 2.0",
     domain: 3, contrib: 3, ci: "no",
     desc: "Barebones library for agents that think in code. HuggingFace's minimal agent framework (~1000 lines). CodeAgent writes actions as Python code, not JSON blobs.",
     why: "Interesting agent architecture but Python-centric. HuggingFace has good contribution culture.",
@@ -162,7 +170,7 @@ var DATA = [
   },
   {
     id: "genericagent", name: "lsdefine/GenericAgent", url: "https://github.com/lsdefine/GenericAgent",
-    stars: 12618, starsDay: 90, tier: "a", lang: "Python", license: "MIT",
+    stars: 12726, starsDay: 88, tier: "a", lang: "Python", license: "MIT",
     domain: 5, contrib: 3, ci: "special",
     desc: "Self-evolving autonomous agent: grows a skill tree from 3K lines of seed code. 9 atomic tools + 100-line Agent Loop. Automatically crystallizes each solved task into a reusable Skill.",
     why: "The most explicit agent loop architecture on this list. Self-directing, self-improving, skill-crystallizing — this is the execution layer that memory projects assume but don't provide. README has 10 Windows mentions with PowerShell install scripts; TUI has known Windows rendering issues worth fixing.",
@@ -172,7 +180,7 @@ var DATA = [
   },
   {
     id: "mem0", name: "mem0ai/mem0", url: "https://github.com/mem0ai/mem0",
-    stars: 57836, starsDay: 54, tier: "b", lang: "Python", license: "Apache 2.0",
+    stars: 58160, starsDay: 54, tier: "b", lang: "Python", license: "Apache 2.0",
     domain: 4, contrib: 3, ci: "no",
     desc: "Universal memory layer for AI Agents. Persistent context across sessions. Production-ready with multi-provider support.",
     why: "AI memory is your domain, but you're already in this niche via mcp-memory-service and claude-mem. Contributing here means competing with your own projects.",
@@ -182,7 +190,7 @@ var DATA = [
   },
   {
     id: "mastra", name: "mastra-ai/mastra", url: "https://github.com/mastra-ai/mastra",
-    stars: 24800, starsDay: 37, tier: "a", lang: "TypeScript", license: "Apache 2.0",
+    stars: 24897, starsDay: 37, tier: "a", lang: "TypeScript", license: "Apache 2.0",
     domain: 5, contrib: 4, ci: "yes",
     desc: "TypeScript-first agent framework with durable, evented agentic loops. Native suspend/resume across restarts, human-in-the-loop checkpointing, step-level workflow tracing, and retry/fallback middleware.",
     why: "Fills the loop infrastructure gap directly: DurableAgent runs each LLM and tool call as a traceable step on an evented workflow engine. Suspend/resume survives server restarts; HITL pause/resume is first-class. From the Gatsby/Netlify team with 470 contributors, confirmed Windows CI, and Windows-specific fixes actively merged. TypeScript is your daily stack.",
@@ -192,7 +200,7 @@ var DATA = [
   },
   {
     id: "browser-use", name: "browser-use/browser-use", url: "https://github.com/browser-use/browser-use",
-    stars: 97396, starsDay: 167, tier: "b", lang: "Python", license: "MIT",
+    stars: 97923, starsDay: 167, tier: "b", lang: "Python", license: "MIT",
     domain: 3, contrib: 3, ci: "no",
     desc: "Make websites accessible for AI agents. Automate tasks online with ease. Browser automation library used by Manus and other agent platforms.",
     why: "Browser automation for agents. Adjacent to web development background but not core.",
@@ -202,7 +210,7 @@ var DATA = [
   },
   {
     id: "autogen", name: "microsoft/autogen", url: "https://github.com/microsoft/autogen",
-    stars: 58723, starsDay: 58, tier: "b", lang: "Python", license: "MIT",
+    stars: 58808, starsDay: 57, tier: "b", lang: "Python", license: "MIT",
     domain: 3, contrib: 2, ci: "no",
     desc: "Microsoft's multi-agent conversation framework for collaborative AI.",
     why: "Multi-agent patterns but Microsoft bureaucracy for external contributors. Appears in a lull (last push April 15, 2026).",
@@ -212,29 +220,29 @@ var DATA = [
   },
   {
     id: "hermes-agent", name: "NousResearch/hermes-agent", url: "https://github.com/NousResearch/hermes-agent",
-    stars: 184000, starsDay: 0, tier: "c", lang: "Python", license: "",
+    stars: 188371, starsDay: 585, tier: "c", lang: "Python", license: "",
     domain: 5, contrib: 1, ci: "no",
     desc: "Maintainers rarely merge external PRs. ~11K open PRs with only 3 maintainers.",
     why: "Great project, bad investment for contributions. Poor review throughput.",
-    created: "", contributors: 0, issues: 0,
+    created: "July 2025", contributors: 0, issues: 0,
     mergedPRs: ""
   },
   {
     id: "langchain", name: "langchain-ai/langchain", url: "https://github.com/langchain-ai/langchain",
-    stars: 139000, starsDay: 0, tier: "c", lang: "Python", license: "",
+    stars: 138882, starsDay: 104, tier: "c", lang: "Python", license: "",
     domain: 3, contrib: 1, ci: "no",
     desc: "Massive, slow review cycles, corporate governance. Hard to make meaningful contributions.",
     why: "",
-    created: "", contributors: 0, issues: 0,
+    created: "October 2022", contributors: 0, issues: 0,
     mergedPRs: ""
   },
   {
     id: "autogpt", name: "Significant-Gravitas/AutoGPT", url: "https://github.com/Significant-Gravitas/AutoGPT",
-    stars: 185000, starsDay: 0, tier: "c", lang: "Python", license: "",
+    stars: 184859, starsDay: 157, tier: "c", lang: "Python", license: "",
     domain: 2, contrib: 1, ci: "no",
     desc: "Pioneer but declining velocity. Complex codebase, hard to break in.",
     why: "",
-    created: "", contributors: 0, issues: 0,
+    created: "March 2023", contributors: 0, issues: 0,
     mergedPRs: ""
   }
 ];
@@ -289,29 +297,50 @@ function formatStars(n) {
 }
 
 function ciLabel(ci) {
-  if (ci === 'yes') return '<span class="win-yes">First-class</span>';
-  if (ci === 'node') return '<span class="win-node">Node-native</span>';
-  if (ci === 'special') return '<span class="win-special">Special</span>';
-  return '<span class="win-no">None</span>';
+  if (ci === 'yes') return '<span class="win-yes"><span class="ci-long">First-class</span><span class="ci-short">Win</span></span>';
+  if (ci === 'node') return '<span class="win-node"><span class="ci-long">Node-native</span><span class="ci-short">Node</span></span>';
+  if (ci === 'special') return '<span class="win-special"><span class="ci-long">Special</span><span class="ci-short">Spcl</span></span>';
+  return '<span class="win-no"><span class="ci-long">None</span><span class="ci-short">—</span></span>';
 }
 
 function tierLabel(t) {
-  if (t === 'focused') return '<span class="tier-badge tier-focused">FOCUSED</span>';
-  if (t === 'a') return '<span class="tier-badge tier-a">TIER A</span>';
-  if (t === 'b') return '<span class="tier-badge tier-b">TIER B</span>';
-  return '<span class="tier-badge tier-c">TIER C</span>';
+  if (t === 'focused') return '<span class="tier-badge tier-focused"><span class="tier-long">FOCUSED</span><span class="tier-short">F</span></span>';
+  if (t === 'a') return '<span class="tier-badge tier-a"><span class="tier-long">TIER A</span><span class="tier-short">A</span></span>';
+  if (t === 'b') return '<span class="tier-badge tier-b"><span class="tier-long">TIER B</span><span class="tier-short">B</span></span>';
+  return '<span class="tier-badge tier-c"><span class="tier-long">TIER C</span><span class="tier-short">C</span></span>';
+}
+
+function tgtInset(html) {
+  return '<span class="tgt-inset">' + html + '</span>';
 }
 
 function scoreBar(val, max) {
   var pct = (val / max) * 100;
   var fillClass = 'score-fill-' + pct;
   var colorClass = val >= 4 ? 'score-color-green' : val >= 3 ? 'score-color-blue' : val >= 2 ? 'score-color-yellow' : 'score-color-dim';
-  return '<span class="score-bar ' + fillClass + ' ' + colorClass + '"></span><span class="score-num ' + colorClass + '">' + val + '</span>';
+  return '<span class="score-cell">' +
+    '<span class="score-track"><span class="score-bar ' + fillClass + ' ' + colorClass + '"></span></span>' +
+    '<span class="score-num ' + colorClass + '">' + val + '</span>' +
+  '</span>';
+}
+
+function primaryCompare(a, b, sortKey) {
+  var diff;
+  if (sortKey === 'ci') diff = ciScore(b.ci) - ciScore(a.ci);
+  else if (sortKey === 'domain') diff = b.domain - a.domain;
+  else if (sortKey === 'velocity') diff = b.starsDay - a.starsDay;
+  else if (sortKey === 'size') diff = b.stars - a.stars;
+  else diff = 0;
+  if (diff !== 0) return diff;
+  return score(b, WEIGHTS.composite) - score(a, WEIGHTS.composite);
 }
 
 function renderTable(sortKey) {
   var w = WEIGHTS[sortKey];
-  var sorted = DATA.slice().sort(function(a, b) { return score(b, w) - score(a, w); });
+  var sorted = DATA.slice().sort(function(a, b) {
+    if (sortKey === 'composite') return score(b, w) - score(a, w);
+    return primaryCompare(a, b, sortKey);
+  });
   var tbody = document.getElementById('targets-body');
   var html = '';
   var prevTier = '';
@@ -322,31 +351,30 @@ function renderTable(sortKey) {
     prevTier = d.tier;
 
     html += '<tr' + (showSep ? ' class="separator-row"' : '') + '>' +
-      '<td class="repo-name"><a href="' + d.url + '">' + d.name + '</a>' +
-        (d.lang ? ' <span class="dim">' + d.lang + '</span>' : '') +
-      '</td>' +
-      '<td class="stars">' + formatStars(d.stars) + (d.starsDay > 0 ? ' <span class="dim dim-plain">' + d.starsDay + '/d</span>' : '') + '</td>' +
-      '<td>' + tierLabel(d.tier) + '</td>' +
-      '<td>' + scoreBar(normalizeVelocity(d.starsDay), 5) + '</td>' +
-      '<td>' + scoreBar(d.domain, 5) + '</td>' +
-      '<td>' + scoreBar(d.contrib, 5) + '</td>' +
-      '<td>' + ciLabel(d.ci) + '</td>' +
+      '<td class="repo-name">' + tgtInset('<a href="' + d.url + '">' + d.name + '</a>' +
+        (d.lang ? ' <span class="dim">' + d.lang + '</span>' : '')) + '</td>' +
+      '<td class="stars">' + tgtInset('<span class="stars-main">' + formatStars(d.stars) + '</span> <span class="dim dim-plain">' + d.starsDay + '/d</span>') + '</td>' +
+      '<td>' + tgtInset(tierLabel(d.tier)) + '</td>' +
+      '<td>' + tgtInset(scoreBar(normalizeVelocity(d.starsDay), 5)) + '</td>' +
+      '<td>' + tgtInset(scoreBar(d.domain, 5)) + '</td>' +
+      '<td>' + tgtInset(scoreBar(d.contrib, 5)) + '</td>' +
+      '<td>' + tgtInset(ciLabel(d.ci)) + '</td>' +
     '</tr>';
 
     if (d.desc) {
-      html += '<tr class="detail-row"><td colspan="7"><span class="detail-text">' + d.desc + '</span></td></tr>';
+      html += '<tr class="detail-row"><td class="tgt-detail" colspan="7"><span class="detail-text">' + d.desc + '</span></td></tr>';
     }
     if (d.why || d.angle || d.mergedPRs) {
       html += '<tr class="detail-hr"><td colspan="7"><hr></td></tr>';
     }
     if (d.why) {
-      html += '<tr class="detail-row"><td colspan="7"><div class="detail-meta"><span class="detail-label">Fit</span> <span class="detail-text">' + d.why + '</span></div></td></tr>';
+      html += '<tr class="detail-row"><td class="tgt-detail" colspan="7"><div class="detail-meta"><span class="detail-label">Fit</span> <span class="detail-text">' + d.why + '</span></div></td></tr>';
     }
     if (d.angle) {
-      html += '<tr class="detail-row"><td colspan="7"><div class="detail-meta"><span class="detail-label">Angle</span> <span class="detail-text">' + d.angle + '</span></div></td></tr>';
+      html += '<tr class="detail-row"><td class="tgt-detail" colspan="7"><div class="detail-meta"><span class="detail-label">Angle</span> <span class="detail-text">' + d.angle + '</span></div></td></tr>';
     }
     if (d.mergedPRs) {
-      html += '<tr class="detail-row"><td colspan="7"><div class="detail-meta"><span class="detail-label">Culture</span> <span class="detail-text">' + d.mergedPRs + '</span></div></td></tr>';
+      html += '<tr class="detail-row"><td class="tgt-detail" colspan="7"><div class="detail-meta"><span class="detail-label">Culture</span> <span class="detail-text">' + d.mergedPRs + '</span></div></td></tr>';
     }
   }
 
@@ -372,6 +400,7 @@ if (typeof ResizeObserver !== 'undefined') {
 window.addEventListener('resize', syncLandscapeStickyOffset);
 renderTable('composite');
 </script>
+<script src="../assets/script.js?v=20260609u"></script>
 
 </body>
 </html>

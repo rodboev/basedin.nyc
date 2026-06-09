@@ -116,16 +116,20 @@ def render(entries: list[dict[str, str]]) -> str:
     if entries:
         rows_html = "\n".join(
             (
-                "    <tr>"
-                f'<td data-sort-value="{html.escape(item["label"].lower())}"><a href="{html.escape(item["href"])}">{html.escape(item["label"])}</a> <span class="dim"><code>{html.escape(item["href"])}</code></span></td>'
-                f'<td data-sort-value="{html.escape(item["modified_sort"])}">{html.escape(item["modified_display"])}</td>'
-                f'<td data-sort-value="{html.escape(item["created_sort"])}">{html.escape(item["created_display"])}</td>'
-                "</tr>"
+                f'    <div class="docs-file-row"'
+                f' data-sort-name="{html.escape(item["label"].lower())}"'
+                f' data-sort-modified="{html.escape(item["modified_sort"])}"'
+                f' data-sort-created="{html.escape(item["created_sort"])}">'
+                f'<a class="docs-file-label" href="{html.escape(item["href"])}">{html.escape(item["label"])}</a>'
+                f'<div class="docs-file-date">{html.escape(item["modified_display"])}</div>'
+                f'<div class="docs-file-date">{html.escape(item["created_display"])}</div>'
+                "</div>"
             )
             for item in entries
         )
+        body_html = f'  <div class="docs-file-list-body" id="docs-list-body">\n{rows_html}\n  </div>'
     else:
-        rows_html = '    <tr><td colspan="3">No docs found.</td></tr>'
+        body_html = '  <p class="docs-file-empty">No docs found.</p>'
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -136,55 +140,41 @@ def render(entries: list[dict[str, str]]) -> str:
 <meta name="color-scheme" content="light dark" />
 <title>docs</title>
 <link rel="stylesheet" href="../style.css">
-<style>
-#docs-table th button {{
-  appearance: none;
-  background: none;
-  border: 0;
-  color: inherit;
-  cursor: pointer;
-  font: inherit;
-  padding: 0;
-}}
-
-#docs-table td:nth-child(2),
-#docs-table td:nth-child(3) {{
-  white-space: nowrap;
-}}
-</style>
 </head>
-<body class="pr">
-<main class="doc-page">
+<body class="pr doc-index">
 <div class="top-row">
   <h1><a class="back-link" href="../"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>docs</h1>
   <nav class="nav-links">
+    <a href="../projects/">Projects</a>
+    <span class="nav-sep">/</span>
+    <a href="../pr-stats/">Stats</a>
+    <span class="nav-sep">/</span>
+    <a href="../pr-targets/">Targets</a>
+    <span class="nav-sep">/</span>
     <span class="current">Docs</span>
+    <span class="nav-sep">/</span>
+    <a href="https://github.com/rodboev/pr-sweep">Repo</a> <span class="private">(private)</span>
   </nav>
 </div>
-<table id="docs-table">
-  <thead>
-    <tr>
-      <th><button type="button" data-sort-key="0" data-sort-type="text">Name</button></th>
-      <th><button type="button" data-sort-key="1" data-sort-type="date" data-sort-default="desc">Date Modified</button></th>
-      <th><button type="button" data-sort-key="2" data-sort-type="date">Date Created</button></th>
-    </tr>
-  </thead>
-  <tbody>
-{rows_html}
-  </tbody>
-</table>
+<section class="docs-file-list" id="docs-list">
+  <div class="docs-file-list-head">
+    <button type="button" data-sort-key="name" data-sort-type="text">Name</button>
+    <button type="button" data-sort-key="modified" data-sort-type="date" data-sort-default="desc">Date Modified</button>
+    <button type="button" data-sort-key="created" data-sort-type="date">Date Created</button>
+  </div>
+{body_html}
+</section>
 
 <p class="footer">Generated {html.escape(generated_at)}.</p>
-</main>
 <script>
-var docsTable = document.getElementById('docs-table');
-var docsBody = docsTable ? docsTable.querySelector('tbody') : null;
-var sortButtons = docsTable ? docsTable.querySelectorAll('button[data-sort-key]') : [];
-var activeSort = {{ key: 1, direction: 'desc', type: 'date' }};
+var docsList = document.getElementById('docs-list');
+var docsBody = document.getElementById('docs-list-body');
+var sortButtons = docsList ? docsList.querySelectorAll('button[data-sort-key]') : [];
+var activeSort = {{ key: 'modified', direction: 'desc', type: 'date' }};
 
 function updateSortLabels() {{
   sortButtons.forEach(function(button) {{
-    var key = Number(button.getAttribute('data-sort-key'));
+    var key = button.getAttribute('data-sort-key');
     var label = button.textContent.replace(/ [▲▼]$/, '');
     if (key === activeSort.key) {{
       button.textContent = label + (activeSort.direction === 'asc' ? ' ▲' : ' ▼');
@@ -194,12 +184,13 @@ function updateSortLabels() {{
   }});
 }}
 
-function sortDocsTable(key, type, direction) {{
+function sortDocsList(key, type, direction) {{
   if (!docsBody) return;
-  var rows = Array.from(docsBody.querySelectorAll('tr'));
+  var sortAttr = 'data-sort-' + key;
+  var rows = Array.from(docsBody.querySelectorAll('.docs-file-row'));
   rows.sort(function(a, b) {{
-    var aValue = a.children[key].getAttribute('data-sort-value') || a.children[key].textContent.trim();
-    var bValue = b.children[key].getAttribute('data-sort-value') || b.children[key].textContent.trim();
+    var aValue = a.getAttribute(sortAttr) || '';
+    var bValue = b.getAttribute(sortAttr) || '';
     var result = 0;
     if (type === 'date') {{
       result = aValue.localeCompare(bValue);
@@ -217,7 +208,7 @@ function sortDocsTable(key, type, direction) {{
 
 sortButtons.forEach(function(button) {{
   button.addEventListener('click', function() {{
-    var key = Number(button.getAttribute('data-sort-key'));
+    var key = button.getAttribute('data-sort-key');
     var type = button.getAttribute('data-sort-type') || 'text';
     var direction = 'asc';
     if (activeSort.key === key) {{
@@ -225,11 +216,11 @@ sortButtons.forEach(function(button) {{
     }} else if (button.getAttribute('data-sort-default') === 'desc') {{
       direction = 'desc';
     }}
-    sortDocsTable(key, type, direction);
+    sortDocsList(key, type, direction);
   }});
 }});
 
-sortDocsTable(activeSort.key, activeSort.type, activeSort.direction);
+sortDocsList(activeSort.key, activeSort.type, activeSort.direction);
 </script>
 </body>
 </html>

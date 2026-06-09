@@ -1295,23 +1295,23 @@ $html = @"
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Open Source Contributions</title>
+    <title>GitHub Contributions</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="darkreader-lock" />
     <meta name="description" content="150+ PRs across OSS AI projects: provider infrastructure, agent UX, reliability, streaming, and release-linked production work." />
-    <meta property="og:title" content="Open Source Contributions">
+    <meta property="og:title" content="GitHub Contributions">
     <meta property="og:description" content="150+ PRs across OSS AI projects: provider infrastructure, agent UX, reliability, streaming, and release-linked production work.">
     <meta property="og:image" content="https://basedin.nyc/pr-stats/thumb.jpg">
     <meta property="og:url" content="https://basedin.nyc/pr-stats">
     <meta property="og:type" content="website">
     <meta name="darkreader-lock" />
     <meta name="color-scheme" content="light dark" />
-    <link rel="stylesheet" href="../style.css?v=20260609m">
+    <link rel="stylesheet" href="../style.css?v=20260609t">
   </head>
 <body class="pr">
 
 <div class="top-row">
-  <h1><a class="back-link" href="../"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>Open Source Contributions</h1>
+  <h1><a class="back-link" href="../"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>GitHub Contributions</h1>
   <nav class="nav-links">
     <a href="../projects/">Projects</a>
     <span class="nav-sep">/</span>
@@ -1319,12 +1319,11 @@ $html = @"
     <span class="nav-sep">/</span>
     <a href="../pr-targets/">Targets</a>
     <span class="nav-sep">/</span>
-    <a href="https://github.com/rodboev/pr-sweep">Repo</a> <span class="private">(private)</span>
+    <span class="nav-repo"><a href="https://github.com/rodboev/pr-sweep">Repo</a><span class="private">(private)</span></span>
   </nav>
 </div>
-<p class="subtitle">$Author contributions to nesquena/hermes-webui + NousResearch/hermes-agent</p>
 
-<div class="grid">
+<div class="grid grid-summary">
   <div class="stat-card"><div class="number">$($allPRs.Count)</div><div class="label">Total PRs</div></div>
   <div class="stat-card"><div class="number green">$totalAccepted</div><div class="label">Shipped</div></div>
   <div class="stat-card"><div class="number yellow">$($open.Count)</div><div class="label">Open</div></div>
@@ -1543,6 +1542,7 @@ renderPrTable(CURRENT_PR_FILTER.statusKey, CURRENT_PR_FILTER.repoKey);
 updateCollapsedOverlays();
 document.addEventListener('scroll', updateCollapsedOverlays, { passive: true });
 </script>
+<script src="../assets/script.js?v=20260609u"></script>
 
 </body>
 </html>

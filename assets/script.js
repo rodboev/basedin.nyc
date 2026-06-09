@@ -1,6 +1,15 @@
+var isLocalhost = document.location.hostname === 'localhost';
+
 function setPairHover(pair, on) {
-  var els = document.querySelectorAll('[data-pair="' + pair + '"]');
-  for (var i = 0; i < els.length; i++) els[i].classList.toggle('hover', on);
+  document.querySelectorAll('[data-pair="' + pair + '"]').forEach(function(el) {
+    el.classList.toggle('hover', on);
+  });
+}
+
+function clearTouchHover() {
+  document.querySelectorAll('a.hover').forEach(function(el) {
+    el.classList.remove('hover');
+  });
 }
 
 document.addEventListener('touchstart', function(e) {
@@ -11,21 +20,50 @@ document.addEventListener('touchstart', function(e) {
   if (pair) setPairHover(pair, true);
 }, { passive: true });
 
-document.addEventListener('touchend', function() {
-  var els = document.querySelectorAll('a.hover');
-  for (var i = 0; i < els.length; i++) els[i].classList.remove('hover');
-});
+document.addEventListener('touchend', clearTouchHover);
+document.addEventListener('touchcancel', clearTouchHover);
 
-document.addEventListener('touchcancel', function() {
-  var els = document.querySelectorAll('a.hover');
-  for (var i = 0; i < els.length; i++) els[i].classList.remove('hover');
-});
+function injectDocsNavLink() {
+  if (!isLocalhost) return;
+
+  var nav = document.querySelector('.nav-links');
+  if (!nav || nav.querySelector('a[href*="docs"]')) return;
+
+  var current = nav.querySelector('.current');
+  if (current && current.textContent.trim() === 'Docs') return;
+
+  var docsLink = document.createElement('a');
+  docsLink.href = document.location.pathname.indexOf('/docs') !== -1 ? './' : '../docs/';
+  docsLink.textContent = 'Docs';
+
+  function makeSep() {
+    var sep = document.createElement('span');
+    sep.className = 'nav-sep';
+    sep.textContent = '/';
+    return sep;
+  }
+
+  var repoEl = nav.querySelector('.nav-repo')
+    || nav.querySelector('a[href*="github.com/rodboev/pr-sweep"]');
+
+  if (repoEl) {
+    var sep = makeSep();
+    repoEl.parentNode.insertBefore(sep, repoEl);
+    repoEl.parentNode.insertBefore(docsLink, sep);
+    return;
+  }
+
+  nav.appendChild(makeSep());
+  nav.appendChild(docsLink);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', injectDocsNavLink);
+} else {
+  injectDocsNavLink();
+}
 
 if (document.body.classList.contains('home')) {
-  var links = Array.prototype.slice.call(
-    document.querySelectorAll('a.preview')
-  );
-  var isLocalhost = document.location.hostname === 'localhost';
   var homeLinks = document.querySelector('.home-links');
 
   if (isLocalhost && homeLinks) {
@@ -46,7 +84,7 @@ if (document.body.classList.contains('home')) {
     el.addEventListener('mouseleave', function() { setPairHover(pair, false); });
   });
 
-  links.forEach(function(link) {
+  document.querySelectorAll('a.preview').forEach(function(link) {
     var filename = link.getAttribute('href').replace(/\/$/, '') + '.pdf';
 
     pdfjsLib.getDocument(filename).promise
@@ -78,95 +116,102 @@ if (document.body.classList.contains('home')) {
   ga('create', 'UA-114825587-1', 'auto');
   ga('send', 'pageview');
 
-  if (Boolean(window.location.search))
+  if (window.location.search)
     history.replaceState({}, '', '/');
 }
 
 if (document.body.classList.contains('preview')) {
   var pdfFile = location.pathname.replace(/\/$/, '').split('/').pop() + '.pdf';
 
-  function renderSvgPages(pdf) {
-    var pages = [];
-    for (var i = 1; i <= pdf.numPages; i++) pages.push(i);
-    pages.reduce(function(chain, pageNum) {
-      return chain.then(function() {
-        return pdf.getPage(pageNum).then(function(page) {
-          var displayWidth = Math.min(720, window.innerWidth * 0.96);
-          var scale = displayWidth / page.getViewport({ scale: 1 }).width;
-          var viewport = page.getViewport({ scale: scale });
-          return page.getOperatorList().then(function(opList) {
-            var svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs);
-            return svgGfx.getSVG(opList, viewport);
-          }).then(function(svg) {
-            svg.removeAttribute('width');
-            svg.removeAttribute('height');
-            svg.style.width = displayWidth + 'px';
-            document.body.appendChild(svg);
-          });
-        });
-      });
-    }, Promise.resolve());
+  function pdfDisplayWidth(page) {
+    return Math.min(720, window.innerWidth * 0.96);
   }
 
-  function renderHiDpiPages(pdf) {
-    var pages = [];
-    for (var i = 1; i <= pdf.numPages; i++) pages.push(i);
-    pages.reduce(function(chain, pageNum) {
-      return chain.then(function() {
-        return pdf.getPage(pageNum).then(function(page) {
-          var dpr = window.devicePixelRatio || 1;
-          var displayWidth = Math.min(720, window.innerWidth * 0.96);
-          var scale = displayWidth / page.getViewport({ scale: 1 }).width;
-          var viewport = page.getViewport({ scale: scale });
-          var hiDpiViewport = page.getViewport({ scale: scale * dpr * 2 });
-          var fullCanvas = document.createElement('canvas');
-          fullCanvas.width = hiDpiViewport.width;
-          fullCanvas.height = hiDpiViewport.height;
-          var canvasPromise = page.render({ canvasContext: fullCanvas.getContext('2d'), viewport: hiDpiViewport }).promise;
-          var svgPromise = page.getOperatorList().then(function(opList) {
-            var svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs, true);
-            return svgGfx.getSVG(opList, viewport);
-          });
-          return Promise.all([canvasPromise, svgPromise]).then(function(results) {
-            var svg = results[1];
-            svg.removeAttribute('width');
-            svg.removeAttribute('height');
-            svg.style.width = displayWidth + 'px';
-            var wrapper = document.createElement('div');
-            wrapper.style.position = 'relative';
-            wrapper.appendChild(svg);
-            document.body.appendChild(wrapper);
-            var svgRect = svg.getBoundingClientRect();
-            var scaleX = hiDpiViewport.width / svgRect.width;
-            var scaleY = hiDpiViewport.height / svgRect.height;
-            var images = svg.querySelectorAll('image');
-            Array.prototype.forEach.call(images, function(img) {
-              var clipEl = img.closest('[clip-path]');
-              var rect = (clipEl || img).getBoundingClientRect();
-              if (rect.width < 1 || rect.height < 1) return;
-              var cx = (rect.left - svgRect.left) * scaleX;
-              var cy = (rect.top - svgRect.top) * scaleY;
-              var cw = rect.width * scaleX;
-              var ch = rect.height * scaleY;
-              var crop = document.createElement('canvas');
-              crop.width = Math.round(cw);
-              crop.height = Math.round(ch);
-              crop.getContext('2d').drawImage(fullCanvas,
-                Math.round(cx), Math.round(cy), Math.round(cw), Math.round(ch),
-                0, 0, Math.round(cw), Math.round(ch));
-              crop.style.cssText = 'position:absolute;display:block;pointer-events:none';
-              crop.style.left = (rect.left - svgRect.left) + 'px';
-              crop.style.top = (rect.top - svgRect.top) + 'px';
-              crop.style.width = rect.width + 'px';
-              crop.style.height = rect.height + 'px';
-              wrapper.appendChild(crop);
-            });
-          });
-        });
-      });
-    }, Promise.resolve());
+  function pdfScale(page, displayWidth) {
+    return displayWidth / page.getViewport({ scale: 1 }).width;
   }
 
-  var hasImages = pdfFile === 'recommendations.pdf';
-  pdfjsLib.getDocument('/' + pdfFile).promise.then(hasImages ? renderHiDpiPages : renderSvgPages);
+  function styleSvg(svg, displayWidth) {
+    svg.removeAttribute('width');
+    svg.removeAttribute('height');
+    svg.style.width = displayWidth + 'px';
+    return svg;
+  }
+
+  function renderPages(pdf, renderPage) {
+    var chain = Promise.resolve();
+    for (var pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      chain = chain.then(function(n) {
+        return function() { return renderPage(pdf, n); };
+      }(pageNum));
+    }
+    return chain;
+  }
+
+  function renderSvgPage(pdf, pageNum) {
+    return pdf.getPage(pageNum).then(function(page) {
+      var displayWidth = pdfDisplayWidth(page);
+      var scale = pdfScale(page, displayWidth);
+      var viewport = page.getViewport({ scale: scale });
+      return page.getOperatorList().then(function(opList) {
+        var svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs);
+        return svgGfx.getSVG(opList, viewport);
+      }).then(function(svg) {
+        document.body.appendChild(styleSvg(svg, displayWidth));
+      });
+    });
+  }
+
+  function renderHiDpiPage(pdf, pageNum) {
+    return pdf.getPage(pageNum).then(function(page) {
+      var dpr = window.devicePixelRatio || 1;
+      var displayWidth = pdfDisplayWidth(page);
+      var scale = pdfScale(page, displayWidth);
+      var viewport = page.getViewport({ scale: scale });
+      var hiDpiViewport = page.getViewport({ scale: scale * dpr * 2 });
+      var fullCanvas = document.createElement('canvas');
+      fullCanvas.width = hiDpiViewport.width;
+      fullCanvas.height = hiDpiViewport.height;
+      var canvasPromise = page.render({ canvasContext: fullCanvas.getContext('2d'), viewport: hiDpiViewport }).promise;
+      var svgPromise = page.getOperatorList().then(function(opList) {
+        var svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs, true);
+        return svgGfx.getSVG(opList, viewport);
+      });
+      return Promise.all([canvasPromise, svgPromise]).then(function(results) {
+        var svg = styleSvg(results[1], displayWidth);
+        var wrapper = document.createElement('div');
+        wrapper.style.position = 'relative';
+        wrapper.appendChild(svg);
+        document.body.appendChild(wrapper);
+        var svgRect = svg.getBoundingClientRect();
+        var scaleX = hiDpiViewport.width / svgRect.width;
+        var scaleY = hiDpiViewport.height / svgRect.height;
+        svg.querySelectorAll('image').forEach(function(img) {
+          var clipEl = img.closest('[clip-path]');
+          var rect = (clipEl || img).getBoundingClientRect();
+          if (rect.width < 1 || rect.height < 1) return;
+          var cx = (rect.left - svgRect.left) * scaleX;
+          var cy = (rect.top - svgRect.top) * scaleY;
+          var cw = rect.width * scaleX;
+          var ch = rect.height * scaleY;
+          var crop = document.createElement('canvas');
+          crop.width = Math.round(cw);
+          crop.height = Math.round(ch);
+          crop.getContext('2d').drawImage(fullCanvas,
+            Math.round(cx), Math.round(cy), Math.round(cw), Math.round(ch),
+            0, 0, Math.round(cw), Math.round(ch));
+          crop.style.cssText = 'position:absolute;display:block;pointer-events:none';
+          crop.style.left = (rect.left - svgRect.left) + 'px';
+          crop.style.top = (rect.top - svgRect.top) + 'px';
+          crop.style.width = rect.width + 'px';
+          crop.style.height = rect.height + 'px';
+          wrapper.appendChild(crop);
+        });
+      });
+    });
+  }
+
+  pdfjsLib.getDocument('/' + pdfFile).promise.then(function(pdf) {
+    return renderPages(pdf, pdfFile === 'recommendations.pdf' ? renderHiDpiPage : renderSvgPage);
+  });
 }
