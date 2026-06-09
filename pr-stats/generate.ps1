@@ -2,6 +2,7 @@ param(
     [string]$Author = "rodboev",
     [string[]]$Repos = @("nesquena/hermes-webui", "NousResearch/hermes-agent"),
     [string]$ReadmeRepo = "rodboev/pr-sweep",
+    [string]$ReadmePath = "C:\Users\Rod\.claude\skills\pr\README.md",
     [string]$OutFile = "$PSScriptRoot\index.html",
     [string]$CacheFile = "$PSScriptRoot\.pr-classification-cache.json",
     [int]$ClosedClassificationCacheTtlHours = 24 * 30,
@@ -1041,16 +1042,21 @@ $projectionsHtml
 
 Export-ClassificationCache -Path $CacheFile
 
-Write-Host "`nFetching representative PRs from $ReadmeRepo README..." -ForegroundColor DarkGray
-$readmeB64 = gh api "repos/$ReadmeRepo/contents/README.md" --jq '.content' 2>$null
-$readmeText = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String(($readmeB64 -replace "\s","")))
+if (Test-Path -LiteralPath $ReadmePath) {
+    Write-Host "`nReading representative PRs from $ReadmePath..." -ForegroundColor DarkGray
+    $readmeText = Get-Content -Raw -Path $ReadmePath
+} else {
+    Write-Host "`nFetching representative PRs from $ReadmeRepo README..." -ForegroundColor DarkGray
+    $readmeB64 = gh api "repos/$ReadmeRepo/contents/README.md" --jq '.content' 2>$null
+    $readmeText = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String(($readmeB64 -replace "\s","")))
+}
 
 $representativeHtml = ""
-$inBlock = $false; $mdLines = @()
+$inBlock = $false; $representativeItems = @()
 foreach ($line in ($readmeText -split "`n")) {
     if ($line -match "^Representative merged PRs:") { $inBlock = $true; continue }
     if ($inBlock) {
-        if ($line -match "^##" -or ($line -notmatch "^-" -and $mdLines.Count -gt 0 -and $line -notmatch "^\s")) { break }
+        if ($line -match "^##" -or ($line -notmatch "^-" -and $representativeItems.Count -gt 0 -and $line -notmatch "^\s")) { break }
         if ($line -match "^-\s*\[#(\d+)\]\(([^)]+)\)") {
             $prNum = $Matches[1]; $prUrl = $Matches[2]
             $desc = $line -replace "^-\s*\[#\d+\]\([^)]+\)\s*", ""
@@ -1062,24 +1068,31 @@ foreach ($line in ($readmeText -split "`n")) {
             }
             $desc = $desc -replace '\[([^\]]+)\]\(([^)]+)\)', '<a href="$2">$1</a>'
             $desc = $desc.TrimEnd()
-            $mdLines += @{ num = $prNum; url = $prUrl; desc = $desc; release = $rel }
+            $representativeItems += [pscustomobject][ordered]@{
+                num = $prNum
+                url = $prUrl
+                desc = $desc
+                release = $rel
+            }
         }
     }
 }
 
-if ($mdLines.Count -gt 0) {
+if ($representativeItems.Count -gt 0) {
     $representativeHtml = @"
 <h2>Representative PRs</h2>
 <table>
   <tr><th>PR</th><th>Description</th><th>Release</th></tr>
 
 "@
-    foreach ($m in $mdLines) {
+    foreach ($m in $representativeItems) {
         $repoLabel = if ($m.url -match "hermes-agent") { "agent" } else { "webui" }
         $relCell = if ($m.release) { $m.release } else { "pending" }
         $representativeHtml += "  <tr><td><a href=`"$($m.url)`">#$($m.num)</a> <span class=`"dim`">$repoLabel</span></td><td>$($m.desc)</td><td>$relCell</td></tr>`n"
     }
     $representativeHtml += "</table>"
+} else {
+    $representativeHtml = '<p class="empty-state">Representative PRs unavailable.</p>'
 }
 
 Write-Host "Generating HTML..." -ForegroundColor DarkGray
@@ -1138,18 +1151,74 @@ foreach ($pr in $allPRs) {
 }
 $allPRItems = @($allPRItems | Sort-Object sortDate -Descending)
 
+function Test-PrStatusMatch {
+    param(
+        [string]$StatusKey,
+        [string]$ItemStatusKey
+    )
+    if ($StatusKey -eq "lost-withdrawn") {
+        return $ItemStatusKey -in @("lost", "withdrawn")
+    }
+    return $ItemStatusKey -eq $StatusKey
+}
+
+function Test-PrRepoMatch {
+    param(
+        [string]$RepoKey,
+        [string]$RepoLabel
+    )
+    return $RepoKey -eq "all" -or $RepoLabel -eq $RepoKey
+}
+
+function Get-PrFilterCount {
+    param(
+        $Items,
+        [string]$StatusKey,
+        [string]$RepoKey
+    )
+    @($Items | Where-Object {
+        (Test-PrStatusMatch -StatusKey $StatusKey -ItemStatusKey $_.statusKey) -and
+        (Test-PrRepoMatch -RepoKey $RepoKey -RepoLabel $_.repoLabel)
+    }).Count
+}
+
+$defaultPrStatusKey = "shipped"
+$defaultPrRepoKey = "all"
+
 $prStatusFilters = @(
-    [pscustomobject][ordered]@{ key = "all"; label = "All"; count = $allPRItems.Count },
-    [pscustomobject][ordered]@{ key = "shipped"; label = "Shipped"; count = $totalAccepted },
     [pscustomobject][ordered]@{ key = "open"; label = "Open"; count = $open.Count },
-    [pscustomobject][ordered]@{ key = "lost"; label = "Lost"; count = $lost.Count },
-    [pscustomobject][ordered]@{ key = "withdrawn"; label = "Withdrawn"; count = $withdrawn.Count }
-) | Where-Object { $_.key -eq "all" -or $_.count -gt 0 }
+    [pscustomobject][ordered]@{ key = "shipped"; label = "Shipped"; count = $totalAccepted },
+    [pscustomobject][ordered]@{ key = "lost-withdrawn"; label = "Lost/Withdrawn"; count = $totalLostWithdrawn }
+)
 
 $prFilterPills = ""
 foreach ($filter in $prStatusFilters) {
-    $activeClass = if ($filter.key -eq "shipped") { " active" } else { "" }
-    $prFilterPills += "    <div class=`"sort-pill$activeClass`" data-status=`"$($filter.key)`">$($filter.label) ($($filter.count))</div>`n"
+    $activeClass = if ($filter.key -eq $defaultPrStatusKey) { " active" } else { "" }
+    $pillCount = Get-PrFilterCount -Items $allPRItems -StatusKey $filter.key -RepoKey $defaultPrRepoKey
+    $prFilterPills += "    <div class=`"sort-pill$activeClass`" data-status=`"$($filter.key)`">$($filter.label) ($pillCount)</div>`n"
+}
+
+$prRepoFilters = @(
+    [pscustomobject][ordered]@{
+        key = "all"
+        label = "All"
+        count = (Get-PrFilterCount -Items $allPRItems -StatusKey $defaultPrStatusKey -RepoKey "all")
+    }
+)
+foreach ($repo in $Repos) {
+    $repoLabel = if ($repo -match "hermes-agent") { "agent" } else { "webui" }
+    $repoCount = Get-PrFilterCount -Items $allPRItems -StatusKey $defaultPrStatusKey -RepoKey $repoLabel
+    $prRepoFilters += [pscustomobject][ordered]@{
+        key = $repoLabel
+        label = $repoLabel
+        count = $repoCount
+    }
+}
+
+$prRepoPills = ""
+foreach ($filter in $prRepoFilters) {
+    $activeClass = if ($filter.key -eq $defaultPrRepoKey) { " active" } else { "" }
+    $prRepoPills += "    <div class=`"sort-pill$activeClass`" data-repo=`"$($filter.key)`">$($filter.label)</div>`n"
 }
 
 $prDataJson = @(
@@ -1172,6 +1241,8 @@ $prDataJson = @(
 $prDataJson = $prDataJson -replace '</script', '<\/script'
 $prFiltersJson = @($prStatusFilters) | ConvertTo-Json -Compress
 $prFiltersJson = $prFiltersJson -replace '</script', '<\/script'
+$prRepoFiltersJson = @($prRepoFilters) | ConvertTo-Json -Compress
+$prRepoFiltersJson = $prRepoFiltersJson -replace '</script', '<\/script'
 
 $repoSections = ""
 foreach ($repo in $Repos) {
@@ -1235,7 +1306,7 @@ $html = @"
     <meta property="og:type" content="website">
     <meta name="darkreader-lock" />
     <meta name="color-scheme" content="light dark" />
-    <link rel="stylesheet" href="../style.css?v=20260608a">
+    <link rel="stylesheet" href="../style.css?v=20260609l">
   </head>
 <body class="pr">
 
@@ -1286,17 +1357,31 @@ $leaderboardHtml
 $representativeHtml
 
 <div class="landscape-row">
-  <h2>PRs</h2>
-  <div class="sort-pills" id="pr-filter-pills">
-$prFilterPills  </div>
+  <div class="pr-filter-group pr-filter-group-left">
+    <h2>PRs</h2>
+    <div class="sort-pills" id="pr-repo-pills">
+$prRepoPills    </div>
+  </div>
+  <div class="pr-filter-group pr-filter-group-right">
+    <div class="sort-pills" id="pr-filter-pills">
+$prFilterPills    </div>
+  </div>
 </div>
 <table class="targets-table pr-list-table" id="pr-list-table">
+  <colgroup>
+    <col class="pr-col-pr">
+    <col class="pr-col-repo">
+    <col class="pr-col-status">
+    <col class="pr-col-date">
+    <col class="pr-col-release">
+    <col class="pr-col-via">
+  </colgroup>
   <thead><tr><th>PR</th><th>Repo</th><th>Status</th><th>Date</th><th>Release</th><th>Via</th></tr></thead>
   <tbody id="pr-list-body"></tbody>
 </table>
 
 <h2>Methodology</h2>
-<div class="section">
+<div class="section methodology-section">
   <p>Both repos use a cherry-pick workflow: the maintainer picks commits and closes the PR without GitHub's merge button, so <code>mergedAt</code> is usually null on the original author PR. "Shipped" is determined first from GitHub timeline evidence such as a merged release PR closing or referencing the author PR, then from maintainer release comments when timeline evidence is absent.</p>
   <p>PRs classified as "withdrawn" were either explicitly withdrawn by the author or closed without meaningful maintainer interaction beyond automated bot reviews (Greptile). "Lost" means a competing PR addressing the same issue was accepted instead without explicit credit back to this PR or author.</p>
   <p>The PR table is filterable by status and sorted newest-first, using close time for closed PRs and creation time for open PRs.</p>
@@ -1307,7 +1392,12 @@ $prFilterPills  </div>
 
 <script>
 var PR_FILTERS = $prFiltersJson;
+var PR_REPO_FILTERS = $prRepoFiltersJson;
 var PR_DATA = $prDataJson;
+var CURRENT_PR_FILTER = {
+  statusKey: 'shipped',
+  repoKey: 'all'
+};
 
 function setBarWidths() {
   document.querySelectorAll('.bar-segment[data-width]').forEach(function(segment) {
@@ -1327,11 +1417,33 @@ function syncLandscapeStickyOffset() {
   if (!row) return;
   document.body.style.setProperty('--landscape-row-offset', row.getBoundingClientRect().height + 'px');
 }
-function renderPrTable(statusKey) {
+function prMatchesStatus(item, statusKey) {
+  if (statusKey === 'lost-withdrawn') {
+    return item.statusKey === 'lost' || item.statusKey === 'withdrawn';
+  }
+  return item.statusKey === statusKey;
+}
+function prMatchesRepo(item, repoKey) {
+  return repoKey === 'all' || item.repoLabel === repoKey;
+}
+function countPrItems(statusKey, repoKey) {
+  return PR_DATA.filter(function(item) {
+    return prMatchesStatus(item, statusKey) && prMatchesRepo(item, repoKey);
+  }).length;
+}
+function updatePrFilterPills() {
+  PR_FILTERS.forEach(function(filter) {
+    var pill = document.querySelector('#pr-filter-pills .sort-pill[data-status="' + filter.key + '"]');
+    if (!pill) return;
+    var count = countPrItems(filter.key, CURRENT_PR_FILTER.repoKey);
+    pill.textContent = filter.label + ' (' + count + ')';
+  });
+}
+function renderPrTable(statusKey, repoKey) {
   var tbody = document.getElementById('pr-list-body');
   if (!tbody) return;
   var filtered = PR_DATA.filter(function(item) {
-    return statusKey === 'all' || item.statusKey === statusKey;
+    return prMatchesStatus(item, statusKey) && prMatchesRepo(item, repoKey);
   });
   var html = '';
   filtered.forEach(function(item) {
@@ -1348,7 +1460,7 @@ function renderPrTable(statusKey) {
       '<td>' + via + '</td>' +
     '</tr>' +
     '<tr class="pr-title-row">' +
-      '<td></td>' +
+      '<td class="pr-title-gap"></td>' +
       '<td colspan="5"><div class="pr-title-text" title="' + escapeHtml(item.title || '') + '">' + escapeHtml(item.title || '') + '</div></td>' +
     '</tr>';
   });
@@ -1398,12 +1510,24 @@ function toggleLeaderboard(id) {
 document.getElementById('pr-filter-pills').addEventListener('click', function(e) {
   var pill = e.target.closest('.sort-pill');
   if (!pill) return;
-  var statusKey = pill.getAttribute('data-status');
+  CURRENT_PR_FILTER.statusKey = pill.getAttribute('data-status');
   document.querySelectorAll('#pr-filter-pills .sort-pill').forEach(function(p) {
     p.classList.remove('active');
   });
   pill.classList.add('active');
-  renderPrTable(statusKey);
+  updatePrFilterPills();
+  renderPrTable(CURRENT_PR_FILTER.statusKey, CURRENT_PR_FILTER.repoKey);
+});
+document.getElementById('pr-repo-pills').addEventListener('click', function(e) {
+  var pill = e.target.closest('.sort-pill');
+  if (!pill) return;
+  CURRENT_PR_FILTER.repoKey = pill.getAttribute('data-repo');
+  document.querySelectorAll('#pr-repo-pills .sort-pill').forEach(function(p) {
+    p.classList.remove('active');
+  });
+  pill.classList.add('active');
+  updatePrFilterPills();
+  renderPrTable(CURRENT_PR_FILTER.statusKey, CURRENT_PR_FILTER.repoKey);
 });
 setBarWidths();
 syncLandscapeStickyOffset();
@@ -1414,7 +1538,8 @@ if (typeof ResizeObserver !== 'undefined') {
   }
 }
 window.addEventListener('resize', syncLandscapeStickyOffset);
-renderPrTable('shipped');
+updatePrFilterPills();
+renderPrTable(CURRENT_PR_FILTER.statusKey, CURRENT_PR_FILTER.repoKey);
 updateCollapsedOverlays();
 document.addEventListener('scroll', updateCollapsedOverlays, { passive: true });
 </script>
