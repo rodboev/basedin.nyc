@@ -1,6 +1,8 @@
 param(
     [string]$Author = "rodboev",
-    [string[]]$Repos = @("nesquena/hermes-webui", "NousResearch/hermes-agent"),
+    [string[]]$Repos = @("nesquena/hermes-webui", "NousResearch/hermes-agent", "thedotmack/claude-mem"),
+    [Nullable[datetime]]$StartDate = $null,
+    [ValidateSet("Default", "All")][string]$Span = "Default",
     [string]$ReadmeRepo = "rodboev/pr-sweep",
     [string]$ReadmePath = "C:\Users\Rod\.claude\skills\pr\README.md",
     [string]$OutFile = "$PSScriptRoot\index.html",
@@ -9,6 +11,7 @@ param(
     [int]$LeaderboardCacheTtlHours = 24,
     [int]$LeaderboardTop = 10,
     [switch]$RebuildCache,
+    [switch]$RebuildClassifications,
     [switch]$RefreshLeaderboardCache,
     [switch]$OpenOutput
 )
@@ -16,10 +19,12 @@ param(
 $shippedPatterns = @("Shipped", "shipped", "cherry-picked", "merged-via", "Salvaged into", "salvaged into")
 $acceptedPatterns = @()
 $duplicatePatterns = @("Duplicate", "duplicate")
-$lostPatterns = @("Superseded by", "superseded by", "consolidated", "Consolidating")
+$supersededPatterns = @("Superseded by", "superseded by", "superseded", "consolidated", "Consolidating")
+$lostPatterns = @()
 $withdrawnPattern = '(?i)\bwithdraw(?:ing|n)?\b'
 $DefaultLeaderboardVisible = 10
-$ClassificationCacheVersion = 2
+$ClassificationCacheVersion = 3
+$DefaultReportStartDate = [datetime]"2026-06-02"
 
 $EasternTimeZone = [System.TimeZoneInfo]::FindSystemTimeZoneById("Eastern Standard Time")
 $script:PullRequestStateCache = @{}
@@ -61,6 +66,36 @@ function Get-ReleaseTag([string]$Text) {
 
 function Test-IsReleaseTitle([string]$Text) {
     return [bool](Get-ReleaseTag $Text)
+}
+
+function Get-RepoLabel([string]$Repo) {
+    $repoShort = ($Repo -split '/')[-1]
+    switch ($repoShort) {
+        "hermes-webui" { return "webui" }
+        "hermes-agent" { return "agent" }
+        default { return $repoShort }
+    }
+}
+
+function Get-ReportStartLabel([datetime]$Date) {
+    return $Date.ToString("MMMM d, yyyy")
+}
+
+function Get-OptionalDateValue([object]$Date) {
+    if ($null -eq $Date) { return $null }
+    try {
+        return [datetime]$Date
+    } catch {
+        return $null
+    }
+}
+
+function Get-StartDateCacheKey([object]$Date) {
+    $dateValue = Get-OptionalDateValue -Date $Date
+    if ($null -ne $dateValue) {
+        return $dateValue.ToString("yyyy-MM-dd")
+    }
+    return "all"
 }
 
 function Select-BestCrossReference {
@@ -116,6 +151,7 @@ function Get-PullRequestEvidence([string]$Repo, [int]$Number) {
             author = [pscustomobject]@{
                 login = $comment.user.login
             }
+            authorAssociation = $comment.author_association
         }
     }
 
@@ -201,6 +237,36 @@ function Test-IsAuthorWithdrawnEvidence([object]$PullRequest, [object]$Evidence)
     return $false
 }
 
+function Test-IsSupersededEvidence([object]$PullRequest, [object]$Evidence) {
+    $authorLogin = Get-ScalarValue $PullRequest.author.login
+    if (-not $authorLogin) { $authorLogin = $Author }
+    $maintainerAssociations = @("OWNER", "COLLABORATOR", "MEMBER")
+
+    foreach ($comment in @($Evidence.comments.nodes)) {
+        if ($authorLogin -and $comment.author.login -eq $authorLogin) { continue }
+        if ($comment.authorAssociation -and $comment.authorAssociation -notin $maintainerAssociations) { continue }
+        foreach ($pattern in $supersededPatterns) {
+            if ([string]$comment.body -match [regex]::Escape($pattern)) {
+                return $true
+            }
+        }
+    }
+
+    return $false
+}
+
+function Test-HasSupersededReference([object]$Evidence) {
+    foreach ($comment in @($Evidence.comments.nodes)) {
+        foreach ($pattern in $supersededPatterns) {
+            if ([string]$comment.body -match [regex]::Escape($pattern)) {
+                return $true
+            }
+        }
+    }
+
+    return $false
+}
+
 function Get-PullRequestReferenceText([string]$Repo, [int]$Number) {
     $details = Get-PullRequestState -Repo $Repo -Number $Number
     if (-not $details) { return "" }
@@ -254,6 +320,21 @@ function Get-ReferencedMergedPullRequest([string]$Repo, [object]$OriginalPr, [st
             return $pr
         }
     }
+    return $null
+}
+
+function Get-TimelineCreditedMergedPullRequest([string]$Repo, [object]$OriginalPr, [object]$Evidence) {
+    foreach ($node in @($Evidence.timelineItems.nodes)) {
+        if ($node.__typename -ne "CrossReferencedEvent") { continue }
+        if (-not $node.source -or $node.source.__typename -ne "PullRequest") { continue }
+        if (-not $node.source.merged -and -not $node.source.mergedAt) { continue }
+
+        $pr = Get-PullRequestState -Repo $Repo -Number $node.source.number
+        if ($pr -and (Test-IsCreditedMergedSibling -Repo $Repo -OriginalPr $OriginalPr -MergedPr $pr)) {
+            return $pr
+        }
+    }
+
     return $null
 }
 
@@ -411,7 +492,7 @@ function New-ClassificationCache {
     }
 }
 
-function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild) {
+function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild, [switch]$ForceRebuildClassifications) {
     if ($ForceRebuild -or -not (Test-Path -LiteralPath $Path)) {
         return New-ClassificationCache
     }
@@ -422,12 +503,12 @@ function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild) {
         return New-ClassificationCache
     }
 
-    if (-not $raw -or $raw.version -ne $ClassificationCacheVersion) {
+    if (-not $raw) {
         return New-ClassificationCache
     }
 
     $entries = @{}
-    if ($raw.entries) {
+    if (-not $ForceRebuildClassifications -and $raw.version -eq $ClassificationCacheVersion -and $raw.entries) {
         foreach ($prop in $raw.entries.PSObject.Properties) {
             $entries[$prop.Name] = @{
                 classification = $prop.Value.classification
@@ -460,7 +541,8 @@ function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild) {
                 $logins = @($repoProp.Value.logins | ForEach-Object { [string]$_ })
             }
 
-            $leaderboards[$repoProp.Name] = @{
+            $leaderboardKey = if ($repoProp.Name -match '\|') { $repoProp.Name } else { "$($repoProp.Name)|all" }
+            $leaderboards[$leaderboardKey] = @{
                 cachedAt = $repoProp.Value.cachedAt
                 logins = $logins
                 stats = $stats
@@ -630,16 +712,18 @@ function Get-ClosedClassificationCacheTtlHours(
 
 function Get-CachedLeaderboardStats(
     [string]$Repo,
+    [Nullable[datetime]]$StartDate,
     [datetime]$Now,
     [double]$DaysSinceStart,
     [int]$TtlHours,
     [switch]$ForceRefresh
 ) {
-    if ($ForceRefresh -or -not $script:ClassificationCache.leaderboards.ContainsKey($Repo)) {
+    $cacheKey = "$Repo|$(Get-StartDateCacheKey -Date $StartDate)"
+    if ($ForceRefresh -or -not $script:ClassificationCache.leaderboards.ContainsKey($cacheKey)) {
         return $null
     }
 
-    $entry = $script:ClassificationCache.leaderboards[$Repo]
+    $entry = $script:ClassificationCache.leaderboards[$cacheKey]
     if (-not $entry -or -not $entry.cachedAt) {
         return $null
     }
@@ -686,9 +770,11 @@ function Get-CachedLeaderboardStats(
 
 function Set-CachedLeaderboardStats(
     [string]$Repo,
+    [Nullable[datetime]]$StartDate,
     [string[]]$Logins,
     [hashtable]$Stats
 ) {
+    $cacheKey = "$Repo|$(Get-StartDateCacheKey -Date $StartDate)"
     $storedStats = @{}
     foreach ($login in $Stats.Keys) {
         $storedStats[$login] = @{
@@ -699,14 +785,14 @@ function Set-CachedLeaderboardStats(
         }
     }
 
-    $script:ClassificationCache.leaderboards[$Repo] = @{
+    $script:ClassificationCache.leaderboards[$cacheKey] = @{
         cachedAt = (Get-Date).ToString("o")
         logins = @($Logins | Where-Object { $_ } | Select-Object -Unique)
         stats = $storedStats
     }
 }
 
-$script:ClassificationCache = Import-ClassificationCache -Path $CacheFile -ForceRebuild:$RebuildCache
+$script:ClassificationCache = Import-ClassificationCache -Path $CacheFile -ForceRebuild:$RebuildCache -ForceRebuildClassifications:$RebuildClassifications
 
 Write-Host "Fetching PRs from $($Repos.Count) repos..." -ForegroundColor DarkGray
 
@@ -734,7 +820,7 @@ foreach ($pr in $open) {
 
 Write-Host "Classifying $($closed.Count) closed PRs..." -ForegroundColor DarkGray
 
-$shipped = @(); $acceptedIndirect = @(); $duplicates = @(); $lost = @(); $withdrawn = @(); $rejected = @()
+$shipped = @(); $acceptedIndirect = @(); $duplicates = @(); $lost = @(); $superseded = @(); $withdrawn = @(); $rejected = @()
 
 foreach ($pr in $closed) {
     Write-Host "  #$($pr.number) ($($pr.repoShort))..." -ForegroundColor DarkGray -NoNewline
@@ -763,6 +849,10 @@ foreach ($pr in $closed) {
                 $lost += $pr
                 Write-Host " lost (cache)" -ForegroundColor Red
             }
+            "superseded" {
+                $superseded += $pr
+                Write-Host " superseded (cache)" -ForegroundColor DarkYellow
+            }
             "withdrawn" {
                 $withdrawn += $pr
                 Write-Host " withdrawn (cache)" -ForegroundColor DarkGray
@@ -789,16 +879,6 @@ foreach ($pr in $closed) {
                 $_.source.merged -and
                 (Test-IsReleaseTitle $_.source.title)
             }) -ClosedAt $closedEvent.createdAt
-    $mergedPullRequestCloser = $null
-    if ($closedEvent -and $closedEvent.closer.__typename -eq "PullRequest" -and $closedEvent.closer.merged) {
-        $mergedPullRequestCloser = $closedEvent.closer
-    }
-    $mergedPullRequestCrossRef = Select-BestCrossReference -Candidates @($timelineNodes |
-            Where-Object {
-                $_.__typename -eq "CrossReferencedEvent" -and
-                $_.source.__typename -eq "PullRequest" -and
-                $_.source.merged
-            }) -ClosedAt $closedEvent.createdAt
     $releaseRefCommit = ($timelineNodes |
             Where-Object {
                 $_.__typename -eq "ReferencedEvent" -and
@@ -821,7 +901,7 @@ foreach ($pr in $closed) {
 
     $isDirectMerged = $pr.state -eq "MERGED" -or [bool]$pr.mergedAt
     $isTimelineShipped = $false
-    if ($mergedReleaseCloser -or $mergedReleaseCrossRef -or $mergedPullRequestCloser -or $mergedPullRequestCrossRef -or $releaseRefCommit) {
+    if ($mergedReleaseCloser -or $mergedReleaseCrossRef -or $releaseRefCommit) {
         $isTimelineShipped = $true
     }
 
@@ -834,17 +914,20 @@ foreach ($pr in $closed) {
     $isDuplicate = $false
     foreach ($p in $duplicatePatterns) { if ($comments -match [regex]::Escape($p)) { $isDuplicate = $true; break } }
 
+    $isSuperseded = Test-IsSupersededEvidence -PullRequest $pr -Evidence $raw
+    $hasSupersededReference = Test-HasSupersededReference -Evidence $raw
+
     $isLost = $false
     foreach ($p in $lostPatterns) { if ($comments -match [regex]::Escape($p)) { $isLost = $true; break } }
 
     $isAuthorWithdrawn = Test-IsAuthorWithdrawnEvidence -PullRequest $pr -Evidence $raw
 
-    $acceptedSibling = $null
-    if ($isDuplicate -or $isLost) {
+    $acceptedSibling = Get-TimelineCreditedMergedPullRequest -Repo $pr.repo -OriginalPr $pr -Evidence $raw
+    if (-not $acceptedSibling -and ($isDuplicate -or $isSuperseded -or $isLost -or $comments)) {
         $acceptedSibling = Get-ReferencedMergedPullRequest -Repo $pr.repo -OriginalPr $pr -Text $comments
     }
 
-    if ($isDirectMerged -or $isTimelineShipped -or $isShipped) {
+    if ($isDirectMerged -or $isTimelineShipped) {
         $pr.classification = "shipped"
         $shipped += $pr
         if ($isDirectMerged) {
@@ -860,14 +943,6 @@ foreach ($pr in $closed) {
                 $pr.viaLabel = "#$($mergedReleaseCrossRef.number)"
                 $pr.viaUrl = $mergedReleaseCrossRef.url
                 "referenced by merged #$($mergedReleaseCrossRef.number)"
-            } elseif ($mergedPullRequestCloser) {
-                $pr.viaLabel = "#$($mergedPullRequestCloser.number)"
-                $pr.viaUrl = $mergedPullRequestCloser.url
-                "closed by merged #$($mergedPullRequestCloser.number)"
-            } elseif ($mergedPullRequestCrossRef) {
-                $pr.viaLabel = "#$($mergedPullRequestCrossRef.number)"
-                $pr.viaUrl = $mergedPullRequestCrossRef.url
-                "referenced by merged #$($mergedPullRequestCrossRef.number)"
             } else {
                 $pr.viaLabel = $releaseRefCommit.oid.Substring(0, 7)
                 $pr.viaUrl = $releaseRefCommit.url
@@ -884,6 +959,11 @@ foreach ($pr in $closed) {
         $withdrawn += $pr
         Write-Host " withdrawn (author withdrew)" -ForegroundColor DarkGray
         Set-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl -EvidenceKind "author-withdrawn"
+    } elseif ($isSuperseded) {
+        $pr.classification = "superseded"
+        $superseded += $pr
+        Write-Host " superseded" -ForegroundColor DarkYellow
+        Set-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl -EvidenceKind "superseded"
     } elseif ($isAccepted -or $acceptedSibling) {
         $pr.classification = "accepted-indirect"
         $acceptedIndirect += $pr
@@ -895,11 +975,26 @@ foreach ($pr in $closed) {
             Write-Host " accepted (indirect)" -ForegroundColor Cyan
         }
         Set-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl -EvidenceKind "accepted-indirect"
+    } elseif ($isSuperseded) {
+        $pr.classification = "superseded"
+        $superseded += $pr
+        Write-Host " superseded" -ForegroundColor DarkYellow
+        Set-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl -EvidenceKind "superseded"
     } elseif ($isDuplicate -or $isLost) {
         $pr.classification = "lost"
         $lost += $pr
         Write-Host " lost (competing PR won)" -ForegroundColor Red
         Set-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl -EvidenceKind "lost"
+    } elseif ($hasSupersededReference) {
+        $pr.classification = "lost"
+        $lost += $pr
+        Write-Host " lost (superseded without maintainer credit)" -ForegroundColor Red
+        Set-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl -EvidenceKind "lost"
+    } elseif ($isShipped) {
+        $pr.classification = "shipped"
+        $shipped += $pr
+        Write-Host " shipped" -ForegroundColor Green
+        Set-CachedClosedClassification -Repo $pr.repo -Number $pr.number -Classification $pr.classification -Release $pr.release -ViaLabel $pr.viaLabel -ViaUrl $pr.viaUrl -EvidenceKind "comment"
     } elseif (-not $comments -or $comments.Trim().Length -eq 0) {
         $pr.classification = "withdrawn"
         $withdrawn += $pr
@@ -913,23 +1008,51 @@ foreach ($pr in $closed) {
     }
 }
 
+$startDateValue = Get-OptionalDateValue -Date $StartDate
+if ($null -eq $startDateValue -and $Span -ne "All") {
+    $startDateValue = $DefaultReportStartDate
+}
+
+if ($null -ne $startDateValue) {
+    $allPRs = @($allPRs | Where-Object {
+        $statusKey = if ($_.classification) { $_.classification } else { "open" }
+        $effectiveDate = Get-PullRequestEffectiveIsoDate -PullRequest $_ -StatusKey $statusKey
+        if (-not $effectiveDate) { return $false }
+        try {
+            return [datetime]$effectiveDate -ge $startDateValue
+        } catch {
+            return $false
+        }
+    })
+}
+
+$closed = @($allPRs | Where-Object { $_.classification -and $_.classification -ne "open" })
+$open = @($allPRs | Where-Object { $_.classification -eq "open" })
+$shipped = @($allPRs | Where-Object { $_.classification -eq "shipped" })
+$acceptedIndirect = @($allPRs | Where-Object { $_.classification -eq "accepted-indirect" })
+$lost = @($allPRs | Where-Object { $_.classification -eq "lost" })
+$superseded = @($allPRs | Where-Object { $_.classification -eq "superseded" })
+$withdrawn = @($allPRs | Where-Object { $_.classification -eq "withdrawn" })
+$rejected = @($allPRs | Where-Object { $_.classification -eq "rejected" })
+
 $totalAccepted = $shipped.Count + $acceptedIndirect.Count
-$totalLostWithdrawn = $lost.Count + $withdrawn.Count
-$totalClosed = $totalAccepted + $lost.Count + $withdrawn.Count
+$totalNotShipped = $lost.Count + $superseded.Count + $withdrawn.Count
+$totalClosed = $totalAccepted + $lost.Count + $superseded.Count + $withdrawn.Count
 $acceptanceRate = if ($totalClosed -gt 0) { [math]::Round(($totalAccepted / $totalClosed) * 100) } else { "N/A" }
 
 # Build per-repo leaderboards
 Write-Host "`nBuilding leaderboards..." -ForegroundColor DarkGray
 $now = Get-Date
-$jun1 = [datetime]"2026-06-01"
-$daysSinceJun1 = ($now - $jun1).TotalDays
+$leaderboardStartDate = if ($null -ne $startDateValue) { $startDateValue } else { $DefaultReportStartDate }
+$daysSinceStartDate = ($now - $leaderboardStartDate).TotalDays
+$reportStartLabel = if ($null -ne $startDateValue) { Get-ReportStartLabel -Date $startDateValue } else { "" }
 
 $leaderboardHtml = ""
 foreach ($repo in $Repos) {
     $repoShort = ($repo -split '/')[-1]
     Write-Host "  $repoShort contributors..." -ForegroundColor DarkGray
 
-    $cachedLeaderboard = Get-CachedLeaderboardStats -Repo $repo -Now $now -DaysSinceStart $daysSinceJun1 -TtlHours $LeaderboardCacheTtlHours -ForceRefresh:$RefreshLeaderboardCache
+    $cachedLeaderboard = Get-CachedLeaderboardStats -Repo $repo -StartDate $StartDate -Now $now -DaysSinceStart $daysSinceStartDate -TtlHours $LeaderboardCacheTtlHours -ForceRefresh:$RefreshLeaderboardCache
     if ($cachedLeaderboard) {
         $stats = $cachedLeaderboard.stats
         $cachedCount = if ($cachedLeaderboard.logins.Count -gt 0) { $cachedLeaderboard.logins.Count } else { $stats.Count }
@@ -943,8 +1066,8 @@ foreach ($repo in $Repos) {
 
         Write-Host "    $($uniqueLogins.Count) contributors found, fetching batched counts..." -ForegroundColor DarkGray
 
-        $stats = Get-LeaderboardStats -Repo $repo -Logins $uniqueLogins -RecentRepoPRs $repoPRs -SinceDate $jun1 -Now $now -DaysSinceStart $daysSinceJun1
-        Set-CachedLeaderboardStats -Repo $repo -Logins $uniqueLogins -Stats $stats
+        $stats = Get-LeaderboardStats -Repo $repo -Logins $uniqueLogins -RecentRepoPRs $repoPRs -SinceDate $leaderboardStartDate -Now $now -DaysSinceStart $daysSinceStartDate
+        Set-CachedLeaderboardStats -Repo $repo -StartDate $StartDate -Logins $uniqueLogins -Stats $stats
     }
 
     # Use my classified count for this repo instead of raw closed
@@ -1080,13 +1203,14 @@ foreach ($line in ($readmeText -split "`n")) {
 
 if ($representativeItems.Count -gt 0) {
     $representativeHtml = @"
-<h2>Representative PRs</h2>
+    <h2>Representative PRs</h2>
 <table>
   <tr><th>PR</th><th>Description</th><th>Release</th></tr>
 
 "@
     foreach ($m in $representativeItems) {
-        $repoLabel = if ($m.url -match "hermes-agent") { "agent" } else { "webui" }
+        $repoPathMatch = [regex]::Match($m.url, 'github\.com/([^/]+/[^/]+)/pull/')
+        $repoLabel = if ($repoPathMatch.Success) { Get-RepoLabel -Repo $repoPathMatch.Groups[1].Value } else { "" }
         $relCell = if ($m.release) { $m.release } else { "pending" }
         $representativeHtml += "  <tr><td><a href=`"$($m.url)`">#$($m.num)</a> <span class=`"dim`">$repoLabel</span></td><td>$($m.desc)</td><td>$relCell</td></tr>`n"
     }
@@ -1118,7 +1242,11 @@ foreach ($pr in $allPRs) {
         }
         "lost" {
             $statusLabel = "Lost"
-            $statusClass = "tag-rejected"
+            $statusClass = "tag-lost"
+        }
+        "superseded" {
+            $statusLabel = "Superseded"
+            $statusClass = "tag-superseded"
         }
         "withdrawn" {
             $statusLabel = "Withdrawn"
@@ -1137,7 +1265,7 @@ foreach ($pr in $allPRs) {
     $allPRItems += [pscustomobject][ordered]@{
         number = $pr.number
         repo = $pr.repo
-        repoLabel = if ($pr.repo -match "hermes-agent") { "agent" } else { "webui" }
+        repoLabel = Get-RepoLabel -Repo $pr.repo
         title = $pr.title
         statusKey = $statusKey
         statusLabel = $statusLabel
@@ -1156,8 +1284,8 @@ function Test-PrStatusMatch {
         [string]$StatusKey,
         [string]$ItemStatusKey
     )
-    if ($StatusKey -eq "lost-withdrawn") {
-        return $ItemStatusKey -in @("lost", "withdrawn")
+    if ($StatusKey -eq "not-shipped") {
+        return $ItemStatusKey -in @("lost", "superseded", "withdrawn")
     }
     return $ItemStatusKey -eq $StatusKey
 }
@@ -1188,7 +1316,7 @@ $defaultPrRepoKey = "all"
 $prStatusFilters = @(
     [pscustomobject][ordered]@{ key = "open"; label = "Open"; count = $open.Count },
     [pscustomobject][ordered]@{ key = "shipped"; label = "Shipped"; count = $totalAccepted },
-    [pscustomobject][ordered]@{ key = "lost-withdrawn"; label = "Lost/Withdrawn"; count = $totalLostWithdrawn }
+    [pscustomobject][ordered]@{ key = "not-shipped"; label = "Not Shipped"; count = $totalNotShipped }
 )
 
 $prFilterPills = ""
@@ -1206,7 +1334,7 @@ $prRepoFilters = @(
     }
 )
 foreach ($repo in $Repos) {
-    $repoLabel = if ($repo -match "hermes-agent") { "agent" } else { "webui" }
+    $repoLabel = Get-RepoLabel -Repo $repo
     $repoCount = Get-PrFilterCount -Items $allPRItems -StatusKey $defaultPrStatusKey -RepoKey $repoLabel
     $prRepoFilters += [pscustomobject][ordered]@{
         key = $repoLabel
@@ -1251,6 +1379,7 @@ foreach ($repo in $Repos) {
     $repoOpen = @($repoPRs | Where-Object { $_.state -eq "OPEN" }).Count
     $repoShipped = @($shipped | Where-Object { $_.repo -eq $repo }).Count + @($acceptedIndirect | Where-Object { $_.repo -eq $repo }).Count
     $repoLost = @($lost | Where-Object { $_.repo -eq $repo }).Count
+    $repoSuperseded = @($superseded | Where-Object { $_.repo -eq $repo }).Count
     $repoWithdrawn = @($withdrawn | Where-Object { $_.repo -eq $repo }).Count
     $repoRejected = @($rejected | Where-Object { $_.repo -eq $repo }).Count
 
@@ -1260,7 +1389,7 @@ foreach ($repo in $Repos) {
   <tr><th>Status</th><th>Count</th><th>Details</th></tr>
   <tr><td><span class="tag tag-shipped">Shipped</span></td><td>$repoShipped</td><td>Verified via merged release PR, maintainer release evidence, or indirect accepted sibling</td></tr>
   <tr><td><span class="tag tag-open">Open</span></td><td>$repoOpen</td><td>Awaiting maintainer review</td></tr>
-$(if ($repoLost -gt 0) { "  <tr><td><span class=`"tag tag-rejected`">Lost</span></td><td>$repoLost</td><td>Competing PR won</td></tr>`n" })$(if ($repoWithdrawn -gt 0) { "  <tr><td><span class=`"tag tag-withdrawn`">Withdrawn</span></td><td>$repoWithdrawn</td><td>Closed without maintainer action</td></tr>`n" })</table>
+$(if ($repoWithdrawn -gt 0) { "  <tr><td><span class=`"tag tag-withdrawn`">Withdrawn</span></td><td>$repoWithdrawn</td><td>Closed without maintainer action</td></tr>`n" })$(if ($repoSuperseded -gt 0) { "  <tr><td><span class=`"tag tag-superseded`">Superseded</span></td><td>$repoSuperseded</td><td>Replaced by a newer maintainer-accepted PR</td></tr>`n" })$(if ($repoLost -gt 0) { "  <tr><td><span class=`"tag tag-lost`">Lost</span></td><td>$repoLost</td><td>Competing PR won</td></tr>`n" })</table>
 
 "@
 }
@@ -1285,10 +1414,11 @@ if ($allDates.Count -ge 2) {
     $timeRange = ""
 }
 
-$barShipped = [math]::Round(($totalAccepted / $allPRs.Count) * 100, 1)
-$barLost = [math]::Round(($lost.Count / $allPRs.Count) * 100, 1)
-$barWithdrawn = [math]::Round(($withdrawn.Count / $allPRs.Count) * 100, 1)
-$barOpen = [math]::Round(($open.Count / $allPRs.Count) * 100, 1)
+$barShipped = if ($allPRs.Count -gt 0) { [math]::Round(($totalAccepted / $allPRs.Count) * 100, 1) } else { 0 }
+$barLost = if ($allPRs.Count -gt 0) { [math]::Round(($lost.Count / $allPRs.Count) * 100, 1) } else { 0 }
+$barSuperseded = if ($allPRs.Count -gt 0) { [math]::Round(($superseded.Count / $allPRs.Count) * 100, 1) } else { 0 }
+$barWithdrawn = if ($allPRs.Count -gt 0) { [math]::Round(($withdrawn.Count / $allPRs.Count) * 100, 1) } else { 0 }
+$barOpen = if ($allPRs.Count -gt 0) { [math]::Round(($open.Count / $allPRs.Count) * 100, 1) } else { 0 }
 
 $html = @"
 <!DOCTYPE html>
@@ -1306,7 +1436,7 @@ $html = @"
     <meta property="og:type" content="website">
     <meta name="darkreader-lock" />
     <meta name="color-scheme" content="light dark" />
-    <link rel="stylesheet" href="../style.css?v=20260609t">
+    <link rel="stylesheet" href="../style.css?v=20260610a">
   </head>
 <body class="pr">
 
@@ -1326,26 +1456,28 @@ $html = @"
 <div class="grid grid-summary">
   <div class="stat-card"><div class="number">$($allPRs.Count)</div><div class="label">Total PRs</div></div>
   <div class="stat-card"><div class="number green">$totalAccepted</div><div class="label">Shipped</div></div>
-  <div class="stat-card"><div class="number yellow">$($open.Count)</div><div class="label">Open</div></div>
-  <div class="stat-card"><div class="number">$totalLostWithdrawn</div><div class="label">Lost/Withdrawn</div></div>
+  <div class="stat-card"><div class="number blue">$($open.Count)</div><div class="label">Open</div></div>
+  <div class="stat-card"><div class="number">$totalNotShipped</div><div class="label">Not Shipped</div></div>
 </div>
 <div class="grid">
-  <div class="stat-card"><div class="number green">${acceptanceRate}%</div><div class="label">Acceptance rate ($totalAccepted shipped, $totalLostWithdrawn lost/withdrawn out of $totalClosed closed PRs)</div></div>
-  <div class="stat-card"><div class="number blue">$timeSpan</div><div class="label">Time span ($timeRange)</div></div>
+  <div class="stat-card"><div class="number green">${acceptanceRate}%</div><div class="label">Acceptance rate ($($withdrawn.Count) withdrawn, $($superseded.Count) superseded, $($lost.Count) lost)</div></div>
+  <div class="stat-card"><div class="number yellow">$timeSpan</div><div class="label">Time span ($timeRange)</div></div>
 </div>
 
 <h2>Breakdown</h2>
 
 <div class="bar-container">
   <div class="bar-segment bar-shipped" data-width="${barShipped}"$(if ($barShipped -gt 4) { " title=`"$totalAccepted`"" })>$(if ($barShipped -gt 4) { $totalAccepted })</div>
-  <div class="bar-segment bar-lost" data-width="${barLost}">$(if ($barLost -gt 4) { $lost.Count })</div>
   <div class="bar-segment bar-withdrawn" data-width="${barWithdrawn}">$(if ($barWithdrawn -gt 4) { $withdrawn.Count })</div>
+  <div class="bar-segment bar-superseded" data-width="${barSuperseded}">$(if ($barSuperseded -gt 4) { $superseded.Count })</div>
+  <div class="bar-segment bar-lost" data-width="${barLost}">$(if ($barLost -gt 4) { $lost.Count })</div>
   <div class="bar-segment bar-open" data-width="${barOpen}" title="$($open.Count)">$($open.Count)</div>
 </div>
 <div class="legend">
   <div class="legend-item"><div class="legend-dot legend-dot-shipped"></div> Shipped ($totalAccepted)</div>
-  <div class="legend-item"><div class="legend-dot legend-dot-lost"></div> Lost ($($lost.Count))</div>
   <div class="legend-item"><div class="legend-dot legend-dot-withdrawn"></div> Withdrawn ($($withdrawn.Count))</div>
+  <div class="legend-item"><div class="legend-dot legend-dot-superseded"></div> Superseded ($($superseded.Count))</div>
+  <div class="legend-item"><div class="legend-dot legend-dot-lost"></div> Lost ($($lost.Count))</div>
   <div class="legend-item"><div class="legend-dot legend-dot-open"></div> Open ($($open.Count))</div>
 </div>
 
@@ -1381,10 +1513,10 @@ $prFilterPills    </div>
 
 <h2>Methodology</h2>
 <div class="section methodology-section">
-  <p>Both repos use a cherry-pick workflow: the maintainer picks commits and closes the PR without GitHub's merge button, so <code>mergedAt</code> is usually null on the original author PR. "Shipped" is determined first from GitHub timeline evidence such as a merged release PR closing or referencing the author PR, then from maintainer release comments when timeline evidence is absent.</p>
-  <p>PRs classified as "withdrawn" were either explicitly withdrawn by the author or closed without meaningful maintainer interaction beyond automated bot reviews (Greptile). "Lost" means a competing PR addressing the same issue was accepted instead without explicit credit back to this PR or author.</p>
+  <p>These repos use a mix of direct merges and maintainer integration branches. When a maintainer lands the work without GitHub's merge button on the original PR, <code>mergedAt</code> stays null there, so "Shipped" is determined first from GitHub timeline evidence such as a merged release PR closing or referencing the author PR, then from maintainer release comments when timeline evidence is absent.</p>
+  <p>PRs classified as "withdrawn" were either explicitly withdrawn by the author or closed without meaningful maintainer interaction beyond automated bot reviews (Greptile). "Superseded" means a newer maintainer-accepted PR replaced this one. "Lost" is reserved for competing PR outcomes that are not explicit supersessions.</p>
   <p>The PR table is filterable by status and sorted newest-first, using close time for closed PRs and creation time for open PRs.</p>
-  <p>"Rate" is the same for everyone: PRs opened since June 1 divided by days elapsed since June 1. "Credited" is not the same for everyone: most contributors use raw closed + merged PR counts as a proxy, while $Author uses the evidence-based shipped classification from this page.</p>
+  <p>$(if ($null -ne $startDateValue) { "This report includes PRs with an effective date on or after $reportStartLabel. " })"Rate" is the same for everyone: PRs opened since $(if ($null -ne $startDateValue) { $reportStartLabel } else { (Get-ReportStartLabel -Date $DefaultReportStartDate) }) divided by days elapsed since then. "Credited" is not the same for everyone: most contributors use raw closed + merged PR counts as a proxy, while $Author uses the evidence-based shipped classification from this page.</p>
 </div>
 
 <p class="footer">Generated $dateStr from GitHub API. Source: <a href="https://github.com/$ReadmeRepo">$ReadmeRepo</a></p>
@@ -1417,8 +1549,8 @@ function syncLandscapeStickyOffset() {
   document.body.style.setProperty('--landscape-row-offset', row.getBoundingClientRect().height + 'px');
 }
 function prMatchesStatus(item, statusKey) {
-  if (statusKey === 'lost-withdrawn') {
-    return item.statusKey === 'lost' || item.statusKey === 'withdrawn';
+  if (statusKey === 'not-shipped') {
+    return item.statusKey === 'lost' || item.statusKey === 'superseded' || item.statusKey === 'withdrawn';
   }
   return item.statusKey === statusKey;
 }

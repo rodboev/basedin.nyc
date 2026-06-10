@@ -683,6 +683,8 @@ body.pr {
   --pr-yellow: #9a6700;
   --pr-blue: #3376d2;
   --pr-purple: #8250df;
+  --pr-superseded: #5f46b8;
+  --pr-lost: #a12b2b;
   --landscape-row-offset: 42px;
   font: 1rem/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -715,6 +717,8 @@ body.pr {
     --pr-yellow: #d29922;
     --pr-blue: #58a6ff;
     --pr-purple: #bc8cff;
+    --pr-superseded: #8f75ea;
+    --pr-lost: #d14a4a;
   }
 }
 
@@ -1149,12 +1153,11 @@ body.pr .badge {
 body.pr .badge-green,
 body.pr .tag-shipped,
 body.pr .tier-focused {
-  background: rgb(63 185 80 / 15%);
+  background: rgb(46 155 95 / 15%);
   color: var(--pr-green);
 }
 
 body.pr .badge-yellow,
-body.pr .tag-open,
 body.pr .tier-b {
   background: rgb(210 153 34 / 15%);
   color: var(--pr-yellow);
@@ -1177,6 +1180,21 @@ body.pr .badge-purple,
 body.pr .tag-accepted {
   background: rgb(188 140 255 / 15%);
   color: var(--pr-purple);
+}
+
+body.pr .tag-open {
+  background: rgb(44 90 160 / 15%);
+  color: var(--pr-blue);
+}
+
+body.pr .tag-lost {
+  background: rgb(201 79 79 / 15%);
+  color: var(--pr-lost);
+}
+
+body.pr .tag-superseded {
+  background: rgb(95 70 184 / 18%);
+  color: var(--pr-superseded);
 }
 
 body.pr .status-grid {
@@ -1303,8 +1321,8 @@ body.pr .tag {
 
 body.pr .tag-withdrawn,
 body.pr .tier-c {
-  background: rgb(128 128 128 / 15%);
-  color: var(--pr-dim);
+  background: rgb(154 103 0 / 18%);
+  color: var(--pr-yellow);
 }
 
 body.pr .bar-container {
@@ -1341,17 +1359,22 @@ body.pr .bar-dup {
 
 body.pr .bar-lost,
 body.pr .legend-dot-lost {
-  background: var(--pr-red);
+  background: var(--pr-lost);
+}
+
+body.pr .bar-superseded,
+body.pr .legend-dot-superseded {
+  background: var(--pr-superseded);
 }
 
 body.pr .bar-withdrawn,
 body.pr .legend-dot-withdrawn {
-  background: #666;
+  background: var(--pr-yellow);
 }
 
 body.pr .bar-open,
 body.pr .legend-dot-open {
-  background: var(--pr-yellow);
+  background: #2c5aa0;
 }
 
 body.pr .legend {

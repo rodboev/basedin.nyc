@@ -27,14 +27,7 @@ function injectDocsNavLink() {
   if (!isLocalhost) return;
 
   var nav = document.querySelector('.nav-links');
-  if (!nav || nav.querySelector('a[href*="docs"]')) return;
-
-  var current = nav.querySelector('.current');
-  if (current && current.textContent.trim() === 'Docs') return;
-
-  var docsLink = document.createElement('a');
-  docsLink.href = document.location.pathname.indexOf('/docs') !== -1 ? './' : '../docs/';
-  docsLink.textContent = 'Docs';
+  if (!nav) return;
 
   function makeSep() {
     var sep = document.createElement('span');
@@ -43,18 +36,35 @@ function injectDocsNavLink() {
     return sep;
   }
 
-  var repoEl = nav.querySelector('.nav-repo')
-    || nav.querySelector('a[href*="github.com/rodboev/pr-sweep"]');
+  var repoEl = nav.querySelector('.nav-repo') ||
+    nav.querySelector('a[href*="github.com/rodboev/pr-sweep"]');
 
-  if (repoEl) {
-    var sep = makeSep();
-    repoEl.parentNode.insertBefore(sep, repoEl);
-    repoEl.parentNode.insertBefore(docsLink, sep);
-    return;
+  var currentEl = nav.querySelector('.current');
+  var hasDocsLink = nav.querySelector('a[href*="docs"]') ||
+    (currentEl && currentEl.textContent.trim() === 'Docs');
+
+  if (!hasDocsLink) {
+    var docsLink = document.createElement('a');
+    docsLink.href = document.location.pathname.indexOf('/docs') !== -1 ? './' : '../docs/';
+    docsLink.textContent = 'Docs';
+
+    if (repoEl) {
+      var sep = makeSep();
+      repoEl.parentNode.insertBefore(sep, repoEl);
+      repoEl.parentNode.insertBefore(docsLink, sep);
+    } else {
+      nav.appendChild(makeSep());
+      nav.appendChild(docsLink);
+    }
   }
 
-  nav.appendChild(makeSep());
-  nav.appendChild(docsLink);
+  if (!repoEl) {
+    var repoLink = document.createElement('a');
+    repoLink.href = 'https://github.com/rodboev/pr-sweep';
+    repoLink.textContent = 'Repo';
+    nav.appendChild(makeSep());
+    nav.appendChild(repoLink);
+  }
 }
 
 if (document.readyState === 'loading') {
@@ -67,15 +77,19 @@ if (document.body.classList.contains('home')) {
   var homeLinks = document.querySelector('.home-links');
 
   if (isLocalhost && homeLinks) {
-    var gap = document.createElement('span');
-    gap.className = 'home-links-gap home-link--desktop';
-    gap.setAttribute('aria-hidden', 'true');
-    homeLinks.appendChild(gap);
-    var docs = document.createElement('a');
-    docs.className = 'home-link--desktop';
-    docs.href = 'docs/';
-    docs.textContent = 'Docs';
-    homeLinks.appendChild(docs);
+    function appendHomeLink(href, text) {
+      var gap = document.createElement('span');
+      gap.className = 'home-links-gap home-link--desktop';
+      gap.setAttribute('aria-hidden', 'true');
+      homeLinks.appendChild(gap);
+      var a = document.createElement('a');
+      a.className = 'home-link--desktop';
+      a.href = href;
+      a.textContent = text;
+      homeLinks.appendChild(a);
+    }
+    appendHomeLink('docs/', 'Docs');
+    appendHomeLink('https://github.com/rodboev/pr-sweep', 'Repo');
   }
 
   document.querySelectorAll('[data-pair]').forEach(function(el) {
