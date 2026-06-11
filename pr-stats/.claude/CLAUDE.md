@@ -4,7 +4,7 @@ Public stats page and leaderboard for Rod Boev's open source contributions. Host
 
 ## Scripts
 
-- `generate.ps1`: Fetches PR data from GitHub API, classifies closed PRs by reading maintainer comments, builds per-repo leaderboards with projections, generates `index.html`, and opens it in the browser. Backport changes from index.html to generate.ps1 only when explicitly asked; do not update generate.ps1 on every index.html edit.
+- `generate.ps1`: Fetches PR data from GitHub API, classifies closed PRs by reading maintainer comments, builds per-repo leaderboards with projections, and generates `index.html`. Does not open the output file automatically. Backport changes from index.html to generate.ps1 only when explicitly asked; do not update generate.ps1 on every index.html edit.
 
 PR pipeline skills (sweep, cleanup, implement, rework, review) live in the pr-sweep repo at `C:\Apps\hermes\.claude\skills\pr\`.
 

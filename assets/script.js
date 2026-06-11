@@ -23,7 +23,7 @@ document.addEventListener('touchstart', function(e) {
 document.addEventListener('touchend', clearTouchHover);
 document.addEventListener('touchcancel', clearTouchHover);
 
-function injectDocsNavLink() {
+function injectLocalNavLinks() {
   if (!isLocalhost) return;
 
   var nav = document.querySelector('.nav-links');
@@ -38,23 +38,40 @@ function injectDocsNavLink() {
 
   var repoEl = nav.querySelector('.nav-repo') ||
     nav.querySelector('a[href*="github.com/rodboev/pr-sweep"]');
-
   var currentEl = nav.querySelector('.current');
+  var nodes = [];
+
+  var hasTargets = nav.querySelector('a[href*="pr-targets"]') ||
+    (currentEl && currentEl.textContent.trim() === 'Targets');
+  if (!hasTargets) {
+    var onTargets = document.location.pathname.indexOf('/pr-targets') !== -1;
+    var targetsEl = onTargets ? document.createElement('span') : document.createElement('a');
+    if (onTargets) {
+      targetsEl.className = 'current';
+      targetsEl.textContent = 'Targets';
+    } else {
+      targetsEl.href = '../pr-targets/';
+      targetsEl.textContent = 'Targets';
+    }
+    nodes.push(makeSep(), targetsEl);
+  }
+
   var hasDocsLink = nav.querySelector('a[href*="docs"]') ||
     (currentEl && currentEl.textContent.trim() === 'Docs');
-
   if (!hasDocsLink) {
     var docsLink = document.createElement('a');
     docsLink.href = document.location.pathname.indexOf('/docs') !== -1 ? './' : '../docs/';
     docsLink.textContent = 'Docs';
+    nodes.push(makeSep(), docsLink);
+  }
 
+  if (nodes.length) {
     if (repoEl) {
-      var sep = makeSep();
-      repoEl.parentNode.insertBefore(sep, repoEl);
-      repoEl.parentNode.insertBefore(docsLink, sep);
+      for (var i = nodes.length - 1; i >= 0; i--) {
+        repoEl.parentNode.insertBefore(nodes[i], repoEl);
+      }
     } else {
-      nav.appendChild(makeSep());
-      nav.appendChild(docsLink);
+      nodes.forEach(function(node) { nav.appendChild(node); });
     }
   }
 
@@ -68,9 +85,9 @@ function injectDocsNavLink() {
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', injectDocsNavLink);
+  document.addEventListener('DOMContentLoaded', injectLocalNavLinks);
 } else {
-  injectDocsNavLink();
+  injectLocalNavLinks();
 }
 
 if (document.body.classList.contains('home')) {

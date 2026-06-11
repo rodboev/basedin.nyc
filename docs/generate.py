@@ -149,8 +149,6 @@ def render(entries: list[dict[str, str]]) -> str:
     <span class="nav-sep">/</span>
     <a href="../pr-stats/">Stats</a>
     <span class="nav-sep">/</span>
-    <a href="../pr-targets/">Targets</a>
-    <span class="nav-sep">/</span>
     <span class="current">Docs</span>
     <span class="nav-sep">/</span>
     <a href="https://github.com/rodboev/pr-sweep">Repo</a> <span class="private">(private)</span>
@@ -222,6 +220,7 @@ sortButtons.forEach(function(button) {{
 
 sortDocsList(activeSort.key, activeSort.type, activeSort.direction);
 </script>
+<script src="../assets/script.js?v=20260609u"></script>
 </body>
 </html>
 """

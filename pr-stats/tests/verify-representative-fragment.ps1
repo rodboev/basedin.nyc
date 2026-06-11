@@ -10,7 +10,7 @@ if ($indexContent -notmatch '<h2>Representative PRs</h2>') {
 
 $representativeMatch = [regex]::Match(
     $indexContent,
-    '<h2>Representative PRs</h2>\s*<table>.*?</table>',
+    '<h2>Representative PRs</h2>\s*<table[^>]*>.*?</table>',
     [System.Text.RegularExpressions.RegexOptions]::Singleline
 )
 if (-not $representativeMatch.Success) {
