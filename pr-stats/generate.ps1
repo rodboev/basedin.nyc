@@ -12,7 +12,7 @@ param(
     [string]$OutFile = "$PSScriptRoot\index.html",
     [string]$CacheFile = "$PSScriptRoot\.pr-classification-cache.json",
     [int]$ClosedClassificationCacheTtlHours = 24 * 30,
-    [int]$LeaderboardCacheTtlHours = 24,
+    [int]$LeaderboardCacheTtlHours = 24 * 7,
     [int]$LeaderboardTop = 10,
     [switch]$RebuildCache,
     [switch]$RebuildClassifications,
@@ -31,6 +31,7 @@ $DefaultLeaderboardVisible = 10
 $LeaderboardMax = 50
 $LeaderboardClassifyTop = 20
 $LeaderboardRateWindowDays = 7
+$MinSpeculativeReferencedPrNumber = 100
 $LeaderboardCacheKeyVersion = "community-shipped-v3"
 $ClassificationCacheVersion = 3
 $DefaultReportStartDate = [datetime]"2026-06-02"
@@ -82,6 +83,7 @@ function Get-GhCommandDisplayText([string]$ArgText, [int]$MaxLength = 160) {
 
 function Invoke-Gh {
     param(
+        [switch]$SuppressErrors,
         [Parameter(ValueFromRemainingArguments = $true)]
         [string[]]$GhArgs
     )
@@ -90,7 +92,11 @@ function Invoke-Gh {
         $env:GIT_TERMINAL_PROMPT = "0"
         $env:GH_NO_UPDATE_NOTIFIER = "1"
         $env:GCM_INTERACTIVE = "never"
-        & gh @GhArgs
+        if ($SuppressErrors) {
+            & gh @GhArgs 2>$null
+        } else {
+            & gh @GhArgs
+        }
         return
     }
 
@@ -154,7 +160,7 @@ function Invoke-Gh {
     $stdout = if (Test-Path $stdoutFile) { [IO.File]::ReadAllText($stdoutFile) } else { "" }
     Remove-Item $stdoutFile, $stderrFile -ErrorAction SilentlyContinue
 
-    if ($stderr) {
+    if ($stderr -and -not $SuppressErrors) {
         [Console]::Error.Write($stderr)
     }
 
@@ -394,14 +400,32 @@ function Get-ScalarValue([object]$Value) {
     return $Value
 }
 
-function Get-PullRequestState([string]$Repo, [int]$Number) {
+function Get-PullRequestState([string]$Repo, [int]$Number, [switch]$Quiet) {
     $cacheKey = "$Repo#$Number"
     if ($script:PullRequestStateCache.ContainsKey($cacheKey)) {
         return $script:PullRequestStateCache[$cacheKey]
     }
-    $result = Invoke-Gh pr view $Number --repo $Repo --json 'number,state,mergedAt,title,url,author,body' 2>$null | ConvertFrom-Json
+    $ghParams = @{
+        SuppressErrors = [bool]$Quiet
+        GhArgs = @('pr', 'view', "$Number", '--repo', $Repo, '--json', 'number,state,mergedAt,title,url,author,body')
+    }
+    $raw = Invoke-Gh @ghParams 2>$null
+    $result = $null
+    if ($raw) {
+        try { $result = $raw | ConvertFrom-Json } catch {}
+    }
     $script:PullRequestStateCache[$cacheKey] = $result
     return $result
+}
+
+function Test-IsExplicitPullRequestReference([string]$Text, [int]$Number) {
+    if (-not $Text) { return $false }
+    return [bool]([regex]::Match($Text, "github\.com/[^/\s]+/[^/\s]+/pull/$Number\b"))
+}
+
+function Test-ShouldResolveReferencedPullRequest([string]$Text, [int]$Number) {
+    if ($Number -ge $MinSpeculativeReferencedPrNumber) { return $true }
+    return (Test-IsExplicitPullRequestReference -Text $Text -Number $Number)
 }
 
 function Get-NonBotCommentText([object]$Evidence) {
@@ -456,7 +480,7 @@ function Test-HasSupersededReference([object]$Evidence) {
 }
 
 function Get-PullRequestReferenceText([string]$Repo, [int]$Number) {
-    $details = Get-PullRequestState -Repo $Repo -Number $Number
+    $details = Get-PullRequestState -Repo $Repo -Number $Number -Quiet
     if (-not $details) { return "" }
 
     $evidence = Get-PullRequestEvidence -Repo $Repo -Number $Number
@@ -503,7 +527,8 @@ function Get-ReferencedMergedPullRequest([string]$Repo, [object]$OriginalPr, [st
         $num = [int]$match.Groups[1].Value
         if ($seen.ContainsKey($num)) { continue }
         $seen[$num] = $true
-        $pr = Get-PullRequestState -Repo $Repo -Number $num
+        if (-not (Test-ShouldResolveReferencedPullRequest -Text $Text -Number $num)) { continue }
+        $pr = Get-PullRequestState -Repo $Repo -Number $num -Quiet
         if ($pr -and ($pr.state -eq "MERGED" -or $pr.mergedAt) -and (Test-IsCreditedMergedSibling -Repo $Repo -OriginalPr $OriginalPr -MergedPr $pr)) {
             return $pr
         }
@@ -517,7 +542,7 @@ function Get-TimelineCreditedMergedPullRequest([string]$Repo, [object]$OriginalP
         if (-not $node.source -or $node.source.__typename -ne "PullRequest") { continue }
         if (-not $node.source.merged -and -not $node.source.mergedAt) { continue }
 
-        $pr = Get-PullRequestState -Repo $Repo -Number $node.source.number
+        $pr = Get-PullRequestState -Repo $Repo -Number $node.source.number -Quiet
         if ($pr -and (Test-IsCreditedMergedSibling -Repo $Repo -OriginalPr $OriginalPr -MergedPr $pr)) {
             return $pr
         }
@@ -980,6 +1005,59 @@ function Get-CachedLeaderboardStats(
     }
 }
 
+function Get-LeaderboardRefreshLogins(
+    [hashtable]$Stats,
+    [int]$Top = $LeaderboardMax
+) {
+    $refreshLogins = @($Stats.GetEnumerator() |
+        Sort-Object { $_.Value.credited } -Descending |
+        Select-Object -First $Top |
+        ForEach-Object { $_.Key })
+    if ($Stats.ContainsKey($Author) -and $refreshLogins -notcontains $Author) {
+        $refreshLogins = @($refreshLogins + $Author)
+    }
+    return @($refreshLogins)
+}
+
+function Get-CommunityContributorLogins(
+    [string]$Repo,
+    [object[]]$RecentRepoPRs,
+    [hashtable]$Exclusions
+) {
+    $uniqueLogins = @($RecentRepoPRs |
+        ForEach-Object { $_.author.login } |
+        Where-Object { $_ -and -not (Test-IsLeaderboardExcludedLogin -Login $_ -Exclusions $Exclusions) } |
+        Select-Object -Unique)
+    if ($uniqueLogins -notcontains $Author -and -not (Test-IsLeaderboardExcludedLogin -Login $Author -Exclusions $Exclusions)) {
+        $uniqueLogins = @($Author) + $uniqueLogins
+    }
+    return @($uniqueLogins)
+}
+
+function Merge-CachedLeaderboardStats(
+    [string]$Repo,
+    [Nullable[datetime]]$StartDate,
+    [string[]]$NewLogins,
+    [hashtable]$NewStats
+) {
+    $cacheKey = Get-LeaderboardCacheKey -Repo $Repo -StartDate $StartDate
+    if (-not $script:ClassificationCache.leaderboards.ContainsKey($cacheKey)) {
+        return
+    }
+
+    $entry = $script:ClassificationCache.leaderboards[$cacheKey]
+    foreach ($login in $NewStats.Keys) {
+        $entry.stats[$login] = @{
+            total = [int]$NewStats[$login].total
+            open = [int]$NewStats[$login].open
+            recentCount = [int]$NewStats[$login].recentCount
+            lastCreatedAt = if ($NewStats[$login].lastCreatedAt) { [string]$NewStats[$login].lastCreatedAt } else { "" }
+        }
+    }
+
+    $entry.logins = @($entry.logins + $NewLogins | Where-Object { $_ } | Select-Object -Unique)
+}
+
 function Set-CachedLeaderboardStats(
     [string]$Repo,
     [Nullable[datetime]]$StartDate,
@@ -1320,29 +1398,45 @@ foreach ($repo in $Repos) {
     $exclusions = Get-RepoLeaderboardExclusions -Repo $repo
     $cachedShippedCounts = @{}
 
+    $repoPRs = @(Get-RecentRepoPullRequests -Repo $repo -Limit 500)
+    if ($repoPRs.Count -eq 0) { continue }
+    $scannedLogins = Get-CommunityContributorLogins -Repo $repo -RecentRepoPRs $repoPRs -Exclusions $exclusions
+
     $cachedLeaderboard = Get-CachedLeaderboardStats -Repo $repo -StartDate $StartDate -Now $now -RateWindowDays $LeaderboardRateWindowDays -TtlHours $LeaderboardCacheTtlHours -ForceRefresh:$RefreshLeaderboardCache
     if ($cachedLeaderboard) {
         $stats = $cachedLeaderboard.stats
         if ($cachedLeaderboard.shippedCounts) {
             $cachedShippedCounts = $cachedLeaderboard.shippedCounts
         }
+
         $cachedCount = if ($cachedLeaderboard.logins.Count -gt 0) { $cachedLeaderboard.logins.Count } else { $stats.Count }
-        Write-Host "    $cachedCount contributors loaded from cache..." -ForegroundColor DarkGray
-    } else {
-        $repoPRs = @(Get-RecentRepoPullRequests -Repo $repo -Limit 500)
-        if ($repoPRs.Count -eq 0) { continue }
-        $uniqueLogins = @($repoPRs |
-            ForEach-Object { $_.author.login } |
-            Where-Object { $_ -and -not (Test-IsLeaderboardExcludedLogin -Login $_ -Exclusions $exclusions) } |
-            Select-Object -Unique)
-        if ($uniqueLogins -notcontains $Author -and -not (Test-IsLeaderboardExcludedLogin -Login $Author -Exclusions $exclusions)) {
-            $uniqueLogins = @($Author) + $uniqueLogins
+        $newLogins = @($scannedLogins | Where-Object { -not $stats.ContainsKey($_) })
+        if ($newLogins.Count -gt 0) {
+            $newStats = Get-LeaderboardStats -Repo $repo -Logins $newLogins -RecentRepoPRs $repoPRs -RateSinceDate $leaderboardRateSinceDate -Now $now -RateWindowDays $LeaderboardRateWindowDays
+            foreach ($login in $newStats.Keys) {
+                $stats[$login] = $newStats[$login]
+            }
+            Merge-CachedLeaderboardStats -Repo $repo -StartDate $StartDate -NewLogins $newLogins -NewStats $newStats
         }
 
-        Write-Host "    $($uniqueLogins.Count) community contributors found, fetching batched counts..." -ForegroundColor DarkGray
+        $refreshLogins = @(Get-LeaderboardRefreshLogins -Stats $stats | Where-Object { $newLogins -notcontains $_ })
+        if ($refreshLogins.Count -gt 0) {
+            $refreshStats = Get-LeaderboardStats -Repo $repo -Logins $refreshLogins -RecentRepoPRs $repoPRs -RateSinceDate $leaderboardRateSinceDate -Now $now -RateWindowDays $LeaderboardRateWindowDays
+            foreach ($login in $refreshStats.Keys) {
+                $stats[$login] = $refreshStats[$login]
+            }
+            Merge-CachedLeaderboardStats -Repo $repo -StartDate $StartDate -NewLogins @() -NewStats $refreshStats
+        }
 
-        $stats = Get-LeaderboardStats -Repo $repo -Logins $uniqueLogins -RecentRepoPRs $repoPRs -RateSinceDate $leaderboardRateSinceDate -Now $now -RateWindowDays $LeaderboardRateWindowDays
-        Set-CachedLeaderboardStats -Repo $repo -StartDate $StartDate -Logins $uniqueLogins -Stats $stats
+        $logParts = @("$cachedCount contributors from cache")
+        if ($newLogins.Count -gt 0) { $logParts += "$($newLogins.Count) new" }
+        if ($refreshLogins.Count -gt 0) { $logParts += "top $($refreshLogins.Count) refreshed" }
+        Write-Host "    $($logParts -join ', ')..." -ForegroundColor DarkGray
+    } else {
+        Write-Host "    $($scannedLogins.Count) community contributors found, fetching batched counts..." -ForegroundColor DarkGray
+
+        $stats = Get-LeaderboardStats -Repo $repo -Logins $scannedLogins -RecentRepoPRs $repoPRs -RateSinceDate $leaderboardRateSinceDate -Now $now -RateWindowDays $LeaderboardRateWindowDays
+        Set-CachedLeaderboardStats -Repo $repo -StartDate $StartDate -Logins $scannedLogins -Stats $stats
     }
 
     $communityStats = @{}
