@@ -683,7 +683,10 @@ body.pr {
   --pr-yellow: #9a6700;
   --pr-blue: #3376d2;
   --pr-purple: #8250df;
-  --pr-superseded: #5f46b8;
+  --pr-withdrawn: grey;
+  --pr-withdrawn-soft: #6e7781;
+  --pr-superseded: darkorange;
+  --pr-superseded-soft: #8f4200;
   --pr-lost: #a12b2b;
   --landscape-row-offset: 42px;
   font: 1rem/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -717,7 +720,10 @@ body.pr {
     --pr-yellow: #d29922;
     --pr-blue: #58a6ff;
     --pr-purple: #bc8cff;
-    --pr-superseded: #8f75ea;
+    --pr-withdrawn: #8b949e;
+    --pr-withdrawn-soft: #b1bac4;
+    --pr-superseded: #ff8c00;
+    --pr-superseded-soft: #d97300;
     --pr-lost: #d14a4a;
   }
 }
@@ -1195,8 +1201,8 @@ body.pr .tag-lost {
 }
 
 body.pr .tag-superseded {
-  background: rgb(95 70 184 / 18%);
-  color: var(--pr-superseded);
+  background: rgb(255 140 0 / 11%);
+  color: var(--pr-superseded-soft);
 }
 
 body.pr .status-grid {
@@ -1321,7 +1327,11 @@ body.pr .tag {
   font-size: 0.7rem;
 }
 
-body.pr .tag-withdrawn,
+body.pr .tag-withdrawn {
+  background: rgb(128 128 128 / 18%);
+  color: var(--pr-withdrawn-soft);
+}
+
 body.pr .tier-c {
   background: rgb(154 103 0 / 18%);
   color: var(--pr-yellow);
@@ -1371,7 +1381,7 @@ body.pr .legend-dot-superseded {
 
 body.pr .bar-withdrawn,
 body.pr .legend-dot-withdrawn {
-  background: var(--pr-yellow);
+  background: var(--pr-withdrawn);
 }
 
 body.pr .bar-open,

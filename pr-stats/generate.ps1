@@ -24,7 +24,7 @@ $script:GenerateStartedAt = Get-Date
 
 $shippedPatterns = @("shipped", "cherry-picked", "merged-via", "salvaged into")
 $duplicatePatterns = @("duplicate")
-$supersededPatterns = @("superseded", "consolidat")
+$supersededPatterns = @("supersede", "consolidat")
 $withdrawnPattern = '(?i)\bwithdraw(?:ing|n)?\b'
 $DefaultLeaderboardVisible = 10
 $LeaderboardMax = 50
@@ -1327,11 +1327,12 @@ $acceptedIndirect = @($allPRs | Where-Object { $_.classification -eq "accepted-i
 $lost = @($allPRs | Where-Object { $_.classification -eq "lost" })
 $superseded = @($allPRs | Where-Object { $_.classification -eq "superseded" })
 $withdrawn = @($allPRs | Where-Object { $_.classification -eq "withdrawn" })
+$reportedPRs = @($allPRs | Where-Object { $_.classification -ne "withdrawn" })
 
 $totalAccepted = $shipped.Count + $acceptedIndirect.Count
-$totalNotShipped = $lost.Count + $superseded.Count + $withdrawn.Count
-$totalClosed = $totalAccepted + $lost.Count + $superseded.Count + $withdrawn.Count
-$acceptanceRate = if ($totalClosed -gt 0) { [math]::Round(($totalAccepted / $totalClosed) * 100) } else { "N/A" }
+$totalNotShipped = $lost.Count + $superseded.Count
+$acceptanceClosed = $totalAccepted + $lost.Count + $superseded.Count
+$acceptanceRate = if ($acceptanceClosed -gt 0) { [math]::Round(($totalAccepted / $acceptanceClosed) * 100) } else { "N/A" }
 
 # Build per-repo leaderboards
 Write-Host "`nBuilding leaderboards..." -ForegroundColor DarkGray
@@ -1655,7 +1656,7 @@ if ($representativeItems.Count -gt 0) {
 Write-Host "Generating HTML..." -ForegroundColor DarkGray
 
 $allPRItems = @()
-foreach ($pr in $allPRs) {
+foreach ($pr in $reportedPRs) {
     $classificationKey = if ($pr.classification) { $pr.classification } else { "open" }
     $statusKey = if ($classificationKey -eq "accepted-indirect") { "shipped" } else { $classificationKey }
     $meta = $ClassificationMeta[$classificationKey]
@@ -1693,7 +1694,7 @@ function Test-PrStatusMatch {
         [string]$ItemStatusKey
     )
     if ($StatusKey -eq "not-shipped") {
-        return $ItemStatusKey -in @("lost", "superseded", "withdrawn")
+        return $ItemStatusKey -in @("lost", "superseded")
     }
     return $ItemStatusKey -eq $StatusKey
 }
@@ -1770,12 +1771,12 @@ $prFiltersJson = (@($prStatusFilters) | ConvertTo-Json -Compress) -replace '</sc
 $repoSections = ""
 foreach ($repo in $Repos) {
     $repoShort = ($repo -split '/')[-1]
-    $repoPRs = @($allPRs | Where-Object { $_.repo -eq $repo })
+    $repoPRs = @($reportedPRs | Where-Object { $_.repo -eq $repo })
     $repoCounts = @{}
     foreach ($group in ($repoPRs | Group-Object classification)) { $repoCounts[$group.Name] = $group.Count }
 
     $repoStatusRows = ""
-    foreach ($status in @("shipped", "open", "withdrawn", "superseded", "lost")) {
+    foreach ($status in @("shipped", "open", "superseded", "lost")) {
         $count = if ($status -eq "shipped") { [int]$repoCounts["shipped"] + [int]$repoCounts["accepted-indirect"] } else { [int]$repoCounts[$status] }
         if ($count -eq 0 -and $status -notin @("shipped", "open")) { continue }
         $meta = $ClassificationMeta[$status]
@@ -1795,7 +1796,7 @@ $dateStr = $now.ToString("MMMM d, yyyy")
 
 # Calculate time span from earliest to latest PR
 $allDates = @()
-foreach ($pr in $allPRs) {
+foreach ($pr in $reportedPRs) {
     $statusKey = if ($pr.classification) { $pr.classification } else { "open" }
     $effectiveDate = Get-PullRequestEffectiveIsoDate -PullRequest $pr -StatusKey $statusKey
     if ($effectiveDate) { try { $allDates += [datetime]$effectiveDate } catch {} }
@@ -1812,9 +1813,9 @@ if ($allDates.Count -ge 2) {
 }
 
 # Title/Content: when the segment renders a title attribute / inline count ("wide" = only when > 4%)
+$barTotal = $reportedPRs.Count
 $barSegments = @(
     @{ Key = "shipped";    Label = "Shipped";    Count = $totalAccepted;     Title = "wide";   Content = "wide" }
-    @{ Key = "withdrawn";  Label = "Withdrawn";  Count = $withdrawn.Count;   Title = "never";  Content = "wide" }
     @{ Key = "superseded"; Label = "Superseded"; Count = $superseded.Count;  Title = "never";  Content = "wide" }
     @{ Key = "lost";       Label = "Lost";       Count = $lost.Count;        Title = "never";  Content = "wide" }
     @{ Key = "open";       Label = "Open";       Count = $open.Count;        Title = "always"; Content = "always" }
@@ -1822,7 +1823,7 @@ $barSegments = @(
 $barHtml = ""
 $legendHtml = ""
 foreach ($seg in $barSegments) {
-    $pct = if ($allPRs.Count -gt 0) { [math]::Round(($seg.Count / $allPRs.Count) * 100, 1) } else { 0 }
+    $pct = if ($barTotal -gt 0) { [math]::Round(($seg.Count / $barTotal) * 100, 1) } else { 0 }
     $wide = $pct -gt 4
     $title = if ($seg.Title -eq "always" -or ($seg.Title -eq "wide" -and $wide)) { " title=`"$($seg.Count)`"" } else { "" }
     $content = if ($seg.Content -eq "always" -or $wide) { $seg.Count } else { "" }
@@ -1861,14 +1862,14 @@ $html = @"
 </div>
 
 <div class="grid grid-summary">
-  <div class="stat-card"><div class="number">$($allPRs.Count)</div><div class="label">Total PRs</div></div>
+  <div class="stat-card"><div class="number">$($reportedPRs.Count)</div><div class="label">Total PRs</div></div>
   <div class="stat-card"><div class="number green">$totalAccepted</div><div class="label">Shipped</div></div>
   <div class="stat-card"><div class="number blue">$($open.Count)</div><div class="label">Open</div></div>
   <div class="stat-card"><div class="number">$totalNotShipped</div><div class="label">Not Shipped</div></div>
 </div>
 <div class="grid">
-  <div class="stat-card"><div class="number green">${acceptanceRate}%</div><div class="label">Acceptance rate ($($withdrawn.Count) withdrawn, $($superseded.Count) superseded, $($lost.Count) lost)</div></div>
-  <div class="stat-card"><div class="number yellow">$timeSpan</div><div class="label">Time span ($timeRange)</div></div>
+  <div class="stat-card"><div class="number green">${acceptanceRate}%</div><div class="label">Acceptance rate ($($superseded.Count) superseded, $($lost.Count) lost)</div></div>
+  <div class="stat-card"><div class="number purple">$timeSpan</div><div class="label">Time span ($timeRange)</div></div>
 </div>
 
 <h2>Breakdown</h2>
@@ -1951,7 +1952,7 @@ function syncLandscapeStickyOffset() {
 }
 function prMatchesStatus(item, statusKey) {
   if (statusKey === 'not-shipped') {
-    return item.statusKey === 'lost' || item.statusKey === 'superseded' || item.statusKey === 'withdrawn';
+    return item.statusKey === 'lost' || item.statusKey === 'superseded';
   }
   return item.statusKey === statusKey;
 }
@@ -2073,7 +2074,7 @@ document.addEventListener('scroll', updateCollapsedOverlays, { passive: true });
 
 $html | Out-File -FilePath $OutFile -Encoding utf8
 Write-Host "`nWritten to $OutFile" -ForegroundColor Green
-Write-Host "  Total: $($allPRs.Count) | Shipped: $totalAccepted | Open: $($open.Count) | Lost: $($lost.Count) | Rate: ${acceptanceRate}%"
+Write-Host "  Total: $($reportedPRs.Count) | Shipped: $totalAccepted | Open: $($open.Count) | Lost: $($lost.Count) | Rate: ${acceptanceRate}%"
 Write-Host "  Closed classification cache hits: $script:ClassificationCacheHits | Leaderboard cache hits: $script:LeaderboardCacheHits | Cache file: $CacheFile" -ForegroundColor DarkGray
 $generateElapsed = (Get-Date) - $script:GenerateStartedAt
 Write-Host "  Elapsed: $([int]$generateElapsed.TotalSeconds)s ($([math]::Round($generateElapsed.TotalMinutes, 1)) min)" -ForegroundColor DarkGray

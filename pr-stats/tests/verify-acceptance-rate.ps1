@@ -6,18 +6,17 @@ $content = Get-Content -Raw -Path $Path
 
 $match = [regex]::Match(
     $content,
-    '<div class="stat-card"><div class="number green">(\d+)%</div><div class="label">Acceptance rate \((\d+) withdrawn, (\d+) superseded, (\d+) lost\)</div></div>'
+    '<div class="stat-card"><div class="number green">(\d+)%</div><div class="label">Acceptance rate \((\d+) superseded, (\d+) lost\)</div></div>'
 )
 if (-not $match.Success) {
     throw "Could not find acceptance rate stat card with the expected wording."
 }
 
 $rate = [int]$match.Groups[1].Value
-$withdrawn = [int]$match.Groups[2].Value
-$superseded = [int]$match.Groups[3].Value
-$lost = [int]$match.Groups[4].Value
+$superseded = [int]$match.Groups[2].Value
+$lost = [int]$match.Groups[3].Value
 
-if ($withdrawn -lt 0 -or $superseded -lt 0 -or $lost -lt 0) {
+if ($superseded -lt 0 -or $lost -lt 0) {
     throw "Acceptance rate breakdown counts should not be negative."
 }
 
