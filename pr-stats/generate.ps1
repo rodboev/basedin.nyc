@@ -13,6 +13,7 @@ param(
     [string]$CacheFile = "$PSScriptRoot\.pr-classification-cache.json",
     [int]$ClosedClassificationCacheTtlHours = 24 * 30,
     [int]$LeaderboardCacheTtlHours = 24 * 7,
+    [int]$LeaderboardRefreshTtlHours = 24,
     [int]$LeaderboardTop = 10,
     [switch]$RebuildCache,
     [switch]$RebuildClassifications,
@@ -21,11 +22,9 @@ param(
 
 $script:GenerateStartedAt = Get-Date
 
-$shippedPatterns = @("Shipped", "shipped", "cherry-picked", "merged-via", "Salvaged into", "salvaged into")
-$acceptedPatterns = @()
-$duplicatePatterns = @("Duplicate", "duplicate")
-$supersededPatterns = @("Superseded by", "superseded by", "superseded", "consolidated", "Consolidating")
-$lostPatterns = @()
+$shippedPatterns = @("shipped", "cherry-picked", "merged-via", "salvaged into")
+$duplicatePatterns = @("duplicate")
+$supersededPatterns = @("superseded", "consolidat")
 $withdrawnPattern = '(?i)\bwithdraw(?:ing|n)?\b'
 $DefaultLeaderboardVisible = 10
 $LeaderboardMax = 50
@@ -51,6 +50,30 @@ $RepoLeaderboardConfig = @{
         MaintainerLogins = @("thedotmack")
         IntegrationBots = @()
     }
+}
+
+# (maxAgeDays, ttlDays) pairs; $null maxAge = catch-all
+$ClassificationTtlProfiles = @{
+    stable   = @(@(30, 30), @(120, 90), @($null, 180))
+    timeline = @(@(14, 14), @(60, 30), @($null, 90))
+    volatile = @(@(14, 7), @(60, 30), @($null, 90))
+}
+$ClassificationTtlProfileFor = @{
+    "shipped/direct-merge" = "stable"
+    "shipped/timeline" = "timeline"
+    "shipped/*" = "volatile"
+    "accepted-indirect/*" = "volatile"
+    "lost/*" = "stable"
+    "withdrawn/*" = "stable"
+}
+
+$ClassificationMeta = [ordered]@{
+    shipped             = @{ Label = "Shipped"; Tag = "tag-shipped"; Color = "Green"; Desc = "Verified via merged release PR, maintainer release evidence, or indirect accepted sibling" }
+    "accepted-indirect" = @{ Label = "Shipped"; Tag = "tag-shipped"; Color = "Cyan" }
+    open                = @{ Label = "Open"; Tag = "tag-open"; Color = "Blue"; Desc = "Awaiting maintainer review" }
+    withdrawn           = @{ Label = "Withdrawn"; Tag = "tag-withdrawn"; Color = "DarkGray"; Desc = "Closed without maintainer action" }
+    superseded          = @{ Label = "Superseded"; Tag = "tag-superseded"; Color = "DarkYellow"; Desc = "Replaced by a newer maintainer-accepted PR" }
+    lost                = @{ Label = "Lost"; Tag = "tag-lost"; Color = "Red"; Desc = "Competing PR won" }
 }
 
 $EasternTimeZone = [System.TimeZoneInfo]::FindSystemTimeZoneById("Eastern Standard Time")
@@ -174,11 +197,7 @@ function Write-ProgressHost {
         [switch]$NoNewline
     )
 
-    if ($NoNewline) {
-        Write-Host $Message -ForegroundColor $ForegroundColor -NoNewline
-    } else {
-        Write-Host $Message -ForegroundColor $ForegroundColor
-    }
+    Write-Host $Message -ForegroundColor $ForegroundColor -NoNewline:$NoNewline
     [Console]::Out.Flush()
 }
 
@@ -211,6 +230,13 @@ function Get-ReleaseTag([string]$Text) {
 
 function Test-IsReleaseTitle([string]$Text) {
     return [bool](Get-ReleaseTag $Text)
+}
+
+function Test-MatchesAnyPattern([string]$Text, [string[]]$Patterns) {
+    foreach ($p in $Patterns) {
+        if ($Text -match [regex]::Escape($p)) { return $true }
+    }
+    return $false
 }
 
 function Get-RepoLabel([string]$Repo) {
@@ -269,6 +295,38 @@ function Test-IsLeaderboardExcludedLogin([string]$Login, [hashtable]$Exclusions)
 
 function Get-LeaderboardCacheKey([string]$Repo, [object]$StartDate) {
     return "$Repo|$LeaderboardCacheKeyVersion|$(Get-StartDateCacheKey -Date $StartDate)"
+}
+
+function New-LeaderboardStat(
+    [int]$Total,
+    [int]$Open,
+    [int]$RecentCount,
+    [string]$LastCreatedAt,
+    [datetime]$Now,
+    [double]$RateWindowDays
+) {
+    $last = $null
+    if ($LastCreatedAt) {
+        try { $last = [datetime]$LastCreatedAt } catch {}
+    }
+    return @{
+        credited = [math]::Max(0, $Total - $Open)
+        open = $Open
+        total = $Total
+        recentCount = $RecentCount
+        rate = if ($RateWindowDays -gt 0) { [math]::Round($RecentCount / $RateWindowDays, 1) } else { 0 }
+        idle = if ($last) { [math]::Round(($Now - $last).TotalDays, 1) } else { 999 }
+        lastCreatedAt = if ($LastCreatedAt) { $LastCreatedAt } else { "" }
+    }
+}
+
+function ConvertTo-StoredLeaderboardStat([object]$Stat) {
+    return @{
+        total = [int]$Stat.total
+        open = [int]$Stat.open
+        recentCount = [int]$Stat.recentCount
+        lastCreatedAt = if ($Stat.lastCreatedAt) { [string]$Stat.lastCreatedAt } else { "" }
+    }
 }
 
 function Get-ReportStartLabel([datetime]$Date) {
@@ -457,10 +515,8 @@ function Test-IsSupersededEvidence([object]$PullRequest, [object]$Evidence) {
     foreach ($comment in @($Evidence.comments.nodes)) {
         if ($authorLogin -and $comment.author.login -eq $authorLogin) { continue }
         if ($comment.authorAssociation -and $comment.authorAssociation -notin $maintainerAssociations) { continue }
-        foreach ($pattern in $supersededPatterns) {
-            if ([string]$comment.body -match [regex]::Escape($pattern)) {
-                return $true
-            }
+        if (Test-MatchesAnyPattern -Text ([string]$comment.body) -Patterns $supersededPatterns) {
+            return $true
         }
     }
 
@@ -469,13 +525,10 @@ function Test-IsSupersededEvidence([object]$PullRequest, [object]$Evidence) {
 
 function Test-HasSupersededReference([object]$Evidence) {
     foreach ($comment in @($Evidence.comments.nodes)) {
-        foreach ($pattern in $supersededPatterns) {
-            if ([string]$comment.body -match [regex]::Escape($pattern)) {
-                return $true
-            }
+        if (Test-MatchesAnyPattern -Text ([string]$comment.body) -Patterns $supersededPatterns) {
+            return $true
         }
     }
-
     return $false
 }
 
@@ -584,7 +637,6 @@ function Get-LegacyLeaderboardStat(
     $dates = @($dates | Sort-Object)
 
     $openCount = @($prs | Where-Object { $_.state -eq "OPEN" }).Count
-    $credited = @($prs | Where-Object { $_.state -ne "OPEN" }).Count
 
     $recentCount = 0
     foreach ($pr in $prs) {
@@ -595,21 +647,9 @@ function Get-LegacyLeaderboardStat(
         }
     }
 
-    $rate = if ($RateWindowDays -gt 0) { [math]::Round($recentCount / $RateWindowDays, 1) } else { 0 }
     $last = if ($dates.Count -gt 0) { $dates[-1] } else { $null }
-    $idle = if ($last) { [math]::Round(($Now - $last).TotalDays, 1) } else { 999 }
-    $span = if ($dates.Count -ge 2) { ($dates[-1] - $dates[0]).TotalDays } else { 0 }
-
-    return @{
-        credited = $credited
-        open = $openCount
-        total = $prs.Count
-        recentCount = $recentCount
-        rate = $rate
-        idle = $idle
-        lastCreatedAt = if ($last) { $last.ToString("o") } else { "" }
-        span = $span
-    }
+    return New-LeaderboardStat -Total $prs.Count -Open $openCount -RecentCount $recentCount `
+        -LastCreatedAt $(if ($last) { $last.ToString("o") } else { "" }) -Now $Now -RateWindowDays $RateWindowDays
 }
 
 function Get-LeaderboardStats(
@@ -670,19 +710,8 @@ function Get-LeaderboardStats(
                 $recentCount = Get-PropertyIssueCount -Data $data -Name "${aliasBase}_recent"
 
                 if ($null -ne $totalCount -and $null -ne $openCount -and $null -ne $recentCount) {
-                    $credited = [math]::Max(0, $totalCount - $openCount)
-                    $rate = if ($RateWindowDays -gt 0) { [math]::Round($recentCount / $RateWindowDays, 1) } else { 0 }
-                    $idle = if ($last) { [math]::Round(($Now - $last).TotalDays, 1) } else { 999 }
-                    $stats[$login] = @{
-                        credited = $credited
-                        open = $openCount
-                        total = $totalCount
-                        recentCount = $recentCount
-                        rate = $rate
-                        idle = $idle
-                        lastCreatedAt = if ($last) { $last.ToString("o") } else { "" }
-                        span = 0
-                    }
+                    $stats[$login] = New-LeaderboardStat -Total $totalCount -Open $openCount -RecentCount $recentCount `
+                        -LastCreatedAt $(if ($last) { $last.ToString("o") } else { "" }) -Now $Now -RateWindowDays $RateWindowDays
                     continue
                 }
             }
@@ -740,12 +769,7 @@ function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild, [switc
             $stats = @{}
             if ($repoProp.Value.stats) {
                 foreach ($statProp in $repoProp.Value.stats.PSObject.Properties) {
-                    $stats[$statProp.Name] = @{
-                        total = $statProp.Value.total
-                        open = $statProp.Value.open
-                        recentCount = $statProp.Value.recentCount
-                        lastCreatedAt = $statProp.Value.lastCreatedAt
-                    }
+                    $stats[$statProp.Name] = ConvertTo-StoredLeaderboardStat $statProp.Value
                 }
             }
 
@@ -764,6 +788,7 @@ function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild, [switc
             $leaderboardKey = if ($repoProp.Name -match '\|') { $repoProp.Name } else { "$($repoProp.Name)|all" }
             $leaderboards[$leaderboardKey] = @{
                 cachedAt = $repoProp.Value.cachedAt
+                refreshedAt = $repoProp.Value.refreshedAt
                 logins = $logins
                 stats = $stats
                 shippedCounts = $shippedCounts
@@ -805,6 +830,7 @@ function Export-ClassificationCache([string]$Path) {
 
         $cacheForJson.leaderboards[$repo] = [ordered]@{
             cachedAt = $entry.cachedAt
+            refreshedAt = $entry.refreshedAt
             logins = @($entry.logins)
             stats = $stats
             shippedCounts = $shippedCounts
@@ -895,48 +921,16 @@ function Get-ClosedClassificationCacheTtlHours(
     if ($PullRequest.closedAt) {
         try { $closedAt = [datetime]$PullRequest.closedAt } catch {}
     }
-
     $ageDays = if ($closedAt) { ($Now - $closedAt).TotalDays } else { 999 }
 
-    switch ($Classification) {
-        "shipped" {
-            switch ($EvidenceKind) {
-                "direct-merge" {
-                    if ($ageDays -lt 30) { return 24 * 30 }
-                    if ($ageDays -lt 120) { return 24 * 90 }
-                    return 24 * 180
-                }
-                "timeline" {
-                    if ($ageDays -lt 14) { return 24 * 14 }
-                    if ($ageDays -lt 60) { return 24 * 30 }
-                    return 24 * 90
-                }
-                default {
-                    if ($ageDays -lt 14) { return 24 * 7 }
-                    if ($ageDays -lt 60) { return 24 * 30 }
-                    return 24 * 90
-                }
-            }
-        }
-        "accepted-indirect" {
-            if ($ageDays -lt 14) { return 24 * 7 }
-            if ($ageDays -lt 60) { return 24 * 30 }
-            return 24 * 90
-        }
-        "lost" {
-            if ($ageDays -lt 30) { return 24 * 30 }
-            if ($ageDays -lt 120) { return 24 * 90 }
-            return 24 * 180
-        }
-        "withdrawn" {
-            if ($ageDays -lt 30) { return 24 * 30 }
-            if ($ageDays -lt 120) { return 24 * 90 }
-            return 24 * 180
-        }
-        default {
-            return $ClosedClassificationCacheTtlHours
-        }
+    $profileName = $ClassificationTtlProfileFor["$Classification/$EvidenceKind"]
+    if (-not $profileName) { $profileName = $ClassificationTtlProfileFor["$Classification/*"] }
+    if (-not $profileName) { return $ClosedClassificationCacheTtlHours }
+
+    foreach ($bucket in $ClassificationTtlProfiles[$profileName]) {
+        if ($null -eq $bucket[0] -or $ageDays -lt $bucket[0]) { return 24 * $bucket[1] }
     }
+    return $ClosedClassificationCacheTtlHours
 }
 
 function Get-CachedLeaderboardStats(
@@ -970,24 +964,8 @@ function Get-CachedLeaderboardStats(
     $stats = @{}
     foreach ($login in $entry.stats.Keys) {
         $raw = $entry.stats[$login]
-        $totalCount = [int]$raw.total
-        $openCount = [int]$raw.open
-        $recentCount = [int]$raw.recentCount
-        $last = $null
-        if ($raw.lastCreatedAt) {
-            try { $last = [datetime]$raw.lastCreatedAt } catch {}
-        }
-
-        $stats[$login] = @{
-            credited = [math]::Max(0, $totalCount - $openCount)
-            open = $openCount
-            total = $totalCount
-            recentCount = $recentCount
-            rate = if ($RateWindowDays -gt 0) { [math]::Round($recentCount / $RateWindowDays, 1) } else { 0 }
-            idle = if ($last) { [math]::Round(($Now - $last).TotalDays, 1) } else { 999 }
-            lastCreatedAt = if ($raw.lastCreatedAt) { $raw.lastCreatedAt } else { "" }
-            span = 0
-        }
+        $stats[$login] = New-LeaderboardStat -Total ([int]$raw.total) -Open ([int]$raw.open) -RecentCount ([int]$raw.recentCount) `
+            -LastCreatedAt ([string]$raw.lastCreatedAt) -Now $Now -RateWindowDays $RateWindowDays
     }
 
     $shippedCounts = @{}
@@ -997,15 +975,21 @@ function Get-CachedLeaderboardStats(
         }
     }
 
+    $refreshedAt = $cachedAt
+    if ($entry.refreshedAt) {
+        try { $refreshedAt = [datetime]$entry.refreshedAt } catch {}
+    }
+
     $script:LeaderboardCacheHits++
     return @{
         logins = @($entry.logins)
         stats = $stats
         shippedCounts = $shippedCounts
+        refreshedAt = $refreshedAt
     }
 }
 
-function Get-LeaderboardRefreshLogins(
+function Get-TopCreditedLogins(
     [hashtable]$Stats,
     [int]$Top = $LeaderboardMax
 ) {
@@ -1047,12 +1031,7 @@ function Merge-CachedLeaderboardStats(
 
     $entry = $script:ClassificationCache.leaderboards[$cacheKey]
     foreach ($login in $NewStats.Keys) {
-        $entry.stats[$login] = @{
-            total = [int]$NewStats[$login].total
-            open = [int]$NewStats[$login].open
-            recentCount = [int]$NewStats[$login].recentCount
-            lastCreatedAt = if ($NewStats[$login].lastCreatedAt) { [string]$NewStats[$login].lastCreatedAt } else { "" }
-        }
+        $entry.stats[$login] = ConvertTo-StoredLeaderboardStat $NewStats[$login]
     }
 
     $entry.logins = @($entry.logins + $NewLogins | Where-Object { $_ } | Select-Object -Unique)
@@ -1067,12 +1046,7 @@ function Set-CachedLeaderboardStats(
     $cacheKey = Get-LeaderboardCacheKey -Repo $Repo -StartDate $StartDate
     $storedStats = @{}
     foreach ($login in $Stats.Keys) {
-        $storedStats[$login] = @{
-            total = [int]$Stats[$login].total
-            open = [int]$Stats[$login].open
-            recentCount = [int]$Stats[$login].recentCount
-            lastCreatedAt = if ($Stats[$login].lastCreatedAt) { [string]$Stats[$login].lastCreatedAt } else { "" }
-        }
+        $storedStats[$login] = ConvertTo-StoredLeaderboardStat $Stats[$login]
     }
 
     $existingShipped = @{}
@@ -1082,9 +1056,17 @@ function Set-CachedLeaderboardStats(
 
     $script:ClassificationCache.leaderboards[$cacheKey] = @{
         cachedAt = (Get-Date).ToString("o")
+        refreshedAt = (Get-Date).ToString("o")
         logins = @($Logins | Where-Object { $_ } | Select-Object -Unique)
         stats = $storedStats
         shippedCounts = $existingShipped
+    }
+}
+
+function Set-CachedLeaderboardRefreshedAt([string]$Repo, [Nullable[datetime]]$StartDate) {
+    $cacheKey = Get-LeaderboardCacheKey -Repo $Repo -StartDate $StartDate
+    if ($script:ClassificationCache.leaderboards.ContainsKey($cacheKey)) {
+        $script:ClassificationCache.leaderboards[$cacheKey].refreshedAt = (Get-Date).ToString("o")
     }
 }
 
@@ -1162,19 +1144,13 @@ function Get-ClosedPullRequestClassification([object]$PullRequest) {
 
     $isDirectMerged = $PullRequest.state -eq "MERGED" -or [bool]$PullRequest.mergedAt
     $isTimelineShipped = [bool]($mergedReleaseCloser -or $mergedReleaseCrossRef -or $releaseRefCommit)
-    $isShipped = $false
-    foreach ($p in $shippedPatterns) { if ($comments -match [regex]::Escape($p)) { $isShipped = $true; break } }
-    $isAccepted = $false
-    foreach ($p in $acceptedPatterns) { if ($comments -match [regex]::Escape($p)) { $isAccepted = $true; break } }
-    $isDuplicate = $false
-    foreach ($p in $duplicatePatterns) { if ($comments -match [regex]::Escape($p)) { $isDuplicate = $true; break } }
+    $isShipped = Test-MatchesAnyPattern -Text $comments -Patterns $shippedPatterns
+    $isDuplicate = Test-MatchesAnyPattern -Text $comments -Patterns $duplicatePatterns
     $isSuperseded = Test-IsSupersededEvidence -PullRequest $PullRequest -Evidence $raw
     $hasSupersededReference = Test-HasSupersededReference -Evidence $raw
-    $isLost = $false
-    foreach ($p in $lostPatterns) { if ($comments -match [regex]::Escape($p)) { $isLost = $true; break } }
     $isAuthorWithdrawn = Test-IsAuthorWithdrawnEvidence -PullRequest $PullRequest -Evidence $raw
     $acceptedSibling = Get-TimelineCreditedMergedPullRequest -Repo $PullRequest.repo -OriginalPr $PullRequest -Evidence $raw
-    if (-not $acceptedSibling -and ($isDuplicate -or $isSuperseded -or $isLost -or $comments)) {
+    if (-not $acceptedSibling -and ($isDuplicate -or $isSuperseded -or $comments)) {
         $acceptedSibling = Get-ReferencedMergedPullRequest -Repo $PullRequest.repo -OriginalPr $PullRequest -Text $comments
     }
 
@@ -1214,17 +1190,13 @@ function Get-ClosedPullRequestClassification([object]$PullRequest) {
         $classification = "superseded"
         $evidenceKind = "superseded"
         $logLabel = "superseded"
-    } elseif ($isAccepted -or $acceptedSibling) {
+    } elseif ($acceptedSibling) {
         $classification = "accepted-indirect"
         $evidenceKind = "accepted-indirect"
-        if ($acceptedSibling) {
-            $viaLabel = "#$($acceptedSibling.number)"
-            $viaUrl = $acceptedSibling.url
-            $logLabel = "accepted indirectly via #$($acceptedSibling.number)"
-        } else {
-            $logLabel = "accepted (indirect)"
-        }
-    } elseif ($isDuplicate -or $isLost) {
+        $viaLabel = "#$($acceptedSibling.number)"
+        $viaUrl = $acceptedSibling.url
+        $logLabel = "accepted indirectly via #$($acceptedSibling.number)"
+    } elseif ($isDuplicate) {
         $classification = "lost"
         $evidenceKind = "lost"
         $logLabel = "lost (competing PR won)"
@@ -1317,8 +1289,6 @@ foreach ($pr in $open) {
 
 Write-ProgressHost "Classifying $($closed.Count) closed PRs..." -ForegroundColor DarkGray
 
-$shipped = @(); $acceptedIndirect = @(); $duplicates = @(); $lost = @(); $superseded = @(); $withdrawn = @(); $rejected = @()
-
 foreach ($pr in $closed) {
     Write-ProgressHost "  #$($pr.number) ($($pr.repoShort))..." -ForegroundColor DarkGray -NoNewline
     $result = Get-ClosedPullRequestClassification -PullRequest $pr
@@ -1327,28 +1297,8 @@ foreach ($pr in $closed) {
     $pr.viaLabel = $result.ViaLabel
     $pr.viaUrl = $result.ViaUrl
 
-    switch ($result.Classification) {
-        "shipped" {
-            $shipped += $pr
-            $color = "Green"
-        }
-        "accepted-indirect" {
-            $acceptedIndirect += $pr
-            $color = "Cyan"
-        }
-        "lost" {
-            $lost += $pr
-            $color = "Red"
-        }
-        "superseded" {
-            $superseded += $pr
-            $color = "DarkYellow"
-        }
-        default {
-            $withdrawn += $pr
-            $color = "DarkGray"
-        }
-    }
+    $meta = $ClassificationMeta[$result.Classification]
+    $color = if ($meta) { $meta.Color } else { "DarkGray" }
     Write-ProgressHost " $($result.LogLabel)" -ForegroundColor $color
 }
 
@@ -1377,7 +1327,6 @@ $acceptedIndirect = @($allPRs | Where-Object { $_.classification -eq "accepted-i
 $lost = @($allPRs | Where-Object { $_.classification -eq "lost" })
 $superseded = @($allPRs | Where-Object { $_.classification -eq "superseded" })
 $withdrawn = @($allPRs | Where-Object { $_.classification -eq "withdrawn" })
-$rejected = @($allPRs | Where-Object { $_.classification -eq "rejected" })
 
 $totalAccepted = $shipped.Count + $acceptedIndirect.Count
 $totalNotShipped = $lost.Count + $superseded.Count + $withdrawn.Count
@@ -1398,10 +1347,6 @@ foreach ($repo in $Repos) {
     $exclusions = Get-RepoLeaderboardExclusions -Repo $repo
     $cachedShippedCounts = @{}
 
-    $repoPRs = @(Get-RecentRepoPullRequests -Repo $repo -Limit 500)
-    if ($repoPRs.Count -eq 0) { continue }
-    $scannedLogins = Get-CommunityContributorLogins -Repo $repo -RecentRepoPRs $repoPRs -Exclusions $exclusions
-
     $cachedLeaderboard = Get-CachedLeaderboardStats -Repo $repo -StartDate $StartDate -Now $now -RateWindowDays $LeaderboardRateWindowDays -TtlHours $LeaderboardCacheTtlHours -ForceRefresh:$RefreshLeaderboardCache
     if ($cachedLeaderboard) {
         $stats = $cachedLeaderboard.stats
@@ -1410,29 +1355,45 @@ foreach ($repo in $Repos) {
         }
 
         $cachedCount = if ($cachedLeaderboard.logins.Count -gt 0) { $cachedLeaderboard.logins.Count } else { $stats.Count }
-        $newLogins = @($scannedLogins | Where-Object { -not $stats.ContainsKey($_) })
-        if ($newLogins.Count -gt 0) {
-            $newStats = Get-LeaderboardStats -Repo $repo -Logins $newLogins -RecentRepoPRs $repoPRs -RateSinceDate $leaderboardRateSinceDate -Now $now -RateWindowDays $LeaderboardRateWindowDays
-            foreach ($login in $newStats.Keys) {
-                $stats[$login] = $newStats[$login]
-            }
-            Merge-CachedLeaderboardStats -Repo $repo -StartDate $StartDate -NewLogins $newLogins -NewStats $newStats
-        }
+        $refreshAgeHours = ($now - $cachedLeaderboard.refreshedAt).TotalHours
+        $newLogins = @()
+        $refreshLogins = @()
+        if ($refreshAgeHours -gt $LeaderboardRefreshTtlHours) {
+            $repoPRs = @(Get-RecentRepoPullRequests -Repo $repo -Limit 500)
+            if ($repoPRs.Count -gt 0) {
+                $scannedLogins = Get-CommunityContributorLogins -Repo $repo -RecentRepoPRs $repoPRs -Exclusions $exclusions
+                $newLogins = @($scannedLogins | Where-Object { -not $stats.ContainsKey($_) })
+                if ($newLogins.Count -gt 0) {
+                    $newStats = Get-LeaderboardStats -Repo $repo -Logins $newLogins -RecentRepoPRs $repoPRs -RateSinceDate $leaderboardRateSinceDate -Now $now -RateWindowDays $LeaderboardRateWindowDays
+                    foreach ($login in $newStats.Keys) {
+                        $stats[$login] = $newStats[$login]
+                    }
+                    Merge-CachedLeaderboardStats -Repo $repo -StartDate $StartDate -NewLogins $newLogins -NewStats $newStats
+                }
 
-        $refreshLogins = @(Get-LeaderboardRefreshLogins -Stats $stats | Where-Object { $newLogins -notcontains $_ })
-        if ($refreshLogins.Count -gt 0) {
-            $refreshStats = Get-LeaderboardStats -Repo $repo -Logins $refreshLogins -RecentRepoPRs $repoPRs -RateSinceDate $leaderboardRateSinceDate -Now $now -RateWindowDays $LeaderboardRateWindowDays
-            foreach ($login in $refreshStats.Keys) {
-                $stats[$login] = $refreshStats[$login]
+                $refreshLogins = @(Get-TopCreditedLogins -Stats $stats | Where-Object { $newLogins -notcontains $_ })
+                if ($refreshLogins.Count -gt 0) {
+                    $refreshStats = Get-LeaderboardStats -Repo $repo -Logins $refreshLogins -RecentRepoPRs $repoPRs -RateSinceDate $leaderboardRateSinceDate -Now $now -RateWindowDays $LeaderboardRateWindowDays
+                    foreach ($login in $refreshStats.Keys) {
+                        $stats[$login] = $refreshStats[$login]
+                    }
+                    Merge-CachedLeaderboardStats -Repo $repo -StartDate $StartDate -NewLogins @() -NewStats $refreshStats
+                }
+
+                Set-CachedLeaderboardRefreshedAt -Repo $repo -StartDate $StartDate
             }
-            Merge-CachedLeaderboardStats -Repo $repo -StartDate $StartDate -NewLogins @() -NewStats $refreshStats
         }
 
         $logParts = @("$cachedCount contributors from cache")
         if ($newLogins.Count -gt 0) { $logParts += "$($newLogins.Count) new" }
         if ($refreshLogins.Count -gt 0) { $logParts += "top $($refreshLogins.Count) refreshed" }
+        if ($refreshAgeHours -le $LeaderboardRefreshTtlHours) { $logParts += "refreshed $([math]::Round($refreshAgeHours))h ago" }
         Write-Host "    $($logParts -join ', ')..." -ForegroundColor DarkGray
     } else {
+        $repoPRs = @(Get-RecentRepoPullRequests -Repo $repo -Limit 500)
+        if ($repoPRs.Count -eq 0) { continue }
+        $scannedLogins = Get-CommunityContributorLogins -Repo $repo -RecentRepoPRs $repoPRs -Exclusions $exclusions
+
         Write-Host "    $($scannedLogins.Count) community contributors found, fetching batched counts..." -ForegroundColor DarkGray
 
         $stats = Get-LeaderboardStats -Repo $repo -Logins $scannedLogins -RecentRepoPRs $repoPRs -RateSinceDate $leaderboardRateSinceDate -Now $now -RateWindowDays $LeaderboardRateWindowDays
@@ -1451,7 +1412,6 @@ foreach ($repo in $Repos) {
             rate = [double]$entry.rate
             idle = [double]$entry.idle
             lastCreatedAt = if ($entry.lastCreatedAt) { [string]$entry.lastCreatedAt } else { "" }
-            span = if ($entry.span) { [double]$entry.span } else { 0 }
             estimated = $true
             shippedClassified = $false
         }
@@ -1460,13 +1420,7 @@ foreach ($repo in $Repos) {
     if ($communityStats.Count -eq 0) { continue }
 
     $myRepoCredited = @($shipped | Where-Object { $_.repo -eq $repo }).Count + @($acceptedIndirect | Where-Object { $_.repo -eq $repo }).Count
-    $classifyLogins = @($communityStats.GetEnumerator() |
-        Sort-Object { $_.Value.credited } -Descending |
-        Select-Object -First $LeaderboardClassifyTop |
-        ForEach-Object { $_.Key })
-    if ($communityStats.ContainsKey($Author) -and $classifyLogins -notcontains $Author) {
-        $classifyLogins = @($classifyLogins + $Author)
-    }
+    $classifyLogins = @(Get-TopCreditedLogins -Stats $communityStats -Top $LeaderboardClassifyTop)
 
     $useCachedShipped = (-not $RefreshLeaderboardCache) -and $cachedShippedCounts.Count -gt 0
     $shippedCountsToSave = @{}
@@ -1519,6 +1473,7 @@ foreach ($repo in $Repos) {
         $visibleEnd = [math]::Min($totalContributors, $visibleStart + $DefaultLeaderboardVisible - 1)
         $collapseMode = "context"
     }
+    $expandAfterRank = if ($collapseMode -eq "context") { $visibleEnd } else { $DefaultLeaderboardVisible }
     $rank = 1
     foreach ($entry in $sorted) {
         $s = $entry.Value
@@ -1530,11 +1485,8 @@ foreach ($repo in $Repos) {
         if ($isMe) { $rowClasses += "is-self" }
         if ($collapseMode -eq "context" -and ($rank -lt $visibleStart -or $rank -gt $visibleEnd)) { $rowClasses += "context-hidden" }
         $rowClass = if ($rowClasses.Count -gt 0) { " class=`"$($rowClasses -join ' ')`"" } else { "" }
-        $nameDisplay = if ($isMe) { "$name" } else { $name }
-        $leaderboardRows += "  <tr$rowClass data-rank=`"$rank`"><td>#$rank</td><td><a href=`"https://github.com/$name`">$nameDisplay</a></td><td>$($s.credited)</td><td>$($s.open)</td><td>$($s.rate)/d</td><td><span class=`"$statusClass`">$statusLabel</span></td></tr>`n"
-        if ($collapseMode -eq "top" -and $rank -eq $DefaultLeaderboardVisible -and $totalContributors -gt $DefaultLeaderboardVisible) {
-            $leaderboardRows += "  <tr class=`"expand-row`" onclick=`"toggleCollapsedTable('lb-$repoShort')`"><td colspan=`"6`">$expandLabel <span class=`"caret`">&#9660;</span></td></tr>`n"
-        } elseif ($collapseMode -eq "context" -and $rank -eq $visibleEnd -and $totalContributors -gt $DefaultLeaderboardVisible) {
+        $leaderboardRows += "  <tr$rowClass data-rank=`"$rank`"><td>#$rank</td><td><a href=`"https://github.com/$name`">$name</a></td><td>$($s.credited)</td><td>$($s.open)</td><td>$($s.rate)/d</td><td><span class=`"$statusClass`">$statusLabel</span></td></tr>`n"
+        if ($rank -eq $expandAfterRank -and $totalContributors -gt $DefaultLeaderboardVisible) {
             $leaderboardRows += "  <tr class=`"expand-row`" onclick=`"toggleCollapsedTable('lb-$repoShort')`"><td colspan=`"6`">$expandLabel <span class=`"caret`">&#9660;</span></td></tr>`n"
         }
         $rank++
@@ -1546,6 +1498,7 @@ foreach ($repo in $Repos) {
     $myRate = if ($communityStats.ContainsKey($Author)) { $communityStats[$Author].rate } else { 0 }
     $ahead = @($allSorted | Where-Object { $_.Value.credited -gt $myCredited })
 
+    $projBody = $null
     if ($ahead.Count -gt 0 -and $myRate -gt 0) {
         $projRows = ""
         foreach ($entry in $ahead) {
@@ -1560,19 +1513,15 @@ foreach ($repo in $Repos) {
                 $projRows += "  <tr><td>$($entry.Key)</td><td>$($s.credited) (+$gap)</td><td>$($s.rate)/d</td><td>${days}d ($($when.ToString("MMM d")))</td></tr>`n"
             }
         }
+        $projBody = "<table>`n  <tr><th>Contributor</th><th>Credited</th><th>Rate (7d)</th><th>Catch-up</th></tr>`n$projRows</table>"
+    } elseif ($myRank -eq 1) {
+        $projBody = '<p class="note">No contributors ahead at current credited totals.</p>'
+    }
+    if ($projBody) {
         $projectionsHtml = @"
 <details class="projections">
 <summary>Projections ($Author @ $myRate/day Rate (7d), rank #$myRank)</summary>
-<table>
-  <tr><th>Contributor</th><th>Credited</th><th>Rate (7d)</th><th>Catch-up</th></tr>
-$projRows</table>
-</details>
-"@
-    } elseif ($myRank -eq 1) {
-        $projectionsHtml = @"
-<details class="projections">
-<summary>Projections ($Author @ $myRate/day Rate (7d), rank #1)</summary>
-<p class="note">No contributors ahead at current credited totals.</p>
+$projBody
 </details>
 "@
     }
@@ -1607,30 +1556,24 @@ if (Test-Path -LiteralPath $ReadmePath) {
     $readmeText = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String(($readmeB64 -replace "\s","")))
 }
 
+function Format-LinkedLabel([string]$Label, [string]$Url) {
+    if ($Label -and $Url) {
+        return "<a href=`"$Url`">$Label</a>"
+    }
+    if ($Label) {
+        return $Label
+    }
+    return ""
+}
+
 function Format-RepresentativeReleaseCell(
     [string]$Release,
     [string]$ReleaseUrl,
     [string]$Classification
 ) {
-    if ($Release -and $ReleaseUrl) {
-        return "<a href=`"$ReleaseUrl`">$Release</a>"
-    }
-    if ($Release) {
-        return $Release
-    }
-    if ($Classification -eq "accepted-indirect") {
-        return "indirect"
-    }
-    return ""
-}
-
-function Format-RepresentativeViaCell([string]$ViaLabel, [string]$ViaUrl) {
-    if ($ViaLabel -and $ViaUrl) {
-        return "<a href=`"$ViaUrl`">$ViaLabel</a>"
-    }
-    if ($ViaLabel) {
-        return $ViaLabel
-    }
+    $cell = Format-LinkedLabel -Label $Release -Url $ReleaseUrl
+    if ($cell) { return $cell }
+    if ($Classification -eq "accepted-indirect") { return "indirect" }
     return ""
 }
 
@@ -1700,7 +1643,7 @@ if ($representativeItems.Count -gt 0) {
 "@
     foreach ($m in $representativeItems) {
         $releaseCell = Format-RepresentativeReleaseCell -Release $m.release -ReleaseUrl $m.releaseUrl -Classification $m.classification
-        $viaCell = Format-RepresentativeViaCell -ViaLabel $m.viaLabel -ViaUrl $m.viaUrl
+        $viaCell = Format-LinkedLabel -Label $m.viaLabel -Url $m.viaUrl
         $representativeHtml += "  <tr class=`"rep-main-row`"><td><a href=`"$($m.url)`">#$($m.num)</a></td><td>$($m.repoLabel)</td><td class=`"rep-desc-cell`">$($m.desc)</td><td>$releaseCell</td><td>$viaCell</td></tr>`n"
         $representativeHtml += "  <tr class=`"rep-desc-row`"><td class=`"rep-desc-gap`"></td><td colspan=`"4`"><div class=`"rep-desc-text`">$($m.desc)</div></td></tr>`n"
     }
@@ -1715,38 +1658,13 @@ $allPRItems = @()
 foreach ($pr in $allPRs) {
     $classificationKey = if ($pr.classification) { $pr.classification } else { "open" }
     $statusKey = if ($classificationKey -eq "accepted-indirect") { "shipped" } else { $classificationKey }
-    $statusLabel = ""
-    $statusClass = ""
-    $releaseLabel = ""
-
-    switch ($classificationKey) {
-        "shipped" {
-            $statusLabel = "Shipped"
-            $statusClass = "tag-shipped"
-            $releaseLabel = if ($pr.release) { $pr.release } else { "" }
-        }
-        "accepted-indirect" {
-            $statusLabel = "Shipped"
-            $statusClass = "tag-shipped"
-            $releaseLabel = "indirect"
-        }
-        "lost" {
-            $statusLabel = "Lost"
-            $statusClass = "tag-lost"
-        }
-        "superseded" {
-            $statusLabel = "Superseded"
-            $statusClass = "tag-superseded"
-        }
-        "withdrawn" {
-            $statusLabel = "Withdrawn"
-            $statusClass = "tag-withdrawn"
-        }
-        default {
-            $statusLabel = "Open"
-            $statusClass = "tag-open"
-        }
-    }
+    $meta = $ClassificationMeta[$classificationKey]
+    if (-not $meta) { $meta = $ClassificationMeta["open"] }
+    $statusLabel = $meta.Label
+    $statusClass = $meta.Tag
+    $releaseLabel = if ($classificationKey -eq "accepted-indirect") { "indirect" }
+        elseif ($classificationKey -eq "shipped" -and $pr.release) { $pr.release }
+        else { "" }
 
     $effectiveDate = Get-PullRequestEffectiveIsoDate -PullRequest $pr -StatusKey $statusKey
     $sortDate = if ($effectiveDate) { [datetime]$effectiveDate } else { [datetime]::MinValue }
@@ -1817,20 +1735,11 @@ foreach ($filter in $prStatusFilters) {
 }
 
 $prRepoFilters = @(
-    [pscustomobject][ordered]@{
-        key = "all"
-        label = "All"
-        count = (Get-PrFilterCount -Items $allPRItems -StatusKey $defaultPrStatusKey -RepoKey "all")
-    }
+    [pscustomobject][ordered]@{ key = "all"; label = "All" }
 )
 foreach ($repo in $Repos) {
     $repoLabel = Get-RepoLabel -Repo $repo
-    $repoCount = Get-PrFilterCount -Items $allPRItems -StatusKey $defaultPrStatusKey -RepoKey $repoLabel
-    $prRepoFilters += [pscustomobject][ordered]@{
-        key = $repoLabel
-        label = $repoLabel
-        count = $repoCount
-    }
+    $prRepoFilters += [pscustomobject][ordered]@{ key = $repoLabel; label = $repoLabel }
 }
 
 $prRepoPills = ""
@@ -1839,7 +1748,7 @@ foreach ($filter in $prRepoFilters) {
     $prRepoPills += "    <div class=`"sort-pill$activeClass`" data-repo=`"$($filter.key)`">$($filter.label)</div>`n"
 }
 
-$prDataJson = @(
+$prDataJson = (@(
     $allPRItems | ForEach-Object {
         [pscustomobject][ordered]@{
             number = $_.number
@@ -1855,31 +1764,29 @@ $prDataJson = @(
             viaUrl = $_.viaUrl
         }
     }
-) | ConvertTo-Json -Depth 4 -Compress
-$prDataJson = $prDataJson -replace '</script', '<\/script'
-$prFiltersJson = @($prStatusFilters) | ConvertTo-Json -Compress
-$prFiltersJson = $prFiltersJson -replace '</script', '<\/script'
-$prRepoFiltersJson = @($prRepoFilters) | ConvertTo-Json -Compress
-$prRepoFiltersJson = $prRepoFiltersJson -replace '</script', '<\/script'
+) | ConvertTo-Json -Depth 4 -Compress) -replace '</script', '<\/script'
+$prFiltersJson = (@($prStatusFilters) | ConvertTo-Json -Compress) -replace '</script', '<\/script'
 
 $repoSections = ""
 foreach ($repo in $Repos) {
     $repoShort = ($repo -split '/')[-1]
     $repoPRs = @($allPRs | Where-Object { $_.repo -eq $repo })
-    $repoOpen = @($repoPRs | Where-Object { $_.state -eq "OPEN" }).Count
-    $repoShipped = @($shipped | Where-Object { $_.repo -eq $repo }).Count + @($acceptedIndirect | Where-Object { $_.repo -eq $repo }).Count
-    $repoLost = @($lost | Where-Object { $_.repo -eq $repo }).Count
-    $repoSuperseded = @($superseded | Where-Object { $_.repo -eq $repo }).Count
-    $repoWithdrawn = @($withdrawn | Where-Object { $_.repo -eq $repo }).Count
-    $repoRejected = @($rejected | Where-Object { $_.repo -eq $repo }).Count
+    $repoCounts = @{}
+    foreach ($group in ($repoPRs | Group-Object classification)) { $repoCounts[$group.Name] = $group.Count }
+
+    $repoStatusRows = ""
+    foreach ($status in @("shipped", "open", "withdrawn", "superseded", "lost")) {
+        $count = if ($status -eq "shipped") { [int]$repoCounts["shipped"] + [int]$repoCounts["accepted-indirect"] } else { [int]$repoCounts[$status] }
+        if ($count -eq 0 -and $status -notin @("shipped", "open")) { continue }
+        $meta = $ClassificationMeta[$status]
+        $repoStatusRows += "  <tr><td><span class=`"tag $($meta.Tag)`">$($meta.Label)</span></td><td>$count</td><td>$($meta.Desc)</td></tr>`n"
+    }
 
     $repoSections += @"
 <h2>$repoShort ($($repoPRs.Count) PRs)</h2>
 <table>
   <tr><th>Status</th><th>Count</th><th>Details</th></tr>
-  <tr><td><span class="tag tag-shipped">Shipped</span></td><td>$repoShipped</td><td>Verified via merged release PR, maintainer release evidence, or indirect accepted sibling</td></tr>
-  <tr><td><span class="tag tag-open">Open</span></td><td>$repoOpen</td><td>Awaiting maintainer review</td></tr>
-$(if ($repoWithdrawn -gt 0) { "  <tr><td><span class=`"tag tag-withdrawn`">Withdrawn</span></td><td>$repoWithdrawn</td><td>Closed without maintainer action</td></tr>`n" })$(if ($repoSuperseded -gt 0) { "  <tr><td><span class=`"tag tag-superseded`">Superseded</span></td><td>$repoSuperseded</td><td>Replaced by a newer maintainer-accepted PR</td></tr>`n" })$(if ($repoLost -gt 0) { "  <tr><td><span class=`"tag tag-lost`">Lost</span></td><td>$repoLost</td><td>Competing PR won</td></tr>`n" })</table>
+$repoStatusRows</table>
 
 "@
 }
@@ -1904,11 +1811,24 @@ if ($allDates.Count -ge 2) {
     $timeRange = ""
 }
 
-$barShipped = if ($allPRs.Count -gt 0) { [math]::Round(($totalAccepted / $allPRs.Count) * 100, 1) } else { 0 }
-$barLost = if ($allPRs.Count -gt 0) { [math]::Round(($lost.Count / $allPRs.Count) * 100, 1) } else { 0 }
-$barSuperseded = if ($allPRs.Count -gt 0) { [math]::Round(($superseded.Count / $allPRs.Count) * 100, 1) } else { 0 }
-$barWithdrawn = if ($allPRs.Count -gt 0) { [math]::Round(($withdrawn.Count / $allPRs.Count) * 100, 1) } else { 0 }
-$barOpen = if ($allPRs.Count -gt 0) { [math]::Round(($open.Count / $allPRs.Count) * 100, 1) } else { 0 }
+# Title/Content: when the segment renders a title attribute / inline count ("wide" = only when > 4%)
+$barSegments = @(
+    @{ Key = "shipped";    Label = "Shipped";    Count = $totalAccepted;     Title = "wide";   Content = "wide" }
+    @{ Key = "withdrawn";  Label = "Withdrawn";  Count = $withdrawn.Count;   Title = "never";  Content = "wide" }
+    @{ Key = "superseded"; Label = "Superseded"; Count = $superseded.Count;  Title = "never";  Content = "wide" }
+    @{ Key = "lost";       Label = "Lost";       Count = $lost.Count;        Title = "never";  Content = "wide" }
+    @{ Key = "open";       Label = "Open";       Count = $open.Count;        Title = "always"; Content = "always" }
+)
+$barHtml = ""
+$legendHtml = ""
+foreach ($seg in $barSegments) {
+    $pct = if ($allPRs.Count -gt 0) { [math]::Round(($seg.Count / $allPRs.Count) * 100, 1) } else { 0 }
+    $wide = $pct -gt 4
+    $title = if ($seg.Title -eq "always" -or ($seg.Title -eq "wide" -and $wide)) { " title=`"$($seg.Count)`"" } else { "" }
+    $content = if ($seg.Content -eq "always" -or $wide) { $seg.Count } else { "" }
+    $barHtml += "  <div class=`"bar-segment bar-$($seg.Key)`" data-width=`"$pct`"$title>$content</div>`n"
+    $legendHtml += "  <div class=`"legend-item`"><div class=`"legend-dot legend-dot-$($seg.Key)`"></div> $($seg.Label) ($($seg.Count))</div>`n"
+}
 
 $html = @"
 <!DOCTYPE html>
@@ -1924,7 +1844,6 @@ $html = @"
     <meta property="og:image" content="https://basedin.nyc/pr-stats/thumb.jpg">
     <meta property="og:url" content="https://basedin.nyc/pr-stats">
     <meta property="og:type" content="website">
-    <meta name="darkreader-lock" />
     <meta name="color-scheme" content="light dark" />
     <link rel="stylesheet" href="../style.css?v=20260611f">
   </head>
@@ -1955,19 +1874,9 @@ $html = @"
 <h2>Breakdown</h2>
 
 <div class="bar-container">
-  <div class="bar-segment bar-shipped" data-width="${barShipped}"$(if ($barShipped -gt 4) { " title=`"$totalAccepted`"" })>$(if ($barShipped -gt 4) { $totalAccepted })</div>
-  <div class="bar-segment bar-withdrawn" data-width="${barWithdrawn}">$(if ($barWithdrawn -gt 4) { $withdrawn.Count })</div>
-  <div class="bar-segment bar-superseded" data-width="${barSuperseded}">$(if ($barSuperseded -gt 4) { $superseded.Count })</div>
-  <div class="bar-segment bar-lost" data-width="${barLost}">$(if ($barLost -gt 4) { $lost.Count })</div>
-  <div class="bar-segment bar-open" data-width="${barOpen}" title="$($open.Count)">$($open.Count)</div>
-</div>
+$barHtml</div>
 <div class="legend">
-  <div class="legend-item"><div class="legend-dot legend-dot-shipped"></div> Shipped ($totalAccepted)</div>
-  <div class="legend-item"><div class="legend-dot legend-dot-withdrawn"></div> Withdrawn ($($withdrawn.Count))</div>
-  <div class="legend-item"><div class="legend-dot legend-dot-superseded"></div> Superseded ($($superseded.Count))</div>
-  <div class="legend-item"><div class="legend-dot legend-dot-lost"></div> Lost ($($lost.Count))</div>
-  <div class="legend-item"><div class="legend-dot legend-dot-open"></div> Open ($($open.Count))</div>
-</div>
+$legendHtml</div>
 
 $repoSections
 
@@ -2010,7 +1919,6 @@ $prFilterPills    </div>
 
 <script>
 var PR_FILTERS = $prFiltersJson;
-var PR_REPO_FILTERS = $prRepoFiltersJson;
 var PR_DATA = $prDataJson;
 var CURRENT_PR_FILTER = {
   statusKey: 'shipped',
@@ -2128,31 +2036,21 @@ function toggleCollapsedTable(id) {
   }
   updateCollapsedOverlays();
 }
-function toggleLeaderboard(id) {
-  toggleCollapsedTable(id);
+function bindPillGroup(containerId, attr, filterKey) {
+  document.getElementById(containerId).addEventListener('click', function(e) {
+    var pill = e.target.closest('.sort-pill');
+    if (!pill) return;
+    CURRENT_PR_FILTER[filterKey] = pill.getAttribute(attr);
+    document.querySelectorAll('#' + containerId + ' .sort-pill').forEach(function(p) {
+      p.classList.remove('active');
+    });
+    pill.classList.add('active');
+    updatePrFilterPills();
+    renderPrTable(CURRENT_PR_FILTER.statusKey, CURRENT_PR_FILTER.repoKey);
+  });
 }
-document.getElementById('pr-filter-pills').addEventListener('click', function(e) {
-  var pill = e.target.closest('.sort-pill');
-  if (!pill) return;
-  CURRENT_PR_FILTER.statusKey = pill.getAttribute('data-status');
-  document.querySelectorAll('#pr-filter-pills .sort-pill').forEach(function(p) {
-    p.classList.remove('active');
-  });
-  pill.classList.add('active');
-  updatePrFilterPills();
-  renderPrTable(CURRENT_PR_FILTER.statusKey, CURRENT_PR_FILTER.repoKey);
-});
-document.getElementById('pr-repo-pills').addEventListener('click', function(e) {
-  var pill = e.target.closest('.sort-pill');
-  if (!pill) return;
-  CURRENT_PR_FILTER.repoKey = pill.getAttribute('data-repo');
-  document.querySelectorAll('#pr-repo-pills .sort-pill').forEach(function(p) {
-    p.classList.remove('active');
-  });
-  pill.classList.add('active');
-  updatePrFilterPills();
-  renderPrTable(CURRENT_PR_FILTER.statusKey, CURRENT_PR_FILTER.repoKey);
-});
+bindPillGroup('pr-filter-pills', 'data-status', 'statusKey');
+bindPillGroup('pr-repo-pills', 'data-repo', 'repoKey');
 setBarWidths();
 syncLandscapeStickyOffset();
 if (typeof ResizeObserver !== 'undefined') {
