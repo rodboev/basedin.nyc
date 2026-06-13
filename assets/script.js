@@ -151,6 +151,122 @@ if (document.body.classList.contains('home')) {
     history.replaceState({}, '', '/');
 }
 
+if (document.body.classList.contains('pr')) {
+  function collapsibleVisibleItems(block) {
+    return parseInt(block.getAttribute('data-visible-items') || '0', 10);
+  }
+
+  function collapsibleRowsPerItem(block) {
+    return parseInt(block.getAttribute('data-rows-per-item') || '1', 10);
+  }
+
+  function expandRowHtml(blockId, label, colspan) {
+    return '<tr class="expand-row" onclick="toggleCollapsedTable(\'' + blockId + '\', event)"><td colspan="' + colspan + '">' +
+      label + ' <span class="caret">&#9660;</span></td></tr>';
+  }
+
+  function syncTopCollapsedRows(block) {
+    if (!block || block.getAttribute('data-collapse-mode') !== 'top') return;
+    var visibleItems = collapsibleVisibleItems(block);
+    if (!visibleItems) return;
+    var rowsPerItem = collapsibleRowsPerItem(block);
+    var tbody = block.querySelector('tbody');
+    if (!tbody) return;
+    var dataRowCount = 0;
+    var collapsed = block.classList.contains('collapsed');
+    tbody.querySelectorAll('tr').forEach(function(row) {
+      if (row.classList.contains('expand-row')) return;
+      dataRowCount++;
+      var itemIndex = Math.ceil(dataRowCount / rowsPerItem);
+      row.classList.toggle('collapse-hidden', collapsed && itemIndex > visibleItems);
+    });
+  }
+
+  function topModeAnchorRow(block) {
+    var visibleItems = collapsibleVisibleItems(block);
+    if (!visibleItems) return null;
+    var rowsPerItem = collapsibleRowsPerItem(block);
+    var targetDataRow = visibleItems * rowsPerItem;
+    var tbody = block.querySelector('tbody');
+    if (!tbody) return null;
+    var dataRowCount = 0;
+    var anchor = null;
+    tbody.querySelectorAll('tr').forEach(function(row) {
+      if (row.classList.contains('expand-row')) return;
+      dataRowCount++;
+      if (dataRowCount === targetDataRow) anchor = row;
+    });
+    return anchor;
+  }
+
+  function initCollapsibleTables() {
+    document.querySelectorAll('.collapsible-table[data-collapse-mode="top"]').forEach(syncTopCollapsedRows);
+  }
+
+  function setCollapsibleCollapsed(block, collapsed) {
+    if (!block) return;
+    block.classList.toggle('collapsed', collapsed);
+    syncTopCollapsedRows(block);
+  }
+
+  window.collapsibleVisibleItems = collapsibleVisibleItems;
+  window.expandRowHtml = expandRowHtml;
+  window.setCollapsibleCollapsed = setCollapsibleCollapsed;
+  window.initCollapsibleTables = initCollapsibleTables;
+
+  window.updateCollapsedOverlays = function() {
+    document.querySelectorAll('.collapsible-table:not(.collapsed)').forEach(function(block) {
+      var tbody = block.querySelector('tbody');
+      if (!tbody) return;
+      var rows = Array.from(tbody.querySelectorAll('tr:not(.expand-row)'));
+      if (!rows.length) return;
+      var overlay = block.querySelector('.overlay-row');
+      if (!overlay) return;
+      var lastRow = rows[rows.length - 1];
+      if (lastRow.getBoundingClientRect().bottom > window.innerHeight) {
+        overlay.classList.add('visible');
+      } else {
+        overlay.classList.remove('visible');
+      }
+    });
+  };
+
+  window.toggleCollapsedTable = function(id, evt) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var wasCollapsed = el.classList.contains('collapsed');
+    var collapseMode = el.getAttribute('data-collapse-mode');
+
+    var anchor = null;
+    if (collapseMode === 'context') {
+      anchor = el.querySelector('tr.is-self') || el.querySelector('tr[data-rank]');
+    } else if (collapseMode === 'top') {
+      anchor = topModeAnchorRow(el);
+    }
+
+    var desiredTop = anchor ? anchor.getBoundingClientRect().top : null;
+    el.classList.toggle('collapsed');
+    syncTopCollapsedRows(el);
+
+    if (anchor && desiredTop != null) {
+      var newTop = anchor.getBoundingClientRect().top;
+      window.scrollBy(0, newTop - desiredTop);
+    }
+    updateCollapsedOverlays();
+  };
+
+  document.addEventListener('scroll', updateCollapsedOverlays, { passive: true });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      initCollapsibleTables();
+      updateCollapsedOverlays();
+    });
+  } else {
+    initCollapsibleTables();
+    updateCollapsedOverlays();
+  }
+}
+
 if (document.body.classList.contains('preview')) {
   var pdfFile = location.pathname.replace(/\/$/, '').split('/').pop() + '.pdf';
 

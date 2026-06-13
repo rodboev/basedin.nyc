@@ -18,8 +18,8 @@ Nathan Esquenazi (nesquena) is co-founder of CodePath.org, based in San Francisc
 
 **Classification categories:**
 - Shipped: maintainer comment contains "Shipped", "cherry-picked", "merged-via", or "Salvaged into"
-- Lost: competing PR won ("Superseded by", "consolidated", "Consolidating", "Duplicate")
-- Withdrawn: closed with no maintainer interaction (only Greptile bot reviews)
+- Lost: closed without acceptance (default for any closed PR with maintainer interaction that wasn't shipped or superseded)
+- Withdrawn: closed with no maintainer interaction (only Greptile bot reviews), or author explicitly withdrew
 
 **Current standing (2026-06-06):** Rod is #5 on webui with 37 shipped, 32 open, 100% acceptance on resolved PRs. Top contributors are franksong2702 (244 credited), Michaelyklam (200), ai-ag2026 (148), AJV20 (75).
 
