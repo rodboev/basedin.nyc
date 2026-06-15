@@ -160,9 +160,18 @@ if (document.body.classList.contains('pr')) {
     return parseInt(block.getAttribute('data-rows-per-item') || '1', 10);
   }
 
+  function collapseCaret(up) {
+    return ' <span class="caret">' + (up ? '&#9650;' : '&#9660;') + '</span>';
+  }
+
   function expandRowHtml(blockId, label, colspan) {
     return '<tr class="expand-row" onclick="toggleCollapsedTable(\'' + blockId + '\', event)"><td colspan="' + colspan + '">' +
-      label + ' <span class="caret">&#9660;</span></td></tr>';
+      label + collapseCaret(false) + '</td></tr>';
+  }
+
+  function collapseOverlayHtml(blockId, label) {
+    return '<div class="overlay-row" onclick="toggleCollapsedTable(\'' + blockId + '\', event)">' +
+      (label || 'Collapse') + collapseCaret(true) + '</div>';
   }
 
   function syncTopCollapsedRows(block) {
@@ -211,59 +220,81 @@ if (document.body.classList.contains('pr')) {
 
   window.collapsibleVisibleItems = collapsibleVisibleItems;
   window.expandRowHtml = expandRowHtml;
+  window.collapseOverlayHtml = collapseOverlayHtml;
   window.setCollapsibleCollapsed = setCollapsibleCollapsed;
   window.initCollapsibleTables = initCollapsibleTables;
 
-  window.updateCollapsedOverlays = function() {
-    document.querySelectorAll('.collapsible-table:not(.collapsed)').forEach(function(block) {
-      var tbody = block.querySelector('tbody');
-      if (!tbody) return;
-      var rows = Array.from(tbody.querySelectorAll('tr:not(.expand-row)'));
-      if (!rows.length) return;
-      var overlay = block.querySelector('.overlay-row');
-      if (!overlay) return;
-      var lastRow = rows[rows.length - 1];
-      if (lastRow.getBoundingClientRect().bottom > window.innerHeight) {
-        overlay.classList.add('visible');
-      } else {
-        overlay.classList.remove('visible');
-      }
-    });
-  };
+  // The collapse overlay is always shown at the bottom of an expanded table
+  // (CSS handles visibility), mirroring the expand row's position. Kept as a
+  // no-op so existing callers remain safe.
+  window.updateCollapsedOverlays = function() {};
 
   window.toggleCollapsedTable = function(id, evt) {
     var el = document.getElementById(id);
     if (!el) return;
-    var wasCollapsed = el.classList.contains('collapsed');
+    var willCollapse = !el.classList.contains('collapsed');
     var collapseMode = el.getAttribute('data-collapse-mode');
 
-    var anchor = null;
-    if (collapseMode === 'context') {
-      anchor = el.querySelector('tr.is-self') || el.querySelector('tr[data-rank]');
-    } else if (collapseMode === 'top') {
-      anchor = topModeAnchorRow(el);
+    if (willCollapse) {
+      // Collapsing: keep whatever the user is anchored on fixed in the viewport.
+      // Collapsing only hides the rows *below* the boundary row, so leaving the
+      // scroll position untouched naturally keeps every surviving row exactly
+      // where it is. We only scroll-correct in two cases:
+      //  1. The top of the table is on screen -> you are reading from the top, so
+      //     keep the table top pinned (corrects for any scroll clamping).
+      //  2. The top has scrolled off above AND the bottom of the collapsed table
+      //     would not land within the viewport -> pin the clicked control to
+      //     where the floating overlay was, so "Show all" stays reachable at the
+      //     bottom of the viewport.
+      // Otherwise (top off-screen, but the surviving rows keep the collapsed
+      // bottom in view) we leave the scroll alone so the top edge does not jump
+      // back into view. Geometry-only, so it stays width-agnostic.
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      var tableEl = el.querySelector('table');
+      var tableTopBefore = tableEl ? tableEl.getBoundingClientRect().top : null;
+      var topVisible = tableTopBefore != null && tableTopBefore >= 0 && tableTopBefore < vh;
+      var overlay = el.querySelector('.overlay-row');
+      var overlayTopBefore = overlay ? overlay.getBoundingClientRect().top : null;
+
+      el.classList.toggle('collapsed');
+      syncTopCollapsedRows(el);
+
+      if (topVisible) {
+        window.scrollBy(0, tableEl.getBoundingClientRect().top - tableTopBefore);
+      } else {
+        var expandRow = el.querySelector('tr.expand-row');
+        var controlRect = expandRow ? expandRow.getBoundingClientRect() : null;
+        var controlInView = controlRect && controlRect.top >= 0 && controlRect.bottom <= vh;
+        if (!controlInView && overlayTopBefore != null && expandRow && expandRow.offsetParent) {
+          window.scrollBy(0, expandRow.getBoundingClientRect().top - overlayTopBefore);
+        }
+      }
+    } else {
+      // Expanding: keep the last visible row fixed so the newly revealed rows
+      // flow in below it.
+      var anchor = null;
+      if (collapseMode === 'context') {
+        anchor = el.querySelector('tr.is-self') || el.querySelector('tr[data-rank]');
+      } else if (collapseMode === 'top') {
+        anchor = topModeAnchorRow(el);
+      }
+      var anchorTop = anchor ? anchor.getBoundingClientRect().top : null;
+      el.classList.toggle('collapsed');
+      syncTopCollapsedRows(el);
+      if (anchor && anchorTop != null) {
+        window.scrollBy(0, anchor.getBoundingClientRect().top - anchorTop);
+      }
     }
 
-    var desiredTop = anchor ? anchor.getBoundingClientRect().top : null;
-    el.classList.toggle('collapsed');
-    syncTopCollapsedRows(el);
-
-    if (anchor && desiredTop != null) {
-      var newTop = anchor.getBoundingClientRect().top;
-      window.scrollBy(0, newTop - desiredTop);
-    }
     updateCollapsedOverlays();
   };
 
-  document.addEventListener('scroll', updateCollapsedOverlays, { passive: true });
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
       initCollapsibleTables();
-      updateCollapsedOverlays();
     });
   } else {
     initCollapsibleTables();
-    updateCollapsedOverlays();
   }
 }
 

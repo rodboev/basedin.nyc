@@ -36,6 +36,10 @@ $script:GenerateStartedAt = Get-Date
 $shippedPatterns = @("shipped", "cherry-picked", "merged-via", "salvaged into")
 $duplicatePatterns = @("duplicate")
 $supersededPatterns = @("supersede", "consolidat")
+# Maintainer phrasing that preserves the author's credit on shipped work. When
+# this co-occurs with shipping evidence (a release tag or a shipping verb), a
+# "superseded"/"integrated" close is actually a credited landing, not a loss.
+$creditPatterns = @("co-author", "coauthor", "co-authored", "authorship", "attribution", "credited")
 $withdrawnPattern = '(?i)\bwithdraw(?:ing|n)?\b'
 $DefaultLeaderboardVisible = 10
 $DefaultPrTableVisible = 20
@@ -224,6 +228,20 @@ function Format-EasternDate([string]$IsoDate) {
     } catch {
         return ""
     }
+}
+
+function Get-CollapseCaretHtml([bool]$Up) {
+    if ($Up) { "&#9650;" } else { "&#9660;" }
+}
+
+function Get-ExpandRowHtml([string]$BlockId, [string]$Label, [int]$Colspan = 6) {
+    $caret = Get-CollapseCaretHtml $false
+    "  <tr class=`"expand-row`" onclick=`"toggleCollapsedTable('$BlockId', event)`"><td colspan=`"$Colspan`">$Label <span class=`"caret`">$caret</span></td></tr>`n"
+}
+
+function Get-CollapseOverlayHtml([string]$BlockId, [string]$Label = "Collapse") {
+    $caret = Get-CollapseCaretHtml $true
+    "<div class=`"overlay-row`" onclick=`"toggleCollapsedTable('$BlockId', event)`">$Label <span class=`"caret`">$caret</span></div>`n"
 }
 
 function Get-PullRequestEffectiveIsoDate([object]$PullRequest, [string]$StatusKey) {
@@ -561,6 +579,33 @@ function Test-HasSupersededReference([object]$Evidence) {
         }
     }
     return $false
+}
+
+function Get-CreditedShipEvidence([object]$PullRequest, [object]$Evidence) {
+    # A maintainer comment that both shows the work shipped (a release tag or a
+    # shipping verb) and preserves the author's credit (co-author trailer,
+    # authorship/attribution preserved, "credited"). This is a shipped landing,
+    # not a superseding loss, even when the maintainer also writes "superseded"
+    # or "closing as integrated". Returns the integration PR number when one can
+    # be parsed from the comment, otherwise an entry with ViaNumber = 0.
+    $authorLogin = Get-ScalarValue $PullRequest.author.login
+    if (-not $authorLogin) { $authorLogin = $Author }
+    $maintainerAssociations = @("OWNER", "COLLABORATOR", "MEMBER")
+
+    foreach ($comment in @($Evidence.comments.nodes)) {
+        if ($authorLogin -and $comment.author.login -eq $authorLogin) { continue }
+        if ($comment.authorAssociation -and $comment.authorAssociation -notin $maintainerAssociations) { continue }
+        $body = [string]$comment.body
+        if (-not $body) { continue }
+        $shipped = [bool](Get-ReleaseTag $body) -or (Test-MatchesAnyPattern -Text $body -Patterns $shippedPatterns)
+        if (-not $shipped) { continue }
+        if (-not (Test-MatchesAnyPattern -Text $body -Patterns $creditPatterns)) { continue }
+        $viaMatch = [regex]::Match($body, '(?i)\b(?:via|by|into|in)\s+#(\d+)')
+        $viaNumber = if ($viaMatch.Success) { [int]$viaMatch.Groups[1].Value } else { 0 }
+        return @{ ViaNumber = $viaNumber }
+    }
+
+    return $null
 }
 
 function Get-PullRequestReferenceText([string]$Repo, [int]$Number) {
@@ -1349,6 +1394,7 @@ function Get-ClosedPullRequestClassification([object]$PullRequest) {
     if (-not $acceptedSibling -and ($isDuplicate -or $isSuperseded -or $comments)) {
         $acceptedSibling = Get-ReferencedMergedPullRequest -Repo $PullRequest.repo -OriginalPr $PullRequest -Text $comments
     }
+    $creditedShip = Get-CreditedShipEvidence -PullRequest $PullRequest -Evidence $raw
 
     $viaLabel = ""
     $viaUrl = ""
@@ -1382,16 +1428,29 @@ function Get-ClosedPullRequestClassification([object]$PullRequest) {
         $classification = "withdrawn"
         $evidenceKind = "author-withdrawn"
         $logLabel = "withdrawn (author withdrew)"
-    } elseif ($isSuperseded) {
-        $classification = "superseded"
-        $evidenceKind = "superseded"
-        $logLabel = "superseded"
     } elseif ($acceptedSibling) {
         $classification = "accepted-indirect"
         $evidenceKind = "accepted-indirect"
         $viaLabel = "#$($acceptedSibling.number)"
         $viaUrl = $acceptedSibling.url
         $logLabel = "accepted indirectly via #$($acceptedSibling.number)"
+    } elseif ($creditedShip) {
+        # Maintainer carried the work forward with the author's credit preserved
+        # (co-author trailer / authorship attribution) and shipped it, even
+        # though the close was phrased as "superseded"/"integrated".
+        $classification = "accepted-indirect"
+        $evidenceKind = "accepted-indirect"
+        if ($creditedShip.ViaNumber -gt 0) {
+            $viaLabel = "#$($creditedShip.ViaNumber)"
+            $viaUrl = "https://github.com/$($PullRequest.repo)/pull/$($creditedShip.ViaNumber)"
+            $logLabel = "accepted indirectly via #$($creditedShip.ViaNumber) (credited ship)"
+        } else {
+            $logLabel = "accepted indirectly (credited ship)"
+        }
+    } elseif ($isSuperseded) {
+        $classification = "superseded"
+        $evidenceKind = "superseded"
+        $logLabel = "superseded"
     } elseif ($isDuplicate) {
         $classification = "lost"
         $evidenceKind = "lost"
@@ -1749,7 +1808,7 @@ foreach ($repo in $displayRepos) {
         $rowClass = if ($rowClasses.Count -gt 0) { " class=`"$($rowClasses -join ' ')`"" } else { "" }
         $leaderboardRows += "  <tr$rowClass data-rank=`"$rank`"><td>#$rank</td><td><a href=`"https://github.com/$name`">$name</a></td><td>$($s.credited)</td><td>$($s.open)</td><td>$($s.rate)/d</td><td><span class=`"$statusClass`">$statusLabel</span></td></tr>`n"
         if ($rank -eq $expandAfterRank -and $totalContributors -gt $DefaultLeaderboardVisible) {
-            $leaderboardRows += "  <tr class=`"expand-row`" onclick=`"toggleCollapsedTable('lb-$repoShort', event)`"><td colspan=`"6`">$expandLabel <span class=`"caret`">&#9660;</span></td></tr>`n"
+            $leaderboardRows += Get-ExpandRowHtml "lb-$repoShort" $expandLabel
         }
         $rank++
     }
@@ -1789,7 +1848,7 @@ $projBody
     }
 
     $collapsedClass = if ($totalContributors -gt $DefaultLeaderboardVisible) { " collapsed" } else { "" }
-    $overlayHtml = if ($totalContributors -gt $DefaultLeaderboardVisible) { "<div class=`"overlay-row`" onclick=`"toggleCollapsedTable('lb-$repoShort', event)`">Collapse <span class=`"caret`">&#9650;</span></div>`n" } else { "" }
+    $overlayHtml = if ($totalContributors -gt $DefaultLeaderboardVisible) { Get-CollapseOverlayHtml "lb-$repoShort" } else { "" }
     $topCollapseAttrs = if ($collapseMode -eq "top") { " data-visible-items=`"$DefaultLeaderboardVisible`" data-rows-per-item=`"1`"" } else { "" }
     $isAgent = $repoShort -eq "hermes-agent"
     $leaderboardHtml += @"
@@ -2092,6 +2151,8 @@ foreach ($seg in $barSegments) {
     $legendHtml += "  <div class=`"legend-item`"><div class=`"legend-dot legend-dot-$($seg.Key)`"></div> $($seg.Label) ($($seg.Count))</div>`n"
 }
 
+$prListOverlayHtml = Get-CollapseOverlayHtml "pr-list-collapsible"
+
 $html = @"
 <!DOCTYPE html>
 <html lang="en">
@@ -2107,7 +2168,7 @@ $html = @"
     <meta property="og:url" content="https://basedin.nyc/pr-stats">
     <meta property="og:type" content="website">
     <meta name="color-scheme" content="light dark" />
-    <link rel="stylesheet" href="../style.css?v=20260611f">
+    <link rel="stylesheet" href="../style.css?v=20260616b">
   </head>
 <body class="pr">
 
@@ -2170,7 +2231,7 @@ $prFilterPills    </div>
   <thead><tr><th>PR</th><th>Repo</th><th>Status</th><th>Date</th><th>Release</th><th>Via</th></tr></thead>
   <tbody id="pr-list-body"></tbody>
 </table>
-<div class="overlay-row" onclick="toggleCollapsedTable('pr-list-collapsible', event)">Collapse <span class="caret">&#9650;</span></div>
+$prListOverlayHtml
 </div>
 
 <h2>Methodology</h2>
@@ -2182,7 +2243,7 @@ $prFilterPills    </div>
 
 <p class="footer">Generated $dateStr from GitHub API. Source: <a href="https://github.com/$ReadmeRepo">$ReadmeRepo</a></p>
 
-<script src="../assets/script.js?v=20260613c"></script>
+<script src="../assets/script.js?v=20260616f"></script>
 <script>
 var PR_FILTERS = $prFiltersJson;
 var PR_DATA = $prDataJson;

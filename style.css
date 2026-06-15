@@ -1420,6 +1420,13 @@ body.pr .collapsible-table table {
   overflow: visible;
 }
 
+/* When expanded, the overlay row caps the table, so the table's own bottom
+   border would double up with the overlay's top border. Drop it and let the
+   overlay close the frame instead. */
+body.pr .collapsible-table:not(.collapsed) table {
+  border-bottom: none;
+}
+
 body.pr .collapsible-table th,
 body.pr .targets-table th {
   position: sticky;
@@ -1460,13 +1467,18 @@ body.pr .expand-row {
   cursor: pointer;
 }
 
-body.pr .expand-row td {
+body.pr .expand-row td,
+body.pr .overlay-row {
   text-align: center;
   color: var(--pr-dim);
   font-size: 0.8rem;
   padding: 0.35rem 0.9rem;
-  border-top: 1px solid var(--pr-border);
   user-select: none;
+  cursor: pointer;
+}
+
+body.pr .expand-row td {
+  border-top: 1px solid var(--pr-border);
 }
 
 body.pr .expand-row td:hover {
@@ -1474,7 +1486,12 @@ body.pr .expand-row td:hover {
   background: rgb(128 128 128 / 6%);
 }
 
-body.pr .expand-row .caret {
+body.pr .overlay-row:hover {
+  color: var(--pr-text);
+}
+
+body.pr .expand-row .caret,
+body.pr .overlay-row .caret {
   font-size: 0.65rem;
   margin-left: 0.3rem;
   display: inline-block;
@@ -1490,22 +1507,11 @@ body.pr .overlay-row {
   bottom: 0;
   z-index: 3;
   display: none;
-  cursor: pointer;
   background: var(--pr-card);
   border: 1px solid var(--pr-border);
-  border-bottom: none;
-  padding: 0.45rem 0.9rem;
-  text-align: center;
-  color: var(--pr-dim);
-  font-size: 0.85rem;
-  user-select: none;
 }
 
-body.pr .overlay-row:hover {
-  color: var(--pr-text);
-}
-
-body.pr .collapsible-table:not(.collapsed) .overlay-row.visible {
+body.pr .collapsible-table:not(.collapsed) .overlay-row {
   display: block;
 }
 
