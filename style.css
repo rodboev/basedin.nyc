@@ -1044,6 +1044,10 @@ body.pr table {
   margin-bottom: 1.25rem;
 }
 
+body.pr .repo-status { table-layout: fixed; }
+body.pr .repo-status tr > :nth-child(1) { width: 15%; }
+body.pr .repo-status tr > :nth-child(2) { width: 12%; }
+
 body.pr th {
   text-align: left;
   padding: 0.55rem 0.9rem;

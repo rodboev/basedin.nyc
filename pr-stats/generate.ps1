@@ -45,7 +45,7 @@ $authorClosePattern = '(?i)\bclos(?:ing|ed|e)\b'
 $DefaultLeaderboardVisible = 10
 $DefaultPrTableVisible = 20
 $LeaderboardMax = 50
-$LeaderboardClassifyTop = 20
+$LeaderboardClassifyTop = $LeaderboardTop
 $LeaderboardRateWindowDays = 7
 $MinSpeculativeReferencedPrNumber = 100
 $LeaderboardCacheKeyVersion = "community-shipped-v4"
@@ -87,10 +87,10 @@ $ClassificationTtlProfileFor = @{
 $ClassificationMeta = [ordered]@{
     shipped             = @{ Label = "Shipped"; Tag = "tag-shipped"; Color = "Green"; Desc = "Verified via merged release PR, maintainer release evidence, or indirect accepted sibling" }
     "accepted-indirect" = @{ Label = "Shipped"; Tag = "tag-shipped"; Color = "Cyan" }
-    open                = @{ Label = "Open"; Tag = "tag-open"; Color = "Blue"; Desc = "Awaiting maintainer review" }
+    open                = @{ Label = "Open"; Tag = "tag-open"; Color = "Blue"; Desc = "Pending review" }
     withdrawn           = @{ Label = "Withdrawn"; Tag = "tag-withdrawn"; Color = "DarkGray"; Desc = "Closed without maintainer action" }
-    superseded          = @{ Label = "Superseded"; Tag = "tag-superseded"; Color = "DarkYellow"; Desc = "Replaced by a newer maintainer-accepted PR" }
-    lost                = @{ Label = "Lost"; Tag = "tag-lost"; Color = "Red"; Desc = "Closed without maintainer acceptance" }
+    superseded          = @{ Label = "Superseded"; Tag = "tag-superseded"; Color = "DarkYellow"; Desc = "Replaced by a newer PR" }
+    lost                = @{ Label = "Lost"; Tag = "tag-lost"; Color = "Red"; Desc = "Closed without acceptance" }
 }
 
 $EasternTimeZone = [System.TimeZoneInfo]::FindSystemTimeZoneById("Eastern Standard Time")
@@ -142,8 +142,6 @@ function Invoke-Gh {
         return
     }
 
-    # gh is a console-subsystem binary; conhost --headless suppresses window flashes.
-    # Redirect gh output to a temp file — piping conhost stdout wraps JSON at ~80 columns.
     # PowerShell splits comma-separated --json field lists into separate args; rejoin them.
     $normalizedArgs = [System.Collections.Generic.List[string]]::new()
     for ($i = 0; $i -lt $GhArgs.Count; $i++) {
@@ -163,20 +161,23 @@ function Invoke-Gh {
         $normalizedArgs.Add($arg)
     }
 
-    $argText = ($normalizedArgs | ForEach-Object {
-        if ($_ -match '[\s",&]') { '"' + ($_ -replace '"', '\"') + '"' } else { $_ }
-    }) -join ' '
-    $commandLabel = "gh $(Get-GhCommandDisplayText -ArgText $argText)"
+    $commandLabel = "gh $(Get-GhCommandDisplayText -ArgText ($normalizedArgs -join ' '))"
+    $ghExe = (Get-Command gh -ErrorAction SilentlyContinue).Source
+    if (-not $ghExe) { $ghExe = "gh" }
 
-    $stdoutFile = [IO.Path]::GetTempFileName()
-    $stderrFile = "$stdoutFile.err"
-    $inner = "gh $argText 1>`"$stdoutFile`" 2>`"$stderrFile`""
-    $psi = [System.Diagnostics.ProcessStartInfo]::new('conhost.exe')
-    $psi.Arguments = "--headless -- cmd /c $inner"
+    $psi = [System.Diagnostics.ProcessStartInfo]::new($ghExe)
+    foreach ($arg in $normalizedArgs) {
+        [void]$psi.ArgumentList.Add($arg)
+    }
     $psi.UseShellExecute = $false
     $psi.CreateNoWindow = $true
+    $psi.RedirectStandardOutput = $true
+    $psi.RedirectStandardError = $true
     Set-ProcessEnvironmentFromCurrent -ProcessInfo $psi
     $p = [System.Diagnostics.Process]::Start($psi)
+    # Read streams before WaitForExit to prevent deadlock when output exceeds the OS pipe buffer.
+    $stdoutTask = $p.StandardOutput.ReadToEndAsync()
+    $stderrTask = $p.StandardError.ReadToEndAsync()
     $sw = [System.Diagnostics.Stopwatch]::StartNew()
     $timedOut = -not $p.WaitForExit($GhInvokeTimeoutSeconds * 1000)
     $sw.Stop()
@@ -189,7 +190,6 @@ function Invoke-Gh {
             }
         } catch {}
         $global:LASTEXITCODE = 124
-        Remove-Item $stdoutFile, $stderrFile -ErrorAction SilentlyContinue
         return ""
     }
 
@@ -198,9 +198,8 @@ function Invoke-Gh {
         Write-ProgressHost "  gh slow ($([math]::Round($sw.Elapsed.TotalSeconds, 1))s): $commandLabel" -ForegroundColor Yellow
     }
 
-    $stderr = if (Test-Path $stderrFile) { [IO.File]::ReadAllText($stderrFile) } else { "" }
-    $stdout = if (Test-Path $stdoutFile) { [IO.File]::ReadAllText($stdoutFile) } else { "" }
-    Remove-Item $stdoutFile, $stderrFile -ErrorAction SilentlyContinue
+    $stdout = $stdoutTask.GetAwaiter().GetResult()
+    $stderr = $stderrTask.GetAwaiter().GetResult()
 
     if ($stderr -and -not $SuppressErrors) {
         [Console]::Error.Write($stderr)
@@ -512,6 +511,20 @@ function Get-PullRequestState([string]$Repo, [int]$Number, [switch]$Quiet) {
     if ($script:PullRequestStateCache.ContainsKey($cacheKey)) {
         return $script:PullRequestStateCache[$cacheKey]
     }
+    if ($script:ClassificationCache.prPullStates -and $script:ClassificationCache.prPullStates.ContainsKey($cacheKey)) {
+        $stored = $script:ClassificationCache.prPullStates[$cacheKey]
+        $result = [pscustomobject]@{
+            number = $Number
+            state = [string]$stored.state
+            mergedAt = if ($stored.mergedAt) { $stored.mergedAt } else { $null }
+            title = [string]$stored.title
+            url = "https://github.com/$Repo/pull/$Number"
+            author = @{ login = [string]$stored.author }
+            body = ""
+        }
+        $script:PullRequestStateCache[$cacheKey] = $result
+        return $result
+    }
     $ghParams = @{
         SuppressErrors = [bool]$Quiet
         GhArgs = @('pr', 'view', "$Number", '--repo', $Repo, '--json', 'number,state,mergedAt,title,url,author,body')
@@ -522,6 +535,27 @@ function Get-PullRequestState([string]$Repo, [int]$Number, [switch]$Quiet) {
         try { $result = $raw | ConvertFrom-Json } catch {}
     }
     $script:PullRequestStateCache[$cacheKey] = $result
+    if ($result) {
+        if (-not $script:ClassificationCache.prPullStates) {
+            $script:ClassificationCache.prPullStates = @{}
+        }
+        $authorLogin = ""
+        if ($result.author -and $result.author.login) {
+            $authorLogin = [string](Get-ScalarValue $result.author.login)
+        }
+        $script:ClassificationCache.prPullStates[$cacheKey] = @{
+            state = [string]$result.state
+            mergedAt = if ($result.mergedAt) { [string]$result.mergedAt } else { "" }
+            title = [string]$result.title
+            author = $authorLogin
+        }
+        if ($authorLogin) {
+            if (-not $script:ClassificationCache.prAuthorsByNumber) {
+                $script:ClassificationCache.prAuthorsByNumber = @{}
+            }
+            $script:ClassificationCache.prAuthorsByNumber[$cacheKey] = $authorLogin
+        }
+    }
     return $result
 }
 
@@ -793,7 +827,8 @@ function Get-LeaderboardStats(
 
         $data = $null
         try {
-            $result = Invoke-Gh api graphql -f query=($queryLines -join "`n") 2>$null | ConvertFrom-Json
+            $q = ($queryLines -join "`n")
+            $result = Invoke-Gh api graphql -f "query=$q" 2>$null | ConvertFrom-Json
             $data = $result.data
         } catch {}
 
@@ -832,6 +867,7 @@ function New-ClassificationCache {
         leaderboards = @{}
         contributorsMdSeeds = @{}
         prAuthorsByNumber = @{}
+        prPullStates = @{}
     }
 }
 
@@ -902,6 +938,16 @@ function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild, [switc
                 }
             }
 
+            $commentShippedCounts = @{}
+            if ($repoProp.Value.commentShippedCounts) {
+                foreach ($csProp in $repoProp.Value.commentShippedCounts.PSObject.Properties) {
+                    $commentShippedCounts[$csProp.Name] = @{
+                        shippedClosedCount = [int]$csProp.Value.shippedClosedCount
+                        closedPrCount = [int]$csProp.Value.closedPrCount
+                    }
+                }
+            }
+
             $leaderboardKey = if ($repoProp.Name -match '\|') { $repoProp.Name } else { "$($repoProp.Name)|all" }
             $leaderboards[$leaderboardKey] = @{
                 cachedAt = $repoProp.Value.cachedAt
@@ -909,6 +955,7 @@ function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild, [switc
                 logins = $logins
                 stats = $stats
                 shippedCounts = $shippedCounts
+                commentShippedCounts = $commentShippedCounts
                 releaseCreditCounts = $releaseCreditCounts
                 releaseCreditMeta = $releaseCreditMeta
             }
@@ -936,12 +983,25 @@ function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild, [switc
         }
     }
 
+    $prPullStates = @{}
+    if ($raw.prPullStates) {
+        foreach ($prop in $raw.prPullStates.PSObject.Properties) {
+            $prPullStates[$prop.Name] = @{
+                state = [string]$prop.Value.state
+                mergedAt = [string]$prop.Value.mergedAt
+                title = [string]$prop.Value.title
+                author = [string]$prop.Value.author
+            }
+        }
+    }
+
     return @{
         version = $ClassificationCacheVersion
         entries = $entries
         leaderboards = $leaderboards
         contributorsMdSeeds = $contributorsMdSeeds
         prAuthorsByNumber = $prAuthorsByNumber
+        prPullStates = $prPullStates
     }
 }
 
@@ -963,7 +1023,7 @@ function Get-CachedAuthorClassificationCount([string[]]$Repos) {
     foreach ($repo in $Repos) {
         $prefix = "$repo|"
         foreach ($key in $script:ClassificationCache.entries.Keys) {
-            if ($key.StartsWith($prefix)) {
+            if ($key.StartsWith($prefix) -and $key -notmatch '\|shipped-comment\|') {
                 $count++
             }
         }
@@ -1030,6 +1090,7 @@ function Export-ClassificationCache([string]$Path) {
     }
 
     foreach ($key in ($script:ClassificationCache.entries.Keys | Sort-Object)) {
+        if ($key -match '\|shipped-comment\|') { continue }
         $cacheForJson.entries[$key] = $script:ClassificationCache.entries[$key]
     }
 
@@ -1063,12 +1124,24 @@ function Export-ClassificationCache([string]$Path) {
             }
         }
 
+        $commentShippedCounts = [ordered]@{}
+        if ($entry.commentShippedCounts) {
+            foreach ($login in ($entry.commentShippedCounts.Keys | Sort-Object)) {
+                $v = $entry.commentShippedCounts[$login]
+                $commentShippedCounts[$login] = [ordered]@{
+                    shippedClosedCount = [int]$v.shippedClosedCount
+                    closedPrCount = [int]$v.closedPrCount
+                }
+            }
+        }
+
         $cacheForJson.leaderboards[$repo] = [ordered]@{
             cachedAt = $entry.cachedAt
             refreshedAt = $entry.refreshedAt
             logins = @($entry.logins)
             stats = $stats
             shippedCounts = $shippedCounts
+            commentShippedCounts = $commentShippedCounts
             releaseCreditCounts = $releaseCreditCounts
             releaseCreditMeta = $releaseCreditMeta
         }
@@ -1090,6 +1163,20 @@ function Export-ClassificationCache([string]$Path) {
             $sortedAuthors[$key] = $script:ClassificationCache.prAuthorsByNumber[$key]
         }
         $cacheForJson["prAuthorsByNumber"] = $sortedAuthors
+    }
+
+    if ($script:ClassificationCache.prPullStates -and $script:ClassificationCache.prPullStates.Count -gt 0) {
+        $sortedStates = [ordered]@{}
+        foreach ($key in ($script:ClassificationCache.prPullStates.Keys | Sort-Object)) {
+            $entry = $script:ClassificationCache.prPullStates[$key]
+            $sortedStates[$key] = [ordered]@{
+                state = [string]$entry.state
+                mergedAt = [string]$entry.mergedAt
+                title = [string]$entry.title
+                author = [string]$entry.author
+            }
+        }
+        $cacheForJson["prPullStates"] = $sortedStates
     }
 
     $cacheForJson | ConvertTo-Json -Depth 6 | Out-File -LiteralPath $Path -Encoding utf8
@@ -1235,11 +1322,26 @@ function Get-CachedLeaderboardStats(
         try { $refreshedAt = [datetime]$entry.refreshedAt } catch {}
     }
 
+    $commentShippedCounts = @{}
+    if ($entry.commentShippedCounts) {
+        if ($entry.commentShippedCounts -is [hashtable]) {
+            $commentShippedCounts = $entry.commentShippedCounts
+        } else {
+            $entry.commentShippedCounts.PSObject.Properties | ForEach-Object {
+                $commentShippedCounts[$_.Name] = @{
+                    shippedClosedCount = [int]$_.Value.shippedClosedCount
+                    closedPrCount = [int]$_.Value.closedPrCount
+                }
+            }
+        }
+    }
+
     $script:LeaderboardCacheHits++
     return @{
         logins = @($entry.logins)
         stats = $stats
         shippedCounts = $shippedCounts
+        commentShippedCounts = $commentShippedCounts
         refreshedAt = $refreshedAt
     }
 }
@@ -1340,7 +1442,8 @@ function Set-CachedLeaderboardRefreshedAt([string]$Repo, [Nullable[datetime]]$St
 function Set-CachedLeaderboardShippedCounts(
     [string]$Repo,
     [Nullable[datetime]]$StartDate,
-    [hashtable]$ShippedCounts
+    [hashtable]$ShippedCounts,
+    [hashtable]$CommentShippedCounts
 ) {
     $cacheKey = Get-LeaderboardCacheKey -Repo $Repo -StartDate $StartDate
     if (-not $script:ClassificationCache.leaderboards.ContainsKey($cacheKey)) {
@@ -1353,6 +1456,9 @@ function Set-CachedLeaderboardShippedCounts(
     }
 
     $script:ClassificationCache.leaderboards[$cacheKey].shippedCounts = $stored
+    if ($CommentShippedCounts -and $CommentShippedCounts.Count -gt 0) {
+        $script:ClassificationCache.leaderboards[$cacheKey].commentShippedCounts = $CommentShippedCounts
+    }
 }
 
 function Get-ClosedPullRequestClassification([object]$PullRequest) {
@@ -1549,10 +1655,10 @@ $script:ClassificationCache = Import-ClassificationCache -Path $CacheFile -Force
 if ($VerifyWebuiCreditsOnly) {
     $counts = Get-ChangelogReleaseCreditCounts -Repo "nesquena/hermes-webui" -StartDate $StartDate -Exclusions (Get-RepoLeaderboardExclusions -Repo "nesquena/hermes-webui") -ForceRefresh
     $checks = @(
-        @{ login = "franksong2702"; min = 165; max = 195 }
-        @{ login = "Michaelyklam"; min = 110; max = 165 }
-        @{ login = "rodboev"; min = 75; max = 92 }
-        @{ login = "ai-ag2026"; min = 65; max = 90 }
+        @{ login = "franksong2702"; min = 170; max = 200 }
+        @{ login = "Michaelyklam"; min = 115; max = 140 }
+        @{ login = "rodboev"; min = 115; max = 135 }
+        @{ login = "ai-ag2026"; min = 85; max = 110 }
     )
     $failed = $false
     foreach ($check in $checks) {
@@ -1589,6 +1695,7 @@ foreach ($repo in $Repos) {
         $pr | Add-Member -NotePropertyName release -NotePropertyValue "" -Force
         $pr | Add-Member -NotePropertyName viaLabel -NotePropertyValue "" -Force
         $pr | Add-Member -NotePropertyName viaUrl -NotePropertyValue "" -Force
+        $pr | Add-Member -NotePropertyName evidenceKind -NotePropertyValue "" -Force
         $allPRs += $pr
     }
 }
@@ -1608,6 +1715,7 @@ foreach ($pr in $closed) {
     $pr.release = $result.Release
     $pr.viaLabel = $result.ViaLabel
     $pr.viaUrl = $result.ViaUrl
+    $pr.evidenceKind = $result.EvidenceKind
 
     $meta = $ClassificationMeta[$result.Classification]
     $color = if ($meta) { $meta.Color } else { "DarkGray" }
@@ -1685,12 +1793,14 @@ $leaderboardRateSinceDate = $now.AddDays(-$LeaderboardRateWindowDays)
 $reportStartLabel = if ($null -ne $startDateValue) { Get-ReportStartLabel -Date $startDateValue } else { "" }
 
 $leaderboardHtml = ""
+$authorCreditedByRepo = @{}
 foreach ($repo in $displayRepos) {
     $repoShort = ($repo -split '/')[-1]
     Write-Host "  $repoShort contributors..." -ForegroundColor DarkGray
 
     $exclusions = Get-RepoLeaderboardExclusions -Repo $repo
     $cachedShippedCounts = @{}
+    $cachedCommentShippedCounts = @{}
 
     $cachedLeaderboard = Get-CachedLeaderboardStats -Repo $repo -StartDate $StartDate -Now $now -RateWindowDays $LeaderboardRateWindowDays -TtlHours $LeaderboardCacheTtlHours -ForceRefresh:$RefreshLeaderboardCache
     $priorLogins = @()
@@ -1699,6 +1809,9 @@ foreach ($repo in $displayRepos) {
         $stats = $cachedLeaderboard.stats
         if ($cachedLeaderboard.shippedCounts) {
             $cachedShippedCounts = $cachedLeaderboard.shippedCounts
+        }
+        if ($cachedLeaderboard.commentShippedCounts -and $cachedLeaderboard.commentShippedCounts.Count -gt 0) {
+            $cachedCommentShippedCounts = $cachedLeaderboard.commentShippedCounts
         }
         if ($cachedLeaderboard.logins) {
             $priorLogins = @($cachedLeaderboard.logins)
@@ -1759,6 +1872,20 @@ foreach ($repo in $displayRepos) {
         }
     }
 
+    # Ensure the author appears in stats even when the leaderboard cache is fresh.
+    if ($Author -and -not $stats.ContainsKey($Author)) {
+        $myRepoShipped = @($shipped | Where-Object { $_.repo -eq $repo }).Count + @($acceptedIndirect | Where-Object { $_.repo -eq $repo }).Count
+        $myRepoOpen = @($open | Where-Object { $_.repo -eq $repo }).Count
+        if ($myRepoShipped -gt 0 -or $myRepoOpen -gt 0) {
+            if ($null -eq $repoPRs) { $repoPRs = @(Get-RecentRepoPullRequests -Repo $repo -Limit 500) }
+            $authorStats = Get-LeaderboardStats -Repo $repo -Logins @($Author) -RecentRepoPRs $repoPRs -RateSinceDate $leaderboardRateSinceDate -Now $now -RateWindowDays $LeaderboardRateWindowDays
+            if ($authorStats.ContainsKey($Author)) {
+                $stats[$Author] = $authorStats[$Author]
+                Merge-CachedLeaderboardStats -Repo $repo -StartDate $StartDate -NewLogins @($Author) -NewStats $authorStats
+            }
+        }
+    }
+
     $communityStats = @{}
     foreach ($login in $stats.Keys) {
         if (Test-IsLeaderboardExcludedLogin -Login $login -Exclusions $exclusions) { continue }
@@ -1779,13 +1906,15 @@ foreach ($repo in $displayRepos) {
     if ($communityStats.Count -eq 0) { continue }
 
     $myRepoCredited = @($shipped | Where-Object { $_.repo -eq $repo }).Count + @($acceptedIndirect | Where-Object { $_.repo -eq $repo }).Count
+    $myRepoOpen = @($open | Where-Object { $_.repo -eq $repo }).Count
     $creditProfile = Get-RepoCreditProfile -Repo $repo
 
     $useCachedShipped = (-not $RefreshLeaderboardCache) -and $creditProfile -ne "changelog-release"
-    $creditResult = Apply-LeaderboardCreditedCounts -Repo $repo -CommunityStats $communityStats -Author $Author -MyRepoCredited $myRepoCredited `
-        -CachedShippedCounts $cachedShippedCounts -Exclusions $exclusions -UseCachedShipped:$useCachedShipped -StartDate $StartDate -ClassifyTop $LeaderboardClassifyTop `
-        -ForceRefresh:$RefreshLeaderboardCache
+    $creditResult = Apply-LeaderboardCreditedCounts -Repo $repo -CommunityStats $communityStats -Author $Author -MyRepoCredited $myRepoCredited -MyRepoOpen $myRepoOpen `
+        -CachedShippedCounts $cachedShippedCounts -CachedCommentShippedCounts $cachedCommentShippedCounts -Exclusions $exclusions -UseCachedShipped:$useCachedShipped -StartDate $StartDate `
+        -ClassifyTop $LeaderboardClassifyTop -ForceRefresh:$RefreshLeaderboardCache
     $shippedCountsToSave = $creditResult.ShippedCountsToSave
+    $commentShippedCounts = $creditResult.CommentShippedCounts
     $classifiedFromCache = $creditResult.ClassifiedFromCache
     $classifiedLive = $creditResult.ClassifiedLive
 
@@ -1796,7 +1925,7 @@ foreach ($repo in $displayRepos) {
             Write-Host "    $classifiedFromCache credited totals from cache, $classifiedLive newly classified" -ForegroundColor DarkGray
         }
     }
-    Set-CachedLeaderboardShippedCounts -Repo $repo -StartDate $StartDate -ShippedCounts $shippedCountsToSave
+    Set-CachedLeaderboardShippedCounts -Repo $repo -StartDate $StartDate -ShippedCounts $shippedCountsToSave -CommentShippedCounts $commentShippedCounts
 
     $allSorted = @($communityStats.GetEnumerator() | Sort-Object { $_.Value.credited } -Descending)
     $myRank = 1
@@ -1838,6 +1967,7 @@ foreach ($repo in $displayRepos) {
     $projectionsHtml = ""
     $myCredited = if ($communityStats.ContainsKey($Author)) { $communityStats[$Author].credited } else { 0 }
     $myRate = if ($communityStats.ContainsKey($Author)) { $communityStats[$Author].rate } else { 0 }
+    $authorCreditedByRepo[$repo] = $myCredited
     $ahead = @($allSorted | Where-Object { $_.Value.credited -gt $myCredited })
 
     $projBody = $null
@@ -1885,6 +2015,7 @@ $projectionsHtml
 
 "@
 }
+
 
 Export-ClassificationCache -Path $CacheFile
 
@@ -2071,7 +2202,7 @@ $prStatusFilters = @(
 $prFilterPills = ""
 foreach ($filter in $prStatusFilters) {
     $activeClass = if ($filter.key -eq $defaultPrStatusKey) { " active" } else { "" }
-    $pillCount = Get-PrFilterCount -Items $allPRItems -StatusKey $filter.key -RepoKey $defaultPrRepoKey
+    $pillCount = $filter.count
     $prFilterPills += "    <div class=`"sort-pill$activeClass`" data-status=`"$($filter.key)`">$($filter.label) ($pillCount)</div>`n"
 }
 
@@ -2115,17 +2246,26 @@ foreach ($repo in $displayRepos) {
     $repoCounts = @{}
     foreach ($group in ($repoPRs | Group-Object classification)) { $repoCounts[$group.Name] = $group.Count }
 
+    $hasCherryPick = ($repoPRs | Where-Object { $_.evidenceKind -eq "timeline" }).Count -gt 0
+    $hasIndirect = ($repoPRs | Where-Object { $_.evidenceKind -eq "accepted-indirect" }).Count -gt 0
+    $shippedDesc = if ($hasCherryPick -and $hasIndirect) { "Merged, cherry-picked, and release-credited" }
+        elseif ($hasCherryPick) { "Merged and cherry-picked" }
+        elseif ($hasIndirect) { "Merged and release-credited" }
+        else { "Merged" }
+
     $repoStatusRows = ""
     foreach ($status in @("shipped", "open", "superseded", "lost")) {
-        $count = if ($status -eq "shipped") { [int]$repoCounts["shipped"] + [int]$repoCounts["accepted-indirect"] } else { [int]$repoCounts[$status] }
+        $count = if ($status -eq "shipped") { [int]$repoCounts["shipped"] + [int]$repoCounts["accepted-indirect"] }
+            else { [int]$repoCounts[$status] }
         if ($count -eq 0 -and $status -notin @("shipped", "open")) { continue }
         $meta = $ClassificationMeta[$status]
-        $repoStatusRows += "  <tr><td><span class=`"tag $($meta.Tag)`">$($meta.Label)</span></td><td>$count</td><td>$($meta.Desc)</td></tr>`n"
+        $desc = if ($status -eq "shipped") { $shippedDesc } else { $meta.Desc }
+        $repoStatusRows += "  <tr><td><span class=`"tag $($meta.Tag)`">$($meta.Label)</span></td><td>$count</td><td>$desc</td></tr>`n"
     }
 
     $repoSections += @"
 <h2>$repoShort ($($repoPRs.Count) PRs)</h2>
-<table>
+<table class="repo-status">
   <tr><th>Status</th><th>Count</th><th>Details</th></tr>
 $repoStatusRows</table>
 
@@ -2146,7 +2286,7 @@ if ($allDates.Count -ge 2) {
     $activeDays = @($allDates | ForEach-Object { $_.Date } | Sort-Object -Unique).Count
     $timeSpan = if ($activeDays -eq 1) { "1 active day" } else { "$activeDays active days" }
     $displayEndDate = $allDates[0].AddDays([math]::Floor(($allDates[-1] - $allDates[0]).TotalDays))
-    $timeRange = "$($allDates[0].ToString('MMMM d'))-$($displayEndDate.ToString('MMMM d, yyyy'))"
+    $timeRange = "$($allDates[0].ToString('MMMM d')) &mdash; $($displayEndDate.ToString('MMMM d, yyyy'))"
 } else {
     $timeSpan = "N/A"
     $timeRange = ""
@@ -2211,7 +2351,7 @@ $html = @"
 </div>
 <div class="grid">
   <div class="stat-card"><div class="number green">${acceptanceRate}%</div><div class="label">Acceptance rate ($($superseded.Count) superseded, $($lost.Count) lost)</div></div>
-  <div class="stat-card"><div class="number blue">$timeSpan</div><div class="label">Active days ($timeRange)</div></div>
+  <div class="stat-card"><div class="number blue">$timeSpan</div><div class="label">$timeRange</div></div>
 </div>
 
 <h2>Breakdown</h2>

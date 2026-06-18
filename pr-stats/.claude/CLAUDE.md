@@ -21,9 +21,9 @@ Nathan Esquenazi (nesquena) is co-founder of CodePath.org, based in San Francisc
 - Lost: closed without acceptance (default for any closed PR with maintainer interaction that wasn't shipped or superseded)
 - Withdrawn: closed with no maintainer interaction (only Greptile bot reviews), or author explicitly withdrew
 
-**Current standing (2026-06-06):** Rod is #5 on webui with 37 shipped, 32 open, 100% acceptance on resolved PRs. Top contributors are franksong2702 (244 credited), Michaelyklam (200), ai-ag2026 (148), AJV20 (75).
+**Current standing (2026-06-19):** Rod is #2 on webui with 189 credited, 13 open, 10.4/day rate. Top contributors are franksong2702 (244 credited), rodboev (189), Michaelyklam (157), ai-ag2026 (115). Leaderboard sourced from upstream CONTRIBUTORS.md (5-source count: merged, CHANGELOG, co-author trailers, ship-comment scan, absorb-commit scan).
 
-**Review cadence:** Comparable across contributors. franksong2702 has 244 credited out of 248 total (98% reviewed). Rod has 43 closed out of 75 total (57% reviewed). The difference is time: franksong started April 12, Rod started June 2.
+**Review cadence:** Comparable across contributors. franksong2702 has 244 credited out of 246 total (99% reviewed). Rod has 189 credited out of 202 total (94% reviewed). The difference is time: franksong started April 12, Rod started June 2.
 
 **Pain point:** The hermes-webui test suite is severely broken on Windows. pytest fixtures assume POSIX paths, temp directories collide, and multiple tests fail with permission errors on NTFS. This creates friction for a Windows-native contributor since you can't validate changes locally before submitting.
 
@@ -31,7 +31,7 @@ Nathan Esquenazi (nesquena) is co-founder of CodePath.org, based in San Francisc
 
 Maintained by teknium1 (NousResearch founder) and a small team. 184K stars but the repo has ~11K open PRs with only 3 maintainers, so review throughput is very low.
 
-**Current standing (2026-06-06):** Rod is #47 on hermes-agent with 2 shipped (#40410 salvaged by teknium1 into #40573, 1 earlier), 3 lost (competing PRs won), 70 open. teknium1 leads at 431 credited. Review rate for external contributors is poor: hundreds of PRs sit open indefinitely.
+**Current standing (2026-06-18):** Rod is #47 on hermes-agent with 2 shipped (#40410 salvaged by teknium1 into #40573, 1 earlier), 3 lost (competing PRs won), open PRs. teknium1 leads at 431 credited. Review rate for external contributors is poor: hundreds of PRs sit open indefinitely.
 
 **Pain point:** Submitting PRs here is a poor investment. The maintainer-to-PR ratio means most contributions wait weeks or months for review. The repo is listed in Tier C ("Skipped") in the contribution targets analysis.
 
