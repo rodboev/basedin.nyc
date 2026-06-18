@@ -29,19 +29,19 @@ if ($representativeContent -notmatch 'https://github.com/nesquena/hermes-webui/p
     throw "Representative PRs are missing saved prompts feature PR #3571."
 }
 
-if ($representativeContent -notmatch 'https://github.com/NousResearch/hermes-agent/pull/40410') {
-    throw "Representative PRs are missing agent PR #40410."
+if ($representativeContent -notmatch 'https://github.com/kenn-io/agentsview/pull/700') {
+    throw "Representative PRs are missing agentsview PR #700."
 }
 
-if ($representativeContent -notmatch 'https://github.com/NousResearch/hermes-agent/pull/39005') {
-    throw "Representative PRs are missing agent PR #39005."
+if ($representativeContent -notmatch 'https://github.com/kenn-io/agentsview/pull/701') {
+    throw "Representative PRs are missing agentsview PR #701."
 }
 
 if ($representativeContent -match 'https://github.com/nesquena/hermes-webui/pull/3860') {
     throw "Representative PRs still link the saved prompts entry to release PR #3860 instead of original PR #3571."
 }
 
-if ($representativeContent -match 'https://github.com/NousResearch/hermes-agent/pull/39001' -or
+if ($representativeContent -match 'https://github.com/NousResearch/hermes-agent/pull/' -or
     $representativeContent -match 'https://github.com/nesquena/hermes-webui/pull/3606' -or
     $representativeContent -match 'https://github.com/nesquena/hermes-webui/pull/3667') {
     throw "Representative PRs still include entries that should have been replaced in the curated examples list."

@@ -1,6 +1,6 @@
 param(
     [string]$Author = "rodboev",
-    [string[]]$Repos = @("nesquena/hermes-webui", "NousResearch/hermes-agent", "thedotmack/claude-mem"
+    [string[]]$Repos = @("nesquena/hermes-webui", "kenn-io/agentsview", "thedotmack/claude-mem"
         # "cline/cline", "continuedev/continue", "CopilotKit/CopilotKit",
         # "MemPalace/mempalace", "mastra-ai/mastra", "github/github-mcp-server",
         # "lsdefine/GenericAgent"
@@ -41,6 +41,7 @@ $supersededPatterns = @("supersede", "consolidat")
 # "superseded"/"integrated" close is actually a credited landing, not a loss.
 $creditPatterns = @("co-author", "coauthor", "co-authored", "authorship", "attribution", "credited")
 $withdrawnPattern = '(?i)\bwithdraw(?:ing|n)?\b'
+$authorClosePattern = '(?i)\bclos(?:ing|ed|e)\b'
 $DefaultLeaderboardVisible = 10
 $DefaultPrTableVisible = 20
 $LeaderboardMax = 50
@@ -58,8 +59,8 @@ $RepoLeaderboardConfig = @{
         MaintainerLogins = @("nesquena")
         IntegrationBots = @("nesquena-hermes")
     }
-    "NousResearch/hermes-agent" = @{
-        MaintainerLogins = @("teknium1")
+    "kenn-io/agentsview" = @{
+        MaintainerLogins = @("wesm")
         IntegrationBots = @()
     }
     "thedotmack/claude-mem" = @{
@@ -275,7 +276,6 @@ function Get-RepoLabel([string]$Repo) {
     $repoShort = ($Repo -split '/')[-1]
     switch ($repoShort) {
         "hermes-webui" { return "webui" }
-        "hermes-agent" { return "agent" }
         "github-mcp-server" { return "gh-mcp" }
         "GenericAgent" { return "generic-agent" }
         default { return $repoShort }
@@ -541,16 +541,43 @@ function Get-NonBotCommentText([object]$Evidence) {
         ForEach-Object { $_.body }) -join "`n---`n"
 }
 
+function Test-HasMaintainerNonBotComment([object]$PullRequest, [object]$Evidence) {
+    $authorLogin = Get-ScalarValue $PullRequest.author.login
+    if (-not $authorLogin) { $authorLogin = $Author }
+    $maintainerAssociations = @("OWNER", "COLLABORATOR", "MEMBER")
+
+    foreach ($comment in @($Evidence.comments.nodes)) {
+        if ($comment.author.login -eq "greptile-apps") { continue }
+        if ($authorLogin -and $comment.author.login -eq $authorLogin) { continue }
+        if ($comment.authorAssociation -and $comment.authorAssociation -in $maintainerAssociations) {
+            return $true
+        }
+        $body = [string]$comment.body
+        if (Test-MatchesAnyPattern -Text $body -Patterns $shippedPatterns) { return $true }
+        if ([bool](Get-ReleaseTag $body)) { return $true }
+        if (Test-MatchesAnyPattern -Text $body -Patterns $creditPatterns) { return $true }
+    }
+
+    return $false
+}
+
 function Test-IsAuthorWithdrawnEvidence([object]$PullRequest, [object]$Evidence) {
     $authorLogin = Get-ScalarValue $PullRequest.author.login
     if (-not $authorLogin) { $authorLogin = $Author }
     if (-not $authorLogin) { return $false }
 
+    $authorCommented = $false
     foreach ($comment in @($Evidence.comments.nodes)) {
         if ($comment.author.login -ne $authorLogin) { continue }
-        if ([string]$comment.body -match $withdrawnPattern) {
-            return $true
-        }
+        $authorCommented = $true
+        $body = [string]$comment.body
+        if ($body -match $withdrawnPattern) { return $true }
+        if (Test-MatchesAnyPattern -Text $body -Patterns $supersededPatterns) { return $true }
+        if ($body -match $authorClosePattern) { return $true }
+    }
+
+    if ($authorCommented -and -not (Test-HasMaintainerNonBotComment -PullRequest $PullRequest -Evidence $Evidence)) {
+        return $true
     }
 
     return $false
@@ -572,8 +599,12 @@ function Test-IsSupersededEvidence([object]$PullRequest, [object]$Evidence) {
     return $false
 }
 
-function Test-HasSupersededReference([object]$Evidence) {
+function Test-HasSupersededReference([object]$PullRequest, [object]$Evidence) {
+    $authorLogin = Get-ScalarValue $PullRequest.author.login
+    if (-not $authorLogin) { $authorLogin = $Author }
+
     foreach ($comment in @($Evidence.comments.nodes)) {
+        if ($authorLogin -and $comment.author.login -eq $authorLogin) { continue }
         if (Test-MatchesAnyPattern -Text ([string]$comment.body) -Patterns $supersededPatterns) {
             return $true
         }
@@ -623,20 +654,15 @@ function Get-PullRequestReferenceText([string]$Repo, [int]$Number) {
 function Test-IsCreditedMergedSibling([string]$Repo, [object]$OriginalPr, [object]$MergedPr) {
     if (-not $MergedPr) { return $false }
 
-    $originalAuthor = Get-ScalarValue $OriginalPr.author.login
-    if (-not $originalAuthor) { $originalAuthor = $Author }
-    $mergedAuthor = Get-ScalarValue $MergedPr.author.login
-
+    $originalNumber = [int]$OriginalPr.number
     $referenceText = Get-PullRequestReferenceText -Repo $Repo -Number $MergedPr.number
     if (-not $referenceText) { return $false }
 
-    $referenceNeedles = @(
-        "#$($OriginalPr.number)",
-        "https://github.com/$Repo/pull/$($OriginalPr.number)",
-        $(if ($originalAuthor) { "@$originalAuthor" } else { "" })
-    ) | Where-Object { $_ }
-
-    foreach ($needle in $referenceNeedles) {
+    $prNeedles = @(
+        "#$originalNumber",
+        "https://github.com/$Repo/pull/$originalNumber"
+    )
+    foreach ($needle in $prNeedles) {
         if ($referenceText -match [regex]::Escape($needle)) {
             return $true
         }
@@ -1388,7 +1414,7 @@ function Get-ClosedPullRequestClassification([object]$PullRequest) {
     $isShipped = Test-MatchesAnyPattern -Text $comments -Patterns $shippedPatterns
     $isDuplicate = Test-MatchesAnyPattern -Text $comments -Patterns $duplicatePatterns
     $isSuperseded = Test-IsSupersededEvidence -PullRequest $PullRequest -Evidence $raw
-    $hasSupersededReference = Test-HasSupersededReference -Evidence $raw
+    $hasSupersededReference = Test-HasSupersededReference -PullRequest $PullRequest -Evidence $raw
     $isAuthorWithdrawn = Test-IsAuthorWithdrawnEvidence -PullRequest $PullRequest -Evidence $raw
     $acceptedSibling = Get-TimelineCreditedMergedPullRequest -Repo $PullRequest.repo -OriginalPr $PullRequest -Evidence $raw
     if (-not $acceptedSibling -and ($isDuplicate -or $isSuperseded -or $comments)) {
@@ -1789,11 +1815,6 @@ foreach ($repo in $displayRepos) {
     $visibleStart = 1
     $visibleEnd = [math]::Min($DefaultLeaderboardVisible, $totalContributors)
     $collapseMode = "top"
-    if ($repoShort -eq "hermes-agent" -and $totalContributors -gt $DefaultLeaderboardVisible) {
-        $visibleStart = [math]::Max(1, [math]::Min($myRank - 4, $totalContributors - $DefaultLeaderboardVisible + 1))
-        $visibleEnd = [math]::Min($totalContributors, $visibleStart + $DefaultLeaderboardVisible - 1)
-        $collapseMode = "context"
-    }
     $expandAfterRank = if ($collapseMode -eq "context") { $visibleEnd } else { $DefaultLeaderboardVisible }
     $rank = 1
     foreach ($entry in $sorted) {
@@ -1850,7 +1871,6 @@ $projBody
     $collapsedClass = if ($totalContributors -gt $DefaultLeaderboardVisible) { " collapsed" } else { "" }
     $overlayHtml = if ($totalContributors -gt $DefaultLeaderboardVisible) { Get-CollapseOverlayHtml "lb-$repoShort" } else { "" }
     $topCollapseAttrs = if ($collapseMode -eq "top") { " data-visible-items=`"$DefaultLeaderboardVisible`" data-rows-per-item=`"1`"" } else { "" }
-    $isAgent = $repoShort -eq "hermes-agent"
     $leaderboardHtml += @"
 <h2>$repoShort Community Leaderboard</h2>
 <div class="collapsible-table leaderboard$collapsedClass" id="lb-$repoShort" data-collapse-mode="$collapseMode"$topCollapseAttrs>

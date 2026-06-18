@@ -2,7 +2,7 @@
 
 $script:RepoCreditProfile = @{
     "nesquena/hermes-webui" = "changelog-release"
-    "NousResearch/hermes-agent" = "github-evidence"
+    "kenn-io/agentsview" = "github-evidence"
     "thedotmack/claude-mem" = "github-evidence"
 }
 
