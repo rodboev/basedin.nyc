@@ -8,4 +8,8 @@ pdfjs-dist/
 ~$*.docx
 __pycache__/
 resume/page*.svg
+resume/page-*.png
+resume/thumb-page-*.png
 recommendations/page*.svg
+recommendations/page-*.png
+recommendations/thumb-page-*.png

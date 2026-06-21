@@ -19,10 +19,8 @@ jobs:
       - run: sudo apt-get install -y poppler-utils
       - run: |
           for pdf in resume recommendations; do
-            pages=$(pdfinfo ${pdf}.pdf | grep -oP 'Pages:\s+\K\d+')
-            for i in $(seq 1 $pages); do
-              pdftocairo -svg -f $i -l $i ${pdf}.pdf ${pdf}/page${i}.svg
-            done
+            pdftocairo -png -r 135 -f 1 -l 1 ${pdf}.pdf ${pdf}/thumb-page
+            pdftocairo -png -r 200 ${pdf}.pdf ${pdf}/page
           done
       - run: python docs/generate.py
       - run: python cachebust.py

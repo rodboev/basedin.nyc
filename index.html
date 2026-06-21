@@ -18,7 +18,10 @@
     <meta property="og:image" content="/assets/share.png" />
   </head>
   <body class="home">
-    <a class="preview" href="resume/" data-pair="resume"><span><span>Resume</span></span></a>
+    <a class="preview" href="resume/" data-pair="resume" data-pdf="/resume.pdf">
+      <img src="resume/thumb-page-1.png" alt="" onload="this.classList.add('loaded')">
+      <span><span>Resume</span></span>
+    </a>
     <nav class="home-links">
       <a href="resume/" data-pair="resume" class="home-link--desktop">Resume</a>
       <span class="home-links-gap home-link--desktop" aria-hidden="true"></span>
@@ -30,7 +33,10 @@
       <span class="home-links-gap" aria-hidden="true"></span>
       <a href="https://linkedin.com/in/rodboev">LinkedIn</a>
     </nav>
-    <a class="preview" href="recommendations/" data-pair="recommendations"><span><span>Recommendations</span></span></a>
+    <a class="preview" href="recommendations/" data-pair="recommendations" data-pdf="/recommendations.pdf">
+      <img src="recommendations/page-1.png" alt="" onload="this.classList.add('loaded')">
+      <span><span>Recommendations</span></span>
+    </a>
     <script src="assets/script.js?v=52c78884"></script>
   </body>
 </html>

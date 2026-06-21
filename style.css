@@ -69,8 +69,7 @@ body.home .home-links-gap {
   pointer-events: none;
 }
 body.home a.preview {
-  background: #fff url("assets/loading.svg") center no-repeat;
-  background-size: contain;
+  background: #fff;
   position: relative;
   overflow: hidden;
   border-radius: min(1vh, 0.75vw);
@@ -86,14 +85,20 @@ body.home a.preview {
   color: inherit;
 }
 body.home a.preview > svg,
-body.home a.preview > object {
+body.home a.preview > object,
+body.home a.preview > img {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: white;
   width: 100%;
   height: 100%;
   pointer-events: none;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+body.home a.preview > img.loaded {
+  opacity: 1;
 }
 body.home a.preview:is(:hover, :focus, :active, .hover) {
   box-shadow:
@@ -635,9 +640,9 @@ body.preview {
 }
 body.preview > svg,
 body.preview > div:not(.downloads),
-body.preview > object {
+body.preview > img {
   display: block;
-  max-width: 96vw;
+  width: min(720px, 96vw);
   height: auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   background: white;
@@ -2223,17 +2228,16 @@ body.pr .separator-row td {
   }
   body.preview > svg,
   body.preview > div:not(.downloads),
-  body.preview > object {
+  body.preview > img {
     box-shadow: none;
-    max-width: none;
     width: 100% !important;
-    height: 100vh;
+    height: auto;
     overflow: hidden;
     break-after: page;
   }
   body.preview > svg:last-of-type,
   body.preview > div:not(.downloads):last-of-type,
-  body.preview > object:last-of-type {
+  body.preview > img:last-of-type {
     break-after: auto;
   }
   body.preview > div > svg {

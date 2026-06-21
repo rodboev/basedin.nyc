@@ -115,13 +115,6 @@ if (document.body.classList.contains('home')) {
     el.addEventListener('mouseleave', function() { setPairHover(pair, false); });
   });
 
-  document.querySelectorAll('a.preview').forEach(function(link) {
-    var dir = link.getAttribute('href').replace(/\/$/, '');
-    var obj = document.createElement('object');
-    obj.type = 'image/svg+xml';
-    obj.data = dir + '/page1.svg';
-    link.insertBefore(obj, link.firstChild);
-  });
 
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
