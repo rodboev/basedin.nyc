@@ -7,3 +7,5 @@ composer.phar
 pdfjs-dist/
 ~$*.docx
 __pycache__/
+resume/page*.svg
+recommendations/page*.svg

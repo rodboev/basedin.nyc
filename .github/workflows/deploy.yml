@@ -16,6 +16,14 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - run: sudo apt-get install -y poppler-utils
+      - run: |
+          for pdf in resume recommendations; do
+            pages=$(pdfinfo ${pdf}.pdf | grep -oP 'Pages:\s+\K\d+')
+            for i in $(seq 1 $pages); do
+              pdftocairo -svg -f $i -l $i ${pdf}.pdf ${pdf}/page${i}.svg
+            done
+          done
       - run: python docs/generate.py
       - run: python cachebust.py
       - uses: actions/upload-pages-artifact@v3

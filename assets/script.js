@@ -116,28 +116,11 @@ if (document.body.classList.contains('home')) {
   });
 
   document.querySelectorAll('a.preview').forEach(function(link) {
-    var filename = link.getAttribute('href').replace(/\/$/, '') + '.pdf';
-
-    pdfjsLib.getDocument(filename).promise
-    .then(function(pdf) { return pdf.getPage(1); })
-    .then(function(page) {
-      var elStyle = window.getComputedStyle(link),
-          scale = parseFloat(elStyle.height) / parseFloat(elStyle.width) * window.devicePixelRatio,
-          viewport = page.getViewport({ scale: scale }),
-          canvas = document.createElement('canvas'),
-          context = canvas.getContext('2d');
-
-      canvas.height = viewport.height;
-      canvas.width = viewport.width;
-      canvas.style.display = 'none';
-      document.body.appendChild(canvas);
-
-      page.render({ canvasContext: context, viewport: viewport }).promise
-      .then(function() {
-        link.style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
-        canvas.parentNode.removeChild(canvas);
-      });
-    });
+    var dir = link.getAttribute('href').replace(/\/$/, '');
+    var obj = document.createElement('object');
+    obj.type = 'image/svg+xml';
+    obj.data = dir + '/page1.svg';
+    link.insertBefore(obj, link.firstChild);
   });
 
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -298,99 +281,3 @@ if (document.body.classList.contains('pr')) {
   }
 }
 
-if (document.body.classList.contains('preview')) {
-  var pdfBase = location.pathname.replace(/\/$/, '').split('/').pop() + '.pdf';
-  var pdfFile = document.body.dataset.pdf || '/' + pdfBase;
-
-  function pdfDisplayWidth(page) {
-    return Math.min(720, window.innerWidth * 0.96);
-  }
-
-  function pdfScale(page, displayWidth) {
-    return displayWidth / page.getViewport({ scale: 1 }).width;
-  }
-
-  function styleSvg(svg, displayWidth) {
-    svg.removeAttribute('width');
-    svg.removeAttribute('height');
-    svg.style.width = displayWidth + 'px';
-    return svg;
-  }
-
-  function renderPages(pdf, renderPage) {
-    var chain = Promise.resolve();
-    for (var pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-      chain = chain.then(function(n) {
-        return function() { return renderPage(pdf, n); };
-      }(pageNum));
-    }
-    return chain;
-  }
-
-  function renderSvgPage(pdf, pageNum) {
-    return pdf.getPage(pageNum).then(function(page) {
-      var displayWidth = pdfDisplayWidth(page);
-      var scale = pdfScale(page, displayWidth);
-      var viewport = page.getViewport({ scale: scale });
-      return page.getOperatorList().then(function(opList) {
-        var svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs);
-        return svgGfx.getSVG(opList, viewport);
-      }).then(function(svg) {
-        document.body.appendChild(styleSvg(svg, displayWidth));
-      });
-    });
-  }
-
-  function renderHiDpiPage(pdf, pageNum) {
-    return pdf.getPage(pageNum).then(function(page) {
-      var dpr = window.devicePixelRatio || 1;
-      var displayWidth = pdfDisplayWidth(page);
-      var scale = pdfScale(page, displayWidth);
-      var viewport = page.getViewport({ scale: scale });
-      var hiDpiViewport = page.getViewport({ scale: scale * dpr * 2 });
-      var fullCanvas = document.createElement('canvas');
-      fullCanvas.width = hiDpiViewport.width;
-      fullCanvas.height = hiDpiViewport.height;
-      var canvasPromise = page.render({ canvasContext: fullCanvas.getContext('2d'), viewport: hiDpiViewport }).promise;
-      var svgPromise = page.getOperatorList().then(function(opList) {
-        var svgGfx = new pdfjsLib.SVGGraphics(page.commonObjs, page.objs, true);
-        return svgGfx.getSVG(opList, viewport);
-      });
-      return Promise.all([canvasPromise, svgPromise]).then(function(results) {
-        var svg = styleSvg(results[1], displayWidth);
-        var wrapper = document.createElement('div');
-        wrapper.style.position = 'relative';
-        wrapper.appendChild(svg);
-        document.body.appendChild(wrapper);
-        var svgRect = svg.getBoundingClientRect();
-        var scaleX = hiDpiViewport.width / svgRect.width;
-        var scaleY = hiDpiViewport.height / svgRect.height;
-        svg.querySelectorAll('image').forEach(function(img) {
-          var clipEl = img.closest('[clip-path]');
-          var rect = (clipEl || img).getBoundingClientRect();
-          if (rect.width < 1 || rect.height < 1) return;
-          var cx = (rect.left - svgRect.left) * scaleX;
-          var cy = (rect.top - svgRect.top) * scaleY;
-          var cw = rect.width * scaleX;
-          var ch = rect.height * scaleY;
-          var crop = document.createElement('canvas');
-          crop.width = Math.round(cw);
-          crop.height = Math.round(ch);
-          crop.getContext('2d').drawImage(fullCanvas,
-            Math.round(cx), Math.round(cy), Math.round(cw), Math.round(ch),
-            0, 0, Math.round(cw), Math.round(ch));
-          crop.style.cssText = 'position:absolute;display:block;pointer-events:none';
-          crop.style.left = (rect.left - svgRect.left) + 'px';
-          crop.style.top = (rect.top - svgRect.top) + 'px';
-          crop.style.width = rect.width + 'px';
-          crop.style.height = rect.height + 'px';
-          wrapper.appendChild(crop);
-        });
-      });
-    });
-  }
-
-  pdfjsLib.getDocument(pdfFile.startsWith('/') ? pdfFile : '/' + pdfFile).promise.then(function(pdf) {
-    return renderPages(pdf, pdfBase === 'recommendations.pdf' ? renderHiDpiPage : renderSvgPage);
-  });
-}

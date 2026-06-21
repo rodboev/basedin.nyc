@@ -8,15 +8,28 @@
     <meta property="og:image" content="https://basedin.nyc/resume/thumb.jpg">
     <meta property="og:url" content="https://basedin.nyc/resume">
     <meta property="og:type" content="website">
-    <link rel="stylesheet" href="/style.css?v=52940991" />
+    <link rel="stylesheet" href="/style.css" />
   </head>
-  <body class="preview" data-pdf="/resume.pdf">
+  <body class="preview" data-pages="2" data-pdf="/resume.pdf">
     <a class="btn back" href="/"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     <div class="downloads">
       <a class="btn" href="/resume.pdf" download><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 1v6M3 4.5 6 7.5 9 4.5M2 9v1.5h8V9"/></svg><span>PDF</span></a>
       <a class="btn" href="/resume.docx" download><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 1v6M3 4.5 6 7.5 9 4.5M2 9v1.5h8V9"/></svg><span>DOCX</span></a>
     </div>
-    <script src="/assets/pdf.min.js?v=d46dac53"></script>
-    <script src="/assets/script.js?v=52c78884"></script>
+    <script>
+      var dir = location.pathname.replace(/\/$/, '');
+      var pages = parseInt(document.body.dataset.pages);
+      var pdfAttr = document.body.dataset.pdf || '';
+      var ver = (pdfAttr.match(/\?(.*)/) || [])[1] || '';
+      var w = Math.min(720, window.innerWidth * 0.96);
+      for (var i = 1; i <= pages; i++) {
+        var obj = document.createElement('object');
+        obj.type = 'image/svg+xml';
+        obj.data = dir + '/page' + i + '.svg' + (ver ? '?' + ver : '');
+        obj.style.width = w + 'px';
+        obj.style.height = (w * 792 / 612) + 'px';
+        document.body.appendChild(obj);
+      }
+    </script>
   </body>
 </html>
