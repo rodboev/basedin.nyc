@@ -26,7 +26,7 @@ def bust(html_path):
             return m.group(0)
         return f'{attr}"{clean}?v={h}"'
 
-    updated = re.sub(r'((?:href|src|data-pdf|data)=)"([^"]+\.(?:css|js|pdf|docx|svg|png))(?:\?[^"]*)?"', replace_attr, content)
+    updated = re.sub(r'((?:href|src)=)"([^"]+\.(?:css|js|pdf|docx|png))(?:\?[^"]*)?"', replace_attr, content)
     if updated != content:
         with open(html_path, 'w', encoding='utf-8') as f:
             f.write(updated)

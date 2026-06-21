@@ -1,6 +1,7 @@
 param(
     [string]$Author = "rodboev",
-    [string[]]$Repos = @("nesquena/hermes-webui", "kenn-io/agentsview", "thedotmack/claude-mem"
+    [string[]]$Repos = @("nesquena/hermes-webui", "kenn-io/agentsview", "thedotmack/claude-mem",
+        "headroomlabs-ai/headroom", "mem0ai/mem0"
         # "cline/cline", "continuedev/continue", "CopilotKit/CopilotKit",
         # "MemPalace/mempalace", "mastra-ai/mastra", "github/github-mcp-server",
         # "lsdefine/GenericAgent"
@@ -60,11 +61,15 @@ $RepoLeaderboardConfig = @{
         IntegrationBots = @("nesquena-hermes")
     }
     "kenn-io/agentsview" = @{
-        MaintainerLogins = @("wesm")
+        MaintainerLogins = @("wesm", "mariusvniekerk", "cpcloud")
         IntegrationBots = @()
     }
     "thedotmack/claude-mem" = @{
         MaintainerLogins = @("thedotmack")
+        IntegrationBots = @()
+    }
+    "headroomlabs-ai/headroom" = @{
+        MaintainerLogins = @("chopratejas")
         IntegrationBots = @()
     }
 }
@@ -162,6 +167,7 @@ function Invoke-Gh {
     }
 
     $commandLabel = "gh $(Get-GhCommandDisplayText -ArgText ($normalizedArgs -join ' '))"
+    Write-ProgressHost "  > $commandLabel" -ForegroundColor DarkGray
     $ghExe = (Get-Command gh -ErrorAction SilentlyContinue).Source
     if (-not $ghExe) { $ghExe = "gh" }
 
@@ -195,7 +201,7 @@ function Invoke-Gh {
 
     $global:LASTEXITCODE = $p.ExitCode
     if ($sw.Elapsed.TotalSeconds -ge $GhInvokeSlowLogSeconds) {
-        Write-ProgressHost "  gh slow ($([math]::Round($sw.Elapsed.TotalSeconds, 1))s): $commandLabel" -ForegroundColor Yellow
+        Write-ProgressHost "  ^ slow ($([math]::Round($sw.Elapsed.TotalSeconds, 1))s)" -ForegroundColor Yellow
     }
 
     $stdout = $stdoutTask.GetAwaiter().GetResult()
@@ -513,6 +519,10 @@ function Get-PullRequestState([string]$Repo, [int]$Number, [switch]$Quiet) {
     }
     if ($script:ClassificationCache.prPullStates -and $script:ClassificationCache.prPullStates.ContainsKey($cacheKey)) {
         $stored = $script:ClassificationCache.prPullStates[$cacheKey]
+        if ($stored.state -eq "NOT_FOUND") {
+            $script:PullRequestStateCache[$cacheKey] = $null
+            return $null
+        }
         $result = [pscustomobject]@{
             number = $Number
             state = [string]$stored.state
@@ -535,10 +545,10 @@ function Get-PullRequestState([string]$Repo, [int]$Number, [switch]$Quiet) {
         try { $result = $raw | ConvertFrom-Json } catch {}
     }
     $script:PullRequestStateCache[$cacheKey] = $result
+    if (-not $script:ClassificationCache.prPullStates) {
+        $script:ClassificationCache.prPullStates = @{}
+    }
     if ($result) {
-        if (-not $script:ClassificationCache.prPullStates) {
-            $script:ClassificationCache.prPullStates = @{}
-        }
         $authorLogin = ""
         if ($result.author -and $result.author.login) {
             $authorLogin = [string](Get-ScalarValue $result.author.login)
@@ -555,6 +565,8 @@ function Get-PullRequestState([string]$Repo, [int]$Number, [switch]$Quiet) {
             }
             $script:ClassificationCache.prAuthorsByNumber[$cacheKey] = $authorLogin
         }
+    } else {
+        $script:ClassificationCache.prPullStates[$cacheKey] = @{ state = "NOT_FOUND" }
     }
     return $result
 }
@@ -1101,8 +1113,16 @@ function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild, [switc
                     }
                 }
             }
+            $normalizedHeadDate = ""
+            if ($repoProp.Value.headDate) {
+                $hd = $repoProp.Value.headDate
+                if ($hd -is [datetime]) { $normalizedHeadDate = $hd.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ") }
+                elseif ($hd -match '^\d{4}-\d{2}-\d{2}T') { $normalizedHeadDate = [string]$hd }
+                elseif ($hd -as [datetime]) { $normalizedHeadDate = ([datetime]$hd).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ") }
+            }
             $commitScanMeta[$repoProp.Name] = @{
                 headSha = [string]$repoProp.Value.headSha
+                headDate = $normalizedHeadDate
                 cachedAt = [string]$repoProp.Value.cachedAt
                 coAuthorIndex = $coAuthorIndex
                 subjectPrNumbers = $subjectPrNumbers
@@ -1355,8 +1375,16 @@ function Export-ClassificationCache([string]$Path) {
                     }
                 }
             }
+            $normalizedHeadDate = ""
+            if ($entry.headDate) {
+                $hd = $entry.headDate
+                if ($hd -is [datetime]) { $normalizedHeadDate = $hd.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ") }
+                elseif ($hd -match '^\d{4}-\d{2}-\d{2}T') { $normalizedHeadDate = [string]$hd }
+                elseif ($hd -as [datetime]) { $normalizedHeadDate = ([datetime]$hd).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ") }
+            }
             $sorted[$repo] = [ordered]@{
                 headSha = [string]$entry.headSha
+                headDate = $normalizedHeadDate
                 cachedAt = [string]$entry.cachedAt
                 coAuthorIndex = $coAuthor
                 subjectPrNumbers = $subjects
@@ -1537,7 +1565,7 @@ function Get-TopCreditedLogins(
     [int]$Top = $LeaderboardMax
 ) {
     $refreshLogins = @($Stats.GetEnumerator() |
-        Sort-Object { $_.Value.credited } -Descending |
+        Sort-Object { $_.Value.credited }, { $_.Value.open } -Descending |
         Select-Object -First $Top |
         ForEach-Object { $_.Key })
     if ($Stats.ContainsKey($Author) -and $refreshLogins -notcontains $Author) {
@@ -1746,13 +1774,13 @@ function Get-ClosedPullRequestClassification([object]$PullRequest) {
         $classification = "withdrawn"
         $evidenceKind = "author-withdrawn"
         $logLabel = "withdrawn (author withdrew)"
-    } elseif ($acceptedSibling) {
+    } elseif ($acceptedSibling -and -not $isSuperseded) {
         $classification = "accepted-indirect"
         $evidenceKind = "accepted-indirect"
         $viaLabel = "#$($acceptedSibling.number)"
         $viaUrl = $acceptedSibling.url
         $logLabel = "accepted indirectly via #$($acceptedSibling.number)"
-    } elseif ($creditedShip) {
+    } elseif ($creditedShip -and -not $isSuperseded) {
         # Maintainer carried the work forward with the author's credit preserved
         # (co-author trailer / authorship attribution) and shipped it, even
         # though the close was phrased as "superseded"/"integrated".
@@ -1815,7 +1843,7 @@ function Get-ContributorShippedCount(
     $closed = @($prs | Where-Object { $_.state -eq "CLOSED" -or $_.state -eq "MERGED" })
     if ($closed.Count -eq 0) { return 0 }
 
-    Write-ProgressHost "      $Login — classifying $($closed.Count) closed PRs on $repoShort..." -ForegroundColor DarkGray
+    Write-ProgressHost "      $Login - classifying $($closed.Count) closed PRs on $repoShort..." -ForegroundColor DarkGray
 
     $shippedCount = 0
     $index = 0
@@ -2112,8 +2140,9 @@ foreach ($repo in $displayRepos) {
         }
     }
     Set-CachedLeaderboardShippedCounts -Repo $repo -StartDate $StartDate -ShippedCounts $shippedCountsToSave -CommentShippedCounts $commentShippedCounts
+    Export-ClassificationCache -Path $CacheFile
 
-    $allSorted = @($communityStats.GetEnumerator() | Sort-Object { $_.Value.credited } -Descending)
+    $allSorted = @($communityStats.GetEnumerator() | Sort-Object { $_.Value.credited }, { $_.Value.open } -Descending)
     $myRank = 1
     foreach ($entry in $allSorted) { if ($entry.Key -eq $Author) { break }; $myRank++ }
 
@@ -2127,9 +2156,17 @@ foreach ($repo in $displayRepos) {
     }
 
     $leaderboardRows = ""
-    $visibleStart = 1
-    $visibleEnd = [math]::Min($DefaultLeaderboardVisible, $totalContributors)
-    $collapseMode = "top"
+    if ($myRank -gt $DefaultLeaderboardVisible -and $myRank -le $totalContributors) {
+        $collapseMode = "context"
+        $halfWindow = [math]::Floor($DefaultLeaderboardVisible / 2)
+        $visibleStart = [math]::Max(1, $myRank - $halfWindow)
+        $visibleEnd = [math]::Min($totalContributors, $visibleStart + $DefaultLeaderboardVisible - 1)
+        if ($visibleEnd -eq $totalContributors) { $visibleStart = [math]::Max(1, $visibleEnd - $DefaultLeaderboardVisible + 1) }
+    } else {
+        $collapseMode = "top"
+        $visibleStart = 1
+        $visibleEnd = [math]::Min($DefaultLeaderboardVisible, $totalContributors)
+    }
     $expandAfterRank = if ($collapseMode -eq "context") { $visibleEnd } else { $DefaultLeaderboardVisible }
     $rank = 1
     foreach ($entry in $sorted) {

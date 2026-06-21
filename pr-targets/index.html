@@ -41,7 +41,7 @@
   </div>
 </div>
 
-<table class="targets-table">
+<table class="targets-table tgt-landscape">
 <colgroup>
   <col class="tgt-col-project">
   <col class="tgt-col-stars">
@@ -53,13 +53,13 @@
 </colgroup>
 <thead>
 <tr>
-  <th><span class="tgt-inset">Project</span></th>
-  <th><span class="tgt-inset">Stars</span></th>
-  <th><span class="tgt-inset">Tier</span></th>
-  <th><span class="tgt-inset"><span class="th-long">Velocity</span><span class="th-short">Vel.</span></span></th>
-  <th><span class="tgt-inset"><span class="th-long">Domain</span><span class="th-short">Dom.</span></span></th>
-  <th><span class="tgt-inset"><span class="th-long">Contrib.</span><span class="th-short">Ctrb</span></span></th>
-  <th><span class="tgt-inset">CI</span></th>
+  <th>Project</th>
+  <th>Stars</th>
+  <th>Tier</th>
+  <th><span class="th-long">Velocity</span><span class="th-short">Vel.</span></th>
+  <th><span class="th-long">Domain</span><span class="th-short">Dom.</span></th>
+  <th><span class="th-long">Contrib.</span><span class="th-short">Ctrb</span></th>
+  <th>CI</th>
 </tr>
 </thead>
 <tbody id="targets-body">
@@ -308,16 +308,11 @@ function tierLabel(t) {
   return '<span class="tier-badge tier-c"><span class="tier-long">TIER C</span><span class="tier-short">C</span></span>';
 }
 
-function tgtInset(html) {
-  return '<span class="tgt-inset">' + html + '</span>';
-}
-
 function scoreBar(val, max) {
   var pct = (val / max) * 100;
-  var fillClass = 'score-fill-' + pct;
   var colorClass = val >= 4 ? 'score-color-green' : val >= 3 ? 'score-color-blue' : val >= 2 ? 'score-color-yellow' : 'score-color-dim';
   return '<span class="score-cell">' +
-    '<span class="score-track"><span class="score-bar ' + fillClass + ' ' + colorClass + '"></span></span>' +
+    '<span class="score-track"><span class="score-bar ' + colorClass + '" style="width:' + pct + '%"></span></span>' +
     '<span class="score-num ' + colorClass + '">' + val + '</span>' +
   '</span>';
 }
@@ -349,14 +344,14 @@ function renderTable(sortKey) {
     prevTier = d.tier;
 
     html += '<tr' + (showSep ? ' class="separator-row"' : '') + '>' +
-      '<td class="repo-name">' + tgtInset('<a href="' + d.url + '">' + d.name + '</a>' +
-        (d.lang ? ' <span class="dim">' + d.lang + '</span>' : '')) + '</td>' +
-      '<td class="stars">' + tgtInset('<span class="stars-main">' + formatStars(d.stars) + '</span> <span class="dim dim-plain">' + d.starsDay + '/d</span>') + '</td>' +
-      '<td>' + tgtInset(tierLabel(d.tier)) + '</td>' +
-      '<td>' + tgtInset(scoreBar(normalizeVelocity(d.starsDay), 5)) + '</td>' +
-      '<td>' + tgtInset(scoreBar(d.domain, 5)) + '</td>' +
-      '<td>' + tgtInset(scoreBar(d.contrib, 5)) + '</td>' +
-      '<td>' + tgtInset(ciLabel(d.ci)) + '</td>' +
+      '<td class="repo-name"><a href="' + d.url + '">' + d.name + '</a>' +
+        (d.lang ? ' <span class="dim">' + d.lang + '</span>' : '') + '</td>' +
+      '<td class="stars"><span class="stars-main">' + formatStars(d.stars) + '</span> <span class="dim dim-plain">' + d.starsDay + '/d</span></td>' +
+      '<td>' + tierLabel(d.tier) + '</td>' +
+      '<td>' + scoreBar(normalizeVelocity(d.starsDay), 5) + '</td>' +
+      '<td>' + scoreBar(d.domain, 5) + '</td>' +
+      '<td>' + scoreBar(d.contrib, 5) + '</td>' +
+      '<td>' + ciLabel(d.ci) + '</td>' +
     '</tr>';
 
     if (d.desc) {

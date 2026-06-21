@@ -115,6 +115,11 @@ if (document.body.classList.contains('home')) {
     el.addEventListener('mouseleave', function() { setPairHover(pair, false); });
   });
 
+  document.querySelectorAll('a.preview > img').forEach(function(img) {
+    function show() { img.classList.add('loaded'); }
+    if (img.complete) show();
+    else img.addEventListener('load', show);
+  });
 
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

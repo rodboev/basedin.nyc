@@ -290,10 +290,20 @@ function Get-GithubLoginFromCoAuthorTrailer([string]$TrailerLine) {
     return $null
 }
 
+$script:GhAuthToken = $null
+
+function Get-GhAuthToken {
+    if (-not $script:GhAuthToken) {
+        $raw = Invoke-Gh auth token 2>$null
+        if ($raw) { $script:GhAuthToken = $raw.Trim() }
+    }
+    return $script:GhAuthToken
+}
+
 function Get-GithubRestJson([string]$Path) {
-    $token = (Invoke-Gh auth token 2>$null)
+    $token = Get-GhAuthToken
     if (-not $token) { return $null }
-    $token = $token.Trim()
+    Write-ProgressHost "  > GET $Path" -ForegroundColor DarkGray
     try {
         return Invoke-RestMethod -Uri "https://api.github.com/$Path" -Headers @{
             Authorization = "Bearer $token"
@@ -387,6 +397,58 @@ function Get-WebuiFilteredMergedPrCreditMap([string]$Repo, [hashtable]$Exclusion
     return $map
 }
 
+function Update-CommitScanFromCommits(
+    [object[]]$Commits,
+    [hashtable]$CoAuthorIndex,
+    [hashtable]$SubjectPrNumbers
+) {
+    foreach ($commit in $Commits) {
+        $message = [string]$commit.commit.message
+        $parentCount = if ($commit.parents) { @($commit.parents).Count } else { 0 }
+
+        $subject = ($message -split "`n")[0]
+        $subjectMatches = [regex]::Matches($subject, '\(#(\d+(?:\s*[,/]\s*#?\d+)*)\)')
+        foreach ($m in $subjectMatches) {
+            $innerMatches = [regex]::Matches($m.Groups[1].Value, '#?(\d+)')
+            foreach ($im in $innerMatches) {
+                $prNum = [int]$im.Groups[1].Value
+                if (-not $SubjectPrNumbers.ContainsKey($prNum)) {
+                    $SubjectPrNumbers[$prNum] = @{ Sha = $commit.sha; ParentCount = $parentCount; HasCoAuthor = ($message -match '(?i)Co-authored-by:') }
+                }
+            }
+        }
+
+        foreach ($line in ($message -split "`n")) {
+            if ($line -notmatch '(?i)^Co-authored-by:') { continue }
+            $login = Get-GithubLoginFromCoAuthorTrailer -TrailerLine $line
+            if (-not $login) { continue }
+            $prMatches = [regex]::Matches($message, '#(\d+)')
+            foreach ($pm in $prMatches) {
+                $prNum = [int]$pm.Groups[1].Value
+                if (-not $CoAuthorIndex.ContainsKey($prNum)) {
+                    $CoAuthorIndex[$prNum] = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+                }
+                $null = $CoAuthorIndex[$prNum].Add($login)
+            }
+        }
+    }
+}
+
+function Get-CommitDate([object]$Commit) {
+    # GitHub since= requires ISO 8601; Invoke-RestMethod auto-parses dates to DateTime
+    if ($Commit.commit.committer.date) {
+        $d = $Commit.commit.committer.date
+        if ($d -is [datetime]) { return $d.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ") }
+        return [string]$d
+    }
+    if ($Commit.commit.author.date) {
+        $d = $Commit.commit.author.date
+        if ($d -is [datetime]) { return $d.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ") }
+        return [string]$d
+    }
+    return ""
+}
+
 function Get-WebuiMasterCommitScan([string]$Repo, [int]$MaxPages = $script:WebuiAbsorbCommitScanMaxPages) {
     if (-not $script:ClassificationCache.commitScanMeta) {
         $script:ClassificationCache.commitScanMeta = @{}
@@ -401,8 +463,49 @@ function Get-WebuiMasterCommitScan([string]$Repo, [int]$MaxPages = $script:Webui
                 CoAuthorIndex = $cached.coAuthorIndex
                 SubjectPrNumbers = $cached.subjectPrNumbers
                 HeadSha = $cached.headSha
+                PriorHeadSha = $null
             }
         }
+
+        # Incremental: use since= to fetch only commits after the cached HEAD date
+        $sinceDate = $cached.headDate
+        if ($sinceDate) {
+            $newCommits = @()
+            for ($page = 1; $page -le $MaxPages; $page++) {
+                $commits = $null
+                try {
+                    $commits = @(Get-GithubRestJson -Path "repos/$Repo/commits?per_page=100&since=$sinceDate&page=$page")
+                } catch {
+                    break
+                }
+                if (-not $commits -or $commits.Count -eq 0) { break }
+                $newCommits += $commits
+            }
+            # since= is inclusive, so filter out the old HEAD
+            $newCommits = @($newCommits | Where-Object { $_.sha -ne $cached.headSha })
+
+            $coAuthorIndex = $cached.coAuthorIndex
+            $subjectPrNumbers = $cached.subjectPrNumbers
+            Update-CommitScanFromCommits -Commits $newCommits -CoAuthorIndex $coAuthorIndex -SubjectPrNumbers $subjectPrNumbers
+            $newHeadSha = if ($headCheck.Count -gt 0) { $headCheck[0].sha } else { $cached.headSha }
+            $newHeadDate = if ($headCheck.Count -gt 0) { Get-CommitDate $headCheck[0] } else { $sinceDate }
+            Write-ProgressHost "    (incremental, $($newCommits.Count) new commits)" -ForegroundColor DarkGray
+            $script:ClassificationCache.commitScanMeta[$Repo] = @{
+                headSha = $newHeadSha
+                headDate = $newHeadDate
+                cachedAt = (Get-Date).ToString("o")
+                coAuthorIndex = $coAuthorIndex
+                subjectPrNumbers = $subjectPrNumbers
+            }
+            return @{
+                Commits = $newCommits
+                CoAuthorIndex = $coAuthorIndex
+                SubjectPrNumbers = $subjectPrNumbers
+                HeadSha = $newHeadSha
+                PriorHeadSha = $cached.headSha
+            }
+        }
+        # No headDate in cache; fall through to full scan
     }
 
     $allCommits = @()
@@ -419,43 +522,15 @@ function Get-WebuiMasterCommitScan([string]$Repo, [int]$MaxPages = $script:Webui
             break
         }
         $allCommits += $commits
-
-        foreach ($commit in $commits) {
-            $message = [string]$commit.commit.message
-            $parentCount = if ($commit.parents) { @($commit.parents).Count } else { 0 }
-
-            $subject = ($message -split "`n")[0]
-            $subjectMatches = [regex]::Matches($subject, '\(#(\d+(?:\s*[,/]\s*#?\d+)*)\)')
-            foreach ($m in $subjectMatches) {
-                $innerMatches = [regex]::Matches($m.Groups[1].Value, '#?(\d+)')
-                foreach ($im in $innerMatches) {
-                    $prNum = [int]$im.Groups[1].Value
-                    if (-not $subjectPrNumbers.ContainsKey($prNum)) {
-                        $subjectPrNumbers[$prNum] = @{ Sha = $commit.sha; ParentCount = $parentCount; HasCoAuthor = ($message -match '(?i)Co-authored-by:') }
-                    }
-                }
-            }
-
-            foreach ($line in ($message -split "`n")) {
-                if ($line -notmatch '(?i)^Co-authored-by:') { continue }
-                $login = Get-GithubLoginFromCoAuthorTrailer -TrailerLine $line
-                if (-not $login) { continue }
-                $prMatches = [regex]::Matches($message, '#(\d+)')
-                foreach ($pm in $prMatches) {
-                    $prNum = [int]$pm.Groups[1].Value
-                    if (-not $coAuthorIndex.ContainsKey($prNum)) {
-                        $coAuthorIndex[$prNum] = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
-                    }
-                    $null = $coAuthorIndex[$prNum].Add($login)
-                }
-            }
-        }
     }
+    Update-CommitScanFromCommits -Commits $allCommits -CoAuthorIndex $coAuthorIndex -SubjectPrNumbers $subjectPrNumbers
 
     $headSha = if ($allCommits.Count -gt 0) { $allCommits[0].sha } else { $null }
+    $headDate = if ($allCommits.Count -gt 0) { Get-CommitDate $allCommits[0] } else { "" }
     if ($headSha) {
         $script:ClassificationCache.commitScanMeta[$Repo] = @{
             headSha = $headSha
+            headDate = $headDate
             cachedAt = (Get-Date).ToString("o")
             coAuthorIndex = $coAuthorIndex
             subjectPrNumbers = $subjectPrNumbers
@@ -467,6 +542,7 @@ function Get-WebuiMasterCommitScan([string]$Repo, [int]$MaxPages = $script:Webui
         CoAuthorIndex = $coAuthorIndex
         SubjectPrNumbers = $subjectPrNumbers
         HeadSha = $headSha
+        PriorHeadSha = $null
     }
 }
 
@@ -491,7 +567,27 @@ function Get-WebuiCommitCreditMap([string]$Repo, [object]$CommitScan) {
         return $map
     }
 
+    # Seed from any cached credits (additive, commit history doesn't change)
     $map = New-EmptyCreditMap
+    if ($cached -and $cached.credits) {
+        foreach ($login in $cached.credits.Keys) {
+            $nums = $cached.credits[$login]
+            if ($nums -is [System.Collections.Generic.HashSet[int]]) {
+                $map[$login] = $nums
+            } else {
+                $map[$login] = [System.Collections.Generic.HashSet[int]]::new([int[]]@($nums))
+            }
+        }
+    }
+
+    # Build set of already-credited PR numbers to skip redundant author lookups
+    $knownPrNumbers = [System.Collections.Generic.HashSet[int]]::new()
+    foreach ($login in $map.Keys) {
+        foreach ($num in $map[$login]) {
+            [void]$knownPrNumbers.Add($num)
+        }
+    }
+
     foreach ($commit in $CommitScan.Commits) {
         $message = [string]$commit.commit.message
         if ($message -notmatch '(?i)Co-authored-by:|release:|contributor batch|salvaged') {
@@ -509,10 +605,12 @@ function Get-WebuiCommitCreditMap([string]$Repo, [object]$CommitScan) {
         if ($coAuthors.Count -eq 0) { continue }
 
         foreach ($prNum in $prNumbers) {
+            if ($knownPrNumbers.Contains($prNum)) { continue }
             $authorLogin = Get-PullRequestAuthorLogin -Repo $Repo -Number $prNum
             if (-not $authorLogin) { continue }
             if ($coAuthors -contains $authorLogin) {
                 Add-CreditPair -Map $map -Login $authorLogin -Number $prNum
+                [void]$knownPrNumbers.Add($prNum)
             }
         }
     }
@@ -552,7 +650,21 @@ function Get-WebuiAbsorbCommitCreditMap([string]$Repo, [hashtable]$Exclusions, [
     }
 
     $map = New-EmptyCreditMap
+    $knownPrNumbers = [System.Collections.Generic.HashSet[int]]::new()
+    if ($cached -and $cached.credits) {
+        foreach ($login in $cached.credits.Keys) {
+            $nums = $cached.credits[$login]
+            if ($nums -is [System.Collections.Generic.HashSet[int]]) {
+                $map[$login] = $nums
+            } else {
+                $map[$login] = [System.Collections.Generic.HashSet[int]]::new([int[]]@($nums))
+            }
+            foreach ($num in $map[$login]) { [void]$knownPrNumbers.Add($num) }
+        }
+    }
+
     foreach ($prNum in $CommitScan.SubjectPrNumbers.Keys) {
+        if ($knownPrNumbers.Contains($prNum)) { continue }
         $info = $CommitScan.SubjectPrNumbers[$prNum]
         if ($info.ParentCount -ne 1) { continue }
         if ($info.HasCoAuthor) { continue }

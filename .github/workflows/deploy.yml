@@ -19,7 +19,6 @@ jobs:
       - run: sudo apt-get install -y poppler-utils
       - run: |
           for pdf in resume recommendations; do
-            pdftocairo -png -r 135 -f 1 -l 1 ${pdf}.pdf ${pdf}/thumb-page
             pdftocairo -png -r 200 ${pdf}.pdf ${pdf}/page
           done
       - run: python docs/generate.py
