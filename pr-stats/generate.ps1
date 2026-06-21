@@ -868,6 +868,12 @@ function New-ClassificationCache {
         contributorsMdSeeds = @{}
         prAuthorsByNumber = @{}
         prPullStates = @{}
+        commitCreditMap = @{}
+        absorbCommitMap = @{}
+        shipCommentClassifications = @{}
+        mergedPrCreditMap = @{}
+        absorbedCreditMap = @{}
+        commitScanMeta = @{}
     }
 }
 
@@ -995,6 +1001,115 @@ function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild, [switc
         }
     }
 
+    $commitCreditMap = @{}
+    if ($raw.commitCreditMap) {
+        foreach ($repoProp in $raw.commitCreditMap.PSObject.Properties) {
+            $credits = @{}
+            if ($repoProp.Value.credits) {
+                foreach ($lp in $repoProp.Value.credits.PSObject.Properties) {
+                    $credits[$lp.Name] = @($lp.Value | ForEach-Object { [int]$_ })
+                }
+            }
+            $commitCreditMap[$repoProp.Name] = @{
+                headSha = [string]$repoProp.Value.headSha
+                cachedAt = [string]$repoProp.Value.cachedAt
+                credits = $credits
+            }
+        }
+    }
+
+    $absorbCommitMap = @{}
+    if ($raw.absorbCommitMap) {
+        foreach ($repoProp in $raw.absorbCommitMap.PSObject.Properties) {
+            $credits = @{}
+            if ($repoProp.Value.credits) {
+                foreach ($lp in $repoProp.Value.credits.PSObject.Properties) {
+                    $credits[$lp.Name] = @($lp.Value | ForEach-Object { [int]$_ })
+                }
+            }
+            $absorbCommitMap[$repoProp.Name] = @{
+                headSha = [string]$repoProp.Value.headSha
+                cachedAt = [string]$repoProp.Value.cachedAt
+                credits = $credits
+            }
+        }
+    }
+
+    $shipCommentClassifications = @{}
+    if ($raw.shipCommentClassifications) {
+        foreach ($prop in $raw.shipCommentClassifications.PSObject.Properties) {
+            $shipCommentClassifications[$prop.Name] = @{
+                classification = [string]$prop.Value.classification
+                classifiedAt = [string]$prop.Value.classifiedAt
+                commentCount = [int]$prop.Value.commentCount
+            }
+        }
+    }
+
+    $mergedPrCreditMap = @{}
+    if ($raw.mergedPrCreditMap) {
+        foreach ($repoProp in $raw.mergedPrCreditMap.PSObject.Properties) {
+            $credits = @{}
+            if ($repoProp.Value.credits) {
+                foreach ($lp in $repoProp.Value.credits.PSObject.Properties) {
+                    $credits[$lp.Name] = @($lp.Value | ForEach-Object { [int]$_ })
+                }
+            }
+            $mergedPrCreditMap[$repoProp.Name] = @{
+                headSha = [string]$repoProp.Value.headSha
+                cachedAt = [string]$repoProp.Value.cachedAt
+                credits = $credits
+            }
+        }
+    }
+
+    $absorbedCreditMap = @{}
+    if ($raw.absorbedCreditMap) {
+        foreach ($repoProp in $raw.absorbedCreditMap.PSObject.Properties) {
+            $credits = @{}
+            if ($repoProp.Value.credits) {
+                foreach ($lp in $repoProp.Value.credits.PSObject.Properties) {
+                    $credits[$lp.Name] = @($lp.Value | ForEach-Object { [int]$_ })
+                }
+            }
+            $absorbedCreditMap[$repoProp.Name] = @{
+                changelogSha = [string]$repoProp.Value.changelogSha
+                cachedAt = [string]$repoProp.Value.cachedAt
+                credits = $credits
+            }
+        }
+    }
+
+    $commitScanMeta = @{}
+    if ($raw.commitScanMeta) {
+        foreach ($repoProp in $raw.commitScanMeta.PSObject.Properties) {
+            $coAuthorIndex = @{}
+            if ($repoProp.Value.coAuthorIndex) {
+                foreach ($prProp in $repoProp.Value.coAuthorIndex.PSObject.Properties) {
+                    $set = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+                    foreach ($login in $prProp.Value) { [void]$set.Add([string]$login) }
+                    $coAuthorIndex[[int]$prProp.Name] = $set
+                }
+            }
+            $subjectPrNumbers = @{}
+            if ($repoProp.Value.subjectPrNumbers) {
+                foreach ($prProp in $repoProp.Value.subjectPrNumbers.PSObject.Properties) {
+                    $subjectPrNumbers[[int]$prProp.Name] = @{
+                        Sha = [string]$prProp.Value.Sha
+                        ParentCount = [int]$prProp.Value.ParentCount
+                        HasCoAuthor = [bool]$prProp.Value.HasCoAuthor
+                    }
+                }
+            }
+            $commitScanMeta[$repoProp.Name] = @{
+                headSha = [string]$repoProp.Value.headSha
+                cachedAt = [string]$repoProp.Value.cachedAt
+                coAuthorIndex = $coAuthorIndex
+                subjectPrNumbers = $subjectPrNumbers
+            }
+        }
+    }
+
     return @{
         version = $ClassificationCacheVersion
         entries = $entries
@@ -1002,6 +1117,12 @@ function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild, [switc
         contributorsMdSeeds = $contributorsMdSeeds
         prAuthorsByNumber = $prAuthorsByNumber
         prPullStates = $prPullStates
+        commitCreditMap = $commitCreditMap
+        absorbCommitMap = $absorbCommitMap
+        shipCommentClassifications = $shipCommentClassifications
+        mergedPrCreditMap = $mergedPrCreditMap
+        absorbedCreditMap = $absorbedCreditMap
+        commitScanMeta = $commitScanMeta
     }
 }
 
@@ -1179,7 +1300,72 @@ function Export-ClassificationCache([string]$Path) {
         $cacheForJson["prPullStates"] = $sortedStates
     }
 
-    $cacheForJson | ConvertTo-Json -Depth 6 | Out-File -LiteralPath $Path -Encoding utf8
+    foreach ($mapKey in @("commitCreditMap", "absorbCommitMap", "mergedPrCreditMap", "absorbedCreditMap")) {
+        $mapData = $script:ClassificationCache[$mapKey]
+        if ($mapData -and $mapData.Count -gt 0) {
+            $sorted = [ordered]@{}
+            foreach ($repo in ($mapData.Keys | Sort-Object)) {
+                $entry = $mapData[$repo]
+                $credits = [ordered]@{}
+                if ($entry.credits) {
+                    foreach ($login in ($entry.credits.Keys | Sort-Object)) {
+                        $credits[$login] = @($entry.credits[$login] | ForEach-Object { [int]$_ })
+                    }
+                }
+                $obj = [ordered]@{ cachedAt = $entry.cachedAt; credits = $credits }
+                if ($entry.headSha) { $obj["headSha"] = $entry.headSha }
+                if ($entry.changelogSha) { $obj["changelogSha"] = $entry.changelogSha }
+                $sorted[$repo] = $obj
+            }
+            $cacheForJson[$mapKey] = $sorted
+        }
+    }
+
+    if ($script:ClassificationCache.shipCommentClassifications -and $script:ClassificationCache.shipCommentClassifications.Count -gt 0) {
+        $sorted = [ordered]@{}
+        foreach ($key in ($script:ClassificationCache.shipCommentClassifications.Keys | Sort-Object)) {
+            $entry = $script:ClassificationCache.shipCommentClassifications[$key]
+            $sorted[$key] = [ordered]@{
+                classification = [string]$entry.classification
+                classifiedAt = [string]$entry.classifiedAt
+                commentCount = [int]$entry.commentCount
+            }
+        }
+        $cacheForJson["shipCommentClassifications"] = $sorted
+    }
+
+    if ($script:ClassificationCache.commitScanMeta -and $script:ClassificationCache.commitScanMeta.Count -gt 0) {
+        $sorted = [ordered]@{}
+        foreach ($repo in ($script:ClassificationCache.commitScanMeta.Keys | Sort-Object)) {
+            $entry = $script:ClassificationCache.commitScanMeta[$repo]
+            $coAuthor = [ordered]@{}
+            if ($entry.coAuthorIndex) {
+                foreach ($prNum in ($entry.coAuthorIndex.Keys | Sort-Object)) {
+                    $coAuthor["$prNum"] = @($entry.coAuthorIndex[$prNum] | Sort-Object)
+                }
+            }
+            $subjects = [ordered]@{}
+            if ($entry.subjectPrNumbers) {
+                foreach ($prNum in ($entry.subjectPrNumbers.Keys | Sort-Object)) {
+                    $info = $entry.subjectPrNumbers[$prNum]
+                    $subjects["$prNum"] = [ordered]@{
+                        Sha = [string]$info.Sha
+                        ParentCount = [int]$info.ParentCount
+                        HasCoAuthor = [bool]$info.HasCoAuthor
+                    }
+                }
+            }
+            $sorted[$repo] = [ordered]@{
+                headSha = [string]$entry.headSha
+                cachedAt = [string]$entry.cachedAt
+                coAuthorIndex = $coAuthor
+                subjectPrNumbers = $subjects
+            }
+        }
+        $cacheForJson["commitScanMeta"] = $sorted
+    }
+
+    $cacheForJson | ConvertTo-Json -Depth 8 | Out-File -LiteralPath $Path -Encoding utf8
 }
 
 function Get-ClassificationCacheKey([string]$Repo, [int]$Number) {

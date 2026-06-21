@@ -299,7 +299,8 @@ if (document.body.classList.contains('pr')) {
 }
 
 if (document.body.classList.contains('preview')) {
-  var pdfFile = location.pathname.replace(/\/$/, '').split('/').pop() + '.pdf';
+  var pdfBase = location.pathname.replace(/\/$/, '').split('/').pop() + '.pdf';
+  var pdfFile = document.body.dataset.pdf || '/' + pdfBase;
 
   function pdfDisplayWidth(page) {
     return Math.min(720, window.innerWidth * 0.96);
@@ -389,7 +390,7 @@ if (document.body.classList.contains('preview')) {
     });
   }
 
-  pdfjsLib.getDocument('/' + pdfFile).promise.then(function(pdf) {
-    return renderPages(pdf, pdfFile === 'recommendations.pdf' ? renderHiDpiPage : renderSvgPage);
+  pdfjsLib.getDocument(pdfFile.startsWith('/') ? pdfFile : '/' + pdfFile).promise.then(function(pdf) {
+    return renderPages(pdf, pdfBase === 'recommendations.pdf' ? renderHiDpiPage : renderSvgPage);
   });
 }

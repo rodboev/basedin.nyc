@@ -203,8 +203,28 @@ function Get-WebuiChangelogCreditMap([string]$Text) {
 function Get-WebuiReleaseAbsorbedCreditMap(
     [string]$Text,
     [string]$Repo,
-    [hashtable]$Exclusions
+    [hashtable]$Exclusions,
+    [string]$ChangelogSha
 ) {
+    if (-not $script:ClassificationCache.absorbedCreditMap) {
+        $script:ClassificationCache.absorbedCreditMap = @{}
+    }
+    if ($ChangelogSha) {
+        $cached = $script:ClassificationCache.absorbedCreditMap[$Repo]
+        if ($cached -and $cached.changelogSha -eq $ChangelogSha) {
+            $map = New-EmptyCreditMap
+            foreach ($login in $cached.credits.Keys) {
+                $nums = $cached.credits[$login]
+                if ($nums -is [System.Collections.Generic.HashSet[int]]) {
+                    $map[$login] = $nums
+                } else {
+                    $map[$login] = [System.Collections.Generic.HashSet[int]]::new([int[]]@($nums))
+                }
+            }
+            return $map
+        }
+    }
+
     $map = New-EmptyCreditMap
     if (-not $Text) { return $map }
 
@@ -241,6 +261,18 @@ function Get-WebuiReleaseAbsorbedCreditMap(
         Add-CreditPair -Map $map -Login $authorLogin -Number $num
     }
 
+    if ($ChangelogSha) {
+        $serializable = @{}
+        foreach ($login in $map.Keys) {
+            $serializable[$login] = @($map[$login])
+        }
+        $script:ClassificationCache.absorbedCreditMap[$Repo] = @{
+            changelogSha = $ChangelogSha
+            cachedAt = (Get-Date).ToString("o")
+            credits = $serializable
+        }
+    }
+
     return $map
 }
 
@@ -273,7 +305,26 @@ function Get-GithubRestJson([string]$Path) {
     }
 }
 
-function Get-WebuiFilteredMergedPrCreditMap([string]$Repo, [hashtable]$Exclusions) {
+function Get-WebuiFilteredMergedPrCreditMap([string]$Repo, [hashtable]$Exclusions, [string]$HeadSha) {
+    if (-not $script:ClassificationCache.mergedPrCreditMap) {
+        $script:ClassificationCache.mergedPrCreditMap = @{}
+    }
+    if ($HeadSha) {
+        $cached = $script:ClassificationCache.mergedPrCreditMap[$Repo]
+        if ($cached -and $cached.headSha -eq $HeadSha) {
+            $map = New-EmptyCreditMap
+            foreach ($login in $cached.credits.Keys) {
+                $nums = $cached.credits[$login]
+                if ($nums -is [System.Collections.Generic.HashSet[int]]) {
+                    $map[$login] = $nums
+                } else {
+                    $map[$login] = [System.Collections.Generic.HashSet[int]]::new([int[]]@($nums))
+                }
+            }
+            return $map
+        }
+    }
+
     $map = New-EmptyCreditMap
     $cursor = $null
     $page = 0
@@ -321,10 +372,39 @@ function Get-WebuiFilteredMergedPrCreditMap([string]$Repo, [hashtable]$Exclusion
         $cursor = $connection.pageInfo.endCursor
     }
 
+    if ($HeadSha) {
+        $serializable = @{}
+        foreach ($login in $map.Keys) {
+            $serializable[$login] = @($map[$login])
+        }
+        $script:ClassificationCache.mergedPrCreditMap[$Repo] = @{
+            headSha = $HeadSha
+            cachedAt = (Get-Date).ToString("o")
+            credits = $serializable
+        }
+    }
+
     return $map
 }
 
 function Get-WebuiMasterCommitScan([string]$Repo, [int]$MaxPages = $script:WebuiAbsorbCommitScanMaxPages) {
+    if (-not $script:ClassificationCache.commitScanMeta) {
+        $script:ClassificationCache.commitScanMeta = @{}
+    }
+    $cached = $script:ClassificationCache.commitScanMeta[$Repo]
+    if ($cached -and $cached.headSha) {
+        $headCheck = @(Get-GithubRestJson -Path "repos/$Repo/commits?per_page=1")
+        if ($headCheck -and $headCheck.Count -gt 0 -and $headCheck[0].sha -eq $cached.headSha) {
+            Write-ProgressHost "    (cached, HEAD unchanged)" -ForegroundColor DarkGray
+            return @{
+                Commits = @()
+                CoAuthorIndex = $cached.coAuthorIndex
+                SubjectPrNumbers = $cached.subjectPrNumbers
+                HeadSha = $cached.headSha
+            }
+        }
+    }
+
     $allCommits = @()
     $coAuthorIndex = @{}
     $subjectPrNumbers = @{}
@@ -371,11 +451,22 @@ function Get-WebuiMasterCommitScan([string]$Repo, [int]$MaxPages = $script:Webui
             }
         }
     }
+
+    $headSha = if ($allCommits.Count -gt 0) { $allCommits[0].sha } else { $null }
+    if ($headSha) {
+        $script:ClassificationCache.commitScanMeta[$Repo] = @{
+            headSha = $headSha
+            cachedAt = (Get-Date).ToString("o")
+            coAuthorIndex = $coAuthorIndex
+            subjectPrNumbers = $subjectPrNumbers
+        }
+    }
+
     return @{
         Commits = $allCommits
         CoAuthorIndex = $coAuthorIndex
         SubjectPrNumbers = $subjectPrNumbers
-        HeadSha = if ($allCommits.Count -gt 0) { $allCommits[0].sha } else { $null }
+        HeadSha = $headSha
     }
 }
 
@@ -383,6 +474,23 @@ function Get-WebuiCommitCreditMap([string]$Repo, [object]$CommitScan) {
     if (-not $CommitScan) {
         $CommitScan = Get-WebuiMasterCommitScan -Repo $Repo -MaxPages $script:WebuiCommitScanMaxPages
     }
+    if (-not $script:ClassificationCache.commitCreditMap) {
+        $script:ClassificationCache.commitCreditMap = @{}
+    }
+    $cached = $script:ClassificationCache.commitCreditMap[$Repo]
+    if ($cached -and $cached.headSha -eq $CommitScan.HeadSha) {
+        $map = New-EmptyCreditMap
+        foreach ($login in $cached.credits.Keys) {
+            $nums = $cached.credits[$login]
+            if ($nums -is [System.Collections.Generic.HashSet[int]]) {
+                $map[$login] = $nums
+            } else {
+                $map[$login] = [System.Collections.Generic.HashSet[int]]::new([int[]]@($nums))
+            }
+        }
+        return $map
+    }
+
     $map = New-EmptyCreditMap
     foreach ($commit in $CommitScan.Commits) {
         $message = [string]$commit.commit.message
@@ -408,6 +516,17 @@ function Get-WebuiCommitCreditMap([string]$Repo, [object]$CommitScan) {
             }
         }
     }
+
+    $serializable = @{}
+    foreach ($login in $map.Keys) {
+        $serializable[$login] = @($map[$login])
+    }
+    $script:ClassificationCache.commitCreditMap[$Repo] = @{
+        headSha = $CommitScan.HeadSha
+        cachedAt = (Get-Date).ToString("o")
+        credits = $serializable
+    }
+
     return $map
 }
 
@@ -839,14 +958,14 @@ function Get-ChangelogReleaseCreditCounts(
 
     Write-ProgressHost "    Building release credit maps (CHANGELOG + merged + commits + absorbed)..." -ForegroundColor DarkGray
     $changelogMap = Get-WebuiChangelogCreditMap -Text $changelog.Text
-    Write-ProgressHost "    Scanning contributor merged PRs..." -ForegroundColor DarkGray
-    $mergedMap = Get-WebuiFilteredMergedPrCreditMap -Repo $Repo -Exclusions $Exclusions
     Write-ProgressHost "    Scanning master commits (shared scan, up to $script:WebuiAbsorbCommitScanMaxPages pages)..." -ForegroundColor DarkGray
     $commitScan = Get-WebuiMasterCommitScan -Repo $Repo
+    Write-ProgressHost "    Scanning contributor merged PRs..." -ForegroundColor DarkGray
+    $mergedMap = Get-WebuiFilteredMergedPrCreditMap -Repo $Repo -Exclusions $Exclusions -HeadSha $commitScan.HeadSha
     Write-ProgressHost "    Extracting co-author credits from commits..." -ForegroundColor DarkGray
     $commitMap = Get-WebuiCommitCreditMap -Repo $Repo -CommitScan $commitScan
     Write-ProgressHost "    Resolving absorbed closed PR credits from release sections..." -ForegroundColor DarkGray
-    $absorbedMap = Get-WebuiReleaseAbsorbedCreditMap -Text $changelog.Text -Repo $Repo -Exclusions $Exclusions
+    $absorbedMap = Get-WebuiReleaseAbsorbedCreditMap -Text $changelog.Text -Repo $Repo -Exclusions $Exclusions -ChangelogSha $changelog.Sha
     Write-ProgressHost "    Scanning master commits for absorb-credits (source e)..." -ForegroundColor DarkGray
     $absorbCommitMap = Get-WebuiAbsorbCommitCreditMap -Repo $Repo -Exclusions $Exclusions -CommitScan $commitScan
     $preMerged = Merge-CreditMaps @($changelogMap, $mergedMap, $commitMap, $absorbedMap, $absorbCommitMap)
