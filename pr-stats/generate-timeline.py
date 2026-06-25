@@ -1,0 +1,363 @@
+#!/usr/bin/env python3
+"""Post-process pr-stats/index.html: inject a Progress chart and avg stat cards.
+
+Reads the classification cache from generate.ps1 and fetches LOC data from GitHub.
+Run after generate.ps1 to augment its output in-place.
+"""
+
+import json
+import re
+import subprocess
+import sys
+from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
+from zoneinfo import ZoneInfo
+
+SCRIPT_DIR = Path(__file__).parent
+CACHE_FILE = SCRIPT_DIR / ".pr-classification-cache.json"
+INDEX_FILE = SCRIPT_DIR / "index.html"
+
+AUTHOR = "rodboev"
+REPOS = [
+    "nesquena/hermes-webui",
+    "kenn-io/agentsview",
+    "thedotmack/claude-mem",
+    "headroomlabs-ai/headroom",
+    "mem0ai/mem0",
+]
+SHIPPED_CLASSIFICATIONS = {"shipped", "accepted-indirect"}
+EASTERN = ZoneInfo("America/New_York")
+
+CHART_MARKER = "<!-- timeline-chart -->"
+
+
+def fetch_prs(repo, author):
+    result = subprocess.run(
+        ["gh", "pr", "list", "--repo", repo, "--author", author,
+         "--state", "all", "--limit", "500",
+         "--json", "number,state,createdAt,closedAt,mergedAt,additions,deletions,changedFiles"],
+        capture_output=True, text=True, timeout=120
+    )
+    if result.returncode != 0:
+        print(f"    WARN: fetch failed for {repo}", file=sys.stderr)
+        return []
+    return json.loads(result.stdout)
+
+
+def load_classifications(cache_file):
+    if not cache_file.exists():
+        return {}
+    with open(cache_file, encoding="utf-8") as f:
+        cache = json.load(f)
+    return {
+        key: entry.get("classification", "")
+        for key, entry in cache.get("entries", {}).items()
+    }
+
+
+def to_eastern_date(iso_str):
+    dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
+    return dt.astimezone(EASTERN).strftime("%Y-%m-%d")
+
+
+def classify_pr(pr, repo, classifications):
+    cache_key = f"{repo}#{pr['number']}"
+    if pr["state"] == "OPEN":
+        return "open"
+    if cache_key in classifications:
+        return classifications[cache_key]
+    if pr.get("mergedAt"):
+        return "shipped"
+    return "lost"
+
+
+def build_daily_data(all_prs):
+    daily_opened = defaultdict(lambda: dict(count=0, loc=0, files=0, additions=0, deletions=0))
+    daily_shipped = defaultdict(lambda: dict(count=0, loc=0, files=0))
+
+    for pr in all_prs:
+        if pr["classification"] == "withdrawn":
+            continue
+
+        day = pr["createdDate"]
+        d = daily_opened[day]
+        loc = pr["additions"] + pr["deletions"]
+        d["count"] += 1
+        d["loc"] += loc
+        d["files"] += pr["changedFiles"]
+        d["additions"] += pr["additions"]
+        d["deletions"] += pr["deletions"]
+
+        if pr["isShipped"] and pr["resolvedDate"]:
+            s = daily_shipped[pr["resolvedDate"]]
+            s["count"] += 1
+            s["loc"] += loc
+            s["files"] += pr["changedFiles"]
+
+    all_dates = sorted(set(list(daily_opened) + list(daily_shipped)))
+
+    chart_data = []
+    cum_opened = cum_loc = cum_shipped = 0
+    empty_opened = dict(count=0, loc=0, files=0, additions=0, deletions=0)
+    empty_shipped = dict(count=0, loc=0, files=0)
+
+    for day in all_dates:
+        o = daily_opened.get(day, empty_opened)
+        s = daily_shipped.get(day, empty_shipped)
+        cum_opened += o["count"]
+        cum_loc += o["loc"]
+        cum_shipped += s["count"]
+
+        chart_data.append(dict(
+            date=day,
+            prsOpened=o["count"],
+            prsShipped=s["count"],
+            loc=o["loc"],
+            additions=o["additions"],
+            deletions=o["deletions"],
+            files=o["files"],
+            shippedLoc=s["loc"],
+            cumOpened=cum_opened,
+            cumShipped=cum_shipped,
+            cumLoc=cum_loc,
+            locPerPr=round(o["loc"] / o["count"]) if o["count"] else 0,
+            filesPerPr=round(o["files"] / o["count"], 1) if o["count"] else 0,
+        ))
+
+    return chart_data
+
+
+def build_chart_html(chart_data):
+    chart_json = json.dumps(chart_data).replace("</script", r"<\/script")
+    active_days = len([d for d in chart_data if d["prsOpened"] > 0])
+    total_loc = sum(d["loc"] for d in chart_data)
+    total_opened = sum(d["prsOpened"] for d in chart_data)
+    avg_loc = f"{round(total_loc / active_days):,}" if active_days else "0"
+    avg_prs = str(round(total_opened / active_days, 1)) if active_days else "0"
+
+    return chart_json, avg_prs, avg_loc
+
+
+def inject_into_index(html, chart_json, avg_prs, avg_loc):
+    # Remove prior injection if re-running
+    html = re.sub(
+        rf'{re.escape(CHART_MARKER)}.*?{re.escape(CHART_MARKER)}',
+        '', html, flags=re.DOTALL
+    )
+
+    # 1. Add Chart.js CDN before </head>
+    chartjs_tags = (
+        '<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>\n'
+        '    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>\n'
+    )
+    if "chart.js@4" not in html:
+        html = html.replace("</head>", f"    {chartjs_tags}  </head>")
+
+    # 2. Add avg stat cards before the active-days card
+    avg_cards = (
+        f'  <div class="stat-card"><div class="number">{avg_prs}</div>'
+        f'<div class="label">Avg PRs / active day</div></div>\n'
+        f'  <div class="stat-card"><div class="number">{avg_loc}</div>'
+        f'<div class="label">Avg LOC / active day</div></div>\n'
+    )
+    # Find the last stat-card in the second .grid (the one with acceptance rate + active days)
+    # Insert before the active-days card (the last stat-card before </div>\n\n)
+    active_days_pattern = r'(<div class="stat-card"><div class="number blue">\d+ days)'
+    if "Avg PRs / active day" not in html:
+        html = re.sub(active_days_pattern, avg_cards + r'\1', html)
+
+    # 3. Insert chart section before <h2>Methodology</h2>
+    chart_section = f"""{CHART_MARKER}
+<div class="landscape-row" style="margin-top:2rem">
+  <div class="pr-filter-group pr-filter-group-left">
+    <h2>Progress</h2>
+    <div class="sort-pills" id="tl-view-pills">
+    <div class="sort-pill active" data-view="daily">Daily</div>
+    <div class="sort-pill" data-view="cumulative">Cumulative</div>
+    </div>
+  </div>
+  <div class="pr-filter-group pr-filter-group-right">
+    <div class="sort-pills" id="tl-range-pills">
+    <div class="sort-pill" data-range="7">7d</div>
+    <div class="sort-pill active" data-range="30">30d</div>
+    <div class="sort-pill" data-range="0">All</div>
+    </div>
+  </div>
+</div>
+<div id="tl-daily-wrap" style="position:relative;width:100%;height:380px;margin:1rem 0 2.5rem"><canvas id="tlDailyChart"></canvas></div>
+<div id="tl-cumulative-wrap" style="position:relative;width:100%;height:380px;margin:1rem 0 2.5rem;display:none"><canvas id="tlCumulativeChart"></canvas></div>
+
+<script>
+(function() {{
+var TL = {chart_json};
+var isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+var C = {{
+  green: isDark ? '#3fb950' : '#1a7f37',
+  blue: isDark ? '#58a6ff' : '#3376d2',
+  purple: isDark ? '#bc8cff' : '#8250df',
+  text: isDark ? '#e6edf3' : '#1a1a1a',
+  grid: isDark ? 'rgba(139,148,158,0.15)' : 'rgba(0,0,0,0.06)',
+}};
+Chart.defaults.color = C.text;
+Chart.defaults.borderColor = C.grid;
+
+function fmtLabel(s) {{
+  var p = s.split('-');
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[+p[1]-1] + ' ' + +p[2];
+}}
+function fmtK(v) {{ return v >= 1000 ? (v/1000).toFixed(1)+'k' : v; }}
+function sliceData(days) {{
+  if (!days) return TL;
+  var last = TL[TL.length-1].date, p = last.split('-');
+  var cut = new Date(p[0], p[1]-1, p[2]);
+  cut.setDate(cut.getDate() - days + 1);
+  var cs = cut.toISOString().slice(0,10);
+  return TL.filter(function(d) {{ return d.date >= cs; }});
+}}
+
+var range = 30, dChart, cChart;
+function build(r) {{
+  var sl = sliceData(r), labs = sl.map(function(d){{ return fmtLabel(d.date); }});
+  if (dChart) dChart.destroy();
+  if (cChart) cChart.destroy();
+
+  dChart = new Chart(document.getElementById('tlDailyChart'), {{
+    type: 'bar',
+    data: {{
+      labels: labs,
+      datasets: [
+        {{ label: 'LOC opened', data: sl.map(function(d){{return d.loc}}),
+           backgroundColor: C.green+'aa', borderColor: C.green, borderWidth: 1, borderRadius: 3, yAxisID: 'yL', order: 2 }},
+        {{ label: 'PRs opened', data: sl.map(function(d){{return d.prsOpened}}), type: 'line',
+           borderColor: C.blue, borderWidth: 2.5, pointRadius: 4, pointHoverRadius: 6, tension: 0.25, yAxisID: 'yP', order: 1 }},
+        {{ label: 'PRs shipped', data: sl.map(function(d){{return d.prsShipped}}), type: 'line',
+           borderColor: C.purple, borderWidth: 2.5, borderDash: [5,3], pointRadius: 4, pointHoverRadius: 6, tension: 0.25, yAxisID: 'yP', order: 0 }},
+      ],
+    }},
+    options: {{
+      responsive: true, maintainAspectRatio: false, interaction: {{ mode: 'index', intersect: false }},
+      scales: {{
+        x: {{ grid: {{display:false}}, ticks: {{maxRotation:50, font:{{size:11}}}} }},
+        yL: {{ position:'left', title:{{display:true,text:'LOC'}}, ticks:{{callback:fmtK}}, grid:{{color:C.grid}}, beginAtZero:true }},
+        yP: {{ position:'right', title:{{display:true,text:'PRs'}}, grid:{{drawOnChartArea:false}}, beginAtZero:true }},
+      }},
+      plugins: {{
+        tooltip: {{ bodySpacing: 7, titleMarginBottom: 8, callbacks: {{
+          title: function(ctx) {{
+            var d = sl[ctx[0].dataIndex], p = d.date.split('-');
+            var dt = new Date(p[0],p[1]-1,p[2]);
+            return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dt.getDay()] + ', ' + labs[ctx[0].dataIndex] + ' ' + p[0];
+          }},
+          afterBody: function(ctx) {{
+            var d = sl[ctx[0].dataIndex];
+            return [' ', '+'+fmtK(d.additions)+'/-'+fmtK(d.deletions)+' ('+d.files+' files)',
+              d.prsOpened > 0 ? 'LOC/PR: '+fmtK(d.locPerPr)+'  Files/PR: '+d.filesPerPr : ''].filter(Boolean);
+          }}
+        }} }},
+        legend: {{ position: 'top' }},
+      }},
+    }},
+  }});
+
+  cChart = new Chart(document.getElementById('tlCumulativeChart'), {{
+    type: 'line',
+    data: {{
+      labels: labs,
+      datasets: [
+        {{ label: 'Cumulative LOC', data: sl.map(function(d){{return d.cumLoc}}),
+           borderColor: C.green, borderWidth: 2, backgroundColor: C.green+'20', fill: true, tension: 0.3, pointRadius: 3, yAxisID: 'yL' }},
+        {{ label: 'Cumulative PRs opened', data: sl.map(function(d){{return d.cumOpened}}),
+           borderColor: C.blue, borderWidth: 2, tension: 0.3, pointRadius: 3, yAxisID: 'yP' }},
+        {{ label: 'Cumulative PRs shipped', data: sl.map(function(d){{return d.cumShipped}}),
+           borderColor: C.purple, borderWidth: 2, borderDash: [5,3], tension: 0.3, pointRadius: 3, yAxisID: 'yP' }},
+      ],
+    }},
+    options: {{
+      responsive: true, maintainAspectRatio: false, interaction: {{ mode: 'index', intersect: false }},
+      scales: {{
+        x: {{ grid: {{display:false}}, ticks: {{maxRotation:50, font:{{size:11}}}} }},
+        yL: {{ position:'left', title:{{display:true,text:'LOC'}}, ticks:{{callback:fmtK}}, grid:{{color:C.grid}} }},
+        yP: {{ position:'right', title:{{display:true,text:'PRs'}}, grid:{{drawOnChartArea:false}} }},
+      }},
+      plugins: {{ legend: {{ position: 'top' }} }},
+    }},
+  }});
+}}
+build(range);
+
+document.getElementById('tl-range-pills').addEventListener('click', function(e) {{
+  var p = e.target.closest('.sort-pill'); if (!p) return;
+  range = parseInt(p.getAttribute('data-range'), 10);
+  document.querySelectorAll('#tl-range-pills .sort-pill').forEach(function(x){{ x.classList.remove('active') }});
+  p.classList.add('active');
+  build(range);
+}});
+document.getElementById('tl-view-pills').addEventListener('click', function(e) {{
+  var p = e.target.closest('.sort-pill'); if (!p) return;
+  var v = p.getAttribute('data-view');
+  document.querySelectorAll('#tl-view-pills .sort-pill').forEach(function(x){{ x.classList.remove('active') }});
+  p.classList.add('active');
+  document.getElementById('tl-daily-wrap').style.display = v === 'daily' ? '' : 'none';
+  document.getElementById('tl-cumulative-wrap').style.display = v === 'cumulative' ? '' : 'none';
+}});
+}})();
+</script>
+{CHART_MARKER}
+"""
+    # Insert after the breakdown legend div (before the first repo heading)
+    m = re.search(r'(</div>\s*<div class="legend">.*?</div>\s*</div>)\s*\n', html, re.DOTALL)
+    if m:
+        insert_at = m.end()
+        html = html[:insert_at] + '\n' + chart_section + '\n' + html[insert_at:]
+    else:
+        html = html.replace("<h2>Methodology</h2>", chart_section + "\n<h2>Methodology</h2>")
+    return html
+
+
+def main():
+    if not INDEX_FILE.exists():
+        print(f"ERROR: {INDEX_FILE} not found. Run generate.ps1 first.", file=sys.stderr)
+        sys.exit(1)
+
+    classifications = load_classifications(CACHE_FILE)
+    print(f"Loaded {len(classifications)} classifications from cache", file=sys.stderr)
+
+    all_prs = []
+    for repo in REPOS:
+        print(f"  {repo}...", file=sys.stderr)
+        prs = fetch_prs(repo, AUTHOR)
+        for pr in prs:
+            classification = classify_pr(pr, repo, classifications)
+            is_shipped = classification in SHIPPED_CLASSIFICATIONS
+
+            created_date = to_eastern_date(pr["createdAt"])
+            resolved_iso = pr.get("mergedAt") or pr.get("closedAt") or ""
+            resolved_date = to_eastern_date(resolved_iso) if resolved_iso else ""
+
+            all_prs.append(dict(
+                repo=repo,
+                number=pr["number"],
+                additions=pr.get("additions", 0) or 0,
+                deletions=pr.get("deletions", 0) or 0,
+                changedFiles=pr.get("changedFiles", 0) or 0,
+                classification=classification,
+                isShipped=is_shipped,
+                createdDate=created_date,
+                resolvedDate=resolved_date,
+            ))
+
+    print(f"  {len(all_prs)} PRs total", file=sys.stderr)
+
+    chart_data = build_daily_data(all_prs)
+    chart_json, avg_prs, avg_loc = build_chart_html(chart_data)
+
+    html = INDEX_FILE.read_text(encoding="utf-8")
+    html = inject_into_index(html, chart_json, avg_prs, avg_loc)
+    INDEX_FILE.write_text(html, encoding="utf-8")
+    print(f"Injected chart + stat cards into {INDEX_FILE}", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main()

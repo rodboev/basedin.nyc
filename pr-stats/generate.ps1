@@ -2507,9 +2507,9 @@ foreach ($pr in $reportedPRs) {
 $allDates = @($allDates | Sort-Object)
 if ($allDates.Count -ge 2) {
     $activeDays = @($allDates | ForEach-Object { $_.Date } | Sort-Object -Unique).Count
-    $timeSpan = if ($activeDays -eq 1) { "1 active day" } else { "$activeDays active days" }
+    $timeSpan = if ($activeDays -eq 1) { "1 day" } else { "$activeDays days" }
     $displayEndDate = $allDates[0].AddDays([math]::Floor(($allDates[-1] - $allDates[0]).TotalDays))
-    $timeRange = "$($allDates[0].ToString('MMMM d')) &mdash; $($displayEndDate.ToString('MMMM d, yyyy'))"
+    $timeRange = "Active days from $($allDates[0].ToString('MMM d')) - $($displayEndDate.ToString('MMM d'))"
 } else {
     $timeSpan = "N/A"
     $timeRange = ""
@@ -2566,18 +2566,19 @@ $html = @"
   </nav>
 </div>
 
+
+<h2>Breakdown</h2>
+
 <div class="grid grid-summary">
   <div class="stat-card"><div class="number">$($reportedPRs.Count)</div><div class="label">Total PRs</div></div>
   <div class="stat-card"><div class="number green">$totalAccepted</div><div class="label">Shipped</div></div>
   <div class="stat-card"><div class="number yellow">$($open.Count)</div><div class="label">Open</div></div>
   <div class="stat-card"><div class="number">$totalNotShipped</div><div class="label">Not Shipped</div></div>
 </div>
-<div class="grid">
-  <div class="stat-card"><div class="number green">${acceptanceRate}%</div><div class="label">Acceptance rate ($($superseded.Count) superseded, $($lost.Count) lost)</div></div>
+<div class="grid grid-summary">
+  <div class="stat-card"><div class="number green">${acceptanceRate}%</div><div class="label">Acceptance ($($superseded.Count) superseded, $($lost.Count) lost)</div></div>
   <div class="stat-card"><div class="number blue">$timeSpan</div><div class="label">$timeRange</div></div>
 </div>
-
-<h2>Breakdown</h2>
 
 <div class="bar-container">
 $barHtml</div>

@@ -13,6 +13,8 @@
     <meta property="og:type" content="website">
     <meta name="color-scheme" content="light dark" />
     <link rel="stylesheet" href="../style.css?v=20260616b">
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
   </head>
 <body class="pr">
 
@@ -27,18 +29,21 @@
   </nav>
 </div>
 
+
+<h2>Breakdown</h2>
+
 <div class="grid grid-summary">
   <div class="stat-card"><div class="number">308</div><div class="label">Total PRs</div></div>
   <div class="stat-card"><div class="number green">247</div><div class="label">Shipped</div></div>
   <div class="stat-card"><div class="number yellow">55</div><div class="label">Open</div></div>
   <div class="stat-card"><div class="number">6</div><div class="label">Not Shipped</div></div>
 </div>
-<div class="grid">
-  <div class="stat-card"><div class="number green">98%</div><div class="label">Acceptance rate (5 superseded, 1 lost)</div></div>
-  <div class="stat-card"><div class="number blue">26 active days</div><div class="label">February 5 &mdash; June 24, 2026</div></div>
+<div class="grid grid-summary">
+  <div class="stat-card"><div class="number green">98%</div><div class="label">Acceptance (5 superseded, 1 lost)</div></div>
+    <div class="stat-card"><div class="number">11.4</div><div class="label">Avg PRs / active day</div></div>
+  <div class="stat-card"><div class="number">4,464</div><div class="label">Avg LOC / active day</div></div>
+<div class="stat-card"><div class="number blue">26 days</div><div class="label">Active days from Feb 5 - Jun 24</div></div>
 </div>
-
-<h2>Breakdown</h2>
 
 <div class="bar-container">
   <div class="bar-segment bar-shipped" data-width="80.2" title="247">247</div>
@@ -52,6 +57,151 @@
   <div class="legend-item"><div class="legend-dot legend-dot-lost"></div> Lost (1)</div>
   <div class="legend-item"><div class="legend-dot legend-dot-open"></div> Open (55)</div>
 </div>
+
+
+
+
+
+
+
+
+<!-- timeline-chart -->
+<div class="landscape-row" style="margin-top:2rem">
+  <div class="pr-filter-group pr-filter-group-left">
+    <h2>Progress</h2>
+    <div class="sort-pills" id="tl-view-pills">
+    <div class="sort-pill active" data-view="daily">Daily</div>
+    <div class="sort-pill" data-view="cumulative">Cumulative</div>
+    </div>
+  </div>
+  <div class="pr-filter-group pr-filter-group-right">
+    <div class="sort-pills" id="tl-range-pills">
+    <div class="sort-pill" data-range="7">7d</div>
+    <div class="sort-pill active" data-range="30">30d</div>
+    <div class="sort-pill" data-range="0">All</div>
+    </div>
+  </div>
+</div>
+<div id="tl-daily-wrap" style="position:relative;width:100%;height:380px;margin:1rem 0 2.5rem"><canvas id="tlDailyChart"></canvas></div>
+<div id="tl-cumulative-wrap" style="position:relative;width:100%;height:380px;margin:1rem 0 2.5rem;display:none"><canvas id="tlCumulativeChart"></canvas></div>
+
+<script>
+(function() {
+var TL = [{"date": "2026-02-05", "prsOpened": 2, "prsShipped": 2, "loc": 21, "additions": 6, "deletions": 15, "files": 3, "shippedLoc": 21, "cumOpened": 2, "cumShipped": 2, "cumLoc": 21, "locPerPr": 10, "filesPerPr": 1.5}, {"date": "2026-02-10", "prsOpened": 2, "prsShipped": 0, "loc": 1303, "additions": 997, "deletions": 306, "files": 18, "shippedLoc": 0, "cumOpened": 4, "cumShipped": 2, "cumLoc": 1324, "locPerPr": 652, "filesPerPr": 9.0}, {"date": "2026-02-11", "prsOpened": 1, "prsShipped": 3, "loc": 536, "additions": 515, "deletions": 21, "files": 7, "shippedLoc": 1839, "cumOpened": 5, "cumShipped": 5, "cumLoc": 1860, "locPerPr": 536, "filesPerPr": 7.0}, {"date": "2026-02-13", "prsOpened": 1, "prsShipped": 0, "loc": 495, "additions": 403, "deletions": 92, "files": 9, "shippedLoc": 0, "cumOpened": 6, "cumShipped": 5, "cumLoc": 2355, "locPerPr": 495, "filesPerPr": 9.0}, {"date": "2026-06-02", "prsOpened": 5, "prsShipped": 2, "loc": 1458, "additions": 1418, "deletions": 40, "files": 15, "shippedLoc": 198, "cumOpened": 11, "cumShipped": 7, "cumLoc": 3813, "locPerPr": 292, "filesPerPr": 3.0}, {"date": "2026-06-03", "prsOpened": 12, "prsShipped": 6, "loc": 1208, "additions": 1159, "deletions": 49, "files": 43, "shippedLoc": 765, "cumOpened": 23, "cumShipped": 13, "cumLoc": 5021, "locPerPr": 101, "filesPerPr": 3.6}, {"date": "2026-06-04", "prsOpened": 32, "prsShipped": 14, "loc": 6756, "additions": 6027, "deletions": 729, "files": 134, "shippedLoc": 1469, "cumOpened": 55, "cumShipped": 27, "cumLoc": 11777, "locPerPr": 211, "filesPerPr": 4.2}, {"date": "2026-06-05", "prsOpened": 12, "prsShipped": 19, "loc": 4434, "additions": 3825, "deletions": 609, "files": 54, "shippedLoc": 3879, "cumOpened": 67, "cumShipped": 46, "cumLoc": 16211, "locPerPr": 370, "filesPerPr": 4.5}, {"date": "2026-06-06", "prsOpened": 14, "prsShipped": 9, "loc": 6556, "additions": 5839, "deletions": 717, "files": 71, "shippedLoc": 3188, "cumOpened": 81, "cumShipped": 55, "cumLoc": 22767, "locPerPr": 468, "filesPerPr": 5.1}, {"date": "2026-06-07", "prsOpened": 1, "prsShipped": 7, "loc": 224, "additions": 155, "deletions": 69, "files": 3, "shippedLoc": 2475, "cumOpened": 82, "cumShipped": 62, "cumLoc": 22991, "locPerPr": 224, "filesPerPr": 3.0}, {"date": "2026-06-08", "prsOpened": 2, "prsShipped": 5, "loc": 636, "additions": 603, "deletions": 33, "files": 5, "shippedLoc": 1583, "cumOpened": 84, "cumShipped": 67, "cumLoc": 23627, "locPerPr": 318, "filesPerPr": 2.5}, {"date": "2026-06-09", "prsOpened": 18, "prsShipped": 11, "loc": 13911, "additions": 10312, "deletions": 3599, "files": 169, "shippedLoc": 6189, "cumOpened": 102, "cumShipped": 78, "cumLoc": 37538, "locPerPr": 773, "filesPerPr": 9.4}, {"date": "2026-06-10", "prsOpened": 20, "prsShipped": 7, "loc": 4231, "additions": 3926, "deletions": 305, "files": 56, "shippedLoc": 1317, "cumOpened": 122, "cumShipped": 85, "cumLoc": 41769, "locPerPr": 212, "filesPerPr": 2.8}, {"date": "2026-06-11", "prsOpened": 16, "prsShipped": 3, "loc": 3633, "additions": 3406, "deletions": 227, "files": 59, "shippedLoc": 367, "cumOpened": 138, "cumShipped": 88, "cumLoc": 45402, "locPerPr": 227, "filesPerPr": 3.7}, {"date": "2026-06-12", "prsOpened": 18, "prsShipped": 18, "loc": 3124, "additions": 2753, "deletions": 371, "files": 62, "shippedLoc": 2089, "cumOpened": 156, "cumShipped": 106, "cumLoc": 48526, "locPerPr": 174, "filesPerPr": 3.4}, {"date": "2026-06-13", "prsOpened": 13, "prsShipped": 9, "loc": 4311, "additions": 3718, "deletions": 593, "files": 67, "shippedLoc": 2512, "cumOpened": 169, "cumShipped": 115, "cumLoc": 52837, "locPerPr": 332, "filesPerPr": 5.2}, {"date": "2026-06-14", "prsOpened": 7, "prsShipped": 18, "loc": 642, "additions": 596, "deletions": 46, "files": 21, "shippedLoc": 6415, "cumOpened": 176, "cumShipped": 133, "cumLoc": 53479, "locPerPr": 92, "filesPerPr": 3.0}, {"date": "2026-06-15", "prsOpened": 21, "prsShipped": 20, "loc": 5198, "additions": 4775, "deletions": 423, "files": 88, "shippedLoc": 4199, "cumOpened": 197, "cumShipped": 153, "cumLoc": 58677, "locPerPr": 248, "filesPerPr": 4.2}, {"date": "2026-06-16", "prsOpened": 4, "prsShipped": 11, "loc": 1522, "additions": 1465, "deletions": 57, "files": 7, "shippedLoc": 6193, "cumOpened": 201, "cumShipped": 164, "cumLoc": 60199, "locPerPr": 380, "filesPerPr": 1.8}, {"date": "2026-06-17", "prsOpened": 10, "prsShipped": 8, "loc": 4192, "additions": 3758, "deletions": 434, "files": 45, "shippedLoc": 2521, "cumOpened": 211, "cumShipped": 172, "cumLoc": 64391, "locPerPr": 419, "filesPerPr": 4.5}, {"date": "2026-06-18", "prsOpened": 12, "prsShipped": 9, "loc": 5175, "additions": 4946, "deletions": 229, "files": 58, "shippedLoc": 4281, "cumOpened": 223, "cumShipped": 181, "cumLoc": 69566, "locPerPr": 431, "filesPerPr": 4.8}, {"date": "2026-06-19", "prsOpened": 6, "prsShipped": 9, "loc": 4185, "additions": 3970, "deletions": 215, "files": 25, "shippedLoc": 6446, "cumOpened": 229, "cumShipped": 190, "cumLoc": 73751, "locPerPr": 698, "filesPerPr": 4.2}, {"date": "2026-06-20", "prsOpened": 21, "prsShipped": 8, "loc": 7941, "additions": 6903, "deletions": 1038, "files": 109, "shippedLoc": 1006, "cumOpened": 250, "cumShipped": 198, "cumLoc": 81692, "locPerPr": 378, "filesPerPr": 5.2}, {"date": "2026-06-21", "prsOpened": 2, "prsShipped": 1, "loc": 1504, "additions": 1368, "deletions": 136, "files": 11, "shippedLoc": 216, "cumOpened": 252, "cumShipped": 199, "cumLoc": 83196, "locPerPr": 752, "filesPerPr": 5.5}, {"date": "2026-06-22", "prsOpened": 7, "prsShipped": 9, "loc": 6720, "additions": 6245, "deletions": 475, "files": 63, "shippedLoc": 3319, "cumOpened": 259, "cumShipped": 208, "cumLoc": 89916, "locPerPr": 960, "filesPerPr": 9.0}, {"date": "2026-06-23", "prsOpened": 15, "prsShipped": 13, "loc": 12491, "additions": 11819, "deletions": 672, "files": 130, "shippedLoc": 13211, "cumOpened": 274, "cumShipped": 221, "cumLoc": 102407, "locPerPr": 833, "filesPerPr": 8.7}, {"date": "2026-06-24", "prsOpened": 34, "prsShipped": 22, "loc": 18118, "additions": 17618, "deletions": 500, "files": 196, "shippedLoc": 10098, "cumOpened": 308, "cumShipped": 243, "cumLoc": 120525, "locPerPr": 533, "filesPerPr": 5.8}, {"date": "2026-06-25", "prsOpened": 3, "prsShipped": 5, "loc": 1363, "additions": 1338, "deletions": 25, "files": 19, "shippedLoc": 1882, "cumOpened": 311, "cumShipped": 248, "cumLoc": 121888, "locPerPr": 454, "filesPerPr": 6.3}];
+var isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+var C = {
+  green: isDark ? '#3fb950' : '#1a7f37',
+  blue: isDark ? '#58a6ff' : '#3376d2',
+  purple: isDark ? '#bc8cff' : '#8250df',
+  text: isDark ? '#e6edf3' : '#1a1a1a',
+  grid: isDark ? 'rgba(139,148,158,0.15)' : 'rgba(0,0,0,0.06)',
+};
+Chart.defaults.color = C.text;
+Chart.defaults.borderColor = C.grid;
+
+function fmtLabel(s) {
+  var p = s.split('-');
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[+p[1]-1] + ' ' + +p[2];
+}
+function fmtK(v) { return v >= 1000 ? (v/1000).toFixed(1)+'k' : v; }
+function sliceData(days) {
+  if (!days) return TL;
+  var last = TL[TL.length-1].date, p = last.split('-');
+  var cut = new Date(p[0], p[1]-1, p[2]);
+  cut.setDate(cut.getDate() - days + 1);
+  var cs = cut.toISOString().slice(0,10);
+  return TL.filter(function(d) { return d.date >= cs; });
+}
+
+var range = 30, dChart, cChart;
+function build(r) {
+  var sl = sliceData(r), labs = sl.map(function(d){ return fmtLabel(d.date); });
+  if (dChart) dChart.destroy();
+  if (cChart) cChart.destroy();
+
+  dChart = new Chart(document.getElementById('tlDailyChart'), {
+    type: 'bar',
+    data: {
+      labels: labs,
+      datasets: [
+        { label: 'LOC opened', data: sl.map(function(d){return d.loc}),
+           backgroundColor: C.green+'aa', borderColor: C.green, borderWidth: 1, borderRadius: 3, yAxisID: 'yL', order: 2 },
+        { label: 'PRs opened', data: sl.map(function(d){return d.prsOpened}), type: 'line',
+           borderColor: C.blue, borderWidth: 2.5, pointRadius: 4, pointHoverRadius: 6, tension: 0.25, yAxisID: 'yP', order: 1 },
+        { label: 'PRs shipped', data: sl.map(function(d){return d.prsShipped}), type: 'line',
+           borderColor: C.purple, borderWidth: 2.5, borderDash: [5,3], pointRadius: 4, pointHoverRadius: 6, tension: 0.25, yAxisID: 'yP', order: 0 },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+      scales: {
+        x: { grid: {display:false}, ticks: {maxRotation:50, font:{size:11}} },
+        yL: { position:'left', title:{display:true,text:'LOC'}, ticks:{callback:fmtK}, grid:{color:C.grid}, beginAtZero:true },
+        yP: { position:'right', title:{display:true,text:'PRs'}, grid:{drawOnChartArea:false}, beginAtZero:true },
+      },
+      plugins: {
+        tooltip: { bodySpacing: 7, titleMarginBottom: 8, callbacks: {
+          title: function(ctx) {
+            var d = sl[ctx[0].dataIndex], p = d.date.split('-');
+            var dt = new Date(p[0],p[1]-1,p[2]);
+            return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dt.getDay()] + ', ' + labs[ctx[0].dataIndex] + ' ' + p[0];
+          },
+          afterBody: function(ctx) {
+            var d = sl[ctx[0].dataIndex];
+            return [' ', '+'+fmtK(d.additions)+'/-'+fmtK(d.deletions)+' ('+d.files+' files)',
+              d.prsOpened > 0 ? 'LOC/PR: '+fmtK(d.locPerPr)+'  Files/PR: '+d.filesPerPr : ''].filter(Boolean);
+          }
+        } },
+        legend: { position: 'top' },
+      },
+    },
+  });
+
+  cChart = new Chart(document.getElementById('tlCumulativeChart'), {
+    type: 'line',
+    data: {
+      labels: labs,
+      datasets: [
+        { label: 'Cumulative LOC', data: sl.map(function(d){return d.cumLoc}),
+           borderColor: C.green, borderWidth: 2, backgroundColor: C.green+'20', fill: true, tension: 0.3, pointRadius: 3, yAxisID: 'yL' },
+        { label: 'Cumulative PRs opened', data: sl.map(function(d){return d.cumOpened}),
+           borderColor: C.blue, borderWidth: 2, tension: 0.3, pointRadius: 3, yAxisID: 'yP' },
+        { label: 'Cumulative PRs shipped', data: sl.map(function(d){return d.cumShipped}),
+           borderColor: C.purple, borderWidth: 2, borderDash: [5,3], tension: 0.3, pointRadius: 3, yAxisID: 'yP' },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+      scales: {
+        x: { grid: {display:false}, ticks: {maxRotation:50, font:{size:11}} },
+        yL: { position:'left', title:{display:true,text:'LOC'}, ticks:{callback:fmtK}, grid:{color:C.grid} },
+        yP: { position:'right', title:{display:true,text:'PRs'}, grid:{drawOnChartArea:false} },
+      },
+      plugins: { legend: { position: 'top' } },
+    },
+  });
+}
+build(range);
+
+document.getElementById('tl-range-pills').addEventListener('click', function(e) {
+  var p = e.target.closest('.sort-pill'); if (!p) return;
+  range = parseInt(p.getAttribute('data-range'), 10);
+  document.querySelectorAll('#tl-range-pills .sort-pill').forEach(function(x){ x.classList.remove('active') });
+  p.classList.add('active');
+  build(range);
+});
+document.getElementById('tl-view-pills').addEventListener('click', function(e) {
+  var p = e.target.closest('.sort-pill'); if (!p) return;
+  var v = p.getAttribute('data-view');
+  document.querySelectorAll('#tl-view-pills .sort-pill').forEach(function(x){ x.classList.remove('active') });
+  p.classList.add('active');
+  document.getElementById('tl-daily-wrap').style.display = v === 'daily' ? '' : 'none';
+  document.getElementById('tl-cumulative-wrap').style.display = v === 'cumulative' ? '' : 'none';
+});
+})();
+</script>
+<!-- timeline-chart -->
 
 <h2>hermes-webui (218 PRs)</h2>
 <table class="repo-status">
@@ -509,6 +659,10 @@
 <div class="overlay-row" onclick="toggleCollapsedTable('pr-list-collapsible', event)">Collapse <span class="caret">&#9650;</span></div>
 
 </div>
+
+
+
+
 
 <h2>Methodology</h2>
 <div class="section methodology-section">
