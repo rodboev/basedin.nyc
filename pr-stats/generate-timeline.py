@@ -17,15 +17,9 @@ from zoneinfo import ZoneInfo
 SCRIPT_DIR = Path(__file__).parent
 CACHE_FILE = SCRIPT_DIR / ".pr-classification-cache.json"
 INDEX_FILE = SCRIPT_DIR / "index.html"
+GENERATE_PS1 = SCRIPT_DIR / "generate.ps1"
 
 AUTHOR = "rodboev"
-REPOS = [
-    "nesquena/hermes-webui",
-    "kenn-io/agentsview",
-    "thedotmack/claude-mem",
-    "headroomlabs-ai/headroom",
-    "mem0ai/mem0",
-]
 SHIPPED_CLASSIFICATIONS = {"shipped", "accepted-indirect"}
 EASTERN = ZoneInfo("America/New_York")
 
@@ -72,11 +66,31 @@ def classify_pr(pr, repo, classifications):
     return "lost"
 
 
-def build_daily_data(all_prs):
+def repo_short_name(full_name):
+    return full_name.split("/")[-1]
+
+
+def load_active_repos(ps1_path):
+    text = ps1_path.read_text(encoding="utf-8")
+    match = re.search(r"\[string\[\]\]\$Repos\s*=\s*@\((.*?)\)\s*,", text, re.DOTALL)
+    if not match:
+        raise ValueError(f"could not find $Repos default list in {ps1_path}")
+
+    active_block = "\n".join(
+        line.split("#", 1)[0]
+        for line in match.group(1).splitlines()
+    )
+    repos = re.findall(r'"([^"]+)"', active_block)
+    if not repos:
+        raise ValueError(f"no active repos found in {ps1_path}")
+    return repos
+
+
+def _aggregate_daily(prs):
     daily_opened = defaultdict(lambda: dict(count=0, loc=0, files=0, additions=0, deletions=0))
     daily_shipped = defaultdict(lambda: dict(count=0, loc=0, files=0))
 
-    for pr in all_prs:
+    for pr in prs:
         if pr["classification"] == "withdrawn":
             continue
 
@@ -96,6 +110,10 @@ def build_daily_data(all_prs):
             s["files"] += pr["changedFiles"]
 
     all_dates = sorted(set(list(daily_opened) + list(daily_shipped)))
+
+    today = datetime.now(EASTERN).strftime("%Y-%m-%d")
+    if all_dates and all_dates[-1] == today:
+        all_dates = all_dates[:-1]
 
     chart_data = []
     cum_opened = cum_loc = cum_shipped = 0
@@ -128,18 +146,32 @@ def build_daily_data(all_prs):
     return chart_data
 
 
-def build_chart_html(chart_data):
+def build_daily_data(all_prs, repos):
+    by_repo = defaultdict(list)
+    for pr in all_prs:
+        by_repo[repo_short_name(pr["repo"])].append(pr)
+
+    repo_data = {name: _aggregate_daily(prs) for name, prs in by_repo.items()}
+    aggregate = _aggregate_daily(all_prs)
+    repo_names = [repo_short_name(r) for r in repos]
+    return aggregate, repo_data, repo_names
+
+
+def build_chart_html(chart_data, repo_data, repo_names):
     chart_json = json.dumps(chart_data).replace("</script", r"<\/script")
+    repo_json = json.dumps(repo_data).replace("</script", r"<\/script")
+    names_json = json.dumps(repo_names).replace("</script", r"<\/script")
     active_days = len([d for d in chart_data if d["prsOpened"] > 0])
     total_loc = sum(d["loc"] for d in chart_data)
     total_opened = sum(d["prsOpened"] for d in chart_data)
-    avg_loc = f"{round(total_loc / active_days):,}" if active_days else "0"
+    raw_avg_loc = round(total_loc / active_days) if active_days else 0
+    avg_loc = f"{raw_avg_loc / 1000:.1f}k" if raw_avg_loc >= 1000 else str(raw_avg_loc)
     avg_prs = str(round(total_opened / active_days, 1)) if active_days else "0"
 
-    return chart_json, avg_prs, avg_loc
+    return chart_json, repo_json, names_json, avg_prs, avg_loc
 
 
-def inject_into_index(html, chart_json, avg_prs, avg_loc):
+def inject_into_index(html, chart_json, repo_json, names_json, avg_prs, avg_loc):
     # Remove prior injection if re-running
     html = re.sub(
         rf'{re.escape(CHART_MARKER)}.*?{re.escape(CHART_MARKER)}',
@@ -157,19 +189,19 @@ def inject_into_index(html, chart_json, avg_prs, avg_loc):
     # 2. Add avg stat cards before the active-days card
     avg_cards = (
         f'  <div class="stat-card"><div class="number">{avg_prs}</div>'
-        f'<div class="label">Avg PRs / active day</div></div>\n'
+        f'<div class="label">Avg PRs/day</div></div>\n'
         f'  <div class="stat-card"><div class="number">{avg_loc}</div>'
-        f'<div class="label">Avg LOC / active day</div></div>\n'
+        f'<div class="label">Avg LOC/day</div></div>\n'
     )
     # Find the last stat-card in the second .grid (the one with acceptance rate + active days)
     # Insert before the active-days card (the last stat-card before </div>\n\n)
     active_days_pattern = r'(<div class="stat-card"><div class="number blue">\d+ days?)'
-    if "Avg PRs / active day" not in html:
+    if "Avg PRs/day" not in html:
         html = re.sub(active_days_pattern, avg_cards + r'\1', html)
 
     # 3. Insert chart section before <h2>Methodology</h2>
     chart_section = f"""{CHART_MARKER}
-<div class="landscape-row" style="margin-top:2rem">
+<div class="landscape-row" style="margin-top:2rem;position:static">
   <div class="pr-filter-group pr-filter-group-left">
     <h2>Progress</h2>
     <div class="sort-pills" id="tl-view-pills">
@@ -180,17 +212,23 @@ def inject_into_index(html, chart_json, avg_prs, avg_loc):
   <div class="pr-filter-group pr-filter-group-right">
     <div class="sort-pills" id="tl-range-pills">
     <div class="sort-pill" data-range="7">7d</div>
-    <div class="sort-pill active" data-range="30">30d</div>
-    <div class="sort-pill" data-range="0">All</div>
+    <div class="sort-pill" data-range="14">14d</div>
+    <div class="sort-pill" data-range="30">30d</div>
+    <div class="sort-pill active" data-range="0">All</div>
     </div>
   </div>
 </div>
-<div id="tl-daily-wrap" style="position:relative;width:100%;height:380px;margin:1rem 0 2.5rem"><canvas id="tlDailyChart"></canvas></div>
-<div id="tl-cumulative-wrap" style="position:relative;width:100%;height:380px;margin:1rem 0 2.5rem;display:none"><canvas id="tlCumulativeChart"></canvas></div>
+<div id="tl-daily-wrap"><canvas id="tlDailyChart"></canvas></div>
+<div id="tl-cumulative-wrap" style="display:none"><canvas id="tlCumulativeChart"></canvas></div>
+<div class="sort-pills tl-repo-pills" id="tl-repo-pills"></div>
 
 <script>
 (function() {{
-var TL = {chart_json};
+var TL_ALL = {chart_json};
+var TL_REPOS = {repo_json};
+var TL_NAMES = {names_json};
+var activeRepo = null;
+function activeTL() {{ return activeRepo ? (TL_REPOS[activeRepo] || []) : TL_ALL; }}
 var isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 var C = {{
   green: isDark ? '#3fb950' : '#1a7f37',
@@ -202,49 +240,81 @@ var C = {{
 Chart.defaults.color = C.text;
 Chart.defaults.borderColor = C.grid;
 
+var pillsEl = document.getElementById('tl-repo-pills');
+var allPill = document.createElement('div');
+allPill.className = 'sort-pill active';
+allPill.setAttribute('data-repo', '');
+allPill.textContent = 'All';
+pillsEl.appendChild(allPill);
+var TL_LABELS = {{"hermes-webui": "webui"}};
+TL_NAMES.forEach(function(name) {{
+  var pill = document.createElement('div');
+  pill.className = 'sort-pill';
+  pill.setAttribute('data-repo', name);
+  pill.textContent = TL_LABELS[name] || name;
+  pillsEl.appendChild(pill);
+}});
+
 function fmtLabel(s) {{
   var p = s.split('-');
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return months[+p[1]-1] + ' ' + +p[2];
 }}
 function fmtK(v) {{ return v >= 1000 ? (v/1000).toFixed(1)+'k' : v; }}
+function trendline(vals) {{
+  var n = vals.length;
+  if (n < 2) return vals.map(function() {{ return null; }});
+  var sx=0, sy=0, sxx=0, sxy=0;
+  for (var i=0; i<n; i++) {{ sx+=i; sy+=vals[i]; sxx+=i*i; sxy+=i*vals[i]; }}
+  var m = (n*sxy - sx*sy) / (n*sxx - sx*sx);
+  var b = (sy - m*sx) / n;
+  return vals.map(function(_, i) {{ return i === 0 || i === n-1 ? Math.max(0, m*i + b) : null; }});
+}}
 function sliceData(days) {{
-  if (!days) return TL;
-  var last = TL[TL.length-1].date, p = last.split('-');
+  var src = activeTL();
+  if (!days || !src.length) return src;
+  var last = src[src.length-1].date, p = last.split('-');
   var cut = new Date(p[0], p[1]-1, p[2]);
   cut.setDate(cut.getDate() - days + 1);
   var cs = cut.toISOString().slice(0,10);
-  return TL.filter(function(d) {{ return d.date >= cs; }});
+  return src.filter(function(d) {{ return d.date >= cs; }});
 }}
 
-var range = 30, dChart, cChart;
+var range = 0, dChart, cChart;
 function build(r) {{
   var sl = sliceData(r), labs = sl.map(function(d){{ return fmtLabel(d.date); }});
   if (dChart) dChart.destroy();
   if (cChart) cChart.destroy();
+
+  var tOpened = trendline(sl.map(function(d){{return d.prsOpened}}));
+  var tShipped = trendline(sl.map(function(d){{return d.prsShipped}}));
 
   dChart = new Chart(document.getElementById('tlDailyChart'), {{
     type: 'bar',
     data: {{
       labels: labs,
       datasets: [
-        {{ label: 'LOC opened', data: sl.map(function(d){{return d.loc}}),
-           backgroundColor: C.green+'aa', borderColor: C.green, borderWidth: 1, borderRadius: 3, yAxisID: 'yL', order: 2 }},
+        {{ label: 'Lines of code', data: sl.map(function(d){{return d.loc}}),
+           backgroundColor: C.green+'40', borderColor: C.green+'60', borderWidth: 1, borderRadius: 3, yAxisID: 'yL', order: 4 }},
         {{ label: 'PRs opened', data: sl.map(function(d){{return d.prsOpened}}), type: 'line',
            borderColor: C.blue, borderWidth: 2.5, pointRadius: 4, pointHoverRadius: 6, tension: 0.25, yAxisID: 'yP', order: 1 }},
+        {{ label: ' ', data: tOpened, type: 'line',
+           borderColor: C.blue, borderWidth: 1.5, borderDash: [6,4], pointRadius: 0, pointHitRadius: 0, tension: 0, yAxisID: 'yP', order: 0, spanGaps: true }},
         {{ label: 'PRs shipped', data: sl.map(function(d){{return d.prsShipped}}), type: 'line',
-           borderColor: C.purple, borderWidth: 2.5, borderDash: [5,3], pointRadius: 4, pointHoverRadius: 6, tension: 0.25, yAxisID: 'yP', order: 0 }},
+           borderColor: C.purple, borderWidth: 2.5, borderDash: [5,3], pointRadius: 4, pointHoverRadius: 6, tension: 0.25, yAxisID: 'yP', order: 3 }},
+        {{ label: '  ', data: tShipped, type: 'line',
+           borderColor: C.purple, borderWidth: 1.5, borderDash: [6,4], pointRadius: 0, pointHitRadius: 0, tension: 0, yAxisID: 'yP', order: 2, spanGaps: true }},
       ],
     }},
     options: {{
-      responsive: true, maintainAspectRatio: false, interaction: {{ mode: 'index', intersect: false }},
+      responsive: true, maintainAspectRatio: false, animation: {{ duration: 0 }}, interaction: {{ mode: 'index', intersect: false }},
       scales: {{
         x: {{ grid: {{display:false}}, ticks: {{maxRotation:50, font:{{size:11}}}} }},
-        yL: {{ position:'left', title:{{display:true,text:'LOC'}}, ticks:{{callback:fmtK}}, grid:{{color:C.grid}}, beginAtZero:true }},
+        yL: {{ position:'left', title:{{display:true,text:'LOC'}}, ticks:{{stepSize:2500,callback:fmtK}}, grid:{{color:C.grid}}, beginAtZero:true }},
         yP: {{ position:'right', title:{{display:true,text:'PRs'}}, grid:{{drawOnChartArea:false}}, beginAtZero:true }},
       }},
       plugins: {{
-        tooltip: {{ bodySpacing: 7, titleMarginBottom: 8, callbacks: {{
+        tooltip: {{ filter: function(ctx) {{ return ctx.dataset.label.trim().length > 0; }}, bodySpacing: 7, titleMarginBottom: 8, callbacks: {{
           title: function(ctx) {{
             var d = sl[ctx[0].dataIndex], p = d.date.split('-');
             var dt = new Date(p[0],p[1]-1,p[2]);
@@ -256,7 +326,7 @@ function build(r) {{
               d.prsOpened > 0 ? 'LOC/PR: '+fmtK(d.locPerPr)+'  Files/PR: '+d.filesPerPr : ''].filter(Boolean);
           }}
         }} }},
-        legend: {{ position: 'top' }},
+        legend: {{ position: 'top', labels: {{ padding: 28, boxWidth: 12, boxHeight: 12, useBorderRadius: true, borderRadius: 2, filter: function(item) {{ return item.text.trim().length > 0; }} }} }},
       }},
     }},
   }});
@@ -266,22 +336,22 @@ function build(r) {{
     data: {{
       labels: labs,
       datasets: [
-        {{ label: 'Cumulative LOC', data: sl.map(function(d){{return d.cumLoc}}),
+        {{ label: 'Cum. LOC', data: sl.map(function(d){{return d.cumLoc}}),
            borderColor: C.green, borderWidth: 2, backgroundColor: C.green+'20', fill: true, tension: 0.3, pointRadius: 3, yAxisID: 'yL' }},
-        {{ label: 'Cumulative PRs opened', data: sl.map(function(d){{return d.cumOpened}}),
+        {{ label: 'Cum. PRs opened', data: sl.map(function(d){{return d.cumOpened}}),
            borderColor: C.blue, borderWidth: 2, tension: 0.3, pointRadius: 3, yAxisID: 'yP' }},
-        {{ label: 'Cumulative PRs shipped', data: sl.map(function(d){{return d.cumShipped}}),
+        {{ label: 'Cum. PRs shipped', data: sl.map(function(d){{return d.cumShipped}}),
            borderColor: C.purple, borderWidth: 2, borderDash: [5,3], tension: 0.3, pointRadius: 3, yAxisID: 'yP' }},
       ],
     }},
     options: {{
-      responsive: true, maintainAspectRatio: false, interaction: {{ mode: 'index', intersect: false }},
+      responsive: true, maintainAspectRatio: false, animation: {{ duration: 0 }}, interaction: {{ mode: 'index', intersect: false }},
       scales: {{
         x: {{ grid: {{display:false}}, ticks: {{maxRotation:50, font:{{size:11}}}} }},
-        yL: {{ position:'left', title:{{display:true,text:'LOC'}}, ticks:{{callback:fmtK}}, grid:{{color:C.grid}} }},
+        yL: {{ position:'left', title:{{display:true,text:'LOC'}}, ticks:{{stepSize:2500,callback:fmtK}}, grid:{{color:C.grid}} }},
         yP: {{ position:'right', title:{{display:true,text:'PRs'}}, grid:{{drawOnChartArea:false}} }},
       }},
-      plugins: {{ legend: {{ position: 'top' }} }},
+      plugins: {{ legend: {{ position: 'top', labels: {{ padding: 28, boxWidth: 12, boxHeight: 12, useBorderRadius: true, borderRadius: 2 }} }} }},
     }},
   }});
 }}
@@ -302,6 +372,13 @@ document.getElementById('tl-view-pills').addEventListener('click', function(e) {
   document.getElementById('tl-daily-wrap').style.display = v === 'daily' ? '' : 'none';
   document.getElementById('tl-cumulative-wrap').style.display = v === 'cumulative' ? '' : 'none';
 }});
+pillsEl.addEventListener('click', function(e) {{
+  var p = e.target.closest('.sort-pill'); if (!p) return;
+  activeRepo = p.getAttribute('data-repo') || null;
+  pillsEl.querySelectorAll('.sort-pill').forEach(function(x){{ x.classList.remove('active') }});
+  p.classList.add('active');
+  build(range);
+}});
 }})();
 </script>
 {CHART_MARKER}
@@ -321,11 +398,17 @@ def main():
         print(f"ERROR: {INDEX_FILE} not found. Run generate.ps1 first.", file=sys.stderr)
         sys.exit(1)
 
+    try:
+        repos = load_active_repos(GENERATE_PS1)
+    except (OSError, ValueError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        sys.exit(1)
+
     classifications = load_classifications(CACHE_FILE)
     print(f"Loaded {len(classifications)} classifications from cache", file=sys.stderr)
 
     all_prs = []
-    for repo in REPOS:
+    for repo in repos:
         print(f"  {repo}...", file=sys.stderr)
         prs = fetch_prs(repo, AUTHOR)
         for pr in prs:
@@ -350,11 +433,11 @@ def main():
 
     print(f"  {len(all_prs)} PRs total", file=sys.stderr)
 
-    chart_data = build_daily_data(all_prs)
-    chart_json, avg_prs, avg_loc = build_chart_html(chart_data)
+    chart_data, repo_data, repo_names = build_daily_data(all_prs, repos)
+    chart_json, repo_json, names_json, avg_prs, avg_loc = build_chart_html(chart_data, repo_data, repo_names)
 
     html = INDEX_FILE.read_text(encoding="utf-8")
-    html = inject_into_index(html, chart_json, avg_prs, avg_loc)
+    html = inject_into_index(html, chart_json, repo_json, names_json, avg_prs, avg_loc)
     INDEX_FILE.write_text(html, encoding="utf-8")
     print(f"Injected chart + stat cards into {INDEX_FILE}", file=sys.stderr)
 

@@ -2,6 +2,8 @@
 
 Public contribution stats page for Rod Boev. Hosted at `basedin.nyc/pr-stats/`.
 
+Script only runs with pwsh. Use pwsh instead of powershell.
+
 ## Architecture
 
 `generate.ps1` is the single entry point. It fetches PR data from the GitHub API, classifies closed PRs by reading maintainer comments, builds per-repo community leaderboards with catch-up projections, and emits `index.html`. Does not open the output file.

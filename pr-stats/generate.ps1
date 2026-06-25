@@ -1,7 +1,7 @@
 param(
     [string]$Author = "rodboev",
     [string[]]$Repos = @("nesquena/hermes-webui", "kenn-io/agentsview", "thedotmack/claude-mem",
-        "headroomlabs-ai/headroom", "mem0ai/mem0"
+        "headroomlabs-ai/headroom", "mem0ai/mem0", "stablyai/orca"
         # "cline/cline", "continuedev/continue", "CopilotKit/CopilotKit",
         # "MemPalace/mempalace", "mastra-ai/mastra", "github/github-mcp-server",
         # "lsdefine/GenericAgent"
@@ -69,7 +69,43 @@ $RepoLeaderboardConfig = @{
         IntegrationBots = @()
     }
     "headroomlabs-ai/headroom" = @{
-        MaintainerLogins = @("chopratejas")
+        MaintainerLogins = @("chopratejas", "DevanshiVyas", "JerrettDavis")
+        IntegrationBots = @()
+    }
+    "mem0ai/mem0" = @{
+        MaintainerLogins = @("taranjeet", "deshraj", "kartik-mem0", "chaithanyak42", "prathameshagrawal", "agumpandey")
+        IntegrationBots = @()
+    }
+    "stablyai/orca" = @{
+        MaintainerLogins = @("nwparker", "AmethystLiang", "Jinwoo-H", "brennanb2025", "tmchow")
+        IntegrationBots = @("buf0-bot[bot]")
+    }
+    "cline/cline" = @{
+        MaintainerLogins = @("abeatrix", "BarreiroT", "celestial-vault", "robinnewhouse", "Garoth", "arafatkatze", "dominiccooney", "NightTrek", "tseglevskiy", "JicLotus", "mkondratek")
+        IntegrationBots = @()
+    }
+    "continuedev/continue" = @{
+        MaintainerLogins = @("Patrick-Erichsen", "TyDunn", "tomasz-stefaniak", "BekahHW", "sestinj")
+        IntegrationBots = @("continue-agent")
+    }
+    "CopilotKit/CopilotKit" = @{
+        MaintainerLogins = @("CopilotKit", "ataibarkai", "samjulien", "maxkorp", "NathanTarbert", "johnprg", "Anmol-Baranwal")
+        IntegrationBots = @()
+    }
+    "MemPalace/mempalace" = @{
+        MaintainerLogins = @("igorls", "jphein", "milla-jovovich")
+        IntegrationBots = @()
+    }
+    "mastra-ai/mastra" = @{
+        MaintainerLogins = @("abhiaiyer91", "TylerBarnes", "LekoArts", "NikAiyer", "smthomas", "YujohnNattrass", "intojhanurag", "CalebBarnes", "graysonhicks", "mikhael28", "taofeeq-deru", "jsumnersmith")
+        IntegrationBots = @("devin-ai-integration")
+    }
+    "github/github-mcp-server" = @{
+        MaintainerLogins = @("toby", "alondahari", "koesie10", "owenniblock", "rubiojr", "JoannaaKL", "juruen", "mntlty", "SamMorrowDrums", "williammartin", "tommaso-moro", "MattBabbage", "gokhanarkan", "stephenotalora", "tmelliottjr", "omgitsads", "GeekTrainer", "chiedo", "jshorty", "reneexeener", "timrogers")
+        IntegrationBots = @()
+    }
+    "lsdefine/GenericAgent" = @{
+        MaintainerLogins = @("lsdefine")
         IntegrationBots = @()
     }
 }
@@ -587,15 +623,27 @@ function Get-NonBotCommentText([object]$Evidence) {
         ForEach-Object { $_.body }) -join "`n---`n"
 }
 
+function Test-IsMaintainerComment([string]$Repo, [object]$Comment) {
+    $login = Get-ScalarValue $Comment.author.login
+    if ($login) {
+        $config = $RepoLeaderboardConfig[$Repo]
+        if ($config) {
+            if ($config.MaintainerLogins -and $login -in @($config.MaintainerLogins)) { return $true }
+            if ($config.IntegrationBots -and $login -in @($config.IntegrationBots)) { return $true }
+        }
+    }
+
+    return $Comment.authorAssociation -and $Comment.authorAssociation -in @("OWNER", "COLLABORATOR", "MEMBER")
+}
+
 function Test-HasMaintainerNonBotComment([object]$PullRequest, [object]$Evidence) {
     $authorLogin = Get-ScalarValue $PullRequest.author.login
     if (-not $authorLogin) { $authorLogin = $Author }
-    $maintainerAssociations = @("OWNER", "COLLABORATOR", "MEMBER")
 
     foreach ($comment in @($Evidence.comments.nodes)) {
         if ($comment.author.login -eq "greptile-apps") { continue }
         if ($authorLogin -and $comment.author.login -eq $authorLogin) { continue }
-        if ($comment.authorAssociation -and $comment.authorAssociation -in $maintainerAssociations) {
+        if (Test-IsMaintainerComment -Repo $PullRequest.repo -Comment $comment) {
             return $true
         }
         $body = [string]$comment.body
@@ -632,11 +680,10 @@ function Test-IsAuthorWithdrawnEvidence([object]$PullRequest, [object]$Evidence)
 function Test-IsSupersededEvidence([object]$PullRequest, [object]$Evidence) {
     $authorLogin = Get-ScalarValue $PullRequest.author.login
     if (-not $authorLogin) { $authorLogin = $Author }
-    $maintainerAssociations = @("OWNER", "COLLABORATOR", "MEMBER")
 
     foreach ($comment in @($Evidence.comments.nodes)) {
         if ($authorLogin -and $comment.author.login -eq $authorLogin) { continue }
-        if ($comment.authorAssociation -and $comment.authorAssociation -notin $maintainerAssociations) { continue }
+        if (-not (Test-IsMaintainerComment -Repo $PullRequest.repo -Comment $comment)) { continue }
         if (Test-MatchesAnyPattern -Text ([string]$comment.body) -Patterns $supersededPatterns) {
             return $true
         }
@@ -667,11 +714,10 @@ function Get-CreditedShipEvidence([object]$PullRequest, [object]$Evidence) {
     # be parsed from the comment, otherwise an entry with ViaNumber = 0.
     $authorLogin = Get-ScalarValue $PullRequest.author.login
     if (-not $authorLogin) { $authorLogin = $Author }
-    $maintainerAssociations = @("OWNER", "COLLABORATOR", "MEMBER")
 
     foreach ($comment in @($Evidence.comments.nodes)) {
         if ($authorLogin -and $comment.author.login -eq $authorLogin) { continue }
-        if ($comment.authorAssociation -and $comment.authorAssociation -notin $maintainerAssociations) { continue }
+        if (-not (Test-IsMaintainerComment -Repo $PullRequest.repo -Comment $comment)) { continue }
         $body = [string]$comment.body
         if (-not $body) { continue }
         $shipped = [bool](Get-ReleaseTag $body) -or (Test-MatchesAnyPattern -Text $body -Patterns $shippedPatterns)
@@ -2573,7 +2619,7 @@ $html = @"
   <div class="stat-card"><div class="number">$($reportedPRs.Count)</div><div class="label">Total PRs</div></div>
   <div class="stat-card"><div class="number green">$totalAccepted</div><div class="label">Shipped</div></div>
   <div class="stat-card"><div class="number yellow">$($open.Count)</div><div class="label">Open</div></div>
-  <div class="stat-card"><div class="number">$totalNotShipped</div><div class="label">Not Shipped</div></div>
+  <div class="stat-card"><div class="number">$totalNotShipped</div><div class="label">Lost/Superseded</div></div>
 </div>
 <div class="grid grid-summary">
   <div class="stat-card"><div class="number green">${acceptanceRate}%</div><div class="label">Acceptance ($($superseded.Count) superseded, $($lost.Count) lost)</div></div>
@@ -2622,7 +2668,7 @@ $prListOverlayHtml
 <div class="section methodology-section">
   <p><strong>Shipped</strong> means maintainer-accepted work: a direct merge, timeline evidence such as a release PR or cherry-pick reference, or an indirect landing credited back to the original PR. GitHub's <code>mergedAt</code> flag alone is not sufficient because some repos land contributor work outside the merge button.</p>
   <p><strong>Withdrawn</strong>, <strong>superseded</strong>, and <strong>lost</strong> separate author pullbacks, maintainer replacements, and competing outcomes. The PR table is sorted newest-first using close time for closed PRs and creation time for open PRs.$(if ($null -ne $startDateValue) { " This report includes PRs with an effective date on or after $reportStartLabel." })</p>
-  <p><strong>Community leaderboards</strong> rank third-party contributors only. Repo owners, maintainers, integration bots, and other automated accounts are excluded. Each board shows the top $LeaderboardMax contributors. Contributor discovery unions recent repo activity, prior cache entries, and (for hermes-webui) names from upstream <code>CONTRIBUTORS.md</code>. <strong>hermes-webui Credited</strong> counts distinct release-attributed PRs from <code>CHANGELOG.md</code> (including <code>(#123, @user)</code> lines), filtered contributor merges, and release-commit <code>Co-authored-by</code> trailers (rebuilt when the changelog changes). Other repos use evidence-based shipped classification for the top $LeaderboardClassifyTop contributors and merged-PR totals as a proxy below that. <strong>Rate (7d)</strong> is PRs opened in the rolling last $LeaderboardRateWindowDays days divided by $LeaderboardRateWindowDays (a recent per-day opening rate, not merge velocity).</p>
+  <p><strong>Community leaderboards</strong> rank third-party contributors only. Repo owners, org employees, collaborators with write access, integration bots, and other automated accounts are excluded. Each board shows the top $LeaderboardMax contributors. Contributor discovery unions recent repo activity, prior cache entries, and (for hermes-webui) names from upstream <code>CONTRIBUTORS.md</code>. <strong>hermes-webui Credited</strong> counts distinct release-attributed PRs from <code>CHANGELOG.md</code> (including <code>(#123, @user)</code> lines), filtered contributor merges, and release-commit <code>Co-authored-by</code> trailers (rebuilt when the changelog changes). Other repos use evidence-based shipped classification for the top $LeaderboardClassifyTop contributors and merged-PR totals as a proxy below that. <strong>Rate (7d)</strong> is PRs opened in the rolling last $LeaderboardRateWindowDays days divided by $LeaderboardRateWindowDays (a recent per-day opening rate, not merge velocity).</p>
 </div>
 
 <p class="footer">Generated $dateStr from GitHub API. Source: <a href="https://github.com/$ReadmeRepo">$ReadmeRepo</a></p>
@@ -2766,6 +2812,12 @@ Write-Host "  Total: $($reportedPRs.Count) | Shipped: $totalAccepted | Open: $($
 Write-Host "  Closed classification cache hits: $script:ClassificationCacheHits | Leaderboard cache hits: $script:LeaderboardCacheHits | Cache file: $CacheFile" -ForegroundColor DarkGray
 $generateElapsed = (Get-Date) - $script:GenerateStartedAt
 Write-Host "  Elapsed: $([int]$generateElapsed.TotalSeconds)s ($([math]::Round($generateElapsed.TotalMinutes, 1)) min)" -ForegroundColor DarkGray
+
+$timelinePy = Join-Path $PSScriptRoot "generate-timeline.py"
+if (Test-Path $timelinePy) {
+    Write-Host "`nInjecting timeline chart..." -ForegroundColor Cyan
+    python $timelinePy
+}
 
 if ([Environment]::UserInteractive -and -not [Console]::IsInputRedirected) {
     Read-Host "`nPress Enter to close"
