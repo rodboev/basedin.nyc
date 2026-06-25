@@ -163,7 +163,7 @@ def inject_into_index(html, chart_json, avg_prs, avg_loc):
     )
     # Find the last stat-card in the second .grid (the one with acceptance rate + active days)
     # Insert before the active-days card (the last stat-card before </div>\n\n)
-    active_days_pattern = r'(<div class="stat-card"><div class="number blue">\d+ days)'
+    active_days_pattern = r'(<div class="stat-card"><div class="number blue">\d+ days?)'
     if "Avg PRs / active day" not in html:
         html = re.sub(active_days_pattern, avg_cards + r'\1', html)
 

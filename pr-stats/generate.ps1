@@ -2591,7 +2591,7 @@ $leaderboardHtml
 
 $representativeHtml
 
-<div class="landscape-row">
+<div class="landscape-row" id="pr-landscape-row">
   <div class="pr-filter-group pr-filter-group-left">
     <h2>PRs</h2>
     <div class="sort-pills" id="pr-repo-pills">
@@ -2656,7 +2656,7 @@ function prDateCell(dateLabel) {
     '<span class="pr-date-short">' + escapeHtml(shortDate) + '</span>';
 }
 function syncLandscapeStickyOffset() {
-  var row = document.querySelector('.landscape-row');
+  var row = document.getElementById('pr-landscape-row');
   if (!row) return;
   document.body.style.setProperty('--landscape-row-offset', row.getBoundingClientRect().height + 'px');
 }
@@ -2737,7 +2737,7 @@ bindPillGroup('pr-repo-pills', 'data-repo', 'repoKey');
 setBarWidths();
 syncLandscapeStickyOffset();
 if (typeof ResizeObserver !== 'undefined') {
-  var landscapeRow = document.querySelector('.landscape-row');
+  var landscapeRow = document.getElementById('pr-landscape-row');
   if (landscapeRow) {
     new ResizeObserver(syncLandscapeStickyOffset).observe(landscapeRow);
   }
