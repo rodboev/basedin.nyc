@@ -84,6 +84,15 @@
 
 
 
+
+
+
+
+
+
+
+
+
 <!-- timeline-chart -->
 <div class="landscape-row" style="margin-top:2rem;position:static">
   <div class="pr-filter-group pr-filter-group-left">
@@ -327,10 +336,23 @@ build(range);
   phases.push({pill: '0', from: prev, to: total});
   var dur = 2000, phaseDur = dur / phases.length, start = null;
   var pills = document.querySelectorAll('#bd-range-pills .sort-pill');
+  var dLabsFull = dChart.data.labels.slice();
+  var cLabsFull = cChart.data.labels.slice();
+  var dFull = dChart.data.datasets.map(function(ds) { return ds.data.slice(); });
+  var cFull = cChart.data.datasets.map(function(ds) { return ds.data.slice(); });
+  var totalPts = dLabsFull.length;
   function ease(t) { return 1 - Math.pow(1 - t, 2); }
   animId = requestAnimationFrame(function tick(now) {
     if (!start) start = now;
     var elapsed = now - start, done = elapsed >= dur;
+    var prog = done ? 1 : Math.min(elapsed / dur, 1);
+    var n = done ? totalPts : Math.max(1, Math.ceil(prog * totalPts));
+    dChart.data.labels = dLabsFull.slice(0, n);
+    dChart.data.datasets.forEach(function(ds, i) { ds.data = dFull[i].slice(0, n); });
+    cChart.data.labels = cLabsFull.slice(0, n);
+    cChart.data.datasets.forEach(function(ds, i) { ds.data = cFull[i].slice(0, n); });
+    dChart.update('none');
+    cChart.update('none');
     var pi = done ? phases.length - 1 : Math.min(Math.floor(elapsed / phaseDur), phases.length - 1);
     var phase = phases[pi];
     var pt = done ? 1 : Math.min((elapsed - pi * phaseDur) / phaseDur, 1);
@@ -378,6 +400,12 @@ build(range);
     if (!done) { animId = requestAnimationFrame(tick); }
     else {
       animId = 0;
+      dChart.data.labels = dLabsFull;
+      dChart.data.datasets.forEach(function(ds, i) { ds.data = dFull[i]; });
+      cChart.data.labels = cLabsFull;
+      cChart.data.datasets.forEach(function(ds, i) { ds.data = cFull[i]; });
+      dChart.update('none');
+      cChart.update('none');
       updateBreakdown(0);
       pills.forEach(function(p) { p.classList.toggle('active', p.getAttribute('data-range') === '0'); });
     }
