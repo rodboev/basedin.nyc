@@ -97,11 +97,6 @@ body.home a.preview > img {
   height: 100%;
   pointer-events: none;
   object-fit: cover;
-  /* opacity: 0;
-  transition: opacity 0.2s ease-in-out; */
-}
-body.home a.preview > img.loaded {
-  opacity: 1;
 }
 body.home a.preview:is(:hover, :focus, :active, .hover) {
   box-shadow:
