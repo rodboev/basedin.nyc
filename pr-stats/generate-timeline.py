@@ -121,10 +121,6 @@ def _aggregate_daily(prs):
 
     all_dates = sorted(set(list(daily_opened) + list(daily_shipped)))
 
-    today = datetime.now(EASTERN).strftime("%Y-%m-%d")
-    if all_dates and all_dates[-1] == today:
-        all_dates = all_dates[:-1]
-
     chart_data = []
     cum_opened = cum_loc = cum_shipped = 0
     empty_opened = dict(count=0, loc=0, files=0, additions=0, deletions=0,
@@ -187,6 +183,7 @@ def build_chart_html(chart_data, repo_data, repo_names):
 
 
 def inject_into_index(html, chart_json, repo_json, names_json, avg_prs, avg_loc):
+    today = datetime.now(EASTERN).strftime("%Y-%m-%d")
     # Remove prior injection if re-running
     html = re.sub(
         rf'{re.escape(CHART_MARKER)}.*?{re.escape(CHART_MARKER)}',
@@ -228,7 +225,7 @@ def inject_into_index(html, chart_json, repo_json, names_json, avg_prs, avg_loc)
         )
         html = html.replace('<h2>Breakdown</h2>', bd_header)
 
-    # 3. Insert chart section before <h2>Methodology</h2>
+    # 4. Insert chart section before <h2>Methodology</h2>
     chart_section = f"""{CHART_MARKER}
 <div class="landscape-row" style="margin-top:2rem;position:static">
   <div class="pr-filter-group pr-filter-group-left">
@@ -248,6 +245,7 @@ def inject_into_index(html, chart_json, repo_json, names_json, avg_prs, avg_loc)
 var TL_ALL = {chart_json};
 var TL_REPOS = {repo_json};
 var TL_NAMES = {names_json};
+var TL_TODAY = '{today}';
 var activeRepo = null;
 function activeTL() {{ return activeRepo ? (TL_REPOS[activeRepo] || []) : TL_ALL; }}
 var isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -276,23 +274,6 @@ TL_NAMES.forEach(function(name) {{
   pillsEl.appendChild(pill);
 }});
 
-var bdStatic = {{}};
-(function() {{
-  ['bd-total','bd-shipped','bd-open','bd-lost-sup','bd-rate','bd-rate-label',
-   'bd-days','bd-days-label','bd-avg-prs','bd-avg-loc'].forEach(function(id) {{
-    var el = document.getElementById(id);
-    if (el) bdStatic[id] = el.textContent;
-  }});
-  ['bd-bar-shipped','bd-bar-superseded','bd-bar-lost','bd-bar-open'].forEach(function(id) {{
-    var el = document.getElementById(id);
-    if (el) bdStatic[id] = {{w: el.getAttribute('data-width'), t: el.textContent, title: el.title || ''}};
-  }});
-  ['bd-leg-shipped','bd-leg-superseded','bd-leg-lost','bd-leg-open'].forEach(function(id) {{
-    var el = document.getElementById(id);
-    if (el) bdStatic[id] = el.innerHTML;
-  }});
-}})();
-
 function fmtLabel(s) {{
   var p = s.split('-');
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -318,21 +299,6 @@ function sliceData(days) {{
   return src.filter(function(d) {{ return d.date >= cs; }});
 }}
 function updateBreakdown(r) {{
-  if (!r && !activeRepo) {{
-    for (var id in bdStatic) {{
-      var el = document.getElementById(id);
-      if (!el) continue;
-      var v = bdStatic[id];
-      if (typeof v === 'object') {{
-        el.setAttribute('data-width', v.w); el.style.width = v.w + '%'; el.textContent = v.t; el.title = v.title;
-      }} else if (id.indexOf('bd-leg-') === 0) {{
-        el.innerHTML = v;
-      }} else {{
-        el.textContent = v;
-      }}
-    }}
-    return;
-  }}
   var sl = sliceData(r);
   var total = 0, shipped = 0, open = 0, superseded = 0, lost = 0;
   var totalLoc = 0, activeDays = 0;
@@ -359,7 +325,7 @@ function updateBreakdown(r) {{
   if (el = document.getElementById('bd-shipped')) el.textContent = shipped;
   if (el = document.getElementById('bd-open')) el.textContent = open;
   if (el = document.getElementById('bd-lost-sup')) el.textContent = lostSup;
-  if (el = document.getElementById('bd-rate')) el.textContent = rate + '%';
+  if (el = document.getElementById('bd-rate')) el.textContent = typeof rate === 'number' ? rate + '%' : rate;
   if (el = document.getElementById('bd-rate-label')) el.textContent = 'Acceptance (' + superseded + ' superseded, ' + lost + ' lost)';
   var dayStr = activeDays === 1 ? '1 day' : activeDays + ' days';
   if (el = document.getElementById('bd-days')) el.textContent = dayStr;
@@ -405,9 +371,10 @@ function updateBreakdown(r) {{
   }}
 }}
 
-var range = 0, dChart, cChart;
+var range = 0, dChart, cChart, animId = 0;
 function build(r) {{
-  var sl = sliceData(r), labs = sl.map(function(d){{ return fmtLabel(d.date); }});
+  var sl = sliceData(r).filter(function(d) {{ return d.date !== TL_TODAY; }});
+  var labs = sl.map(function(d){{ return fmtLabel(d.date); }});
   if (dChart) dChart.destroy();
   if (cChart) cChart.destroy();
 
@@ -482,8 +449,86 @@ function build(r) {{
 }}
 build(range);
 
+(function animateOnLoad() {{
+  var all = TL_ALL;
+  var total = 0, shipped = 0, opn = 0, sup = 0, lost = 0, totalLoc = 0, activeDays = 0;
+  for (var i = 0; i < all.length; i++) {{
+    var d = all[i];
+    total += d.prsOpened; shipped += (d.clsShipped || 0); opn += (d.clsOpen || 0);
+    sup += (d.clsSuperseded || 0); lost += (d.clsLost || 0); totalLoc += d.loc;
+    if (d.prsOpened > 0) activeDays++;
+  }}
+  var phases = [];
+  var prev = 0;
+  [7, 14, 30].forEach(function(days) {{
+    var s = sliceData(days), t = 0;
+    for (var j = 0; j < s.length; j++) t += s[j].prsOpened;
+    phases.push({{pill: String(days), from: prev, to: t}});
+    prev = t;
+  }});
+  phases.push({{pill: '0', from: prev, to: total}});
+  var dur = 2000, phaseDur = dur / phases.length, start = null;
+  var pills = document.querySelectorAll('#bd-range-pills .sort-pill');
+  function ease(t) {{ return 1 - Math.pow(1 - t, 2); }}
+  animId = requestAnimationFrame(function tick(now) {{
+    if (!start) start = now;
+    var elapsed = now - start, done = elapsed >= dur;
+    var pi = done ? phases.length - 1 : Math.min(Math.floor(elapsed / phaseDur), phases.length - 1);
+    var phase = phases[pi];
+    var pt = done ? 1 : Math.min((elapsed - pi * phaseDur) / phaseDur, 1);
+    var et = ease(pt);
+    var cT = Math.round(phase.from + et * (phase.to - phase.from));
+    if (cT < 1) {{ animId = requestAnimationFrame(tick); return; }}
+    var frac = cT / total;
+    var cS = Math.round(frac * shipped);
+    var cO = Math.round(frac * opn), cSp = Math.round(frac * sup), cL = Math.round(frac * lost);
+    var cD = cS + cL + cSp;
+    var cR = cD > 0 ? Math.round(cS / cD * 100) : 0;
+    var cAd = Math.max(1, Math.round(frac * activeDays)), cLoc = Math.round(frac * totalLoc);
+    var cAp = (cT / cAd).toFixed(1);
+    var rLoc = Math.round(cLoc / cAd);
+    var cAl = rLoc >= 1000 ? (rLoc / 1000).toFixed(1) + 'k' : String(rLoc);
+    var activePill = phase.pill;
+    pills.forEach(function(p) {{ p.classList.toggle('active', p.getAttribute('data-range') === activePill); }});
+    var el;
+    if (el = document.getElementById('bd-total')) el.textContent = cT;
+    if (el = document.getElementById('bd-shipped')) el.textContent = cS;
+    if (el = document.getElementById('bd-open')) el.textContent = cO;
+    if (el = document.getElementById('bd-lost-sup')) el.textContent = cL + cSp;
+    if (el = document.getElementById('bd-rate')) el.textContent = cR + '%';
+    if (el = document.getElementById('bd-avg-prs')) el.textContent = cAp;
+    if (el = document.getElementById('bd-avg-loc')) el.textContent = cAl;
+    var dayStr = cAd === 1 ? '1 day' : cAd + ' days';
+    if (el = document.getElementById('bd-days')) el.textContent = dayStr;
+    var bT = cT;
+    [['bd-bar-shipped', cS], ['bd-bar-superseded', cSp], ['bd-bar-lost', cL], ['bd-bar-open', cO]].forEach(function(s) {{
+      var el = document.getElementById(s[0]); if (!el) return;
+      var pct = (s[1] / bT * 100).toFixed(1);
+      el.style.width = pct + '%'; el.setAttribute('data-width', pct);
+      var wide = parseFloat(pct) > 4;
+      if (el.classList.contains('bar-open')) {{ el.textContent = s[1]; el.title = String(s[1]); }}
+      else {{ el.textContent = wide ? s[1] : ''; el.title = wide ? String(s[1]) : ''; }}
+    }});
+    var legs = {{'bd-leg-shipped': ['Shipped', cS], 'bd-leg-superseded': ['Superseded', cSp],
+      'bd-leg-lost': ['Lost', cL], 'bd-leg-open': ['Open', cO]}};
+    for (var lid in legs) {{
+      var lel = document.getElementById(lid); if (!lel) continue;
+      var dot = lel.querySelector('.legend-dot'); lel.textContent = '';
+      lel.appendChild(dot);
+      lel.appendChild(document.createTextNode(' ' + legs[lid][0] + ' (' + legs[lid][1] + ')'));
+    }}
+    if (!done) {{ animId = requestAnimationFrame(tick); }}
+    else {{
+      animId = 0;
+      updateBreakdown(0);
+      pills.forEach(function(p) {{ p.classList.toggle('active', p.getAttribute('data-range') === '0'); }});
+    }}
+  }});
+}})();
+
 document.getElementById('bd-range-pills').addEventListener('click', function(e) {{
   var p = e.target.closest('.sort-pill'); if (!p) return;
+  if (animId) {{ cancelAnimationFrame(animId); animId = 0; }}
   range = parseInt(p.getAttribute('data-range'), 10);
   document.querySelectorAll('#bd-range-pills .sort-pill').forEach(function(x){{ x.classList.remove('active') }});
   p.classList.add('active');
@@ -500,6 +545,7 @@ document.getElementById('tl-view-pills').addEventListener('click', function(e) {
 }});
 pillsEl.addEventListener('click', function(e) {{
   var p = e.target.closest('.sort-pill'); if (!p) return;
+  if (animId) {{ cancelAnimationFrame(animId); animId = 0; }}
   activeRepo = p.getAttribute('data-repo') || null;
   pillsEl.querySelectorAll('.sort-pill').forEach(function(x){{ x.classList.remove('active') }});
   p.classList.add('active');
