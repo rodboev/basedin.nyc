@@ -368,6 +368,8 @@ function updateBreakdown(r) {{
     var fp = firstDate.split('-'), lp = lastDate.split('-');
     if (el = document.getElementById('bd-days-label')) el.textContent =
       'Active days from ' + months[+fp[1]-1] + ' ' + +fp[2] + ' - ' + months[+lp[1]-1] + ' ' + +lp[2];
+  }} else {{
+    if (el = document.getElementById('bd-days-label')) el.textContent = 'No active days in range';
   }}
   var avgPrs = activeDays > 0 ? (total / activeDays).toFixed(1) : '0';
   var rawAvgLoc = activeDays > 0 ? Math.round(totalLoc / activeDays) : 0;
@@ -386,9 +388,8 @@ function updateBreakdown(r) {{
     el.setAttribute('data-width', pct);
     el.style.width = pct + '%';
     var wide = parseFloat(pct) > 4;
-    if (el.classList.contains('bar-open')) el.textContent = s[1];
-    else el.textContent = wide ? s[1] : '';
-    if (el.classList.contains('bar-shipped') && wide) el.title = String(s[1]);
+    if (el.classList.contains('bar-open')) {{ el.textContent = s[1]; el.title = String(s[1]); }}
+    else {{ el.textContent = wide ? s[1] : ''; el.title = wide ? String(s[1]) : ''; }}
   }});
   var legs = {{
     'bd-leg-shipped': ['Shipped', shipped], 'bd-leg-superseded': ['Superseded', superseded],

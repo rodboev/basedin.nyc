@@ -47,8 +47,7 @@
   <div class="stat-card"><div class="number" id="bd-lost-sup">7</div><div class="label">Lost/Superseded</div></div>
 </div>
 <div class="grid grid-summary">
-  <div class="stat-card"><div class="number green" id="bd-rate">97%</div><div class="label" id="bd-rate-label">Acceptance (6 superseded, 1 lost)</div></div>
-    <div class="stat-card"><div class="number" id="bd-avg-prs">11.6</div><div class="label">Avg PRs/day</div></div>
+  <div class="stat-card"><div class="number green" id="bd-rate">97%</div><div class="label" id="bd-rate-label">Acceptance (6 superseded, 1 lost)</div></div>  <div class="stat-card"><div class="number" id="bd-avg-prs">11.6</div><div class="label">Avg PRs/day</div></div>
   <div class="stat-card"><div class="number" id="bd-avg-loc">4.9k</div><div class="label">Avg LOC/day</div></div>
 <div class="stat-card"><div class="number blue" id="bd-days">27 days</div><div class="label" id="bd-days-label">Active days from Feb 5 - Jun 25</div></div>
 </div>
@@ -65,6 +64,9 @@
   <div class="legend-item" id="bd-leg-lost"><div class="legend-dot legend-dot-lost"></div> Lost (1)</div>
   <div class="legend-item" id="bd-leg-open"><div class="legend-dot legend-dot-open"></div> Open (66)</div>
 </div>
+
+
+
 
 
 <!-- timeline-chart -->
@@ -206,6 +208,8 @@ function updateBreakdown(r) {
     var fp = firstDate.split('-'), lp = lastDate.split('-');
     if (el = document.getElementById('bd-days-label')) el.textContent =
       'Active days from ' + months[+fp[1]-1] + ' ' + +fp[2] + ' - ' + months[+lp[1]-1] + ' ' + +lp[2];
+  } else {
+    if (el = document.getElementById('bd-days-label')) el.textContent = 'No active days in range';
   }
   var avgPrs = activeDays > 0 ? (total / activeDays).toFixed(1) : '0';
   var rawAvgLoc = activeDays > 0 ? Math.round(totalLoc / activeDays) : 0;
@@ -224,9 +228,8 @@ function updateBreakdown(r) {
     el.setAttribute('data-width', pct);
     el.style.width = pct + '%';
     var wide = parseFloat(pct) > 4;
-    if (el.classList.contains('bar-open')) el.textContent = s[1];
-    else el.textContent = wide ? s[1] : '';
-    if (el.classList.contains('bar-shipped') && wide) el.title = String(s[1]);
+    if (el.classList.contains('bar-open')) { el.textContent = s[1]; el.title = String(s[1]); }
+    else { el.textContent = wide ? s[1] : ''; el.title = wide ? String(s[1]) : ''; }
   });
   var legs = {
     'bd-leg-shipped': ['Shipped', shipped], 'bd-leg-superseded': ['Superseded', superseded],
