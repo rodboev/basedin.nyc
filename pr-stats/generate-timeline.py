@@ -87,7 +87,8 @@ def load_active_repos(ps1_path):
 
 
 def _aggregate_daily(prs):
-    daily_opened = defaultdict(lambda: dict(count=0, loc=0, files=0, additions=0, deletions=0))
+    daily_opened = defaultdict(lambda: dict(count=0, loc=0, files=0, additions=0, deletions=0,
+                                             clsShipped=0, clsOpen=0, clsSuperseded=0, clsLost=0))
     daily_shipped = defaultdict(lambda: dict(count=0, loc=0, files=0))
 
     for pr in prs:
@@ -103,6 +104,15 @@ def _aggregate_daily(prs):
         d["additions"] += pr["additions"]
         d["deletions"] += pr["deletions"]
 
+        if pr["isShipped"]:
+            d["clsShipped"] += 1
+        elif pr["classification"] == "open":
+            d["clsOpen"] += 1
+        elif pr["classification"] == "superseded":
+            d["clsSuperseded"] += 1
+        elif pr["classification"] == "lost":
+            d["clsLost"] += 1
+
         if pr["isShipped"] and pr["resolvedDate"]:
             s = daily_shipped[pr["resolvedDate"]]
             s["count"] += 1
@@ -117,7 +127,8 @@ def _aggregate_daily(prs):
 
     chart_data = []
     cum_opened = cum_loc = cum_shipped = 0
-    empty_opened = dict(count=0, loc=0, files=0, additions=0, deletions=0)
+    empty_opened = dict(count=0, loc=0, files=0, additions=0, deletions=0,
+                        clsShipped=0, clsOpen=0, clsSuperseded=0, clsLost=0)
     empty_shipped = dict(count=0, loc=0, files=0)
 
     for day in all_dates:
@@ -141,6 +152,10 @@ def _aggregate_daily(prs):
             cumLoc=cum_loc,
             locPerPr=round(o["loc"] / o["count"]) if o["count"] else 0,
             filesPerPr=round(o["files"] / o["count"], 1) if o["count"] else 0,
+            clsShipped=o["clsShipped"],
+            clsOpen=o["clsOpen"],
+            clsSuperseded=o["clsSuperseded"],
+            clsLost=o["clsLost"],
         ))
 
     return chart_data
@@ -188,16 +203,30 @@ def inject_into_index(html, chart_json, repo_json, names_json, avg_prs, avg_loc)
 
     # 2. Add avg stat cards before the active-days card
     avg_cards = (
-        f'  <div class="stat-card"><div class="number">{avg_prs}</div>'
+        f'  <div class="stat-card"><div class="number" id="bd-avg-prs">{avg_prs}</div>'
         f'<div class="label">Avg PRs/day</div></div>\n'
-        f'  <div class="stat-card"><div class="number">{avg_loc}</div>'
+        f'  <div class="stat-card"><div class="number" id="bd-avg-loc">{avg_loc}</div>'
         f'<div class="label">Avg LOC/day</div></div>\n'
     )
-    # Find the last stat-card in the second .grid (the one with acceptance rate + active days)
-    # Insert before the active-days card (the last stat-card before </div>\n\n)
-    active_days_pattern = r'(<div class="stat-card"><div class="number blue">\d+ days?)'
-    if "Avg PRs/day" not in html:
-        html = re.sub(active_days_pattern, avg_cards + r'\1', html)
+    active_days_pattern = r'(<div class="stat-card"><div class="number blue"[^>]*>\d+ days?)'
+    html = re.sub(r'\s*<div class="stat-card"><div class="number"[^>]*>[^<]*</div><div class="label">Avg PRs/day</div></div>\n?', '', html)
+    html = re.sub(r'\s*<div class="stat-card"><div class="number"[^>]*>[^<]*</div><div class="label">Avg LOC/day</div></div>\n?', '', html)
+    html = re.sub(active_days_pattern, avg_cards + r'\1', html)
+
+    # 3. Wrap Breakdown heading with range pills
+    if 'id="bd-range-pills"' not in html:
+        bd_header = (
+            '<div class="landscape-row" style="position:static">\n'
+            '<h2>Breakdown</h2>\n'
+            '<div class="sort-pills" id="bd-range-pills">\n'
+            '  <div class="sort-pill" data-range="7">7d</div>\n'
+            '  <div class="sort-pill" data-range="14">14d</div>\n'
+            '  <div class="sort-pill" data-range="30">30d</div>\n'
+            '  <div class="sort-pill active" data-range="0">All</div>\n'
+            '</div>\n'
+            '</div>'
+        )
+        html = html.replace('<h2>Breakdown</h2>', bd_header)
 
     # 3. Insert chart section before <h2>Methodology</h2>
     chart_section = f"""{CHART_MARKER}
@@ -207,14 +236,6 @@ def inject_into_index(html, chart_json, repo_json, names_json, avg_prs, avg_loc)
     <div class="sort-pills" id="tl-view-pills">
     <div class="sort-pill active" data-view="daily">Daily</div>
     <div class="sort-pill" data-view="cumulative">Cumulative</div>
-    </div>
-  </div>
-  <div class="pr-filter-group pr-filter-group-right">
-    <div class="sort-pills" id="tl-range-pills">
-    <div class="sort-pill" data-range="7">7d</div>
-    <div class="sort-pill" data-range="14">14d</div>
-    <div class="sort-pill" data-range="30">30d</div>
-    <div class="sort-pill active" data-range="0">All</div>
     </div>
   </div>
 </div>
@@ -255,6 +276,23 @@ TL_NAMES.forEach(function(name) {{
   pillsEl.appendChild(pill);
 }});
 
+var bdStatic = {{}};
+(function() {{
+  ['bd-total','bd-shipped','bd-open','bd-lost-sup','bd-rate','bd-rate-label',
+   'bd-days','bd-days-label','bd-avg-prs','bd-avg-loc'].forEach(function(id) {{
+    var el = document.getElementById(id);
+    if (el) bdStatic[id] = el.textContent;
+  }});
+  ['bd-bar-shipped','bd-bar-superseded','bd-bar-lost','bd-bar-open'].forEach(function(id) {{
+    var el = document.getElementById(id);
+    if (el) bdStatic[id] = {{w: el.getAttribute('data-width'), t: el.textContent, title: el.title || ''}};
+  }});
+  ['bd-leg-shipped','bd-leg-superseded','bd-leg-lost','bd-leg-open'].forEach(function(id) {{
+    var el = document.getElementById(id);
+    if (el) bdStatic[id] = el.innerHTML;
+  }});
+}})();
+
 function fmtLabel(s) {{
   var p = s.split('-');
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -278,6 +316,92 @@ function sliceData(days) {{
   cut.setDate(cut.getDate() - days + 1);
   var cs = cut.toISOString().slice(0,10);
   return src.filter(function(d) {{ return d.date >= cs; }});
+}}
+function updateBreakdown(r) {{
+  if (!r && !activeRepo) {{
+    for (var id in bdStatic) {{
+      var el = document.getElementById(id);
+      if (!el) continue;
+      var v = bdStatic[id];
+      if (typeof v === 'object') {{
+        el.setAttribute('data-width', v.w); el.style.width = v.w + '%'; el.textContent = v.t; el.title = v.title;
+      }} else if (id.indexOf('bd-leg-') === 0) {{
+        el.innerHTML = v;
+      }} else {{
+        el.textContent = v;
+      }}
+    }}
+    return;
+  }}
+  var sl = sliceData(r);
+  var total = 0, shipped = 0, open = 0, superseded = 0, lost = 0;
+  var totalLoc = 0, activeDays = 0;
+  var firstDate = null, lastDate = null;
+  for (var i = 0; i < sl.length; i++) {{
+    var d = sl[i];
+    total += d.prsOpened;
+    shipped += (d.clsShipped || 0);
+    open += (d.clsOpen || 0);
+    superseded += (d.clsSuperseded || 0);
+    lost += (d.clsLost || 0);
+    totalLoc += d.loc;
+    if (d.prsOpened > 0) {{
+      activeDays++;
+      if (!firstDate) firstDate = d.date;
+      lastDate = d.date;
+    }}
+  }}
+  var lostSup = lost + superseded;
+  var closedDenom = shipped + lost + superseded;
+  var rate = closedDenom > 0 ? Math.round(shipped / closedDenom * 100) : 'N/A';
+  var el;
+  if (el = document.getElementById('bd-total')) el.textContent = total;
+  if (el = document.getElementById('bd-shipped')) el.textContent = shipped;
+  if (el = document.getElementById('bd-open')) el.textContent = open;
+  if (el = document.getElementById('bd-lost-sup')) el.textContent = lostSup;
+  if (el = document.getElementById('bd-rate')) el.textContent = rate + '%';
+  if (el = document.getElementById('bd-rate-label')) el.textContent = 'Acceptance (' + superseded + ' superseded, ' + lost + ' lost)';
+  var dayStr = activeDays === 1 ? '1 day' : activeDays + ' days';
+  if (el = document.getElementById('bd-days')) el.textContent = dayStr;
+  if (firstDate && lastDate) {{
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var fp = firstDate.split('-'), lp = lastDate.split('-');
+    if (el = document.getElementById('bd-days-label')) el.textContent =
+      'Active days from ' + months[+fp[1]-1] + ' ' + +fp[2] + ' - ' + months[+lp[1]-1] + ' ' + +lp[2];
+  }}
+  var avgPrs = activeDays > 0 ? (total / activeDays).toFixed(1) : '0';
+  var rawAvgLoc = activeDays > 0 ? Math.round(totalLoc / activeDays) : 0;
+  var avgLoc = rawAvgLoc >= 1000 ? (rawAvgLoc / 1000).toFixed(1) + 'k' : String(rawAvgLoc);
+  if (el = document.getElementById('bd-avg-prs')) el.textContent = avgPrs;
+  if (el = document.getElementById('bd-avg-loc')) el.textContent = avgLoc;
+  var barTotal = total || 1;
+  var segs = [
+    ['bd-bar-shipped', shipped], ['bd-bar-superseded', superseded],
+    ['bd-bar-lost', lost], ['bd-bar-open', open]
+  ];
+  segs.forEach(function(s) {{
+    var el = document.getElementById(s[0]);
+    if (!el) return;
+    var pct = (s[1] / barTotal * 100).toFixed(1);
+    el.setAttribute('data-width', pct);
+    el.style.width = pct + '%';
+    var wide = parseFloat(pct) > 4;
+    if (el.classList.contains('bar-open')) el.textContent = s[1];
+    else el.textContent = wide ? s[1] : '';
+    if (el.classList.contains('bar-shipped') && wide) el.title = String(s[1]);
+  }});
+  var legs = {{
+    'bd-leg-shipped': ['Shipped', shipped], 'bd-leg-superseded': ['Superseded', superseded],
+    'bd-leg-lost': ['Lost', lost], 'bd-leg-open': ['Open', open]
+  }};
+  for (var lid in legs) {{
+    var lel = document.getElementById(lid);
+    if (!lel) continue;
+    var dot = lel.querySelector('.legend-dot');
+    lel.textContent = '';
+    lel.appendChild(dot);
+    lel.appendChild(document.createTextNode(' ' + legs[lid][0] + ' (' + legs[lid][1] + ')'));
+  }}
 }}
 
 var range = 0, dChart, cChart;
@@ -357,12 +481,13 @@ function build(r) {{
 }}
 build(range);
 
-document.getElementById('tl-range-pills').addEventListener('click', function(e) {{
+document.getElementById('bd-range-pills').addEventListener('click', function(e) {{
   var p = e.target.closest('.sort-pill'); if (!p) return;
   range = parseInt(p.getAttribute('data-range'), 10);
-  document.querySelectorAll('#tl-range-pills .sort-pill').forEach(function(x){{ x.classList.remove('active') }});
+  document.querySelectorAll('#bd-range-pills .sort-pill').forEach(function(x){{ x.classList.remove('active') }});
   p.classList.add('active');
   build(range);
+  updateBreakdown(range);
 }});
 document.getElementById('tl-view-pills').addEventListener('click', function(e) {{
   var p = e.target.closest('.sort-pill'); if (!p) return;
@@ -378,6 +503,7 @@ pillsEl.addEventListener('click', function(e) {{
   pillsEl.querySelectorAll('.sort-pill').forEach(function(x){{ x.classList.remove('active') }});
   p.classList.add('active');
   build(range);
+  updateBreakdown(range);
 }});
 }})();
 </script>

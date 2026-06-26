@@ -2576,8 +2576,8 @@ foreach ($seg in $barSegments) {
     $wide = $pct -gt 4
     $title = if ($seg.Title -eq "always" -or ($seg.Title -eq "wide" -and $wide)) { " title=`"$($seg.Count)`"" } else { "" }
     $content = if ($seg.Content -eq "always" -or $wide) { $seg.Count } else { "" }
-    $barHtml += "  <div class=`"bar-segment bar-$($seg.Key)`" data-width=`"$pct`"$title>$content</div>`n"
-    $legendHtml += "  <div class=`"legend-item`"><div class=`"legend-dot legend-dot-$($seg.Key)`"></div> $($seg.Label) ($($seg.Count))</div>`n"
+    $barHtml += "  <div class=`"bar-segment bar-$($seg.Key)`" id=`"bd-bar-$($seg.Key)`" data-width=`"$pct`"$title>$content</div>`n"
+    $legendHtml += "  <div class=`"legend-item`" id=`"bd-leg-$($seg.Key)`"><div class=`"legend-dot legend-dot-$($seg.Key)`"></div> $($seg.Label) ($($seg.Count))</div>`n"
 }
 
 $prListOverlayHtml = Get-CollapseOverlayHtml "pr-list-collapsible"
@@ -2616,14 +2616,14 @@ $html = @"
 <h2>Breakdown</h2>
 
 <div class="grid grid-summary">
-  <div class="stat-card"><div class="number">$($reportedPRs.Count)</div><div class="label">Total PRs</div></div>
-  <div class="stat-card"><div class="number green">$totalAccepted</div><div class="label">Shipped</div></div>
-  <div class="stat-card"><div class="number yellow">$($open.Count)</div><div class="label">Open</div></div>
-  <div class="stat-card"><div class="number">$totalNotShipped</div><div class="label">Lost/Superseded</div></div>
+  <div class="stat-card"><div class="number" id="bd-total">$($reportedPRs.Count)</div><div class="label">Total PRs</div></div>
+  <div class="stat-card"><div class="number green" id="bd-shipped">$totalAccepted</div><div class="label">Shipped</div></div>
+  <div class="stat-card"><div class="number yellow" id="bd-open">$($open.Count)</div><div class="label">Open</div></div>
+  <div class="stat-card"><div class="number" id="bd-lost-sup">$totalNotShipped</div><div class="label">Lost/Superseded</div></div>
 </div>
 <div class="grid grid-summary">
-  <div class="stat-card"><div class="number green">${acceptanceRate}%</div><div class="label">Acceptance ($($superseded.Count) superseded, $($lost.Count) lost)</div></div>
-  <div class="stat-card"><div class="number blue">$timeSpan</div><div class="label">$timeRange</div></div>
+  <div class="stat-card"><div class="number green" id="bd-rate">${acceptanceRate}%</div><div class="label" id="bd-rate-label">Acceptance ($($superseded.Count) superseded, $($lost.Count) lost)</div></div>
+  <div class="stat-card"><div class="number blue" id="bd-days">$timeSpan</div><div class="label" id="bd-days-label">$timeRange</div></div>
 </div>
 
 <div class="bar-container">
