@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>Architecture</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+</head>
+<body class="pr">
+<main class="doc-page">
+<h1>Architecture</h1>
+<p class="subtitle">Architectural decisions and patterns across projects.</p>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="scheduling-v2" type="button">scheduling-v2</button>
+    <button class="sort-pill" data-target="notes-ai" type="button">notes-ai</button>
+    <button class="sort-pill" data-target="pr-sweep" type="button">pr-sweep</button>
+    <button class="sort-pill" data-target="prose" type="button">Prose</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="scheduling-v2">scheduling-v2: Three-Tier API</h2>
+<div class="card">
+  <p>The scheduling optimizer splits data loading, expansion, and optimization into three chained API endpoints. Each tier consumes the previous one's output and adds a distinct layer of processing, so any tier can be called independently for debugging or by different parts of the frontend.</p>
+
+  <h3>Tier 1: <code>/api/serviceSetups</code> — Raw Data</h3>
+  <p>Queries SQL Server (via FreeTDS/ODBC), joining <code>ServiceSetups</code>, <code>Locations</code>, <code>Schedules</code>, <code>Technicians</code>, and <code>FrequencyClasses</code> into flat rows. Each row is normalized: DB field names become consistent camelCase, <code>TimeRange</code> strings are parsed into <code>[rangeStart, rangeEnd]</code> second offsets, <code>WorkTime</code> is converted to Eastern time, and per-setup tech assignment overrides are merged from an enforcement state file. Results are disk-cached to <code>data/serviceSetups.json</code> so subsequent calls skip the database entirely.</p>
+  <p>Output: an array of normalized service setup objects, one per recurring service contract.</p>
+
+  <h3>Tier 2: <code>/api/services</code> — Temporal Expansion + Spatial Grouping</h3>
+  <p>Calls Tier 1 internally, then expands each setup into concrete dated service instances for a requested date range. For each setup it walks the range day by day, checking a 420-character schedule bitmap string to determine whether that service occurs on that date. Matching dates get a concrete <code>start</code>/<code>end</code> datetime calculated from the preferred time and duration, rounded to 15-minute increments.</p>
+  <p>Additional processing at this tier:</p>
+  <ul>
+    <li>Filters services outside configured NYC boroughs</li>
+    <li>Removes techs with exact time collisions (duplicate scheduling artifacts)</li>
+    <li>Fetches the pairwise Haversine distance matrix from <code>/api/distance-matrix</code> for all unique locations</li>
+    <li>Runs a geographic + time-compatibility grouping pass, clustering services within a hard max radius while respecting time windows</li>
+  </ul>
+  <p>Output: a flat array of dated service objects with resolved times, locations (parsed float coordinates), tech assignments, and embedded distance data.</p>
+
+  <h3>Tier 3: <code>/api/schedule</code> — Optimization</h3>
+  <p>Calls Tier 2, filters out invalid entries (bad time ranges, missing coordinates, out-of-range dates), then hands valid services plus a full distance matrix to a Node.js worker thread for the heavy scheduling work:</p>
+  <ul>
+    <li>Separates long services (above a threshold) into solo shifts</li>
+    <li>Sorts remaining services by time-window flexibility, least flexible first</li>
+    <li>Places each service into existing shift gaps using travel time, distance, and scoring</li>
+    <li>Runs iterative shift-merging passes to consolidate toward ~12 services per tech</li>
+    <li>Assigns tech IDs across days with continuity scoring (start-time similarity, workload balance, geographic proximity to prior day)</li>
+    <li>Compresses each shift by condensing services toward the midpoint</li>
+  </ul>
+  <p>Output: fully sequenced services with cluster assignments, tech IDs, sequence numbers, and travel metadata (distance and time from previous service).</p>
+
+  <h3>Data flow</h3>
+  <pre><code>SQL Server (FreeTDS/ODBC)
+  └── /api/serviceSetups   raw DB rows → normalized setup objects (disk-cached)
+        └── /api/services  setups → dated service instances, geographic grouping
+              │
+              ├── /api/distance-matrix  pairwise Haversine distances (in-memory cached)
+              │
+              └── /api/schedule         filters + worker thread optimizer
+                    └── worker.js       shift building, merging, tech assignment, condensing
+                          └── frontend  drag-and-drop schedule UI</code></pre>
+
+  <h3>Why three tiers?</h3>
+  <p>Each tier has a different change frequency and failure mode. The raw data layer caches aggressively and rarely changes shape. The expansion layer is date-range-dependent and handles the combinatorial explosion of "which services happen when." The optimization layer is CPU-intensive and runs in a worker thread to avoid blocking the event loop. Separating them means you can debug each layer independently: hit <code>/api/serviceSetups</code> to verify the data looks right, hit <code>/api/services?start=...&end=...</code> to see what got expanded, and only then check whether the optimizer assigned them sensibly.</p>
+</div>
+
+<h2 class="doc-nav-target" id="notes-ai">notes-ai: Content-Addressed LLM Pipeline</h2>
+<div class="card">
+  <p>Internal tool for Liberty Pest Control. Field techs submit service notes via PestPac; the app pulls those notes, runs them through an LLM to draft personalized upsell emails, lets staff edit in a rich text editor, and sends via Gmail. A voice feature calls customers to summarize the visit and pitch follow-up services.</p>
+
+  <h3>Stack</h3>
+  <p>Next.js 15 RC + React 19 RC with the experimental React Compiler, wrapped in a custom Node HTTP server. GPT-4o for email generation, OpenAI Realtime API for voice. SQL Server (PestPac) via SSH tunnel for source data, Supabase (PostgreSQL) for durable persistence. Hosted on Heroku. (Later retrofitted to DeepSeek + ElevenLabs to cut demo costs, but the architecture was built around the OpenAI APIs.)</p>
+
+  <h3>Content-addressed caching</h3>
+  <p>Every note is SHA-1 hashed with <code>object-hash</code>. That fingerprint becomes the universal key across every layer: in-memory <code>Map</code>, disk <code>data/*.json</code>, Supabase primary key, React Query cache key, URL query param, and an injected <code>x-fingerprint</code> request header. Reads cascade memory → disk → Supabase, writing back up the chain on miss. Heroku's ephemeral filesystem serves as a warm session cache; Supabase is the durable fallback across dyno restarts. Identical note content fetched on different days hits cache rather than re-generating.</p>
+
+  <h3>SSE + partial JSON for progressive LLM output</h3>
+  <p>Uses browser-native <code>EventSource</code> (one-way SSE) rather than WebSocket for streaming GPT-4o tokens to the client. Notes are chunked (10 at a time, 3 in dev), each chunk streamed through <code>ReadableStream</code> in the API route. <code>best-effort-json-parser</code> renders partial email JSON as tokens arrive before the response is complete, so emails surface progressively rather than all-at-once.</p>
+
+  <h3>Voice: signed URL pattern</h3>
+  <p>The call button hits <code>GET /api/voice/signed-url</code>, which mints an ephemeral OpenAI Realtime API WebSocket URL server-side. The client connects directly with that URL. The private API key never touches the browser. Per-note context is injected as prompt overrides at session start, and a module-scope singleton enforces one active call globally without Redux or Context.</p>
+
+  <h3>LLM call design</h3>
+  <p><code>response_format: { type: 'json_object' }</code> forces structured output. Address fields are stripped before notes reach the LLM (privacy). <code>seed: 0</code> for reproducibility. System prompts use <code>{{email.current}}</code> and <code>{{error}}</code> template slots expanded by a recursive <code>expand()</code> function, and prompts are user-editable via a Settings panel persisted to Supabase.</p>
+
+  <h3>Demo mode via React Context</h3>
+  <p><code>?demo=true</code> activates <code>DemoProvider</code>; <code>useNotes</code> and <code>useEmails</code> swap to demo endpoints serving fabricated data and skip all Supabase writes. No <code>if (demo)</code> scattered through components.</p>
+
+  <h3>Data flow</h3>
+  <pre><code>SQL Server (PestPac, via SSH tunnel)
+  └── /api/notes              raw service notes, normalized
+        └── /api/emails       LLM generation (GPT-4o, SSE-streamed)
+              │
+              ├── TinyMCE     rich text editing, staff review
+              │
+              ├── Gmail API   send approved emails
+              │
+              └── /api/voice/signed-url → OpenAI Realtime WebSocket
+                    └── browser   direct voice connection
+
+Cache reads: memory Map → disk JSON → Supabase (fingerprint-keyed at every layer)</code></pre>
+</div>
+
+<h2 class="doc-nav-target" id="pr-sweep">pr-sweep: Autonomous Multi-Agent PR Pipeline</h2>
+<div class="card">
+  <p>Fully autonomous, multi-agent pipeline for making upstream open-source contributions. Runs continuously from issue discovery through code, review, PR opening, and post-push convergence. 240 PRs across 3 repos, 196 shipped, 97% acceptance rate.</p>
+
+  <h3>Subskill chain</h3>
+  <p>The pipeline is a chain of six skills, each handing off to the next. Only <code>pr:converge</code> can declare completion for pushed work.</p>
+  <pre><code>pr:find       scoped status reconciliation, then scout agents per search dimension
+    │
+pr:spec       planner agents write 4-file artifact bundles per target
+    │
+pr:code       coder agents implement in isolated git worktrees
+    │
+pr:review     cross-provider adversarial review, fixups, push, open PR
+    │
+pr:converge   shared post-push loop: CI, bots, merge, reviewer feedback
+
+pr:rework     triggered by reviewer feedback on existing PRs
+    │
+pr:converge   same shared terminal phase</code></pre>
+
+  <h3>Model tiering and cross-provider review</h3>
+  <p>Five agent tiers across three host runtimes (Claude Code, Codex CLI, MiMoCode). Scouts run on Sonnet for cheap search. Planners run on Opus for spec quality. Coders run on Haiku for speed. The adversarial reviewer is always the opposite model family from the orchestrator: if the orchestrator is Claude, the reviewer is GPT-5.5 dispatched via shell (not as a subagent) for a genuinely independent pass. Up to 5 coder and reviewer agents run concurrently per phase.</p>
+
+  <h3>Five-gate discovery</h3>
+  <p>Scout agents search in parallel across dimensions (labels, subsystems, bug clusters). Every candidate must pass five gates in order:</p>
+  <ol>
+    <li><strong>Freshness</strong>: the specific file, function, and line range must still exhibit the bug on current <code>origin/{default_branch}</code></li>
+    <li><strong>Issue thread</strong>: full thread read, not just the body. Kill signals: "fixed", "resolved", "duplicate", "claimed", "wontfix"</li>
+    <li><strong>Closed work</strong>: searches closed PRs and sibling issues by keyword, affected files, function names, error strings</li>
+    <li><strong>Competing PRs</strong>: searches open PRs addressing the same surface</li>
+    <li><strong>Claimed work</strong>: distinguishes active ownership from courtesy holds (bare offer older than 14 days with no follow-up)</li>
+  </ol>
+  <p>Survivors are tiered: maintainer direction > architectural > feature > bugfix > janitorial.</p>
+
+  <h3>Spec artifacts</h3>
+  <p>After target approval, planner agents write four files per target: an implementation plan with <code>file:line</code> anchors pinned to current HEAD, a PR body in the repo's observed format (passed via <code>--body-file</code>, never inline), an execution prompt for the coder agent (worktree setup, file allowlist, test commands, repo-specific gates), and optionally an issue file when no upstream issue exists.</p>
+
+  <h3>Code phase</h3>
+  <p>Before dispatching coders, the orchestrator audits the target set as a group, classifying each as independent, stacked, serialized, or hold. Only independent targets dispatch. Each coder works in an isolated git worktree. Workers stage but never commit; the orchestrator owns all commits after review passes. Each session re-verifies freshness independently to guard against batch staleness.</p>
+
+  <h3>Post-push convergence</h3>
+  <p>After any push or PR update, the skill that pushed hands off to <code>pr:converge</code> rather than running its own convergence logic. The loop polls every 2 minutes for at least 6 minutes: CI check state, merge state, PR comments, reviews, and review threads (GraphQL thread-level resolution). A complete poll cycle finishes before acting on any signal; if both a failing check and actionable feedback appear in the same cycle, the feedback is handled first since the resulting push gives a cleaner CI rerun.</p>
+  <p>Bot comments are fingerprinted (author + body hash) to avoid re-triaging. Stop conditions: 2 fix-push cycles per PR, 3 consecutive quiet poll cycles, fabricated results (immediate stop), or human maintainer signals like "duplicate" or "spam" (stop entire repo, trigger survival audit).</p>
+
+  <h3>Continuation guard</h3>
+  <p>Pipeline continuation is enforced at the harness level via Stop hooks, not by prompt instructions alone. Every subskill declares a Stop hook that calls a shared guard script. The guard inspects execution state and exits 0 (allow stop) or 2 (block stop with a reason). Only four markers can end a run: convergence complete, status reconciliation, approval gates (target selection, survival audit), and discovery complete with no candidates. Everything else is blocked. This decouples continuation discipline from model capability, so lighter models can run the pipeline without self-assessing as done prematurely.</p>
+
+  <h3>Per-repo config</h3>
+  <p>Four config files per repo: <strong>config</strong> (identifiers, git paths, test runner, bot definitions with trigger timing and triage rules, convergence intervals, quirks), <strong>find</strong> (search dimensions with verified label strings and issue counts, skip rules), <strong>style</strong> (conventions observed from actual merged PRs, each claim URL-cited), and <strong>templates</strong> (exact structure for artifact files, cross-file requirements).</p>
+
+  <h3>Data flow</h3>
+  <pre><code>GitHub Issues
+  └── pr:find        scout agents per search dimension, 5-gate filtering
+        └── pr:spec  planner agents → 4-file artifact bundle per target
+              └── pr:code     coder agents in isolated worktrees (stage only, never commit)
+                    └── pr:review   cross-provider adversarial review, commit, push, open PR
+                          └── pr:converge   poll CI + bots + reviews, fix-push cycles
+                                └── merged / pr:rework → pr:converge (on reviewer feedback)
+
+Stop hooks: continuation-guard.js blocks premature exit at every phase</code></pre>
+</div>
+
+<h2 class="doc-nav-target" id="prose">Prose Examples</h2>
+<div class="card">
+  <h3>pr-sweep</h3>
+  <p>Most recently, I built a multi-agent orchestration system that autonomously contributes to open-source projects end-to-end. It discovers issues, researches codebases, writes implementation specs, builds code in isolated worktrees, runs cross-provider adversarial reviews, opens PRs, then holds control through a convergence loop that triages CI failures, bot reviews, merge conflicts, and reviewer feedback until the PR is clean or a human decision is needed. Stop hooks enforce deterministic continuation at the harness level so the system can't self-assess as done and stop early. Over 200 PRs shipped to production across 3 repos at 97%+ acceptance.</p>
+
+  <h3>notes-ai</h3>
+  <p>Before that, I built an internal AI tool that pulls field technician service notes from a legacy database, streams them through GPT-4o to draft personalized customer emails (SSE with partial JSON parsing so results render progressively), and makes follow-up voice calls through the OpenAI Realtime API using a signed-URL pattern that keeps API keys server-side while giving the browser a direct WebSocket connection. Every note is SHA-1 fingerprinted, and that hash serves as the universal key across the in-memory cache, disk cache, Firebase primary key, and React Query cache.</p>
+
+  <h3>Why Nourish (application, June 2026)</h3>
+  <p>I'm interested in the idea of a system where AI agents, clinicians, and data work together to deliver care at scale. I've built internal platforms on a smaller scale, bridging legacy data back-ends with frontier models to write customer-facing communications and make phone calls. These are novel opportunities with broad applications; I've worked on solving some of these problems already, and am interested in applying my learnings on a larger scale.</p>
+
+  <h3>Most challenging project (application, June 2026)</h3>
+  <p>I build a scheduling engine for a company that deploys 100 technicians a day throughout the NYC metro area. It's a vehicle routing problem with additional constraints: time windows, geographic continuity, workload balance, tech-to-account relationships and service durations. The core algorithm is several thousand lines running in Node.js worker threads, doing gap-packing with weighted scoring, two-phase shift merging, and tech assignment with continuity scoring across days. There was no off-the-shelf solver or solution to do this, so I wrote it from scratch. The real challenge was solving for every optimization, since one dimension degrades another, and searching for the least-bad tradeoff across all of them simultaneously.</p>
+</div>
+
+<p class="footer">Updated June 21, 2026.</p>
+</main>
+<script src="doc-nav.js?v=ea01d90e"></script>
+</body>
+</html>

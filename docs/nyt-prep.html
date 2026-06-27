@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>Interview Prep: The New York Times</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+</head>
+<body class="pr">
+<main class="doc-page">
+<h1>Interview Prep: The New York Times</h1>
+<p class="subtitle">Senior Software Engineer, Frontend Video Advertising &middot; $140K&ndash;$160K base + 10% AIP + RSUs + sign-on &middot; NYC hybrid (or remote US) &middot; Recruiter: Emily Vlcek (internal, emily.vlcek@nytimes.com) &middot; via LinkedIn June 23, 2026</p>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="role-shape" type="button">Role Shape</button>
+    <button class="sort-pill" data-target="programmatic" type="button">Programmatic</button>
+    <button class="sort-pill" data-target="video" type="button">Video Ads</button>
+    <button class="sort-pill" data-target="identity" type="button">Identity</button>
+    <button class="sort-pill" data-target="performance" type="button">Performance</button>
+    <button class="sort-pill" data-target="standards" type="button">Standards</button>
+    <button class="sort-pill" data-target="ai" type="button">AI Tooling</button>
+    <button class="sort-pill" data-target="questions" type="button">Questions</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="role-shape">What This Role Actually Is</h2>
+<div class="card">
+  <p>This is a frontend-heavy senior IC on the Digital Advertising team, focused specifically on <strong>programmatic video ad products</strong>. The team builds the ad experiences that run across NYT's digital properties (web, apps, 150M+ monthly readers). Revenue team, not editorial.</p>
+
+  <h3>What the job is day-to-day</h3>
+  <ul>
+    <li>Building and optimizing video ad units (outstream and instream) that render inside NYT articles and pages</li>
+    <li>Working within the programmatic auction pipeline: header bidding, SSPs, DSPs, identity resolution</li>
+    <li>Monitoring and improving performance metrics: Core Web Vitals impact, time-to-first-frame, viewability</li>
+    <li>Ensuring compliance with IAB video ad standards (VAST, VPAID/SIMID)</li>
+    <li>Mentoring other engineers on programmatic concepts</li>
+  </ul>
+
+  <h3>Comp breakdown</h3>
+  <p>$140K&ndash;$160K base, plus 10% Annual Incentive Plan (bonus), plus RSUs, plus potential sign-on bonus. Emily mentioned sign-on flexibility to "bridge gaps." All-in comp likely $170K&ndash;$200K+ depending on RSU grant and sign-on. Remote US is an option per the listing.</p>
+
+  <h3>Interview process (from research)</h3>
+  <p>NYT uses a human-led process throughout, no proctored CodeSignal/HackerRank. Typical flow: recruiter screen, hiring manager call, then a final panel (4 rounds over 1&ndash;2 days). Expect: a technical round with live coding (easy/medium difficulty, practical problems), system design, code review, and behavioral interviews. Some teams offer a take-home instead of live coding. Questions tend to be domain-relevant rather than abstract algorithm puzzles.</p>
+</div>
+
+<h2 class="doc-nav-target" id="programmatic">Programmatic Advertising</h2>
+<div class="card">
+  <p>Programmatic advertising is automated, auction-based ad buying that happens in real time as a page loads. The JD expects deep familiarity with this ecosystem.</p>
+
+  <h3>How the auction works</h3>
+  <ol>
+    <li><strong>Page loads, ad slots declared:</strong> the publisher's page contains ad slots defined by size, position, and type (display, video). These are registered with an ad server (Google Ad Manager / GAM is the industry standard).</li>
+    <li><strong>Header bidding:</strong> before the ad server makes its decision, client-side JavaScript (Prebid.js is the dominant open-source wrapper) sends bid requests to multiple SSPs (Supply-Side Platforms) simultaneously. Each SSP forwards the request to DSPs (Demand-Side Platforms) representing advertisers. This happens in parallel, with a configurable timeout (typically 1&ndash;3 seconds).</li>
+    <li><strong>Bids return:</strong> each SSP/DSP responds with a bid (CPM price) and a creative (the actual ad content). Prebid collects bids, applies floor prices, and passes the winning bids as key-value pairs to the ad server.</li>
+    <li><strong>Ad server decision:</strong> GAM runs its own auction combining header bidding winners with its own demand (AdX/AdSense). The overall winner renders in the ad slot.</li>
+    <li><strong>Rendering:</strong> the winning creative (HTML, JS, VAST tag for video) renders inside an iframe or a video player in the ad slot.</li>
+  </ol>
+
+  <h3>Key concepts</h3>
+  <ul>
+    <li><strong>Prebid.js:</strong> open-source header bidding library. Publishers configure "bidder adapters" for each SSP they work with. Each adapter knows how to format bid requests and parse responses for that SSP's API. Prebid handles orchestration, timeouts, currency conversion, and passing results to the ad server.</li>
+    <li><strong>SSP (Supply-Side Platform):</strong> represents the publisher. Connects to multiple DSPs. Examples: Google AdX, Xandr (formerly AppNexus), Magnite (formerly Rubicon Project), Index Exchange, PubMatic, OpenX.</li>
+    <li><strong>DSP (Demand-Side Platform):</strong> represents the advertiser. Bids on impressions that match targeting criteria. Examples: The Trade Desk, DV360 (Google), Amazon DSP, MediaMath.</li>
+    <li><strong>CPM (Cost Per Mille):</strong> price per 1,000 impressions. A $10 CPM bid means the advertiser pays $10 for 1,000 ad views. Video CPMs are significantly higher than display ($15&ndash;$50+ vs $2&ndash;$10).</li>
+    <li><strong>Floor price:</strong> minimum bid the publisher will accept. Below the floor, the impression goes unsold (or falls through to lower-priority demand).</li>
+    <li><strong>Auction depth:</strong> how many bidders participate. More bidders increases competition (higher CPMs) but adds latency. The engineering tradeoff is yield vs. page performance.</li>
+    <li><strong>Yield:</strong> revenue per impression. Optimizing yield means maximizing CPM while maintaining fill rate (percentage of ad slots that actually show an ad). Technical decisions directly affect yield: identity match rates, auction timeout, bidder selection, ad slot viewability.</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="video">Video Ad Products</h2>
+<div class="card">
+  <p>The JD specifically calls out outstream and instream video, and mentions "video-first ad experiences." Video is the high-CPM format that publishers are aggressively expanding.</p>
+
+  <h3>Instream vs. outstream</h3>
+  <ul>
+    <li><strong>Instream:</strong> video ads that play within existing video content. Pre-roll (before the content), mid-roll (during), post-roll (after). The user came to watch video; the ad plays in the same player. NYT has editorial video content (documentaries, news clips); instream ads monetize that inventory.</li>
+    <li><strong>Outstream:</strong> video ads that exist independently of video content, embedded within text articles or other non-video pages. Types:
+      <ul>
+        <li><strong>In-read:</strong> a video ad unit that appears between paragraphs of an article. Typically auto-plays muted when scrolled into view, pauses when scrolled away.</li>
+        <li><strong>In-page:</strong> a fixed-position video unit (sticky player, corner player) that persists as the user scrolls.</li>
+        <li><strong>In-banner:</strong> a video creative rendered inside a standard display ad slot.</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>Video player engineering</h3>
+  <ul>
+    <li><strong>Player selection:</strong> publishers use players like Video.js (open source), JW Player, or custom implementations. The player handles media playback; an ad SDK (Google IMA, or a custom VAST parser) handles ad insertion.</li>
+    <li><strong>VAST parsing:</strong> the ad server returns a VAST XML document containing the video creative URL, tracking pixels, companion ads, and skip-offset rules. The player's ad SDK parses this, fetches the video file, and manages the ad lifecycle (impression, start, firstQuartile, midpoint, thirdQuartile, complete, skip events).</li>
+    <li><strong>Viewability:</strong> an ad impression only counts (and bills) if it meets viewability thresholds. IAB standard for video: 50% of pixels in viewport for 2 continuous seconds. Intersection Observer API is the browser primitive for this. Outstream units need to manage play/pause based on viewport visibility.</li>
+    <li><strong>Lazy loading:</strong> don't load heavy video player JS until the ad slot is approaching the viewport. Balance between "ready to play instantly when in view" and "don't tank page load with 500KB of player code above the fold."</li>
+  </ul>
+
+  <h3>Why outstream matters commercially</h3>
+  <p>NYT produces far more text articles than video content. Outstream lets them monetize article pages at video CPMs ($15&ndash;$50+) without needing editorial video for every article. It's a massive revenue multiplier. The engineering challenge is doing this without degrading the reading experience, which is NYT's core product.</p>
+</div>
+
+<h2 class="doc-nav-target" id="identity">Identity and Privacy</h2>
+<div class="card">
+  <p>The JD calls this out as a specific responsibility: "Design and implement solutions for identity resolution within the programmatic stack, ensuring high auction match rates while maintaining strict privacy standards."</p>
+
+  <h3>The post-cookie landscape</h3>
+  <p>Third-party cookies are deprecated or blocked in most browsers. Without cookies, DSPs can't identify users across sites, which collapses targeting precision and bid prices. The industry has developed alternative identity solutions:</p>
+  <ul>
+    <li><strong>UID2 (Unified ID 2.0):</strong> an open-source identity framework managed by The Trade Desk. Users provide an email address (e.g., through a login or newsletter signup); it's hashed and encrypted into a UID2 token. DSPs can match on UID2 across sites without third-party cookies. The token rotates and users can opt out. The publisher's job: collect authenticated user data (logins, subscriptions), generate UID2 tokens, and pass them in bid requests.</li>
+    <li><strong>LiveRamp RampID (formerly IdentityLink):</strong> a deterministic identity graph. Maps PII (email, phone) to a pseudonymous ID. LiveRamp's ATS (Authenticated Traffic Solution) sits on the publisher page, captures authenticated signals, and makes them available in the bidstream.</li>
+    <li><strong>Publisher first-party data:</strong> NYT has a massive advantage here: millions of logged-in subscribers. A subscriber's reading history, section preferences, and engagement patterns are first-party data that can power targeting without any cross-site tracking. This is the "identity resolution" the JD references: turning NYT's subscriber base into targetable, privacy-compliant audience segments.</li>
+  </ul>
+
+  <h3>Match rate</h3>
+  <p>"High auction match rates" means maximizing the percentage of ad requests where the user can be identified to a DSP. An unidentified user gets untargeted bids (lower CPMs). A matched user gets targeted bids (higher CPMs). Engineering levers: encouraging login/authentication, implementing multiple identity providers (UID2 + LiveRamp + first-party), passing identity signals correctly in bid requests, and handling consent (GDPR TCFV2, CCPA/CPRA) so that identity is only shared when the user has opted in.</p>
+
+  <h3>Privacy frameworks</h3>
+  <ul>
+    <li><strong>TCF v2 (Transparency and Consent Framework):</strong> IAB Europe standard. A CMP (Consent Management Platform) collects user consent; the TC string encodes which vendors and purposes the user consented to. Prebid and SSPs read the TC string to determine whether they can process the bid.</li>
+    <li><strong>GPP (Global Privacy Platform):</strong> IAB's unified framework replacing the patchwork of regional signals. Encodes GDPR, CCPA, and other regional consent in a single string.</li>
+    <li><strong>NYT context:</strong> as a global publication, NYT serves readers under GDPR (EU), CCPA/CPRA (California), and other regional privacy laws simultaneously. The ad stack must respect jurisdiction-specific consent requirements per-request.</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="performance">Performance Engineering</h2>
+<div class="card">
+  <p>The JD emphasizes Core Web Vitals and "time to first frame." Ad code is the #1 performance villain on most publisher sites. This role owns making video ads fast without breaking the reading experience.</p>
+
+  <h3>Core Web Vitals impact</h3>
+  <ul>
+    <li><strong>LCP (Largest Contentful Paint):</strong> ad-related JS that blocks the main thread delays LCP. Header bidding scripts (Prebid + bidder adapters) can add 200&ndash;500ms if not loaded asynchronously. Video player libraries (Video.js, IMA SDK) are heavy. Strategy: async loading, code splitting, lazy initialization for below-fold units.</li>
+    <li><strong>CLS (Cumulative Layout Shift):</strong> ad slots that resize after content renders cause layout shifts. Video outstream units are particularly bad: an in-read unit that expands a 0-height slot to 400px mid-scroll causes a massive CLS penalty. Fix: reserve space with aspect-ratio containers, use <code>content-visibility: auto</code> for off-screen units, animate expansion rather than instant resize.</li>
+    <li><strong>INP (Interaction to Next Paint):</strong> ad scripts running on the main thread during user interactions cause input delay. Heavy auction processing, creative rendering, and tracking pixel fires can block the thread. Strategy: yield to the main thread (<code>scheduler.yield()</code>, <code>requestIdleCallback</code>), move non-critical work to web workers, batch tracking events.</li>
+  </ul>
+
+  <h3>Time to first frame</h3>
+  <p>For outstream video, this is the critical metric: how fast does the video start playing once the unit is in view? The chain: viewport detection &rarr; initialize player &rarr; request ad (VAST call) &rarr; parse VAST &rarr; fetch video file &rarr; decode &rarr; render first frame. Each step is a latency source. Optimization: prefetch VAST response before viewport entry, preconnect to CDN origins, use lighter video codecs, start buffering early.</p>
+</div>
+
+<h2 class="doc-nav-target" id="standards">Industry Standards</h2>
+<div class="card">
+  <h3>VAST (Video Ad Serving Template)</h3>
+  <p>XML-based protocol (currently VAST 4.2) that defines how video ads are served. A VAST response contains:</p>
+  <ul>
+    <li>Media files: URLs to the actual video creatives in multiple formats/bitrates</li>
+    <li>Tracking events: URLs to ping at each lifecycle point (impression, start, quartiles, complete, skip, mute, unmute, pause, resume)</li>
+    <li>Click-through URL and companion ads</li>
+    <li>Ad verification scripts (OMID/Open Measurement for viewability)</li>
+    <li>Wrapper chains: a VAST response can point to another VAST URL (wrapper), creating a chain of redirects before reaching the actual creative (inline). Each hop adds latency.</li>
+  </ul>
+
+  <h3>VPAID vs. SIMID</h3>
+  <ul>
+    <li><strong>VPAID (Video Player-Ad Interface Definition):</strong> allows the ad creative to run arbitrary JavaScript inside the player. Originally designed for interactive ads. In practice, it became a vehicle for third-party measurement, fraud detection, and sometimes malicious code. Most publishers are deprecating VPAID because it's a performance and security liability.</li>
+    <li><strong>SIMID (Secure Interactive Media Interface Definition):</strong> VPAID's successor. The interactive ad runs in a sandboxed iframe, communicating with the player via <code>postMessage</code>. The player retains control; the ad can't manipulate the page. Better security, better performance, weaker adoption so far.</li>
+  </ul>
+
+  <h3>OMID (Open Measurement)</h3>
+  <p>IAB standard for third-party viewability and verification measurement. Instead of each verification vendor (MOAT, IAS, DoubleVerify) injecting their own scripts, they register with the OMID SDK, which provides standardized viewport and playback signals. Reduces the number of scripts running per ad.</p>
+</div>
+
+<h2 class="doc-nav-target" id="ai">AI-Assisted Coding</h2>
+<div class="card">
+  <p>The JD lists "Hands-on experience with agentic or AI-assisted coding tools (e.g., Claude Code or Cursor) including the ability to effectively direct, iterate on, and verify AI-generated output" as a basic qualification.</p>
+
+  <h3>What they're looking for</h3>
+  <p>This is the same "AI-native" signal as other current JDs: fluency with AI coding tools as a daily workflow, not a novelty. The specific mention of Claude Code and "agentic" tools suggests they care about more than autocomplete; they want engineers who can direct multi-step AI workflows (scaffold a component, write tests, refactor) and critically evaluate the output.</p>
+
+  <h3>NYT's internal AI culture</h3>
+  <p>NYT is actively investing in AI-assisted development. They have a DevEx Platforms team building "GenAI-augmented developer experiences" using Claude Code, Cursor, and Copilot, with a dedicated Senior Software Engineer role for GenAI developer tooling (LiteLLM routing, agent guardrails, telemetry). The organization is serious about this, not just checking a box.</p>
+
+  <p>Note from the JD: "We ask that you submit your own work and not use GenAI tools to generate substantive content during the application and interview process. If you're an Engineering candidate, we'll let you know what specific GenAI tools you are permitted to use for your technical assessment." They want you to use AI at work but demonstrate your own skills in the interview.</p>
+</div>
+
+<h2 class="doc-nav-target" id="questions">Questions to Ask</h2>
+<div class="card">
+  <ol>
+    <li>"What does the ad engineering team look like? How many engineers, and how is the team split between video and display?"</li>
+    <li>"What's the current tech stack for the video ad units? Custom player, Video.js, JW Player?"</li>
+    <li>"How does the team work with Prebid? Custom fork, standard open-source, or a managed wrapper?"</li>
+    <li>"What does the interview process look like after this call?"</li>
+    <li>"Would the team consider a corp-to-corp arrangement, or is this strictly W2?"</li>
+    <li>"The listing says NYC hybrid or remote US. Is there a preference?"</li>
+    <li>"What's the biggest technical challenge the team is working on right now?"</li>
+  </ol>
+</div>
+
+</main>
+<script src="doc-nav.js"></script>
+<script src="../assets/script.js?v=20260609u"></script>
+</body>
+</html>

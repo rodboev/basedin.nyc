@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>Interview Prep: SimpleClosure</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+</head>
+<body class="pr">
+<main class="doc-page">
+<h1>Interview Prep: SimpleClosure</h1>
+<p class="subtitle">Mid-Level Full Stack Engineer &middot; $120K&ndash;$170K + equity &middot; Midtown hybrid (2 days in office) &middot; Recruiter: Robyn Purvin (external, fractional) &middot; via LinkedIn June 23, 2026</p>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="company" type="button">Company</button>
+    <button class="sort-pill" data-target="domain" type="button">Domain</button>
+    <button class="sort-pill" data-target="stack" type="button">Stack</button>
+    <button class="sort-pill" data-target="compliance" type="button">Compliance</button>
+    <button class="sort-pill" data-target="third-party" type="button">Integrations</button>
+    <button class="sort-pill" data-target="ai-native" type="button">AI-Native</button>
+    <button class="sort-pill" data-target="questions" type="button">Questions</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="company">Company Context</h2>
+<div class="card">
+  <p>SimpleClosure was founded in 2023 by Nimrod and Dori, who went through the pain of shutting down a company themselves. The thesis: formation has Stripe Atlas, fundraising has AngelList, but dissolution has no equivalent. One million US businesses shut down annually, and the process involves coordinating across state filings, tax clearances, asset distribution, creditor notification, employee/contractor obligations, and regulatory compliance, typically handled by bouncing between lawyers and accountants with no single owner.</p>
+
+  <h3>Traction</h3>
+  <ul>
+    <li><strong>$15M Series A</strong> (2024/2025)</li>
+    <li><strong>Break-even:</strong> crossed seven figures in revenue and hit profitability, unusual for a Series A startup</li>
+    <li><strong>Fast Company Most Innovative Companies 2025</strong> (top 50)</li>
+    <li><strong>Headcount:</strong> ~20&ndash;30 people total. Engineering team is 6 engineers plus a Staff Engineer (Scott Stevens, joined Feb 2026). This hire would bring the team to ~8.</li>
+  </ul>
+
+  <h3>Engineering team</h3>
+  <p>Per The Org: 3 Senior Software Engineers (Brandon Durham, James Daubert, Synclair Wang), 3 Software Engineers (Aja Singer, Arthur Liu, Eric Wang), plus Staff Engineer Scott Stevens. Reports to the CTO directly. Small team, high ownership per person.</p>
+
+  <h3>Public repos</h3>
+  <p>GitHub org (<code>@simpleclosure</code>) has 5 public repos, three related to PDF generation: <code>react-pdf</code> (fork), <code>pdf-renderer</code>, <code>pdf-layout</code>. PDF generation is clearly a core technical problem; dissolution paperwork means generating legal documents programmatically.</p>
+</div>
+
+<h2 class="doc-nav-target" id="domain">Domain: Business Dissolution</h2>
+<div class="card">
+  <p>Shutting down a company is a multi-step, multi-party, jurisdiction-dependent workflow. The product automates and orchestrates what used to require manual coordination across legal, accounting, tax, and state agencies.</p>
+
+  <h3>What the workflow involves</h3>
+  <ul>
+    <li><strong>State filings:</strong> articles of dissolution, certificate of cancellation, or equivalent, varying by entity type (LLC, C-corp, S-corp) and state of incorporation. Delaware, California, New York each have different forms, fees, timelines, and prerequisites.</li>
+    <li><strong>Tax clearance:</strong> state and federal tax obligations must be settled before dissolution is accepted. IRS requires a final return (Form 966 for corps). States may require tax clearance certificates.</li>
+    <li><strong>Creditor notification:</strong> many states require formal notice to known creditors and sometimes published notice for unknown creditors. Statutes define minimum waiting periods (typically 60&ndash;120 days).</li>
+    <li><strong>Asset distribution:</strong> remaining assets distributed to shareholders/members after debts are settled. Order of priority is legally prescribed.</li>
+    <li><strong>Employee/contractor obligations:</strong> final paychecks, COBRA notifications, W-2 or 1099 preparation, benefits termination.</li>
+    <li><strong>Registered agent cancellation, EIN closure, bank account closure, SaaS subscription cancellation, IP disposition.</strong></li>
+  </ul>
+
+  <h3>What this means for the product</h3>
+  <p>The platform is a stateful workflow engine. Each dissolution is a long-running process (weeks to months) with dependencies between steps, jurisdiction-specific rules, waiting periods, and external blocking conditions. Think of it as a project management tool where the project template varies by entity type and state, steps have legal deadlines, and some steps require integration with government systems or third-party services.</p>
+</div>
+
+<h2 class="doc-nav-target" id="stack">Tech Stack</h2>
+<div class="card">
+  <p>Confirmed from the JD, LinkedIn tech signals, and infrastructure probes:</p>
+  <ul>
+    <li><strong>Frontend:</strong> React, TypeScript, Next.js (confirmed via CDN headers and JD preference). Tailwind CSS.</li>
+    <li><strong>Backend:</strong> Node.js. The JD says "APIs and data models," and the LinkedIn tech stack lists Python alongside TypeScript, so there may be Python services for specific tasks (document generation, data pipelines).</li>
+    <li><strong>Database:</strong> "relational and/or NoSQL." Snowflake appears in their LinkedIn tech stack (analytics/data warehouse). Primary transactional DB is unconfirmed; likely Postgres given the ecosystem.</li>
+    <li><strong>Infrastructure:</strong> Google Cloud (CDN confirmed), Docker. dbt and Fivetran for data pipeline/ETL.</li>
+    <li><strong>PDF generation:</strong> custom stack built on react-pdf (forked). Three repos dedicated to this. Legal document generation is a core feature.</li>
+    <li><strong>Integrations:</strong> Salesforce, HubSpot, Carta, Brex, Notion, Slack. Carta integration is notable since many shutting-down startups use Carta for cap table management.</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="compliance">Compliance Workflows as Code</h2>
+<div class="card">
+  <p>The JD asks for someone who can "translate requirements into scalable technical solutions." In this domain, the requirements are legal rules that vary by jurisdiction and change over time.</p>
+
+  <h3>The core engineering problem</h3>
+  <ul>
+    <li><strong>Rule engines:</strong> dissolution steps, prerequisites, deadlines, and required documents are governed by state statutes. Encoding these as data (rule tables, decision trees, state machines) rather than hardcoded conditionals makes the system maintainable as laws change and new states are added. A rule engine separates the "what" (legal requirements) from the "how" (execution logic).</li>
+    <li><strong>Workflow orchestration:</strong> steps have dependencies (can't file dissolution until tax clearance is obtained), waiting periods (creditor notice period must elapse), and external triggers (state agency responds). This is a DAG (directed acyclic graph) execution engine, similar to CI/CD pipelines or data orchestration tools like Airflow, but with human-in-the-loop steps and much longer timescales.</li>
+    <li><strong>Jurisdiction as configuration:</strong> the same logical step ("file articles of dissolution") has different concrete implementations per state. The system needs an abstraction layer where adding a new state means adding configuration, not rewriting application code.</li>
+    <li><strong>Audit trail:</strong> every action, decision, and state transition needs to be recorded immutably. When a dissolution is challenged or audited, the system needs to reconstruct exactly what happened and when.</li>
+  </ul>
+
+  <h3>Where this gets interesting</h3>
+  <p>SimpleClosure is essentially building legaltech infrastructure. The "simple" in the name is the UX goal; the underlying system is handling genuine complexity. This is the kind of product where getting the state machine wrong doesn't just cause a bug, it causes legal exposure for the client.</p>
+</div>
+
+<h2 class="doc-nav-target" id="third-party">Third-Party Integrations</h2>
+<div class="card">
+  <p>The JD calls out "connecting with third-party services" as a backend requirement. In this domain, integrations are load-bearing.</p>
+  <ul>
+    <li><strong>Carta:</strong> cap table management. When a company dissolves, equity needs to be resolved: cancel outstanding options, distribute remaining assets to shareholders per ownership percentages. Carta integration pulls the cap table and ownership data.</li>
+    <li><strong>Payroll/HR providers:</strong> final payroll runs, benefits termination, COBRA administration. ADP, Gusto, Rippling APIs.</li>
+    <li><strong>State agency portals:</strong> many states now accept electronic filings. Some have APIs; others require form-filling or even mailed documents. This is where document generation (the PDF repos) becomes critical.</li>
+    <li><strong>Banking:</strong> Brex is in their stack. Account closure, final disbursements, wire transfers for asset distribution.</li>
+    <li><strong>Accounting:</strong> QuickBooks, Xero integration for final financial statements and tax preparation data.</li>
+  </ul>
+
+  <h3>Integration engineering patterns</h3>
+  <p>Each third-party integration is a boundary with different reliability characteristics, rate limits, authentication schemes, and data formats. Standard patterns: adapter layer (normalize external APIs to internal interfaces), retry with exponential backoff, circuit breakers for degraded external services, webhook receivers for async callbacks, idempotency keys to prevent duplicate operations on retry.</p>
+</div>
+
+<h2 class="doc-nav-target" id="ai-native">AI-Native Development</h2>
+<div class="card">
+  <p>The JD lists "AI-Native: Familiar with latest agentic and coding technologies, trusts but verifies model outputs" as a desired qualification. This is a cultural signal more than a technical requirement.</p>
+
+  <h3>What "AI-native" means at a startup this size</h3>
+  <ul>
+    <li><strong>Coding with AI tooling:</strong> Cursor, Copilot, Claude Code as daily drivers. The expectation is that you use these fluently to move faster, not that you're building AI features.</li>
+    <li><strong>"Trusts but verifies":</strong> they want engineers who leverage AI output without rubber-stamping it. Generate code, review it critically, ship what's correct. The emphasis on "well-tested code" in the responsibilities section pairs with this: AI generates, tests validate, human judges.</li>
+    <li><strong>Potential AI features:</strong> document understanding (parsing existing legal documents to extract obligations), automated form filling (generating state-specific filings from structured data), classification (determining which dissolution path applies based on entity characteristics). These are plausible product directions, though the JD doesn't specify them.</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="questions">Questions to Ask</h2>
+<div class="card">
+  <ol>
+    <li>"How is the engineering team organized? Is there a frontend/backend split, or does everyone work full-stack?"</li>
+    <li>"What does the backend stack look like in more detail? The JD mentions APIs; is that Node.js, Python, or both?"</li>
+    <li>"What does the interview process look like after this call?"</li>
+    <li>"Is there flexibility on the level? My experience is well beyond the 3&ndash;5 year range."</li>
+    <li>"Would SimpleClosure consider a corp-to-corp arrangement, or is this strictly W2?"</li>
+    <li>"What are the biggest technical challenges the team is working on right now?"</li>
+    <li>"Is this a new headcount from the Series A, or backfilling someone?"</li>
+  </ol>
+</div>
+
+</main>
+<script src="doc-nav.js"></script>
+<script src="../assets/script.js?v=20260609u"></script>
+</body>
+</html>

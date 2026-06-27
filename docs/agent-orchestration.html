@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>What Agent Orchestration Platforms Get Wrong</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="pr">
+
+<div class="top-row">
+  <h1><a class="back-link" href="../docs/"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>What Agent Orchestration Platforms Get Wrong</h1>
+</div>
+
+<div class="doc-page">
+
+<p>Every new agent platform pitches the same thing: run a hundred agents, watch them on a dashboard, scale beyond headcount. It's an infrastructure play that makes sense, but the result is practically guaranteed to be sub-par at best, or a disaster at worst. The problems are only obvious when you go to production, yet none of the platforms are trying to solve them.</p>
+
+<p>That goes for all of them: <a href="https://github.com/smtg-ai/claude-squad">Claude Squad</a>, <a href="https://github.com/mixpeek/amux">amux</a>, <a href="https://github.com/microsoft/conductor">Conductor</a>, <a href="https://github.com/AgentsMesh/AgentsMesh">AgentsMesh</a>, <a href="https://github.com/ruvnet/claude-flow">claude-flow</a>, <a href="https://github.com/nwiizo/ccswarm">ccswarm</a>.</p>
+
+<p>The technical parts (git worktrees, watchdogs, task boards, dashboards, fleet management) work well in isolation to prevent file conflicts, restart crashed sessions, and track assignments, but they operate on a flawed premise: that an agent session will come back with good output, given N dice-rolls, just because it runs to completion.</p>
+
+<p>The problems at scale range from subtle bugs that grow tech debt, to full-on reputational damage.</p>
+
+<h2>What's needed</h2>
+
+<p>These problems have solutions, and those solutions belong in the harness. No platform includes them yet. The first core principles I use are:</p>
+
+<ul>
+<li>Deterministic gating between phases</li>
+<li>Cross-provider adversarial review</li>
+<li>Convergence loops that hold work open until CI, reviewers, and bots all agree it's done</li>
+</ul>
+
+<svg viewBox="0 0 960 560" xmlns="http://www.w3.org/2000/svg" width="960" height="560" style="max-width:100%;height:auto;display:block;margin-top:1.5rem;font-family:system-ui,-apple-system,sans-serif">
+  <defs>
+    <marker id="arr2" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto"><path d="M0,0 L10,3.5 L0,7z" fill="#52b788"/></marker>
+    <marker id="arr2-f" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto"><path d="M0,0 L10,3.5 L0,7z" fill="#c06060"/></marker>
+  </defs>
+
+  <!-- Row 1 background -->
+  <rect x="8" y="8" width="944" height="210" rx="10" fill="#081c15" stroke="#1b4332"/>
+  <text x="22" y="28" fill="#3a7a5a" font-size="10" font-weight="700" letter-spacing="1.5">PIPELINE</text>
+
+  <!-- Research -->
+  <rect x="16" y="40" width="150" height="160" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="91" y="68" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Research</text>
+  <text x="91" y="91" text-anchor="middle" fill="#95d5b2" font-size="11">architecture scan</text>
+  <text x="91" y="109" text-anchor="middle" fill="#95d5b2" font-size="11">style norms</text>
+  <text x="91" y="127" text-anchor="middle" fill="#95d5b2" font-size="11">search dimensions</text>
+  <text x="91" y="145" text-anchor="middle" fill="#95d5b2" font-size="11">overlay configs</text>
+  <text x="91" y="163" text-anchor="middle" fill="#95d5b2" font-size="11">bot ecosystems</text>
+
+  <line x1="166" y1="120" x2="188" y2="120" stroke="#52b788" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+  <!-- Find -->
+  <rect x="190" y="40" width="155" height="160" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="267" y="68" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Find</text>
+  <text x="267" y="91" text-anchor="middle" fill="#95d5b2" font-size="11">scouts per dimension</text>
+  <text x="267" y="109" text-anchor="middle" fill="#95d5b2" font-size="11">freshness gate</text>
+  <text x="267" y="127" text-anchor="middle" fill="#95d5b2" font-size="11">issue-thread analysis</text>
+  <text x="267" y="145" text-anchor="middle" fill="#95d5b2" font-size="11">competing-PR search</text>
+  <text x="267" y="163" text-anchor="middle" fill="#95d5b2" font-size="11">claimed-work filter</text>
+
+  <line x1="345" y1="120" x2="367" y2="120" stroke="#52b788" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+  <!-- Architecture Decision -->
+  <rect x="369" y="40" width="160" height="160" rx="8" fill="#1b4332" stroke="#d4a040" stroke-width="1.5"/>
+  <text x="449" y="66" text-anchor="middle" fill="#e8e8e8" font-size="13" font-weight="600">Architecture Decision</text>
+  <text x="449" y="80" text-anchor="middle" fill="#d4a040" font-size="9">when concern hits 3+ paths</text>
+  <text x="449" y="98" text-anchor="middle" fill="#95d5b2" font-size="10">semantic surface</text>
+  <text x="449" y="112" text-anchor="middle" fill="#95d5b2" font-size="10">application count</text>
+  <text x="449" y="126" text-anchor="middle" fill="#95d5b2" font-size="10">amplification assessment</text>
+  <text x="449" y="140" text-anchor="middle" fill="#95d5b2" font-size="10">ownership decision</text>
+  <text x="449" y="154" text-anchor="middle" fill="#95d5b2" font-size="10">consumer map</text>
+  <text x="449" y="168" text-anchor="middle" fill="#95d5b2" font-size="10">invariants</text>
+  <text x="449" y="182" text-anchor="middle" fill="#95d5b2" font-size="10">bypass risks</text>
+
+  <line x1="529" y1="120" x2="551" y2="120" stroke="#52b788" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+  <!-- Spec Competition -->
+  <rect x="553" y="40" width="165" height="160" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="635" y="68" text-anchor="middle" fill="#e8e8e8" font-size="14" font-weight="600">Spec Competition</text>
+  <text x="635" y="91" text-anchor="middle" fill="#95d5b2" font-size="11">A + B → C synthesis</text>
+  <text x="635" y="109" text-anchor="middle" fill="#95d5b2" font-size="11">approach comparison table</text>
+  <text x="635" y="127" text-anchor="middle" fill="#95d5b2" font-size="11">proof matrix</text>
+  <text x="635" y="145" text-anchor="middle" fill="#95d5b2" font-size="11">test surfaces</text>
+  <text x="635" y="163" text-anchor="middle" fill="#95d5b2" font-size="11">structural validator</text>
+
+  <line x1="718" y1="120" x2="740" y2="120" stroke="#52b788" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+  <!-- Code -->
+  <rect x="742" y="40" width="170" height="160" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="827" y="68" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Code</text>
+  <text x="827" y="91" text-anchor="middle" fill="#95d5b2" font-size="11">isolated worktrees</text>
+  <text x="827" y="109" text-anchor="middle" fill="#95d5b2" font-size="11">mandatory test coverage</text>
+  <text x="827" y="127" text-anchor="middle" fill="#95d5b2" font-size="11">proof matrix execution</text>
+  <text x="827" y="145" text-anchor="middle" fill="#95d5b2" font-size="11">regression contracts</text>
+  <text x="827" y="163" text-anchor="middle" fill="#95d5b2" font-size="11">workers never commit</text>
+
+  <!-- Code → Review connector -->
+  <polyline points="775,200 775,270 117,270 117,336" fill="none" stroke="#52b788" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+  <!-- Gate fail → Code connector -->
+  <polyline points="310,330 310,290 870,290 870,202" fill="none" stroke="#c06060" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arr2-f)"/>
+  <text x="595" y="284" text-anchor="middle" fill="#c06060" font-size="10">fail</text>
+
+  <!-- Row 2 background -->
+  <rect x="8" y="312" width="944" height="215" rx="10" fill="#081c15" stroke="#1b4332"/>
+  <text x="22" y="332" fill="#3a7a5a" font-size="10" font-weight="700" letter-spacing="1.5">QUALITY LOOP</text>
+
+  <!-- Adversarial Review -->
+  <rect x="20" y="344" width="195" height="140" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="117" y="374" text-anchor="middle" fill="#e8e8e8" font-size="14" font-weight="600">Adversarial Review</text>
+  <text x="117" y="397" text-anchor="middle" fill="#95d5b2" font-size="11">cross-provider pass</text>
+  <text x="117" y="415" text-anchor="middle" fill="#95d5b2" font-size="11">same-family pass</text>
+  <text x="117" y="433" text-anchor="middle" fill="#95d5b2" font-size="11">call-site tracing</text>
+  <text x="117" y="451" text-anchor="middle" fill="#95d5b2" font-size="11">import verification</text>
+  <text x="117" y="469" text-anchor="middle" fill="#95d5b2" font-size="11">stale assertion detection</text>
+
+  <line x1="217" y1="414" x2="266" y2="414" stroke="#52b788" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+  <!-- Gate (diamond) -->
+  <polygon points="310,372 358,414 310,456 262,414" fill="#14291e" stroke="#d4a040" stroke-width="1.5"/>
+  <text x="310" y="410" text-anchor="middle" fill="#e8e8e8" font-size="13" font-weight="600">Gate</text>
+  <text x="310" y="426" text-anchor="middle" fill="#d4a040" font-size="10">7 rules</text>
+
+  <line x1="360" y1="414" x2="408" y2="414" stroke="#52b788" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="384" y="405" text-anchor="middle" fill="#52b788" font-size="9" font-weight="600">publish</text>
+
+  <!-- Converge -->
+  <rect x="410" y="344" width="190" height="140" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="505" y="374" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Converge</text>
+  <text x="505" y="397" text-anchor="middle" fill="#95d5b2" font-size="11">CI status polling</text>
+  <text x="505" y="415" text-anchor="middle" fill="#95d5b2" font-size="11">bot triage</text>
+  <text x="505" y="433" text-anchor="middle" fill="#95d5b2" font-size="11">maintainer feedback</text>
+  <text x="505" y="451" text-anchor="middle" fill="#95d5b2" font-size="11">per-repo timing</text>
+  <text x="505" y="469" text-anchor="middle" fill="#95d5b2" font-size="11">quiet-window check</text>
+
+  <line x1="602" y1="414" x2="658" y2="414" stroke="#52b788" stroke-width="1.5" marker-end="url(#arr2)"/>
+  <text x="630" y="405" text-anchor="middle" fill="#52b788" font-size="9" font-weight="600">feedback</text>
+
+  <!-- Rework -->
+  <rect x="660" y="359" width="175" height="110" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="747" y="392" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Rework</text>
+  <text x="747" y="415" text-anchor="middle" fill="#95d5b2" font-size="11">diagnose failure</text>
+  <text x="747" y="433" text-anchor="middle" fill="#95d5b2" font-size="11">plan · fix · push</text>
+  <text x="747" y="451" text-anchor="middle" fill="#95d5b2" font-size="11">thread resolution</text>
+
+  <!-- Rework → Review loop -->
+  <path d="M 660,434 C 520,514 280,514 215,426" fill="none" stroke="#52b788" stroke-width="1.5" marker-end="url(#arr2)"/>
+</svg>
+
+<h2>Results</h2>
+
+<p>A pipeline built this way can hit 98% acceptance across hundreds of PRs, with no human in the loop after target selection. (<a href="https://basedin.nyc/pr-stats">basedin.nyc/pr-stats</a>, more details at the bottom.) I also use two principles upstream of implementation:</p>
+
+<ul>
+<li>Deep dives to build knowledge graphs of each project's architecture, used to identify search dimensions during target discovery</li>
+<li>Cross-provider spec competition, where two or more models independently plan the same implementation, and a validator blocks progressing unless the architecture is sound</li>
+</ul>
+
+<p>This approach helps combat a slew of problems:</p>
+
+<h2>Agents declare success without evidence</h2>
+
+<p>For this, I use a continuation guard written in Node.js that hooks into the model's turn boundary. Every time it tries to stop, the guard checks a status tracker for incomplete stages, and the script kicks the agent back into the loop with a prompt to finish incomplete work. The model can't reason its way past it, and this makes cheaper models viable drop-in replacements for implementation. The script works with the harness to decide when work is done, not the model.</p>
+
+<h2>Lack of planning</h2>
+
+<p>Two providers independently write implementation specs; the validator rejects unsound architecture. The synthesized plan includes an approach comparison table showing why the final plan is stronger than either input. Each execution prompt carries a proof matrix defining the evidence the implementation must produce:</p>
+
+<ul>
+<li>behavioral proof (source inspection alone is rejected) and, for bug fixes:</li>
+<li>reproduction anchors</li>
+<li>root-cause evidence</li>
+<li>regression tests that fail on the base branch and pass in the worktree</li>
+</ul>
+
+<p>Every new function, method, or error path requires a covering test. The proof matrix declares the required surfaces; uncovered code paths beyond those still need tests. These requirements carry forward into review, where each pass verifies they were met.</p>
+
+<h2>Confirmation bias</h2>
+
+<p>Same model-family review is an echo chamber where agents always approve their own outputs. It doesn't matter if the review happens in an agent session or a totally separate pass on the same provider because the weights and biases carry over. Cross-provider reviews break the pattern: one provider reviews another's code, then a different model family reviews the post-fix branch state.</p>
+
+<p>Each pass produces artifacts that run through a deterministic gate (a subprocess, not a prompt) that classifies each review as substantive or malformed based on structural rules: coordination chatter, findings without file references, contradictory clean/dirty state, clean verdicts without trace evidence.</p>
+
+<p>Reviews are scoped to concrete verification tasks:</p>
+
+<ul>
+<li>call-site tracing into unchanged files</li>
+<li>import path verification</li>
+<li>lifecycle completeness checks when new runtime state is introduced</li>
+<li>stale string-assertion detection</li>
+<li>regression proof validation</li>
+</ul>
+
+<p>The gate re-fires after every code change, so a fix that introduces a new problem restarts the cycle rather than sliding through on stale approval. Publish is blocked unless all passes clear.</p>
+
+<h2>No follow-up</h2>
+
+<p>The work is never done when the code is pushed. Integration tests run locally in the real environment before going upstream for CI. End-to-end verification happens there, on the repo's actual infrastructure. A convergence loop polls CI status, merge state, bot reviews, and maintainer feedback on a per-repo cycle tuned to each project's CI timing, bot ecosystem, and approval gates.</p>
+
+<p>Some repos need coverage reports to land before the loop can evaluate; others auto-close PRs on compliance violations within hours. The convergence loop diagnoses CI failures, responds to bot findings, and addresses maintainer feedback. The PR reaches "done" only once every external signal is clean through a quiet window.</p>
+
+<h2>What's missing</h2>
+
+<p>Perhaps it's still early days, but the agent orchestration platforms are working on the wrong problem. One founder's Twitter is a stream of commits fixing the same quality problems his product promises to solve.</p>
+
+<p>Worktrees, watchdogs, and sandboxes solve real problems, but they are easy ones. The hard problems are solved on the other side of the gap; those are the ones humans still consider to be their province: quality judgment, verification, and engineering discipline.</p>
+
+<p>These are mechanical problems too, just more complex ones:</p>
+
+<ul>
+<li>Continuation guards that block premature completion</li>
+<li>Cross-provider spec competitions that survive structural validation</li>
+<li>Proof contracts with mandatory test coverage</li>
+<li>Adversarial review through deterministic gates</li>
+<li>Convergence loops that hold PRs open until CI, bots, and maintainers all sign off</li>
+</ul>
+
+<p>Every gate is a subprocess the model can't talk its way past. This is where the real work is happening.</p>
+
+<p>300+ PRs, 250+ merged, 98% acceptance rate across 5 open-source repos, in 25 active days.<br />Full breakdown at <a href="https://basedin.nyc/pr-stats">basedin.nyc/pr-stats</a>.</p>
+
+<p class="footer" style="margin-top: 3rem">Rod Boev · <a href="https://basedin.nyc/pr-stats/">Stats</a> · June 2026</p>
+
+</div>
+
+</body>
+</html>

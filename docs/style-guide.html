@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>Documentation Style Guide</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+</head>
+<body class="pr">
+<main class="doc-page">
+<h1>Documentation Style Guide</h1>
+<p class="subtitle">Shared document patterns for pages under <code>basedin.nyc</code>. This guide now reflects the real stylesheet used by <a href="../pr-targets/">pr-targets</a> and <a href="../pr-stats/">pr-stats</a>.</p>
+
+<h2>Integration</h2>
+<div class="section">
+  <p>Documentation pages are no longer self-contained. They inherit the shared site stylesheet and the same <code>body.pr</code> surface used by the PR pages.</p>
+  <pre><code>&lt;meta name="darkreader-lock" /&gt;
+&lt;meta name="color-scheme" content="light dark" /&gt;
+&lt;link rel="stylesheet" href="../style.css?v=52940991"&gt;
+&lt;body class="pr"&gt;
+  &lt;main class="doc-page"&gt;
+    ...
+  &lt;/main&gt;
+&lt;/body&gt;</code></pre>
+  <p>Do not embed a separate <code>&lt;style&gt;</code> block. Do not add extra font imports. The shared stylesheet already owns typography, color tokens, cards, tables, notes, code blocks, and pills.</p>
+  <p>Prefer the shared components aggressively. If a document is just a stack of plain headings and paragraphs, it is probably under-using the system.</p>
+</div>
+
+<h2>Color System</h2>
+<div class="card">
+  <pre><code>--pr-bg
+--pr-card
+--pr-border
+--pr-text
+--pr-dim
+--pr-link
+--pr-green
+--pr-red
+--pr-yellow
+--pr-blue
+--pr-purple</code></pre>
+  <p>The page switches automatically between light and dark mode through the shared stylesheet. Docs should consume these tokens indirectly through classes instead of defining their own palette.</p>
+</div>
+
+<h2>Core Layout</h2>
+<table>
+  <tr><th>Element</th><th>Use</th></tr>
+  <tr><td><code>body.pr</code></td><td>Shared document shell with the PR page typography and tokens.</td></tr>
+  <tr><td><code>main.doc-page</code></td><td>Wraps document content and enables shared paragraph, list, code, and blockquote spacing.</td></tr>
+  <tr><td><code>.subtitle</code></td><td>Muted line directly under the page title.</td></tr>
+  <tr><td><code>.grid</code> + <code>.stat-card</code></td><td>Dashboard metrics and compact summaries.</td></tr>
+  <tr><td><code>.section</code></td><td>General prose section in a bordered card.</td></tr>
+  <tr><td><code>.card</code></td><td>Reusable content block with optional header/meta treatment.</td></tr>
+  <tr><td><code>h2</code> + <code>.card</code></td><td>Default document rhythm: heading above the box, content inside the box.</td></tr>
+  <tr><td><code>.footer</code></td><td>Muted closing metadata line.</td></tr>
+</table>
+
+<h2>Reusable Components</h2>
+
+<h3>Cards</h3>
+<div class="card">
+  <div class="card-header">
+    <h3>Card Title</h3>
+    <span class="badge badge-blue">Optional badge</span>
+  </div>
+  <p class="meta"><span>Muted metadata</span><span>dot-separated</span><span>when wrapped in spans</span></p>
+  <p>Use <code>.card</code> for self-contained ideas, rankings, or grouped document content. Use <code>.card-header</code> when the title needs a right-aligned badge or metadata.</p>
+</div>
+
+<h3>Notes and Warnings</h3>
+<div class="section-note">
+  General context or guidance lives in <code>.section-note</code>.
+</div>
+<div class="section-note warn">
+  Use <code>.section-note.warn</code> for caveats and gotchas.
+</div>
+<div class="section-note todo">
+  Use <code>.section-note.todo</code> for blockers or follow-up actions.
+</div>
+
+<h3>Badges and Tags</h3>
+<p>Use badges inside documents when you need compact semantic labels. Use the existing PR page <code>.tag</code> classes for lifecycle states like shipped/open/lost, and the shared <code>.badge-*</code> classes for broader document labeling.</p>
+<p>
+  <span class="badge badge-green">Done</span>
+  <span class="badge badge-yellow">Partial</span>
+  <span class="badge badge-red">Blocked</span>
+  <span class="badge badge-blue">Info</span>
+  <span class="badge badge-purple">Category</span>
+</p>
+
+<h3>Status Grids</h3>
+<div class="status-grid">
+  <div class="status-item">
+    <div class="label">Metric</div>
+    <div class="value green">Healthy</div>
+  </div>
+  <div class="status-item">
+    <div class="label">Another Metric</div>
+    <div class="value">42</div>
+  </div>
+</div>
+<p>Use <code>.status-grid</code> and <code>.status-item</code> when the page needs a compact dashboard before the narrative sections begin.</p>
+
+<h2>Pill Controls</h2>
+<div class="section">
+  <p>Pills are the shared affordance for single-choice table controls. They live in <code>.sort-pills</code>, each control is a <code>.sort-pill</code>, and the current choice gets <code>.active</code>.</p>
+  <p>Do not use pills to hide ordinary document sections. If the page is a narrative draft, checklist, or reference doc, keep the content visible and use pills only as short jump navigation.</p>
+  <p><strong>Actual uses in the site today:</strong></p>
+  <ul>
+    <li><a href="../pr-targets/">pr-targets</a> uses pills to re-sort one table by <code>composite</code>, <code>ci</code>, <code>domain</code>, <code>velocity</code>, and <code>size</code>.</li>
+    <li><a href="../pr-stats/">pr-stats</a> uses the same pill component to filter one table by status buckets such as <code>shipped</code> and <code>open</code>.</li>
+    <li>Section-heavy docs in <code>/docs</code> use the same pill styling as anchor navigation with short labels like <code>Headline</code>, <code>About</code>, and <code>Skills</code>.</li>
+  </ul>
+</div>
+
+<h3>Re-sort Pattern</h3>
+<div class="landscape-row">
+  <h2>Full Landscape</h2>
+  <div class="sort-pills">
+    <div class="sort-pill active">Composite</div>
+    <div class="sort-pill">CI</div>
+    <div class="sort-pill">Velocity</div>
+  </div>
+</div>
+<pre><code>&lt;div class="landscape-row"&gt;
+  &lt;h2&gt;Full Landscape&lt;/h2&gt;
+  &lt;div class="sort-pills" id="sort-pills"&gt;
+    &lt;div class="sort-pill active" data-sort="composite"&gt;Composite&lt;/div&gt;
+    &lt;div class="sort-pill" data-sort="ci"&gt;CI&lt;/div&gt;
+    &lt;div class="sort-pill" data-sort="velocity"&gt;Velocity&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<p>Use this when the data set stays the same and only the ordering changes. Keep the pills adjacent to the heading for the content they control.</p>
+
+<h3>Section Navigation Pattern</h3>
+<pre><code>&lt;div class="landscape-row" data-doc-nav&gt;
+  &lt;h2&gt;Sections&lt;/h2&gt;
+  &lt;div class="sort-pills"&gt;
+    &lt;button class="sort-pill active" data-target="headline" type="button"&gt;Headline&lt;/button&gt;
+    &lt;button class="sort-pill" data-target="about" type="button"&gt;About&lt;/button&gt;
+    &lt;button class="sort-pill" data-target="skills" type="button"&gt;Skills&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2 class="doc-nav-target" id="headline"&gt;Headline&lt;/h2&gt;
+&lt;div class="card"&gt;...&lt;/div&gt;
+
+&lt;h2 class="doc-nav-target" id="about"&gt;About&lt;/h2&gt;
+&lt;div class="card"&gt;...&lt;/div&gt;
+
+&lt;script src="doc-nav.js?v=ea01d90e"&gt;&lt;/script&gt;</code></pre>
+<p>Use this for standard docs where every section should remain visible. Pills should be terse and should scroll to the section, not show and hide cloned copies of the content.</p>
+
+<h3>View Toggle Pattern</h3>
+<pre><code>&lt;div class="landscape-row"&gt;
+  &lt;h2&gt;Views&lt;/h2&gt;
+  &lt;div class="sort-pills" id="view-pills"&gt;
+    &lt;button class="sort-pill active" data-view="summary" type="button"&gt;Summary&lt;/button&gt;
+    &lt;button class="sort-pill" data-view="details" type="button"&gt;Details&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="section" data-view-panel="summary"&gt;...&lt;/div&gt;
+&lt;div class="section" data-view-panel="details" hidden&gt;...&lt;/div&gt;</code></pre>
+<pre><code>var pills = document.getElementById('view-pills');
+pills.addEventListener('click', function (event) {
+  var pill = event.target.closest('.sort-pill');
+  if (!pill) return;
+  var view = pill.getAttribute('data-view');
+  pills.querySelectorAll('.sort-pill').forEach(function (node) {
+    node.classList.toggle('active', node === pill);
+  });
+  document.querySelectorAll('[data-view-panel]').forEach(function (panel) {
+    panel.hidden = panel.getAttribute('data-view-panel') !== view;
+  });
+});</code></pre>
+<p>Reserve hide/show view toggles for genuinely mutually exclusive content states. If a reader benefits from seeing all sections in one pass, do not use this pattern.</p>
+
+<h3>Pill Rules</h3>
+<ul>
+  <li>One active pill only.</li>
+  <li>Place pills inside the same visual block as the content they control, usually a <code>.landscape-row</code>.</li>
+  <li>Prefer terse labels: sort key, status bucket, or view name.</li>
+  <li>Include counts in labels only when they are stable and helpful, as in <a href="../pr-stats/">pr-stats</a>.</li>
+  <li>If you use real <code>&lt;button&gt;</code> elements for accessibility, keep the same <code>.sort-pill</code> class and toggle <code>.active</code>.</li>
+  <li>For document navigation, keep labels short and use the shared <code>doc-nav.js</code> script plus <code>.doc-nav-target</code> on the destination headings.</li>
+  <li>Do not duplicate section content into hidden pill panels just to make the pills work.</li>
+</ul>
+
+<h2>Markdown Mapping</h2>
+<table>
+  <tr><th>Markdown</th><th>HTML Output</th></tr>
+  <tr><td><code>#</code>, <code>##</code>, <code>###</code></td><td>Standard headings inside <code>main.doc-page</code>.</td></tr>
+  <tr><td>Paragraphs and lists</td><td>Plain <code>&lt;p&gt;</code>, <code>&lt;ul&gt;</code>, and <code>&lt;ol&gt;</code>; shared spacing comes from <code>body.pr</code>.</td></tr>
+  <tr><td>Code fences</td><td><code>&lt;pre&gt;&lt;code&gt;</code> on the shared code surface.</td></tr>
+  <tr><td>ASCII diagrams</td><td>Always wrap them in <code>&lt;pre&gt;&lt;code&gt;</code>. Do not place ASCII art in plain <code>&lt;div&gt;</code> or paragraph text.</td></tr>
+  <tr><td>Inline code</td><td><code>&lt;code&gt;</code> with muted inline background.</td></tr>
+  <tr><td>Blockquotes</td><td>Plain <code>&lt;blockquote&gt;</code> with left rule.</td></tr>
+  <tr><td>Horizontal rules</td><td>Plain <code>&lt;hr&gt;</code>.</td></tr>
+  <tr><td>Tables</td><td>Standard <code>&lt;table&gt;</code>; shared stylesheet handles borders and headers.</td></tr>
+</table>
+
+<h2>Boilerplate</h2>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;meta name="darkreader-lock" /&gt;
+  &lt;meta name="color-scheme" content="light dark" /&gt;
+  &lt;title&gt;Page Title&lt;/title&gt;
+  &lt;link rel="stylesheet" href="../style.css?v=52940991"&gt;
+&lt;/head&gt;
+&lt;body class="pr"&gt;
+  &lt;main class="doc-page"&gt;
+    &lt;h1&gt;Page Title&lt;/h1&gt;
+    &lt;p class="subtitle"&gt;Optional subtitle&lt;/p&gt;
+    ...
+    &lt;p class="footer"&gt;Source: file.md · Generated June 7, 2026&lt;/p&gt;
+  &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<p class="footer">Updated June 8, 2026. Use this guide when generating or revising docs under <code>basedin.nyc/docs</code>.</p>
+</main>
+</body>
+</html>

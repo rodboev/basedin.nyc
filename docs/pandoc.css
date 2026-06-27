@@ -1,0 +1,64 @@
+/* Pandoc-specific overrides — loaded after ../style.css to patch pandoc's HTML output */
+
+/* Pandoc wraps content in <main class="doc-page"> via --before-body,
+   but its default standalone template adds its own body/header styles.
+   These rules normalize pandoc output to match hand-authored pages. */
+
+/* Pandoc generates .subtitle from subtitle metadata as a <p> */
+.subtitle {
+  color: var(--pr-dim);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+/* Pandoc generates <h1 class="title"> for the document title */
+h1.title {
+  margin-bottom: 0.5rem;
+}
+
+/* Pandoc wraps the title/subtitle in a <header> — flatten it */
+header#title-block-header {
+  margin: 0;
+  padding: 0;
+}
+
+/* Pandoc code blocks use .sourceCode; inherit the site card style */
+div.sourceCode {
+  background: var(--pr-card);
+  border: 1px solid var(--pr-border);
+  border-radius: 8px;
+  padding: 0.95rem 1rem;
+  overflow-x: auto;
+  margin: 0.75rem 0 1rem;
+}
+
+div.sourceCode pre {
+  margin: 0;
+  border: none;
+  padding: 0;
+  background: transparent;
+}
+
+/* Pandoc footnotes */
+section.footnotes {
+  margin-top: 2rem;
+  border-top: 1px solid var(--pr-border);
+  padding-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--pr-dim);
+}
+
+/* Pandoc definition lists */
+dl {
+  margin: 0.75rem 0;
+}
+
+dt {
+  font-weight: 600;
+  margin-top: 0.75rem;
+}
+
+dd {
+  margin-left: 1.35rem;
+  margin-top: 0.25rem;
+}

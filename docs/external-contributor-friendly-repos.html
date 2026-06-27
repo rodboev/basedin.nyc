@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>AI Repos That Actually Merge External PRs</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body class="pr">
+
+<div class="top-row">
+  <h1><a class="back-link" href="../docs/"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>AI Repos That Actually Merge External PRs</h1>
+</div>
+
+<div class="doc-page">
+
+<p class="subtitle">Verified by checking GitHub org membership for every merged PR author. Most "active" repos that look contributor-friendly are 90%+ internal commits.</p>
+
+<div class="section-note warn">
+  Our earlier repo selection (<a href="https://github.com/AnsBalin/skillspector">skillspector</a>, <a href="https://github.com/NVIDIA/NeMo-Skills">gym</a>, <a href="https://github.com/anthropics/agent-native">agent-native</a>) produced false signals because we weren't distinguishing internal from external contributor merges. Internal contributors merge same-day everywhere; external merge speed is the real signal.
+</div>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="methodology" type="button">Method</button>
+    <button class="sort-pill" data-target="tier1" type="button">Tier 1</button>
+    <button class="sort-pill" data-target="tier2" type="button">Tier 2</button>
+    <button class="sort-pill" data-target="unfriendly" type="button">Unfriendly</button>
+    <button class="sort-pill" data-target="sources" type="button">Sources</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="methodology">Methodology</h2>
+<div class="section">
+  <p>For each repo, I pulled the 15 most recently merged PRs via <code>gh pr list</code>, then verified each author's org membership with <code>gh api orgs/{org}/members/{user}</code>. Repos where external authors routinely merge in 0-3 days are Tier 1. Repos where external merges happen but at lower volume are Tier 2.</p>
+  <p>Checked ~25 AI/AI-tooling repos across <a href="https://github.com/trending?since=monthly">GitHub Trending</a> (monthly), <a href="https://ossinsight.io/trending/ai">OSSInsight</a> AI rankings, and <a href="https://trendshift.io/">Trendshift</a>.</p>
+</div>
+
+<h2 class="doc-nav-target" id="tier1">Tier 1: Confirmed External-Friendly</h2>
+
+<div class="card">
+  <div class="card-header">
+    <h3><a href="https://github.com/langgenius/dify">langgenius/dify</a></h3>
+    <span class="badge badge-green">Same-day</span>
+  </div>
+  <p class="meta"><span>136k stars</span><span>AI app platform</span><span>Python / TypeScript</span></p>
+  <p>8/8 non-org authors verified external, all merged within hours. Tested: uxgnod, EvanYao826, wylswz, zyssyz123, CodingOnStar, xiejl001, linw1995, escape0707. Org has 14 members; the rest are genuine community contributors.</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3><a href="https://github.com/Aider-AI/aider">Aider-AI/aider</a></h3>
+    <span class="badge badge-green">Same-day</span>
+  </div>
+  <p class="meta"><span>~30k stars</span><span>AI coding assistant</span><span>Python</span></p>
+  <p>Recent merges are 100% external contributors: Cyberfilo, Mramaran, claui, turian, clayarnoldg2m, chr15m, codeofdusk, TimPut, muravvv. Founder (paul-gauthier) doesn't appear in recent merged list at all.</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3><a href="https://github.com/unslothai/unsloth">unslothai/unsloth</a></h3>
+    <span class="badge badge-green">1-2 days</span>
+  </div>
+  <p class="meta"><span>~30k stars</span><span>LLM fine-tuning</span><span>Python</span></p>
+  <p>3-person org (danielhanchen, oobabooga, shimmyshimmer). 7/7 tested contributors confirmed external: Lyxot, mvanhorn, anmolxlight, LeoBorcherding, jimdawdy-hub, Cesarsk, Abdul-Moiz31. All merged in 1-2 days.</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3><a href="https://github.com/agno-agi/agno">agno-agi/agno</a></h3>
+    <span class="badge badge-green">0-3 days</span>
+  </div>
+  <p class="meta"><span>~21k stars</span><span>AI agent framework</span><span>Python</span></p>
+  <p>2-person org (Ayush0054, ysolanky). 10/10 tested contributors confirmed external: harshsinha03, sannya-singal, mishramonalisha76, Osamaali313, anuragts, fengjikui, kausmeows, scavio-ai, yaosongding, ly-wang19.</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3><a href="https://github.com/ggml-org/llama.cpp">ggml-org/llama.cpp</a></h3>
+    <span class="badge badge-green">0-2 days</span>
+  </div>
+  <p class="meta"><span>~80k stars</span><span>LLM inference</span><span>C / C++</span></p>
+  <p>Highly diverse contributor base. Recent external merges: CISC, angt, ckastner, arthw, 0cc4m, leonardHONG, shaofeiqi, tdakhran. ggerganov (founder) is one voice among many.</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3><a href="https://github.com/microsoft/presidio">microsoft/presidio</a></h3>
+    <span class="badge badge-green">1-3 days</span>
+  </div>
+  <p class="meta"><span>9.7k stars</span><span>PII detection</span><span>Python</span></p>
+  <p>Multiple verified external contributors merging consistently: jichaowang02-lang, mturac, ArjunPakhan, ultramancode, AlexanderSanin, AUTHENSOR, Dashtid, michaelgiraldo. Internal team is just omri374 and SharonHart.</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3><a href="https://github.com/run-llama/llama_index">run-llama/llama_index</a></h3>
+    <span class="badge badge-green">0-4 days</span>
+  </div>
+  <p class="meta"><span>~40k stars</span><span>LLM framework</span><span>Python</span></p>
+  <p>External contributors: AstraBert, joshuakilts, mattref, citizen204, bbednarski9, Incheonkirin, gaurav0107, WOLIKIMCHENG, ratishoberoi, kgarg2468, bschloss. Integration PRs (new model support, connector fixes) merge particularly fast.</p>
+</div>
+
+<h2 class="doc-nav-target" id="tier2">Tier 2: Some External Merges</h2>
+
+<div class="card">
+  <div class="card-header">
+    <h3><a href="https://github.com/open-webui/open-webui">open-webui/open-webui</a></h3>
+    <span class="badge badge-yellow">1-4 days</span>
+  </div>
+  <p class="meta"><span>106k stars</span><span>AI web UI</span><span>Python / Svelte</span></p>
+  <p>External PRs (SmartMart69, Algorithm5838, andrewbbaek) merge in 1-4 days, but internal contributors (Classic298, silentoplayz) dominate volume. Lower chance of getting reviewed quickly.</p>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h3><a href="https://github.com/pydantic/pydantic-ai">pydantic/pydantic-ai</a></h3>
+    <span class="badge badge-yellow">Same-day</span>
+  </div>
+  <p class="meta"><span>~15k stars</span><span>AI agent framework</span><span>Python</span></p>
+  <p>Some external merges same-day (syf2211, adtyavrdhn) but most merged PRs are from the internal team (dsfaccini, Kludex, dmontagu).</p>
+</div>
+
+<h2 class="doc-nav-target" id="unfriendly">Confirmed NOT External-Friendly</h2>
+
+<div class="section">
+  <p>These repos merge fast, but almost exclusively internal contributors. Don't mistake their velocity for openness.</p>
+  <table>
+    <tr><th>Repo</th><th>Why not</th></tr>
+    <tr><td><a href="https://github.com/n8n-io/n8n">n8n-io/n8n</a></td><td>All internal team + bots (ivov, mfsiega, dlavrenuek, aalises, n8n-cat-bot)</td></tr>
+    <tr><td><a href="https://github.com/crewAIInc/crewAI">crewAIInc/crewAI</a></td><td>All internal (joaomdmoura, lorenzejay, vinibrsl)</td></tr>
+    <tr><td><a href="https://github.com/comfyanonymous/ComfyUI">comfyanonymous/ComfyUI</a></td><td>Solo maintainer + partner nodes (bigcat88)</td></tr>
+    <tr><td><a href="https://github.com/BerriAI/litellm">BerriAI/litellm</a></td><td>All "-berri" suffixed internal authors</td></tr>
+    <tr><td><a href="https://github.com/microsoft/semantic-kernel">microsoft/semantic-kernel</a></td><td>All Microsoft employees (SergeyMenshykh, westey-m, rogerbarreto)</td></tr>
+    <tr><td><a href="https://github.com/guardrails-ai/guardrails">guardrails-ai/guardrails</a></td><td>All internal (zsimjee, ShreyaR, CalebCourier)</td></tr>
+    <tr><td><a href="https://github.com/modelscope/FunASR">modelscope/FunASR</a></td><td>Single author (LauraGPT) dominates</td></tr>
+    <tr><td><a href="https://github.com/qdrant/qdrant">qdrant/qdrant</a></td><td>All internal Qdrant team + qdrant-cloud-bot</td></tr>
+    <tr><td><a href="https://github.com/deepset-ai/haystack">deepset-ai/haystack</a></td><td>Mostly bots and internal (anakin87, julian-risch)</td></tr>
+    <tr><td><a href="https://github.com/langchain-ai/langchain">langchain-ai/langchain</a></td><td>Internal maintainer mdrxy + dependabot dominate</td></tr>
+    <tr><td><a href="https://github.com/ollama/ollama">ollama/ollama</a></td><td>Core team only (dhiltgen, BruceMacD, ParthSareen)</td></tr>
+    <tr><td><a href="https://github.com/continuedev/continue">continuedev/continue</a></td><td>Founder sestinj + RomneyDa only</td></tr>
+    <tr><td><a href="https://github.com/letta-ai/letta">letta-ai/letta</a></td><td>Internal only (cpacker, carenthomas, sarahwooders)</td></tr>
+    <tr><td><a href="https://github.com/browser-use/browser-use">browser-use/browser-use</a></td><td>Internal team (sauravpanda, laithrw, gregpr07)</td></tr>
+    <tr><td><a href="https://github.com/lobehub/lobe-chat">lobehub/lobe-chat</a></td><td>Internal team (arvinxx, Innei, rdmclin2)</td></tr>
+    <tr><td><a href="https://github.com/mem0ai/mem0">mem0ai/mem0</a></td><td>Internal (kartik-mem0, harshgupta-mem0) dominate</td></tr>
+  </table>
+</div>
+
+<h2 class="doc-nav-target" id="sources">Discovery Sources</h2>
+
+<div class="section">
+  <h3>GitHub built-in</h3>
+  <ul>
+    <li><a href="https://github.com/trending?since=monthly">GitHub Trending</a> (daily / weekly / monthly)</li>
+    <li><a href="https://github.com/explore">GitHub Explore</a> (personalized recommendations)</li>
+    <li><a href="https://github.com/topics">GitHub Topics</a> (category browsing)</li>
+  </ul>
+  <p>No built-in "hot" or "popular" ranking beyond these three.</p>
+
+  <h3>Third-party rankings</h3>
+  <ul>
+    <li><a href="https://ossinsight.io/trending/ai">OSSInsight</a> &mdash; real-time AI repo rankings from 10B+ GitHub events, hourly updates</li>
+    <li><a href="https://trendshift.io/">Trendshift</a> &mdash; catches repos as they rise, not after they peak</li>
+    <li><a href="https://github.com/EvanLi/Github-Ranking">GitHub Ranking (EvanLi)</a> &mdash; auto-updated Top 100 by stars per language</li>
+    <li><a href="https://repoinsider.com/">RepoInsider</a> &mdash; weekly newsletter: 5 breakout repos every Monday, ranked by velocity not stars</li>
+  </ul>
+</div>
+
+<p class="footer">Researched June 27, 2026. Org membership verified via GitHub API.</p>
+
+</div>
+<script src="doc-nav.js?v=ea01d90e"></script>
+</body>
+</html>

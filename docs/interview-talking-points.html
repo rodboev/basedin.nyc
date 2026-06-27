@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>Interview: How pr-sweep Actually Comes Up</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+</head>
+<body class="pr">
+<main class="doc-page">
+<h1>Interview: How pr-sweep Actually Comes Up</h1>
+<p class="subtitle">Interview routing guidance for surfacing pr-sweep without forcing it into unrelated questions.</p>
+
+<div class="section">
+<p>The interviewer will never ask about pr-sweep directly. You have to route there from questions they will ask. The goal is to land the harness-engineering story without it feeling shoehorned.</p>
+</div>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="entry-points" type="button">Entry Points</button>
+    <button class="sort-pill" data-target="does-not-fit" type="button">Doesn't Fit</button>
+    <button class="sort-pill" data-target="gap-question" type="button">Gap</button>
+    <button class="sort-pill" data-target="pushback" type="button">Pushback</button>
+    <button class="sort-pill" data-target="remember" type="button">Remember</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="entry-points">The Entry Points</h2>
+<div class="card">
+  <p>There are really only 3-4 questions where this naturally fits. For everything else, don't force it.</p>
+  <h3>"What have you been working on lately?" / "Tell me about a recent project"</h3>
+  <p>This is the cleanest opening. You've been out of full-time work for a year, so they're asking partly to check if you've been staying sharp. Lead with the what, not the how:</p>
+  <p>"I've been contributing to hermes, an open source AI chat platform. I'm the #5 contributor on hermes-webui with 42 shipped PRs, mostly security hardening, performance work, and new features. The interesting part is how I got there: I built a pipeline that automates the full contribution lifecycle, from finding issues worth working on through implementation and code review, and I used it to ship all of those in about a week."</p>
+  <p>If they're interested, they'll ask how. If they don't, move on. Don't push it.</p>
+  <h3>"How do you use AI tools in your development workflow?"</h3>
+  <p>This question is increasingly common and it's almost an invitation. But most people answer with "I use Copilot" or "I prompt Claude to write boilerplate." You want to show a level above that:</p>
+  <p>"I don't just use AI to write code; I build systems around it. The clearest example is a contribution pipeline I built that orchestrates multiple AI models for different tasks. Planning goes to a model with strong architectural judgment, implementation fans out to faster models in parallel, and code review goes to a different provider entirely so the reviewer isn't the same model family that wrote the code. The pipeline handles issue discovery, competing-PR detection, CI gating, and feedback routing. I used it to ship 42 PRs to an active open source project, all accepted by the maintainer."</p>
+  <h3>"Tell me about yourself" / "Walk me through your background"</h3>
+  <p>This is the hardest one because you're covering 15 years in 90 seconds. pr-sweep should be one sentence in the "what I'm doing now" section, not the centerpiece:</p>
+  <p>"...more recently I've been deep in AI integration work. I built AI-powered tools for a pest control company, I maintain an open source AI memory service, and I just built a multi-model contribution pipeline that got me to #5 contributor on a major open source project. I'm looking for roles where I can bring that kind of systems thinking to product engineering or AI tooling."</p>
+  <h3>"Tell me about a technical challenge you solved" / "Describe a complex system you built"</h3>
+  <p>This is where you can go deep, but frame it as a problem you solved, not a thing you're proud of:</p>
+  <p>"I wanted to contribute to an open source project at scale, and I noticed that the #1 contributor was using AI models to do it. Their PRs had mandatory disclosure lines showing which models they used. I realized that the bottleneck wasn't the AI's ability to write code; it was everything around it: figuring out which issues are worth working on, checking that nobody's already doing it, planning an approach, isolating the work, getting quality review, and handling maintainer feedback. So I built a system that automates that entire lifecycle. The interesting engineering decisions were things like routing different tasks to different model tiers, having one model family review another's code, and making the whole thing work across two different AI platforms when I hit rate limits on one."</p>
+</div>
+
+<h2 class="doc-nav-target" id="does-not-fit">Questions Where It Does NOT Fit</h2>
+<div class="card">
+  <ul>
+    <li>"Why did you leave your last role?" -- this is about your career narrative, not a project</li>
+    <li>"What's your management style?" / team questions -- pr-sweep is solo work</li>
+    <li>"Tell me about a conflict with a coworker" -- behavioral, don't redirect</li>
+    <li>"What are your salary expectations?" -- obviously</li>
+    <li>"Why do you want to work here?" -- make it about them, not your portfolio</li>
+    <li>Anything about their product, team, or domain -- listen and respond, don't pivot to your thing</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="gap-question">The Gap Question</h2>
+<div class="card">
+  <p>"What have you been doing since [last role]?"</p>
+  <p>This is where pr-sweep earns its keep as a gap-filler, but don't lead with it. Lead with the full picture:</p>
+  <p>"I left Liberty Pest in mid-2025 and spent time on a few things. I've been doing open source work: I'm a maintainer on mcp-memory-service and a top contributor to claude-mem, both AI memory tools. I built a contribution pipeline that I used to become #5 on hermes-webui with 42 shipped PRs. And I've been sharpening my AI integration skills, building with the OpenAI and Anthropic APIs, voice interfaces, multi-model orchestration. I'm ready to bring all of that into a full-time or contract role."</p>
+</div>
+
+<h2 class="doc-nav-target" id="pushback">What They'll Push Back On</h2>
+<div class="card">
+  <p><strong>"Isn't that just AI-generated code?"</strong>
+"Every PR was manually reviewed by the project maintainer, passed their CI suite, and was cherry-picked into production releases. The pipeline doesn't remove review; it makes the code good enough to survive it. 90%+ acceptance rate on 42 shipped PRs."</p>
+  <p><strong>"Can you do this without AI tools?"</strong>
+"I have 15 years of shipping code for NBC Sports, Victoria's Secret, Visa, and dozens of Fortune 500 clients. The AI tooling is what I do now, on top of that foundation. I'm not someone who learned to code last year and uses AI as a crutch."</p>
+  <p><strong>"How is this relevant to [our product]?"</strong>
+"The transferable skill is building systems that orchestrate AI models for real work, not demos. Your product probably has workflows where you need to route different subtasks to different models, validate output quality, handle failures and retries, and maintain a feedback loop. That's exactly what I built."</p>
+</div>
+
+<h2 class="doc-nav-target" id="remember">The One Thing to Remember</h2>
+<div class="card">
+  <p>Don't explain the pipeline architecture unless they ask. Lead with the outcome (42 shipped PRs, #5 contributor, 90%+ acceptance), and let curiosity pull them into the how. If they don't bite, they don't care about the how, and pushing it will sound like you're compensating.</p>
+</div>
+
+<p class="footer">Source: <code>interview-talking-points.md</code> · Updated June 8, 2026.</p>
+</main>
+<script src="doc-nav.js?v=ea01d90e"></script>
+</body>
+</html>

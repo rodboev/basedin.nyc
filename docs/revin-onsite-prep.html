@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>Revin Onsite Prep Plan</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+</head>
+<body class="pr">
+<main class="doc-page">
+<h1>Revin Onsite Prep Plan</h1>
+<p class="subtitle">2-hour onsite with lead engineer. Practical implementation prep, not LeetCode.</p>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="langgraph" type="button">LangGraph</button>
+    <button class="sort-pill" data-target="livekit" type="button">LiveKit</button>
+    <button class="sort-pill" data-target="fastapi" type="button">FastAPI</button>
+    <button class="sort-pill" data-target="supabase" type="button">Supabase</button>
+    <button class="sort-pill" data-target="eval" type="button">Eval</button>
+    <button class="sort-pill" data-target="system-design" type="button">Design</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="langgraph">LangGraph (highest priority)</h2>
+<div class="card">
+  <p>This is their core agent framework. The listing says "build and evolve LangGraph workflows that handle SMS and voice conversations." Be comfortable building a graph, adding conditional edges, and explaining how state flows through nodes.</p>
+  <h3>Start here</h3>
+  <ul>
+    <li><a href="https://docs.langchain.com/oss/python/langgraph/overview">LangGraph Overview</a> — what it is, why it exists, how it differs from LangChain</li>
+    <li><a href="https://docs.langchain.com/oss/python/langgraph/quickstart">Quickstart</a> — build a calculator agent with StateGraph. Both Graph API and Functional API patterns</li>
+    <li><a href="https://docs.langchain.com/oss/python/langgraph/workflows-agents">Workflows and Agents</a> — tool-augmented agents, conditional routing, the ReAct pattern</li>
+  </ul>
+  <h3>Key concepts to know</h3>
+  <ul>
+    <li><code>StateGraph</code>, <code>MessagesState</code>, <code>START</code>, <code>END</code></li>
+    <li>Nodes are functions that receive state and return updates</li>
+    <li>Conditional edges route based on state (e.g., did the LLM make a tool call?)</li>
+    <li><code>add_node()</code>, <code>add_edge()</code>, <code>add_conditional_edges()</code>, <code>compile()</code></li>
+    <li><code>create_react_agent()</code> for quick prototyping (prebuilt ReAct loop)</li>
+    <li>Human-in-the-loop patterns (relevant to Revin's "humans in the loop where it matters")</li>
+  </ul>
+  <h3>Go deeper</h3>
+  <ul>
+    <li><a href="https://dev.to/agentsindex/langgraph-tutorial-build-a-working-react-agent-with-the-v10-api-3bc1">LangGraph v1.0 ReAct Agent Tutorial</a> — uses the stable v1.0 API (October 2025+), not the deprecated v0.x patterns most tutorials still show</li>
+    <li><a href="https://github.com/langchain-ai/langgraph/tree/main/examples">LangGraph examples on GitHub</a> — multi-agent, tool calling, memory, streaming</li>
+  </ul>
+  <h3>What to build</h3>
+  <p>Build a small agent that takes a customer message, classifies intent (book appointment, cancel, reschedule, general question), and routes to different handler nodes. This directly mirrors what Revin's agents do. Add a conditional edge that escalates to a human node when confidence is low.</p>
+</div>
+
+<h2 class="doc-nav-target" id="livekit">LiveKit + OpenAI Realtime (high priority)</h2>
+<div class="card">
+  <p>The listing confirms "Partner with the voice team on real-time agent behavior (LiveKit + OpenAI Realtime)." You already have OpenAI Realtime experience from Notes AI. LiveKit is the transport layer that connects the Realtime API to actual phone calls.</p>
+  <h3>Start here</h3>
+  <ul>
+    <li><a href="https://docs.livekit.io/agents/start/voice-ai/">LiveKit Voice AI Quickstart</a> — build and deploy a voice assistant in under 10 minutes</li>
+    <li><a href="https://docs.livekit.io/agents/models/realtime/plugins/openai.md">OpenAI Realtime API Plugin</a> — how LiveKit wraps the OpenAI Realtime API specifically</li>
+    <li><a href="https://www.livekit.io/blog/build-your-first-ai-voice-agent-python">Build Your First AI Voice Agent in Python</a> — full tutorial: STT, LLM, TTS pipeline with LiveKit Agents</li>
+  </ul>
+  <h3>Key concepts to know</h3>
+  <ul>
+    <li>LiveKit Agents framework: <code>AgentServer</code>, <code>AgentSession</code>, <code>Agent</code></li>
+    <li>Pipeline architecture: STT → LLM → TTS, streamed in real-time</li>
+    <li>VAD (Voice Activity Detection) and turn detection</li>
+    <li>How LiveKit connects to telephony (SIP trunking for inbound/outbound phone calls)</li>
+    <li>The difference between the pipeline approach (STT+LLM+TTS) and OpenAI Realtime (end-to-end multimodal)</li>
+  </ul>
+  <h3>What to build</h3>
+  <p>Run the <a href="https://github.com/livekit-examples/agent-starter-python">agent-starter-python</a> template locally. Swap in OpenAI Realtime as the model. Talk to it. Understanding how the audio flows from microphone → LiveKit → OpenAI → LiveKit → speaker gives you the mental model for what Revin's voice agents do at scale.</p>
+</div>
+
+<h2 class="doc-nav-target" id="fastapi">FastAPI (medium priority)</h2>
+<div class="card">
+  <p>Their backend. You know Express/Node.js well; FastAPI is the Python equivalent with type hints and auto-generated docs. The concepts transfer directly.</p>
+  <h3>Start here</h3>
+  <ul>
+    <li><a href="https://fastapi.tiangolo.com/tutorial/">FastAPI Tutorial</a> — official tutorial, covers path params, query params, request bodies, dependency injection, all with type hints</li>
+    <li><a href="https://fastapi.tiangolo.com/tutorial/first-steps/">First Steps</a> — hello world in 5 minutes</li>
+  </ul>
+  <h3>Key concepts to know</h3>
+  <ul>
+    <li>Path operations (<code>@app.get()</code>, <code>@app.post()</code>)</li>
+    <li>Pydantic models for request/response validation</li>
+    <li>Dependency injection (<code>Depends()</code>) — this is how they likely handle auth and tenant scoping</li>
+    <li>Background tasks, middleware</li>
+    <li>async/await (FastAPI is async-first, similar to Node.js)</li>
+  </ul>
+  <h3>Node.js → FastAPI cheat sheet</h3>
+  <ul>
+    <li><code>express.Router()</code> → <code>APIRouter()</code></li>
+    <li><code>req.body</code> → Pydantic model parameter</li>
+    <li><code>req.params.id</code> → path parameter with type annotation</li>
+    <li><code>middleware()</code> → <code>@app.middleware("http")</code> or <code>Depends()</code></li>
+    <li><code>next()</code> → dependency injection chain</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="supabase">Supabase Multi-Tenant Patterns (medium priority)</h2>
+<div class="card">
+  <p>You already use Supabase. The new part is multi-tenancy with RLS and JWT-based access, where every query is account-scoped.</p>
+  <h3>Start here</h3>
+  <ul>
+    <li><a href="https://supabase.com/docs/guides/database/postgres/row-level-security">Supabase RLS Guide</a> — how to write policies, common patterns</li>
+    <li><a href="https://supabase.com/docs/guides/auth/jwts">Supabase JWTs</a> — how auth tokens carry tenant context</li>
+  </ul>
+  <h3>Key concepts to know</h3>
+  <ul>
+    <li>RLS policies that use <code>auth.uid()</code> or custom claims to scope queries</li>
+    <li><code>auth.jwt() ->> 'org_id'</code> pattern for multi-tenant scoping</li>
+    <li>Why RLS matters: a bug in query scoping means one customer sees another's conversations</li>
+    <li>Service role key bypasses RLS (for admin/migration tasks only)</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="eval">Eval Frameworks (medium priority)</h2>
+<div class="card">
+  <p>The listing says "build the eval frameworks that catch agent regressions before they reach customers — we treat eval quality as a first-class engineering discipline." This is not just a nice-to-have; it's core to the role.</p>
+  <h3>Start here</h3>
+  <ul>
+    <li><a href="https://langfuse.com/docs">Langfuse Docs</a> — open-source LLM observability: tracing, evals, prompt management. Listed as a bonus skill in the posting</li>
+    <li><a href="https://docs.smith.langchain.com/">LangSmith Docs</a> — LangChain's tracing and eval platform. Also listed in the posting</li>
+    <li><a href="https://www.helicone.ai/docs">Helicone Docs</a> — LLM proxy for logging, monitoring, and rate limiting. Third option listed</li>
+  </ul>
+  <h3>Key concepts to know</h3>
+  <ul>
+    <li>Tracing: following a conversation through every LLM call, tool invocation, and decision point</li>
+    <li>Eval datasets: curated sets of inputs + expected outputs to catch regressions</li>
+    <li>Online vs. offline evaluation: real-time monitoring of live conversations vs. batch evaluation of historical data</li>
+    <li>LLM-as-judge patterns: using a second model to grade the first model's output</li>
+    <li>Metrics that matter for Revin: booking accuracy, intent classification precision, false promise rate, escalation rate</li>
+  </ul>
+  <h3>What to think about</h3>
+  <p>If their agent books an appointment at 3 AM for a business that closes at 6 PM, how do you catch that before it reaches production? How do you build a regression suite from real conversation failures? How do you measure whether a new prompt version is better than the old one without A/B testing on live customers?</p>
+</div>
+
+<h2 class="doc-nav-target" id="system-design">System Design Scenarios (for the conversation)</h2>
+<div class="card">
+  <p>The 2-hour onsite will likely include some "how would you design this" discussion. Think through these scenarios in Revin's context.</p>
+  <h3>Scenario 1: New customer onboarding</h3>
+  <p>A new HVAC operator signs up. They use ServiceTitan. How do you set up a new tenant in the multi-tenant system? What data do you need from them (business hours, service areas, service catalog, qualification rules)? How do you configure the agent's behavior without writing new code?</p>
+
+  <h3>Scenario 2: Agent makes a mistake</h3>
+  <p>The agent booked a plumber for a service the customer doesn't offer. Walk through: how does the system detect this? How does the operator find out? What's the escalation path? How do you prevent it from happening again? (Hint: guardrails in the LangGraph workflow, eval regression test, maybe a validation node before the booking action.)</p>
+
+  <h3>Scenario 3: Multi-channel conversation</h3>
+  <p>A customer calls, gets an AI voice agent, but the call drops. The agent follows up via SMS. How do you maintain conversation state across channels? How does the LangGraph workflow handle the channel switch? What context carries over?</p>
+
+  <h3>Scenario 4: Scaling from 5 customers to 50</h3>
+  <p>What breaks first? Per-customer configuration that's currently hand-maintained? Eval coverage? Deployment pipeline? On-call burden? This ties directly to the platform-vs-custom question you already asked.</p>
+</div>
+
+<p class="footer">Written June 11, 2026.</p>
+</main>
+<script src="doc-nav.js?v=ea01d90e"></script>
+</body>
+</html>

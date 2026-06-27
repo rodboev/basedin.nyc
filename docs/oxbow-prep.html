@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>Interview Prep: Oxbow / Harmonic (Scout)</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+</head>
+<body class="pr">
+<main class="doc-page">
+<h1>Interview Prep: Oxbow / Harmonic (Scout)</h1>
+<p class="subtitle">Senior Software Engineer (AI &amp; Full Stack) &middot; Comp TBD &middot; NYC &middot; Recruiter: Richard Waterson (Oxbow Talent) &middot; Screening call June 25, 2026</p>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="company" type="button">Company</button>
+    <button class="sort-pill" data-target="stack" type="button">Stack</button>
+    <button class="sort-pill" data-target="search" type="button">Search &amp; Retrieval</button>
+    <button class="sort-pill" data-target="agents" type="button">Agent Systems</button>
+    <button class="sort-pill" data-target="eval" type="button">Eval Pipelines</button>
+    <button class="sort-pill" data-target="postgres" type="button">PostgreSQL</button>
+    <button class="sort-pill" data-target="process" type="button">Interview Process</button>
+    <button class="sort-pill" data-target="questions" type="button">Questions</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="company">Harmonic &amp; the Discovery/Scout Team</h2>
+<div class="card">
+  <p>Harmonic is a data platform for venture capital. They track tens of millions of companies, hundreds of millions of operators, and tens of thousands of investors with their deal activity. The Discovery team sits at the core: sourcing and ingesting data from hundreds of fragmented, unstructured sources and turning them into structured, searchable insights.</p>
+
+  <h3>Scout</h3>
+  <p>Scout is their agentic layer for startup search and research. It automates sourcing and diligence workflows for VCs: conversational interfaces, deep research, dynamic agentic frameworks purpose-built for venture. The role is architecting Scout's core intelligence, from data ingestion through ranking, personalization, and model orchestration.</p>
+
+  <h3>Team</h3>
+  <p>Mix of ex-founders and engineers from Google, LinkedIn, Microsoft, Meta. Scout teammates: Austin, Yesh, Kelvin. Reports to Sang. <a href="https://www.harmonic.ai/team">Team page</a>.</p>
+
+  <h3>Culture signals</h3>
+  <p>"Deep curiosity, insatiable growth mindset, high agency." They're building playbooks for agentic UX patterns, not waiting for someone else to write them. The jam session interview format (async, Slack, GitHub PR) reflects this: they care about how you work independently, not how you perform under a stopwatch.</p>
+</div>
+
+<h2 class="doc-nav-target" id="stack">Stack Mapping</h2>
+<div class="card">
+  <p>The stack: LangChain, Groq, LangGraph, Terraform, React, TypeScript, dbt, PostgreSQL, Elasticsearch, GCP, Python, Go.</p>
+
+  <h3>Direct experience</h3>
+  <ul>
+    <li><strong>TypeScript/React:</strong> primary stack for 5+ years. Next.js, component architecture, state management.</li>
+    <li><strong>PostgreSQL:</strong> production use across multiple projects. Supabase (Notes AI), WordPress data layer, query optimization.</li>
+    <li><strong>Elasticsearch:</strong> Mezocliq's backend was built on Elasticsearch. Enterprise search, indexing, query construction.</li>
+    <li><strong>LLM orchestration:</strong> pr-sweep runs multi-model, multi-provider orchestration daily. Tool use, structured output, agent loops, model selection by task tier.</li>
+  </ul>
+
+  <h3>Adjacent experience</h3>
+  <ul>
+    <li><strong>Python:</strong> open source AI contributions are Python-centered. Integration and orchestration, not ML research. Sufficient for LangChain/LangGraph work; less depth on NumPy/pandas/scikit-learn pipelines.</li>
+    <li><strong>Go:</strong> AgentsView (contributed to) is a Go project. Cross-language translation is routine with LLM tooling, and Go's surface area is small by design.</li>
+    <li><strong>GCP:</strong> familiar with cloud infrastructure patterns. Heroku and AWS experience translates; GCP-specific services (BigQuery, Cloud Run, Pub/Sub) are learnable.</li>
+  </ul>
+
+  <h3>New but learnable</h3>
+  <ul>
+    <li><strong>LangChain/LangGraph:</strong> haven't used these frameworks directly, but the abstractions (chains, agents, tool calling, graph-based workflows) map to patterns already built from scratch in pr-sweep. LangGraph's state machines and conditional edges are the same DAG execution model.</li>
+    <li><strong>dbt:</strong> SQL-first data transformation tool. Manages data pipelines as version-controlled SQL models with dependency graphs, testing, and documentation. New tool, familiar concepts (SQL, DAGs, CI/CD for data).</li>
+    <li><strong>Terraform:</strong> infrastructure as code. Declarative config, plan/apply cycle, state management. Haven't used it; the mental model is straightforward.</li>
+    <li><strong>Groq:</strong> inference API provider, fast LPU hardware. Drop-in replacement for OpenAI's API shape. The integration pattern is identical to what pr-sweep already does with multiple providers.</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="search">Search, Retrieval &amp; Ranking</h2>
+<div class="card">
+  <p>The role's core output: "scalable frameworks for retrieval, reranking, and LLM-driven evaluation to deliver highly personalized and high-quality results." This is search infrastructure with an AI layer on top.</p>
+
+  <h3>Elasticsearch fundamentals</h3>
+  <ul>
+    <li><strong>Inverted index:</strong> the core data structure. Documents are analyzed (tokenized, stemmed, normalized) at index time. Queries run against the index, not raw documents. Field mappings control how text is analyzed.</li>
+    <li><strong>Query DSL:</strong> <code>bool</code> queries compose <code>must</code>/<code>should</code>/<code>filter</code>/<code>must_not</code> clauses. <code>filter</code> is cached and doesn't affect scoring; <code>must</code>/<code>should</code> contribute to relevance. <code>function_score</code> wraps a query to boost by arbitrary signals (recency, funding amount, investor reputation).</li>
+    <li><strong>Aggregations:</strong> faceted search (group by industry, stage, location), metrics (avg funding, median headcount), nested aggregations for drill-down. Run alongside search results in a single request.</li>
+    <li><strong>Relevance tuning:</strong> BM25 is the default scoring algorithm. Custom scoring via <code>function_score</code>, <code>script_score</code>, or learning-to-rank plugins. The gap between "returns results" and "returns the right results in the right order" is where the engineering lives.</li>
+  </ul>
+
+  <h3>Hybrid search (keyword + vector)</h3>
+  <p>Pure keyword search misses semantic matches ("AI startup" won't find "machine learning company"). Pure vector search loses precision on exact terms (company names, investor names, specific technologies). Hybrid search combines both:</p>
+  <ul>
+    <li><strong>Embedding models:</strong> encode documents and queries into dense vectors. OpenAI embeddings, Cohere Embed, open-source models (BGE, E5, GTE). The JD mentions experimenting with embedding models, which means they're actively evaluating which model produces the best retrieval for their domain.</li>
+    <li><strong>Elasticsearch dense_vector:</strong> native kNN search since ES 8.0. Store embeddings alongside text fields, run hybrid queries that combine BM25 text scoring with vector similarity.</li>
+    <li><strong>Reciprocal Rank Fusion (RRF):</strong> merge ranked lists from different retrieval methods without needing comparable scores. Each result's fused score = &sum; 1/(k + rank<sub>i</sub>). Simple, effective, no tuning needed for the fusion step itself.</li>
+  </ul>
+
+  <h3>Reranking</h3>
+  <p>First-stage retrieval (keyword, vector, or hybrid) is fast but coarse. Reranking takes the top-N candidates and applies a more expensive, more accurate model:</p>
+  <ul>
+    <li><strong>Cross-encoders:</strong> take (query, document) pairs and output a relevance score. More accurate than bi-encoders (embedding models) because they see both inputs together, but too slow to run over millions of documents. Cohere Rerank, Jina Reranker, open-source models.</li>
+    <li><strong>LLM-as-reranker:</strong> prompt an LLM to rank a list of candidates by relevance to the query. More flexible (can incorporate complex criteria like "prefer companies with recent funding rounds in climate tech"), more expensive. This is likely what Harmonic means by "LLM-driven evaluation."</li>
+    <li><strong>Personalization layer:</strong> reranking isn't just relevance to the query; it's relevance to the user. A VC focused on Series A climate tech should see different rankings than one focused on seed-stage fintech, even for the same query. User preference vectors, interaction history, portfolio overlap.</li>
+  </ul>
+
+  <h3>How this maps to pr-sweep</h3>
+  <p>pr-sweep's review pipeline is a retrieval-and-evaluation system: retrieve relevant code context, evaluate it against quality criteria, rank findings by severity, filter false positives through adversarial verification. The architecture (multi-stage pipeline, model selection by task cost, deterministic quality gates) translates directly to search ranking infrastructure.</p>
+</div>
+
+<h2 class="doc-nav-target" id="agents">Agent-Based Systems</h2>
+<div class="card">
+  <p>The JD: "agentic layer for startup search and research," "dynamic agentic frameworks purpose-built for venture," "AI-first product workflows." Scout is an agent system.</p>
+
+  <h3>Agent architecture</h3>
+  <ul>
+    <li><strong>The loop:</strong> prompt &rarr; LLM decides action &rarr; execute tool &rarr; observe result &rarr; repeat until done. The orchestrator manages this loop, enforces tool permissions, handles timeouts, and captures the trace.</li>
+    <li><strong>Tool use:</strong> the agent has access to a set of tools (functions with schemas). The LLM receives tool definitions in its system prompt, calls them by emitting structured JSON, and the orchestrator executes the function and returns the result. MCP (Model Context Protocol) standardizes tool discovery and invocation across providers.</li>
+    <li><strong>Multi-agent:</strong> multiple specialized agents collaborate. A planner agent decomposes a task, worker agents execute subtasks, a reviewer agent validates output. Communication patterns: shared scratchpad, message passing, or a coordinator that routes between agents.</li>
+    <li><strong>Memory:</strong> the JD explicitly lists "memory systems" as a discovery area. Short-term (conversation context), medium-term (task state persisted across turns), long-term (vector store for retrieval). For Scout, memory means: what has this VC searched before, what companies have they already evaluated, what preferences have they expressed implicitly through interaction patterns.</li>
+  </ul>
+
+  <h3>LangChain / LangGraph</h3>
+  <ul>
+    <li><strong>LangChain:</strong> the dominant Python framework for LLM applications. Chains compose prompts, models, and output parsers. Retrievers abstract over vector stores and search engines. The LCEL (LangChain Expression Language) pipes components together: <code>retriever | prompt | model | parser</code>.</li>
+    <li><strong>LangGraph:</strong> adds stateful, graph-based agent workflows on top of LangChain. Nodes are functions, edges are conditional transitions. State is explicit and checkpointable. Supports cycles (agent loops), branching (conditional tool selection), and human-in-the-loop (pause, get approval, resume). This is the framework for Scout's agentic flows.</li>
+    <li><strong>Parallel to pr-sweep:</strong> pr-sweep's orchestration (multi-phase pipelines, conditional branching, deterministic gates, state tracking across agent turns) is the same computational model as LangGraph. The difference is framework vs. custom implementation. LangGraph adds checkpointing, streaming, and a standard graph abstraction; pr-sweep built these from scratch.</li>
+  </ul>
+
+  <h3>Agent orchestration in a product context</h3>
+  <p>Scout isn't an internal tool; it's a product VCs interact with. The engineering challenges beyond "make the agent work":</p>
+  <ul>
+    <li><strong>Streaming:</strong> agent reasoning visible to the user in real time. Progressive disclosure of sources, intermediate findings, confidence signals.</li>
+    <li><strong>Cost control:</strong> token budgets per query, model routing (cheap models for simple lookups, expensive models for synthesis), caching of repeated retrievals.</li>
+    <li><strong>Reliability:</strong> the JD's priority order is "reliability, performance, cost, and then developer productivity." Agent loops can hang, hallucinate, or loop indefinitely. Circuit breakers, iteration limits, fallback paths.</li>
+    <li><strong>Deterministic replay:</strong> reproducing agent behavior for debugging and evaluation. Log the full trace (prompts, tool calls, responses, timing) so you can replay a session without hitting the LLM again.</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="eval">Evaluation Pipelines</h2>
+<div class="card">
+  <p>The JD: "Improve and extend our evaluation pipelines to test new models and determine lifts in specific parts of our product." This is the gap area. Frame it as systems engineering with an ML flavor, not ML research.</p>
+
+  <h3>What eval means here</h3>
+  <p>Harmonic isn't training foundation models. They're evaluating which models, prompts, embeddings, and retrieval strategies produce the best results for their specific domain (startup data for VCs). This is applied engineering: build the harness, define the metrics, run the experiments, measure the lift.</p>
+
+  <h3>Retrieval evaluation metrics</h3>
+  <ul>
+    <li><strong>MRR (Mean Reciprocal Rank):</strong> 1/rank of the first relevant result, averaged across queries. Measures "how quickly does the user find what they want?"</li>
+    <li><strong>NDCG (Normalized Discounted Cumulative Gain):</strong> measures ranking quality with graded relevance (not just relevant/irrelevant). Penalizes relevant results appearing lower in the list. The standard metric for search quality.</li>
+    <li><strong>Precision@k / Recall@k:</strong> of the top k results, how many are relevant (precision) and what fraction of all relevant results appear (recall).</li>
+    <li><strong>MAP (Mean Average Precision):</strong> average precision across all recall levels. Captures both precision and recall in a single number.</li>
+  </ul>
+
+  <h3>LLM evaluation</h3>
+  <ul>
+    <li><strong>LLM-as-judge:</strong> use a strong model to grade the output of the model being evaluated. Define rubrics (relevance, completeness, factual accuracy), score on a scale, aggregate across a test set. Cheaper and faster than human evaluation, correlates well for many tasks.</li>
+    <li><strong>A/B testing prompts and models:</strong> same query, different configurations. Compare outputs on the eval metrics. Statistical significance matters: small test sets produce noisy results.</li>
+    <li><strong>Regression testing:</strong> a new model or prompt shouldn't break cases that previously worked. Golden sets of query/expected-result pairs. Run after every change, flag regressions.</li>
+    <li><strong>Domain-specific challenges:</strong> startup data is noisy, incomplete, and constantly changing. A company's description six months ago may not reflect what they do now. Ground truth is expensive to curate and goes stale.</li>
+  </ul>
+
+  <h3>How pr-sweep maps</h3>
+  <p>pr-sweep's review gates are an eval pipeline for code quality: define criteria, run multiple evaluators (cross-provider adversarial review), aggregate scores, gate on thresholds, track regressions. The infrastructure pattern (harness, metrics, gates, iteration) is the same; the domain (code quality vs. search relevance) is different. The honest framing: "I've built evaluation infrastructure, not retrieval-specific benchmarks. The engineering is transferable; the domain metrics are new to me."</p>
+</div>
+
+<h2 class="doc-nav-target" id="postgres">PostgreSQL and Data Modeling</h2>
+<div class="card">
+  <p>Postgres is in the stack alongside Elasticsearch. Likely split: Elasticsearch for search and ranking, Postgres for structured data (user profiles, saved searches, interaction history, agent traces, workflow state).</p>
+
+  <h3>Relevant Postgres features</h3>
+  <ul>
+    <li><strong>JSONB:</strong> agent traces, tool call logs, and LLM responses are naturally JSON. <code>JSONB</code> columns with GIN indexes for querying inside documents. Tradeoff: flexibility vs. referential integrity.</li>
+    <li><strong>Partitioning:</strong> tens of millions of companies, hundreds of millions of operators. Time-based or hash partitioning for query performance on large tables.</li>
+    <li><strong>Materialized views:</strong> precomputed aggregations (company scores, investor activity summaries) refreshed on a schedule. Useful for dashboard-style queries that would be too expensive to run live.</li>
+    <li><strong>Advisory locks:</strong> coordinate agent execution. Ensure only one agent processes a given research task without locking rows.</li>
+    <li><strong>CTEs and window functions:</strong> multi-step analytical queries. Ranking companies within cohorts, computing percentiles, tracking metric changes over time.</li>
+    <li><strong>pgvector:</strong> if they store embeddings in Postgres alongside Elasticsearch. Vector similarity search within the relational database for cases where the full ES index isn't needed.</li>
+  </ul>
+
+  <h3>dbt</h3>
+  <p>dbt (data build tool) manages SQL transformations as version-controlled models. Each model is a SELECT statement that defines a table or view. dbt handles dependency ordering, incremental builds, testing (schema tests, data tests), and documentation. It sits between raw ingested data and the clean, structured tables that the application queries. For Harmonic, dbt likely transforms raw company/investor data from hundreds of sources into the canonical models that power search and Scout.</p>
+</div>
+
+<h2 class="doc-nav-target" id="process">Interview Process</h2>
+<div class="card">
+  <p>Five stages. Richard expects feedback by Tuesday July 1.</p>
+  <ol>
+    <li><strong>Intro call (20 min):</strong> internal recruiter. Screening, logistics, comp expectations.</li>
+    <li><strong>Technical screen 1 (45 min):</strong> debugging focus. Likely live, possibly back-to-back with #3.</li>
+    <li><strong>Technical screen 2 (45 min):</strong> system design focus. Likely live, possibly back-to-back with #2.</li>
+    <li><strong>Jam session (2 hrs):</strong> async implementation.
+      <ul>
+        <li>Team sends a prompt via Slack 24 hours in advance.</li>
+        <li>15-min kickoff on Slack: format, goal, tools.</li>
+        <li>Feature requirements presented, initial Q&amp;A.</li>
+        <li>90 min of independent implementation. Can ask questions via Slack. Provide an update at the 30-minute mark.</li>
+        <li>15-min submission wrap-up via Slack, submit via GitHub PR.</li>
+        <li>5-min discussion of implementation and experience.</li>
+      </ul>
+    </li>
+    <li><strong>Leadership meeting (~1 hr):</strong> onsite with founders (Richard confirming). Final stage before potential offer.</li>
+  </ol>
+
+  <h3>What plays well</h3>
+  <ul>
+    <li>The jam session format matches the pr-sweep workflow exactly: receive a spec, work independently, communicate async, submit as a PR. This is the strongest interview format for your working style.</li>
+    <li>System design round maps to Scout architecture discussions: retrieval pipelines, ranking, agent orchestration, data modeling at scale.</li>
+    <li>No indication of HackerRank/CodeSignal-style proctored assessments. Richard described it as interactive and collaborative.</li>
+  </ul>
+
+  <h3>What to clarify</h3>
+  <ul>
+    <li>Language preference for technical screens and jam session (Python? TypeScript? choice?).</li>
+    <li>Whether debugging round is language-specific or framework-specific.</li>
+    <li>Whether rounds 2 and 3 are back-to-back or separate days.</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="questions">Questions for Next Rounds</h2>
+<div class="card">
+  <ol>
+    <li>"What does Scout's current architecture look like? Monolith, microservices, something in between?"</li>
+    <li>"How do you evaluate retrieval quality today? Do you have labeled datasets, or is it more LLM-as-judge?"</li>
+    <li>"What's the split between Python and TypeScript in the codebase? Where does Go fit in?"</li>
+    <li>"How much of the agent framework is custom vs. LangChain/LangGraph?"</li>
+    <li>"What does the data ingestion pipeline look like for the hundreds of unstructured sources?"</li>
+    <li>"What's the team's approach to prompt management? Version-controlled, A/B tested, or more ad hoc?"</li>
+    <li>"What does 'reliability' mean concretely for Scout? SLA targets, fallback behavior, observability?"</li>
+    <li>"What's the comp range and equity structure?"</li>
+    <li>"Remote flexibility, or is this a hybrid/onsite role?"</li>
+  </ol>
+</div>
+
+</main>
+<script src="doc-nav.js"></script>
+<script src="../assets/script.js?v=20260609u"></script>
+</body>
+</html>

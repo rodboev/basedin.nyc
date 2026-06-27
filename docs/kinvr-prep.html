@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>Interview Prep: Fora Travel</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+</head>
+<body class="pr">
+<main class="doc-page">
+<h1>Interview Prep: Fora Travel</h1>
+<p class="subtitle">Senior Full Stack Engineer &middot; $170K&ndash;$200K + equity &middot; Tribeca hybrid (Mon/Tue/Thu) &middot; Recruiter screen June 23, 2026 (via Kinvr / Billy Warner)</p>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="testing" type="button">Testing</button>
+    <button class="sort-pill" data-target="event-driven" type="button">Event-Driven</button>
+    <button class="sort-pill" data-target="databases" type="button">Databases</button>
+    <button class="sort-pill" data-target="stateful" type="button">Stateful Apps</button>
+    <button class="sort-pill" data-target="questions" type="button">Questions</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="testing">Testing Web Applications</h2>
+<div class="card">
+  <p>Automated test suites at multiple layers:</p>
+  <ul>
+    <li><strong>Unit tests:</strong> isolated function/module tests, typically with Jest, Vitest, or pytest. Mock external dependencies, assert return values and side effects.</li>
+    <li><strong>Integration tests:</strong> verify that multiple modules work together correctly. Database queries return expected rows, API routes return expected responses, middleware chains execute in order. May use test databases or in-memory stores.</li>
+    <li><strong>End-to-end (E2E) tests:</strong> Playwright, Cypress, or Selenium driving a real browser against a running app. Assert that user flows (click button, fill form, see result) work as expected.</li>
+    <li><strong>Regression tests:</strong> tests written specifically to prove a fixed bug stays fixed. You write a test that reproduces the broken behavior, verify it fails, apply the fix, verify it passes. The test stays in the suite permanently as a guardrail.</li>
+    <li><strong>Contract tests:</strong> verify that boundaries between components (API shapes, function signatures, state machines) stay consistent. If module A depends on module B's output shape, a contract test breaks when B changes without A being updated.</li>
+  </ul>
+
+  <h3>Your experience here</h3>
+  <p>The pr-sweep pipeline enforces several of these directly. The <code>code</code> skill requires a "Required Proof Matrix" before promoting to review, and for bugfixes, at least one row must be a new behavioral regression check tied to the claimed fix. The adversarial review phase verifies test correctness (hardcoded strings match source, mocks preserve real semantics, assertions are behavioral rather than structural). The skill suite itself has its own contract test suite (<code>workflow-boundary-contract.test.js</code>, <code>spec-state.test.js</code>, <code>review-state.test.js</code>) that asserts the skill files maintain structural invariants across edits.</p>
+</div>
+
+<h2 class="doc-nav-target" id="event-driven">Event-Driven Systems</h2>
+<div class="card">
+  <p>Architectures where components communicate through events rather than direct calls. The key distinction from request/response:</p>
+  <ul>
+    <li><strong>Pub/sub:</strong> a component publishes an event ("order.placed"), zero or more subscribers react independently. The publisher doesn't know or care who's listening. Technologies: Redis Pub/Sub, AWS SNS/SQS, Google Pub/Sub, RabbitMQ, NATS.</li>
+    <li><strong>Event sourcing:</strong> instead of storing current state, store a log of every state change as an immutable event. Current state is derived by replaying events. Common in financial systems, booking systems, anything where audit trail matters.</li>
+    <li><strong>CQRS (Command Query Responsibility Segregation):</strong> separate the write model (commands that emit events) from the read model (projections built by consuming events). Lets you optimize reads and writes independently.</li>
+    <li><strong>Reactive streams / backpressure:</strong> RxJS, Node.js streams, async generators/iterators. Data flows through a pipeline of transformations, with backpressure so fast producers don't overwhelm slow consumers. Generators (<code>function*</code>) and async generators (<code>async function*</code>) are one implementation pattern here, where <code>yield</code> produces values on demand rather than eagerly.</li>
+    <li><strong>WebSockets / SSE:</strong> persistent connections where the server pushes events to the client as they happen rather than the client polling.</li>
+    <li><strong>Event loops / message queues:</strong> decoupling work from the request lifecycle. A booking request enqueues a job; a worker picks it up, processes it, emits completion events that trigger downstream steps (send confirmation email, update availability, notify advisor).</li>
+  </ul>
+
+  <h3>In travel tech specifically</h3>
+  <p>A booking triggers a chain of downstream events (payment capture, inventory hold, confirmation email, advisor notification, calendar sync), each handled by independent consumers. The system needs to handle failures at any step (what if payment succeeds but email fails?) without corrupting state. That's saga/choreography pattern territory.</p>
+
+  <h3>Your experience here</h3>
+  <p>OpenAI Realtime API: WebSocket relay with AudioWorklet audio pipeline, real-time streaming with partial JSON parsing. The pr-sweep pipeline itself is event-driven: issue discovery emits targets, code agents react to specs, review agents react to staged code, convergence loops poll for CI events and review-thread activity.</p>
+</div>
+
+<h2 class="doc-nav-target" id="databases">Relational Databases and ORMs</h2>
+<div class="card">
+  <ul>
+    <li><strong>Relational DB fluency:</strong> schema design (normalization, denormalization tradeoffs), indexing strategy (covering indexes, composite indexes, partial indexes), query optimization (explain plans, N+1 detection, join strategies), migrations (zero-downtime schema changes, backfills on large tables), transactions and isolation levels (read committed vs serializable, when each matters).</li>
+    <li><strong>ORMs:</strong> Sequelize, Prisma, TypeORM, Drizzle (JS ecosystem); SQLAlchemy, Django ORM (Python). The practical question is whether you can reason about what SQL the ORM generates, recognize when it's doing something pathological, and drop to raw queries when the abstraction leaks.</li>
+  </ul>
+
+  <h3>Your experience here</h3>
+  <p>MSSQL via FreeTDS/msnodesqlv8, raw SQL. SQLite concurrency fixes in open source (mcp-memory-service). Supabase (Postgres). No ORM experience to speak of, but raw SQL is a stronger signal than "I used Prisma" because it means you understand what's happening at the query level. Be upfront about this: "I've written production SQL directly; I haven't used Prisma or Sequelize in production but the abstraction layer isn't the hard part."</p>
+</div>
+
+<h2 class="doc-nav-target" id="stateful">Stateful Web Applications / Complex Workflows</h2>
+<div class="card">
+  <ul>
+    <li><strong>Stateful:</strong> the app tracks multi-step processes that span multiple requests and potentially days. A booking isn't a single form submission; it's: search, select, hold inventory, collect passenger details, payment, confirmation, post-booking modifications. Each step depends on the previous state, and the system needs to handle interruptions, timeouts, concurrent modifications, and partial failures.</li>
+    <li><strong>State machines:</strong> explicitly modeling valid transitions (draft &rarr; pending_payment &rarr; confirmed &rarr; modified &rarr; cancelled). Prevents invalid states (you can't modify a cancelled booking). Libraries like XState formalize this; many teams do it ad-hoc with status columns and conditional logic.</li>
+    <li><strong>Optimistic locking / concurrency:</strong> two advisors booking the last seat simultaneously. How does the system resolve that? Optimistic locking (version columns), pessimistic locking (SELECT FOR UPDATE), or inventory holds with TTLs.</li>
+    <li><strong>Complex workflows:</strong> multi-party coordination (traveler, advisor, airline/hotel API, payment processor), each with its own failure modes and retry semantics. Saga pattern (compensating transactions) vs. orchestration (a central coordinator) vs. choreography (each service reacts to events).</li>
+  </ul>
+
+  <h3>Your experience here</h3>
+  <p>scheduling-v2: multi-constraint optimization (technician availability, geography, service windows) with state that persists across sessions and has to handle conflicts. The domain is pest control but the architectural problems are the same: scheduling + routing + client management. Kim Seybert: full e-commerce lifecycle (browsing through checkout), conversion optimization, payment integration (Apple Pay, PayPal). Cosgrove: clients included Hyatt, US Airways, Virgin America, Ritz-Carlton.</p>
+</div>
+
+<h2 class="doc-nav-target" id="questions">Questions to Ask</h2>
+<div class="card">
+  <ol>
+    <li>"What does the engineering team structure look like? How many engineers, and how are squads organized?"</li>
+    <li>"What's the tech stack beyond React?" (confirm Node.js vs. something else on backend, database choices, infrastructure)</li>
+    <li>"Is this backfilling a role or a new headcount from growth?"</li>
+    <li>"What does the interview process look like after this call?" (flag if it involves proctored coding assessments)</li>
+    <li>"How long has Kinvr been working with them? How many placements have you made there?" (gauge how warm this lead is)</li>
+  </ol>
+</div>
+
+</main>
+<script src="doc-nav.js"></script>
+<script src="../assets/script.js?v=20260609u"></script>
+</body>
+</html>
