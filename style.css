@@ -1652,6 +1652,10 @@ body.pr .cumul-short { display: none; }
 @media (max-width: 420px) {
   body.pr .cumul-full { display: none; }
   body.pr .cumul-short { display: inline; }
+  body.pr .landscape-row:not(#pr-landscape-row) .sort-pill {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
 }
 
 body.pr .tl-repo-pills {
