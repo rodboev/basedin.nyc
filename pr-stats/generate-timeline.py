@@ -260,6 +260,49 @@ var C = {{
 Chart.defaults.color = C.text;
 Chart.defaults.borderColor = C.grid;
 
+Chart.register({{
+  id: 'smoothLayout',
+  beforeDatasetsDraw: function(chart) {{
+    var sc = chart._barScales;
+    if (!sc || !sc._xTransform) return;
+    var n = chart.data.labels.length;
+    if (n < 1) return;
+    var eN = sc._xTransform.effectiveN;
+    if (eN < 0.01) return;
+    var aL = chart.chartArea.left, aW = chart.chartArea.right - aL;
+    var eCW = aW / eN;
+    var xS = chart.scales.x;
+    var bR = 0.72;
+    if (n > 1) {{
+      var uCW = xS.getPixelForValue(1) - xS.getPixelForValue(0);
+      if (uCW > 0) for (var di = 0; di < chart.data.datasets.length; di++) {{
+        var m = chart.getDatasetMeta(di);
+        if (m.type === 'bar' && m.data.length > 0 && m.data[0].width > 0) {{ bR = m.data[0].width / uCW; break; }}
+      }}
+    }}
+    var pos = 0, eC = [];
+    for (var i = 0; i < n; i++) {{ var s = i < sc.length ? sc[i] : 1; eC.push(aL + (pos + 0.5 * s) * eCW); pos += s; }}
+    for (var di = 0; di < chart.data.datasets.length; di++) {{
+      var meta = chart.getDatasetMeta(di);
+      for (var i = 0; i < meta.data.length && i < n; i++) {{
+        var el = meta.data[i];
+        var dx = eC[i] - el.x;
+        el.x = eC[i];
+        if (typeof el.width !== 'undefined') {{ var s = i < sc.length ? sc[i] : 1; el.width = Math.max(0, s * eCW * bR); }}
+        if (typeof el.cp1x !== 'undefined') el.cp1x += dx;
+        if (typeof el.cp2x !== 'undefined') el.cp2x += dx;
+      }}
+    }}
+    chart.ctx.save();
+    chart.ctx.beginPath();
+    chart.ctx.rect(aL, 0, aW, chart.canvas.height);
+    chart.ctx.clip();
+  }},
+  afterDatasetsDraw: function(chart) {{
+    if (chart._barScales && chart._barScales._xTransform) chart.ctx.restore();
+  }}
+}});
+
 var pillsEl = document.getElementById('tl-repo-pills');
 var allPill = document.createElement('div');
 allPill.className = 'sort-pill active';
@@ -289,6 +332,43 @@ function trendline(vals) {{
   var m = (n*sxy - sx*sy) / (n*sxx - sx*sx);
   var b = (sy - m*sx) / n;
   return vals.map(function(_, i) {{ return i === 0 || i === n-1 ? Math.max(0, m*i + b) : null; }});
+}}
+function wtrendline(vals, wts) {{
+  var n = vals.length;
+  if (n < 2) return vals.map(function(){{return null;}});
+  var sw=0,sx=0,sy=0,sxx=0,sxy=0;
+  for (var i=0;i<n;i++){{var w=wts[i];sw+=w;sx+=w*i;sy+=w*vals[i];sxx+=w*i*i;sxy+=w*i*vals[i];}}
+  if (sw<0.01) return vals.map(function(){{return null;}});
+  var d=sw*sxx-sx*sx;
+  if(Math.abs(d)<1e-10) return vals.map(function(){{return null;}});
+  var m=(sw*sxy-sx*sy)/d, b=(sy-m*sx)/sw;
+  var fi=-1,li=-1;
+  for(var i=0;i<n;i++) if(wts[i]>0.01){{if(fi<0)fi=i;li=i;}}
+  if(fi<0||fi===li) return vals.map(function(){{return null;}});
+  var r=vals.map(function(){{return null;}});
+  r[fi]=Math.max(0,m*fi+b); r[li]=Math.max(0,m*li+b);
+  return r;
+}}
+function ease(t) {{ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }}
+var textRgb = (function(c){{return parseInt(c.slice(1,3),16)+','+parseInt(c.slice(3,5),16)+','+parseInt(c.slice(5,7),16);}})(C.text);
+function textAlpha(a) {{ return 'rgba('+textRgb+','+a+')'; }}
+function lerpFading(data, sc, len, keep) {{
+  var out = data.slice();
+  for (var i = 0; i < len; i++) {{
+    if (sc[i] > 0.99) continue;
+    var pI = -1, nI = -1;
+    for (var j = i - 1; j >= 0; j--) if (sc[j] > 0.99) {{ pI = j; break; }}
+    for (var j = i + 1; j < len; j++) if (sc[j] > 0.99) {{ nI = j; break; }}
+    if (pI >= 0 && nI >= 0) {{
+      var f = (i - pI) / (nI - pI);
+      out[i] = data[i] * sc[i] + (data[pI] + f * (data[nI] - data[pI])) * (1 - sc[i]);
+      if (sc[i] < 0.01) out[i] = null;
+    }} else {{
+      var k = Array.isArray(keep) ? keep[i] : keep;
+      if (!k) out[i] = null;
+    }}
+  }}
+  return out;
 }}
 function sliceData(days) {{
   var src = activeTL();
@@ -399,14 +479,14 @@ function build(r) {{
            borderColor: function(ctx) {{ return isToday(ctx) ? C.green+'30' : C.green+'60'; }},
            borderWidth: 1, borderRadius: 3, yAxisID: 'yL', order: 4 }},
         {{ label: 'PRs opened', data: sl.map(function(d){{return d.prsOpened}}), type: 'line',
-           borderColor: C.blue, borderWidth: 2.5, tension: 0.25, yAxisID: 'yP', order: 1,
+           borderColor: C.blue, borderWidth: 2.5, tension: 0, yAxisID: 'yP', order: 1,
            pointRadius: 4, pointHoverRadius: 6,
            pointBackgroundColor: function(ctx) {{ return isToday(ctx) ? C.blue+'80' : C.blue; }},
            segment: {{ borderColor: segToday }} }},
         {{ label: ' ', data: tOpened, type: 'line',
            borderColor: C.blue, borderWidth: 1.5, borderDash: [6,4], pointRadius: 0, pointHitRadius: 0, tension: 0, yAxisID: 'yP', order: 0, spanGaps: true }},
         {{ label: 'PRs shipped', data: sl.map(function(d){{return d.prsShipped}}), type: 'line',
-           borderColor: C.purple, borderWidth: 2.5, borderDash: [5,3], tension: 0.25, yAxisID: 'yP', order: 3,
+           borderColor: C.purple, borderWidth: 2.5, borderDash: [5,3], tension: 0, yAxisID: 'yP', order: 3,
            pointRadius: 4, pointHoverRadius: 6,
            pointBackgroundColor: function(ctx) {{ return isToday(ctx) ? C.purple+'80' : C.purple; }},
            segment: {{ borderColor: segToday }} }},
@@ -544,35 +624,132 @@ function transitionRange(newR) {{
   var cS = [sup.map(function(d){{return d.cumLoc}}), sup.map(function(d){{return d.cumOpened}}),
     sup.map(function(d){{return d.cumShipped}})];
   var oD = bdDisplay(oB), nD = bdDisplay(nB);
-  var tDur = 500, tStart = null;
-  function ease(t) {{ return 1 - Math.pow(1 - t, 2); }}
+  var expanding = newN > oldN;
+  var edgeCount = Math.abs(newN - oldN);
+  var lastIsToday = supDates[supLen - 1] === TL_TODAY;
+  var tO0 = trendline((lastIsToday ? dS[1].slice(0,-1) : dS[1]) || []);
+  var tS0 = trendline((lastIsToday ? dS[3].slice(0,-1) : dS[3]) || []);
+  if (lastIsToday) {{ tO0.push(null); tS0.push(null); }}
+  var startDL = dChart.scales.yL.max, startDP = dChart.scales.yP.max;
+  var startCL = cChart.scales.yL.max, startCP = cChart.scales.yP.max;
+  var dYLw0 = dChart.scales.yL.width, dYPw0 = dChart.scales.yP.width, dXh0 = dChart.scales.x.height;
+  var cYLw0 = cChart.scales.yL.width, cYPw0 = cChart.scales.yP.width, cXh0 = cChart.scales.x.height;
+  var dXrot0 = dChart.scales.x.labelRotation, dYLrot0 = dChart.scales.yL.labelRotation, dYProt0 = dChart.scales.yP.labelRotation;
+  build(newR);
+  var endDL = dChart.scales.yL.max, endDP = dChart.scales.yP.max;
+  var endCL = cChart.scales.yL.max, endCP = cChart.scales.yP.max;
+  var dYLw1 = dChart.scales.yL.width, dYPw1 = dChart.scales.yP.width;
+  var cYLw1 = cChart.scales.yL.width, cYPw1 = cChart.scales.yP.width;
+  var dXh1 = dChart.scales.x.height, cXh1 = cChart.scales.x.height;
+  var dXrot1 = dChart.scales.x.labelRotation, dYLrot1 = dChart.scales.yL.labelRotation, dYProt1 = dChart.scales.yP.labelRotation;
+  var dXhCur = dXh0, cXhCur = cXh0;
+  var dYLwCur = dYLw0, dYPwCur = dYPw0, cYLwCur = cYLw0, cYPwCur = cYPw0;
+  dChart.options.scales.yL.afterFit = function(a){{a.width=dYLwCur;}}; dChart.options.scales.yP.afterFit = function(a){{a.width=dYPwCur;}};
+  cChart.options.scales.yL.afterFit = function(a){{a.width=cYLwCur;}}; cChart.options.scales.yP.afterFit = function(a){{a.width=cYPwCur;}};
+  dChart.options.scales.x.afterFit = function(a){{a.height=dXhCur;}}; cChart.options.scales.x.afterFit = function(a){{a.height=cXhCur;}};
+  dChart.data.labels = supLabs;
+  dChart.data.datasets[0].data = dS[0];
+  dChart.data.datasets[1].data = dS[1];
+  dChart.data.datasets[2].data = tO0;
+  dChart.data.datasets[3].data = dS[3];
+  dChart.data.datasets[4].data = tS0;
+  cChart.data.labels = supLabs;
+  cChart.data.datasets[0].data = cS[0];
+  cChart.data.datasets[1].data = cS[1];
+  cChart.data.datasets[2].data = cS[2];
+  var initSc = [];
+  for (var i = 0; i < supLen; i++) {{
+    if (expanding) initSc.push(i < edgeCount ? 0 : 1);
+    else initSc.push(1);
+  }}
+  initSc._xTransform = {{ effectiveN: oldN }};
+  var xSlide = Math.abs(dXh0 - dXh1) < 1 && dXrot0 === dXrot1;
+  var dYLslide = Math.abs(dYLw0 - dYLw1) < 1 && dYLrot0 === dYLrot1;
+  var dYPslide = Math.abs(dYPw0 - dYPw1) < 1 && dYProt0 === dYProt1;
+  dChart._barScales = initSc;
+  if (xSlide) {{
+    dChart.options.scales.x.ticks.color = function(ctx) {{ return initSc[ctx.index] > 0.99 ? C.text : 'transparent'; }};
+  }} else {{
+    dChart.options.scales.x.ticks.color = textAlpha(0);
+  }}
+  if (!dYLslide) dChart.options.scales.yL.ticks.color = textAlpha(0);
+  if (!dYPslide) dChart.options.scales.yP.ticks.color = textAlpha(0);
+  dChart.data.datasets[1].spanGaps = true; dChart.data.datasets[3].spanGaps = true;
+  dChart.options.scales.yL.max = startDL; dChart.options.scales.yP.max = startDP;
+  dChart.update('none');
+  cChart._barScales = initSc;
+  cChart.options.scales.yL.max = startCL; cChart.options.scales.yP.max = startCP;
+  cChart.update('none');
+  var tDur = 500, tStart = null, rotSnapped = false;
   transId = requestAnimationFrame(function tick(now) {{
     if (!tStart) tStart = now;
     var elapsed = now - tStart, done = elapsed >= tDur;
     var et = done ? 1 : ease(Math.min(elapsed / tDur, 1));
-    var n = done ? newN : Math.max(1, Math.round(oldN + et * (newN - oldN)));
-    var si = supLen - n;
-    var labs = supLabs.slice(si, si + n);
-    var d0 = dS[0].slice(si, si+n), d1 = dS[1].slice(si, si+n), d3 = dS[3].slice(si, si+n);
-    var lastIsToday = supDates[si + n - 1] === TL_TODAY;
-    var d1T = lastIsToday ? d1.slice(0, -1) : d1, d3T = lastIsToday ? d3.slice(0, -1) : d3;
-    var tO = trendline(d1T), tS = trendline(d3T);
-    if (lastIsToday) {{ tO.push(null); tS.push(null); }}
-    dChart.data.labels = labs;
-    dChart.data.datasets[0].data = d0;
-    dChart.data.datasets[1].data = d1;
-    dChart.data.datasets[2].data = tO;
-    dChart.data.datasets[3].data = d3;
-    dChart.data.datasets[4].data = tS;
-    dChart.update('none');
-    cChart.data.labels = labs;
-    cChart.data.datasets[0].data = cS[0].slice(si, si+n);
-    cChart.data.datasets[1].data = cS[1].slice(si, si+n);
-    cChart.data.datasets[2].data = cS[2].slice(si, si+n);
-    cChart.update('none');
+    var nExact = oldN + et * (newN - oldN);
+    var sc = [];
+    for (var i = 0; i < supLen; i++) {{
+      if (expanding) {{
+        var fromRight = supLen - 1 - i;
+        if (fromRight < nExact - 1) sc.push(1);
+        else if (fromRight < nExact) sc.push(nExact - fromRight);
+        else sc.push(0);
+      }} else {{
+        if (i < supLen - nExact) sc.push(Math.max(0, 1 - (supLen - nExact - i)));
+        else sc.push(1);
+      }}
+    }}
+    sc._xTransform = {{ effectiveN: Math.max(0.5, nExact) }};
+    var twts = [];
+    for (var i=0;i<supLen;i++) twts.push(supDates[i]===TL_TODAY ? 0 : sc[i]);
+    var tOa = wtrendline(dS[1], twts), tSa = wtrendline(dS[3], twts);
+    var lineO = lerpFading(dS[1], sc, supLen, expanding), lineS = lerpFading(dS[3], sc, supLen, expanding);
+    dChart.data.datasets[1].data = lineO;
+    dChart.data.datasets[2].data = tOa;
+    dChart.data.datasets[3].data = lineS;
+    dChart.data.datasets[4].data = tSa;
+    dChart.options.scales.yL.max = startDL+et*(endDL-startDL);
+    dChart.options.scales.yP.max = startDP+et*(endDP-startDP);
+    cChart.options.scales.yL.max = startCL+et*(endCL-startCL);
+    cChart.options.scales.yP.max = startCP+et*(endCP-startCP);
+    var labelA = et<0.15 ? 1-et/0.15 : et>0.85 ? (et-0.85)/0.15 : 0;
+    var labelC = labelA<0.01 ? 'transparent' : textAlpha(labelA);
+    if (!rotSnapped && labelA < 0.01) {{
+      rotSnapped = true;
+      if (!xSlide) {{ dChart.options.scales.x.ticks.minRotation = dXrot1; dChart.options.scales.x.ticks.maxRotation = dXrot1; }}
+      if (!dYLslide) {{ dChart.options.scales.yL.ticks.minRotation = dYLrot1; dChart.options.scales.yL.ticks.maxRotation = dYLrot1; }}
+      if (!dYPslide) {{ dChart.options.scales.yP.ticks.minRotation = dYProt1; dChart.options.scales.yP.ticks.maxRotation = dYProt1; }}
+    }}
+    if (xSlide) {{
+      dChart.options.scales.x.ticks.color = function(ctx) {{
+        var s = sc[ctx.index]; return s > 0.99 ? C.text : s < 0.01 ? 'transparent' : textAlpha(s);
+      }};
+    }} else {{
+      dChart.options.scales.x.ticks.color = labelC;
+    }}
+    if (!dYLslide) dChart.options.scales.yL.ticks.color = labelC;
+    if (!dYPslide) dChart.options.scales.yP.ticks.color = labelC;
+    dXhCur = dXh0+et*(dXh1-dXh0); cXhCur = cXh0+et*(cXh1-cXh0);
+    dYLwCur = dYLw0+et*(dYLw1-dYLw0); dYPwCur = dYPw0+et*(dYPw1-dYPw0);
+    cYLwCur = cYLw0+et*(cYLw1-cYLw0); cYPwCur = cYPw0+et*(cYPw1-cYPw0);
+    dChart._barScales = sc; dChart.update('none');
+    cChart._barScales = sc; cChart.update('none');
     renderBdFrame(oD, nD, et);
     if (!done) {{ transId = requestAnimationFrame(tick); }}
-    else {{ transId = 0; updateBreakdown(newR); }}
+    else {{
+      dChart._barScales = null; cChart._barScales = null;
+      dChart.data.datasets[1].spanGaps = false; dChart.data.datasets[3].spanGaps = false;
+      dChart.options.scales.x.ticks.color = C.text;
+      dChart.options.scales.yL.ticks.color = C.text; dChart.options.scales.yP.ticks.color = C.text;
+      delete dChart.options.scales.x.ticks.minRotation; dChart.options.scales.x.ticks.maxRotation = 50;
+      delete dChart.options.scales.yL.ticks.minRotation; delete dChart.options.scales.yL.ticks.maxRotation;
+      delete dChart.options.scales.yP.ticks.minRotation; delete dChart.options.scales.yP.ticks.maxRotation;
+      delete dChart.options.scales.yL.max; delete dChart.options.scales.yP.max;
+      delete cChart.options.scales.yL.max; delete cChart.options.scales.yP.max;
+      delete dChart.options.scales.yL.afterFit; delete dChart.options.scales.yP.afterFit;
+      delete cChart.options.scales.yL.afterFit; delete cChart.options.scales.yP.afterFit;
+      delete dChart.options.scales.x.afterFit; delete cChart.options.scales.x.afterFit;
+      transId = 0; build(newR); updateBreakdown(newR);
+    }}
   }});
 }}
 build(range);
@@ -613,27 +790,33 @@ build(range);
   }});
   var p0s = phases[0].startD, p0e = phases[0].endD;
   p0s.barSh = p0e.barSh; p0s.barSp = p0e.barSp; p0s.barL = p0e.barL; p0s.barO = p0e.barO;
-  var dur = 2000, phaseDur = dur / phases.length, start = null;
+  var dur = 1000, phaseDur = dur / phases.length, start = null;
   var pills = document.querySelectorAll('#bd-range-pills .sort-pill');
   var dLabsFull = dChart.data.labels.slice();
   var cLabsFull = cChart.data.labels.slice();
   var dFull = dChart.data.datasets.map(function(ds) {{ return ds.data.slice(); }});
   var cFull = cChart.data.datasets.map(function(ds) {{ return ds.data.slice(); }});
   var totalPts = dLabsFull.length;
+  dChart.options.scales.x.ticks.color = textAlpha(0);
   animId = requestAnimationFrame(function tick(now) {{
     if (!start) start = now;
     var elapsed = now - start, done = elapsed >= dur;
-    var prog = done ? 1 : Math.min(elapsed / dur, 1);
-    var n = done ? totalPts : Math.max(1, Math.ceil(prog * totalPts));
-    dChart.data.labels = dLabsFull.slice(0, n);
-    dChart.data.datasets.forEach(function(ds, i) {{ ds.data = dFull[i].slice(0, n); }});
-    cChart.data.labels = cLabsFull.slice(0, n);
-    cChart.data.datasets.forEach(function(ds, i) {{ ds.data = cFull[i].slice(0, n); }});
-    dChart.update('none');
-    cChart.update('none');
+    var prog = done ? 1 : ease(Math.min(elapsed / dur, 1));
+    var nExact = done ? totalPts : Math.max(0.5, prog * totalPts);
+    var sc = [];
+    for (var i = 0; i < totalPts; i++) {{
+      if (i + 1 <= nExact) sc.push(1);
+      else if (i < nExact) sc.push(nExact - i);
+      else sc.push(0);
+    }}
+    sc._xTransform = {{ effectiveN: nExact }};
+    var labelA = prog>0.7 ? (prog-0.7)/0.3 : 0;
+    dChart.options.scales.x.ticks.color = labelA<0.01 ? 'transparent' : textAlpha(labelA);
+    dChart._barScales = sc; dChart.update('none');
+    cChart._barScales = sc; cChart.update('none');
     var pi = done ? phases.length - 1 : Math.min(Math.floor(elapsed / phaseDur), phases.length - 1);
     var phase = phases[pi];
-    var et = done ? 1 : Math.min((elapsed - pi * phaseDur) / phaseDur, 1);
+    var et = done ? 1 : ease(Math.min((elapsed - pi * phaseDur) / phaseDur, 1));
     var sD = phase.startD, eD = phase.endD;
     var cT = Math.round(sD.total+et*(eD.total-sD.total));
     if (cT < 1) {{ animId = requestAnimationFrame(tick); return; }}
@@ -643,12 +826,9 @@ build(range);
     if (!done) {{ animId = requestAnimationFrame(tick); }}
     else {{
       animId = 0;
-      dChart.data.labels = dLabsFull;
-      dChart.data.datasets.forEach(function(ds, i) {{ ds.data = dFull[i]; }});
-      cChart.data.labels = cLabsFull;
-      cChart.data.datasets.forEach(function(ds, i) {{ ds.data = cFull[i]; }});
-      dChart.update('none');
-      cChart.update('none');
+      dChart._barScales = null; cChart._barScales = null;
+      dChart.options.scales.x.ticks.color = C.text;
+      dChart.update('none'); cChart.update('none');
       updateBreakdown(0);
       pills.forEach(function(p) {{ p.classList.toggle('active', p.getAttribute('data-range') === '0'); }});
     }}
@@ -688,18 +868,20 @@ pillsEl.addEventListener('click', function(e) {{
   newSl.forEach(function(d) {{ dateSet[d.date] = true; }});
   var uDates = Object.keys(dateSet).sort();
   var uLabs = uDates.map(fmtLabel);
+  var uLen = uLabs.length;
   var oldBy = {{}}, newBy = {{}};
   oldSl.forEach(function(d) {{ oldBy[d.date] = d; }});
   newSl.forEach(function(d) {{ newBy[d.date] = d; }});
-  var oldOnly = [], newOnly = [], sharedIdx = [];
+  var oldN = oldSl.length, newN = newSl.length;
+  var cat = [];
   var oV = {{loc:[],po:[],ps:[],cl:[],co:[],cs:[]}};
   var nV = {{loc:[],po:[],ps:[],cl:[],co:[],cs:[]}};
   var ocl=0,oco=0,ocs=0,ncl=0,nco=0,ncs=0;
   uDates.forEach(function(dt, i) {{
     var o = oldBy[dt], n = newBy[dt];
-    if (o && n) sharedIdx.push(i);
-    else if (o) oldOnly.push(i);
-    else newOnly.push(i);
+    if (o && n) cat.push('s');
+    else if (o) cat.push('o');
+    else cat.push('n');
     oV.loc.push(o?o.loc:0); oV.po.push(o?o.prsOpened:0); oV.ps.push(o?o.prsShipped:0);
     nV.loc.push(n?n.loc:0); nV.po.push(n?n.prsOpened:0); nV.ps.push(n?n.prsShipped:0);
     if(o){{ocl=o.cumLoc;oco=o.cumOpened;ocs=o.cumShipped;}}
@@ -707,92 +889,138 @@ pillsEl.addEventListener('click', function(e) {{
     oV.cl.push(ocl);oV.co.push(oco);oV.cs.push(ocs);
     nV.cl.push(ncl);nV.co.push(nco);nV.cs.push(ncs);
   }});
-  var cat = {{}};
-  oldOnly.forEach(function(i){{ cat[i]='o'; }});
-  newOnly.forEach(function(i){{ cat[i]='n'; }});
-  sharedIdx.forEach(function(i){{ cat[i]='s'; }});
   var startDL = dChart.scales.yL.max, startDP = dChart.scales.yP.max;
   var startCL = cChart.scales.yL.max, startCP = cChart.scales.yP.max;
+  var dYLw0 = dChart.scales.yL.width, dYPw0 = dChart.scales.yP.width, dXh0 = dChart.scales.x.height;
+  var cYLw0 = cChart.scales.yL.width, cYPw0 = cChart.scales.yP.width, cXh0 = cChart.scales.x.height;
+  var dXrot0 = dChart.scales.x.labelRotation, dYLrot0 = dChart.scales.yL.labelRotation, dYProt0 = dChart.scales.yP.labelRotation;
   build(range);
   var endDL = dChart.scales.yL.max, endDP = dChart.scales.yP.max;
   var endCL = cChart.scales.yL.max, endCP = cChart.scales.yP.max;
-  var initVis = oldOnly.concat(sharedIdx).sort(function(a,b){{return a-b;}});
-  var initLabs = initVis.map(function(i){{return uLabs[i];}});
-  var initL=[],initPO=[],initPS=[],initCL2=[],initCO2=[],initCS2=[];
-  initVis.forEach(function(idx) {{
-    initL.push(oV.loc[idx]); initPO.push(oV.po[idx]); initPS.push(oV.ps[idx]);
-    initCL2.push(oV.cl[idx]); initCO2.push(oV.co[idx]); initCS2.push(oV.cs[idx]);
-  }});
-  var initNull = initLabs.map(function(){{return null;}});
-  dChart.data.labels = initLabs;
-  dChart.data.datasets[0].data = initL; dChart.data.datasets[1].data = initPO;
-  dChart.data.datasets[2].data = initNull; dChart.data.datasets[3].data = initPS;
-  dChart.data.datasets[4].data = initNull;
+  var dYLw1 = dChart.scales.yL.width, dYPw1 = dChart.scales.yP.width;
+  var cYLw1 = cChart.scales.yL.width, cYPw1 = cChart.scales.yP.width;
+  var dXh1 = dChart.scales.x.height, cXh1 = cChart.scales.x.height;
+  var dXrot1 = dChart.scales.x.labelRotation, dYLrot1 = dChart.scales.yL.labelRotation, dYProt1 = dChart.scales.yP.labelRotation;
+  var dXhCur = dXh0, cXhCur = cXh0;
+  var dYLwCur = dYLw0, dYPwCur = dYPw0, cYLwCur = cYLw0, cYPwCur = cYPw0;
+  dChart.options.scales.yL.afterFit = function(a){{a.width=dYLwCur;}}; dChart.options.scales.yP.afterFit = function(a){{a.width=dYPwCur;}};
+  cChart.options.scales.yL.afterFit = function(a){{a.width=cYLwCur;}}; cChart.options.scales.yP.afterFit = function(a){{a.width=cYPwCur;}};
+  dChart.options.scales.x.afterFit = function(a){{a.height=dXhCur;}}; cChart.options.scales.x.afterFit = function(a){{a.height=cXhCur;}};
+  var nullArr = uLabs.map(function(){{return null;}});
+  dChart.data.labels = uLabs;
+  dChart.data.datasets[0].data = oV.loc.slice();
+  dChart.data.datasets[1].data = oV.po.slice();
+  dChart.data.datasets[2].data = nullArr;
+  dChart.data.datasets[3].data = oV.ps.slice();
+  dChart.data.datasets[4].data = nullArr;
   dChart.options.scales.yL.max = startDL; dChart.options.scales.yP.max = startDP;
+  var initSc = [];
+  for (var i = 0; i < uLen; i++) initSc.push(cat[i] === 'n' ? 0 : 1);
+  initSc._xTransform = {{ effectiveN: oldN }};
+  var xSlide = Math.abs(dXh0 - dXh1) < 1 && dXrot0 === dXrot1;
+  var dYLslide = Math.abs(dYLw0 - dYLw1) < 1 && dYLrot0 === dYLrot1;
+  var dYPslide = Math.abs(dYPw0 - dYPw1) < 1 && dYProt0 === dYProt1;
+  var keepArr = cat.map(function(c) {{ return c !== 'o'; }});
+  dChart._barScales = initSc;
+  if (xSlide) {{
+    dChart.options.scales.x.ticks.color = function(ctx) {{ return initSc[ctx.index] > 0.99 ? C.text : 'transparent'; }};
+  }} else {{
+    dChart.options.scales.x.ticks.color = textAlpha(0);
+  }}
+  if (!dYLslide) dChart.options.scales.yL.ticks.color = textAlpha(0);
+  if (!dYPslide) dChart.options.scales.yP.ticks.color = textAlpha(0);
+  dChart.data.datasets[1].spanGaps = true; dChart.data.datasets[3].spanGaps = true;
   dChart.update('none');
-  cChart.data.labels = initLabs;
-  cChart.data.datasets[0].data = initCL2; cChart.data.datasets[1].data = initCO2;
-  cChart.data.datasets[2].data = initCS2;
+  cChart.data.labels = uLabs;
+  cChart.data.datasets[0].data = oV.cl.slice();
+  cChart.data.datasets[1].data = oV.co.slice();
+  cChart.data.datasets[2].data = oV.cs.slice();
   cChart.options.scales.yL.max = startCL; cChart.options.scales.yP.max = startCP;
+  cChart._barScales = initSc;
   cChart.update('none');
-  var tDur = 500, tStart = null;
+  var tDur = 500, tStart = null, rotSnapped = false;
   transId = requestAnimationFrame(function tick(now) {{
     if (!tStart) tStart = now;
     var elapsed = now - tStart, done = elapsed >= tDur;
-    var et = done ? 1 : Math.min(elapsed / tDur, 1);
-    var nPairs = Math.min(oldOnly.length, newOnly.length);
-    var diff = newOnly.length - oldOnly.length;
-    var paired = Math.round(et * nPairs);
-    var oRem = oldOnly.length - paired;
-    var nVis = paired;
-    if (diff > 0) nVis += Math.round(et * diff);
-    else if (diff < 0) oRem -= Math.round(et * (-diff));
-    var vis = [];
-    for (var i = 0; i < oRem; i++) vis.push(oldOnly[i]);
-    sharedIdx.forEach(function(i){{ vis.push(i); }});
-    for (var i = 0; i < nVis; i++) vis.push(newOnly[i]);
-    vis.sort(function(a,b){{ return a-b; }});
-    var fL=[],fLoc=[],fPO=[],fPS=[],fCL=[],fCO=[],fCS=[];
-    vis.forEach(function(idx) {{
-      fL.push(uLabs[idx]);
-      var c = cat[idx];
-      if (c==='s') {{
-        fLoc.push(oV.loc[idx]+et*(nV.loc[idx]-oV.loc[idx]));
-        fPO.push(oV.po[idx]+et*(nV.po[idx]-oV.po[idx]));
-        fPS.push(oV.ps[idx]+et*(nV.ps[idx]-oV.ps[idx]));
-        fCL.push(oV.cl[idx]+et*(nV.cl[idx]-oV.cl[idx]));
-        fCO.push(oV.co[idx]+et*(nV.co[idx]-oV.co[idx]));
-        fCS.push(oV.cs[idx]+et*(nV.cs[idx]-oV.cs[idx]));
-      }} else if (c==='o') {{
-        fLoc.push(oV.loc[idx]*(1-et)); fPO.push(oV.po[idx]*(1-et)); fPS.push(oV.ps[idx]*(1-et));
-        fCL.push(oV.cl[idx]*(1-et)); fCO.push(oV.co[idx]*(1-et)); fCS.push(oV.cs[idx]*(1-et));
+    var et = done ? 1 : ease(Math.min(elapsed / tDur, 1));
+    var nExact = oldN + et * (newN - oldN);
+    var sc = [];
+    for (var i = 0; i < uLen; i++) {{
+      if (cat[i] === 's') sc.push(1);
+      else if (cat[i] === 'o') sc.push(1 - et);
+      else sc.push(et);
+    }}
+    sc._xTransform = {{ effectiveN: Math.max(0.5, nExact) }};
+    var fLoc=[], fPO=[], fPS=[], fCL=[], fCO=[], fCS=[];
+    for (var i = 0; i < uLen; i++) {{
+      if (cat[i] === 's') {{
+        fLoc.push(oV.loc[i]+et*(nV.loc[i]-oV.loc[i]));
+        fPO.push(oV.po[i]+et*(nV.po[i]-oV.po[i]));
+        fPS.push(oV.ps[i]+et*(nV.ps[i]-oV.ps[i]));
+        fCL.push(oV.cl[i]+et*(nV.cl[i]-oV.cl[i]));
+        fCO.push(oV.co[i]+et*(nV.co[i]-oV.co[i]));
+        fCS.push(oV.cs[i]+et*(nV.cs[i]-oV.cs[i]));
+      }} else if (cat[i] === 'o') {{
+        fLoc.push(oV.loc[i]*(1-et)); fPO.push(oV.po[i]*(1-et)); fPS.push(oV.ps[i]*(1-et));
+        fCL.push(oV.cl[i]*(1-et)); fCO.push(oV.co[i]*(1-et)); fCS.push(oV.cs[i]*(1-et));
       }} else {{
-        fLoc.push(nV.loc[idx]*et); fPO.push(nV.po[idx]*et); fPS.push(nV.ps[idx]*et);
-        fCL.push(nV.cl[idx]*et); fCO.push(nV.co[idx]*et); fCS.push(nV.cs[idx]*et);
+        fLoc.push(nV.loc[i]*et); fPO.push(nV.po[i]*et); fPS.push(nV.ps[i]*et);
+        fCL.push(nV.cl[i]*et); fCO.push(nV.co[i]*et); fCS.push(nV.cs[i]*et);
       }}
-    }});
+    }}
     dChart.options.scales.yL.max = startDL+et*(endDL-startDL);
     dChart.options.scales.yP.max = startDP+et*(endDP-startDP);
     cChart.options.scales.yL.max = startCL+et*(endCL-startCL);
     cChart.options.scales.yP.max = startCP+et*(endCP-startCP);
-    var nullT = fL.map(function(){{return null;}});
-    dChart.data.labels = fL;
+    var twts = [];
+    for (var i=0;i<uLen;i++) twts.push(uDates[i]===TL_TODAY ? 0 : sc[i]);
+    var tOa = wtrendline(fPO, twts), tSa = wtrendline(fPS, twts);
+    var linePO = lerpFading(fPO, sc, uLen, keepArr), linePS = lerpFading(fPS, sc, uLen, keepArr);
     dChart.data.datasets[0].data = fLoc;
-    dChart.data.datasets[1].data = fPO;
-    dChart.data.datasets[2].data = nullT;
-    dChart.data.datasets[3].data = fPS;
-    dChart.data.datasets[4].data = nullT;
-    dChart.update('none');
-    cChart.data.labels = fL;
+    dChart.data.datasets[1].data = linePO;
+    dChart.data.datasets[2].data = tOa;
+    dChart.data.datasets[3].data = linePS;
+    dChart.data.datasets[4].data = tSa;
+    var labelA = et<0.15 ? 1-et/0.15 : et>0.85 ? (et-0.85)/0.15 : 0;
+    var labelC = labelA<0.01 ? 'transparent' : textAlpha(labelA);
+    if (!rotSnapped && labelA < 0.01) {{
+      rotSnapped = true;
+      if (!xSlide) {{ dChart.options.scales.x.ticks.minRotation = dXrot1; dChart.options.scales.x.ticks.maxRotation = dXrot1; }}
+      if (!dYLslide) {{ dChart.options.scales.yL.ticks.minRotation = dYLrot1; dChart.options.scales.yL.ticks.maxRotation = dYLrot1; }}
+      if (!dYPslide) {{ dChart.options.scales.yP.ticks.minRotation = dYProt1; dChart.options.scales.yP.ticks.maxRotation = dYProt1; }}
+    }}
+    if (xSlide) {{
+      dChart.options.scales.x.ticks.color = function(ctx) {{
+        var s = sc[ctx.index]; return s > 0.99 ? C.text : s < 0.01 ? 'transparent' : textAlpha(s);
+      }};
+    }} else {{
+      dChart.options.scales.x.ticks.color = labelC;
+    }}
+    if (!dYLslide) dChart.options.scales.yL.ticks.color = labelC;
+    if (!dYPslide) dChart.options.scales.yP.ticks.color = labelC;
+    dXhCur = dXh0+et*(dXh1-dXh0); cXhCur = cXh0+et*(cXh1-cXh0);
+    dYLwCur = dYLw0+et*(dYLw1-dYLw0); dYPwCur = dYPw0+et*(dYPw1-dYPw0);
+    cYLwCur = cYLw0+et*(cYLw1-cYLw0); cYPwCur = cYPw0+et*(cYPw1-cYPw0);
+    dChart._barScales = sc; dChart.update('none');
     cChart.data.datasets[0].data = fCL;
     cChart.data.datasets[1].data = fCO;
     cChart.data.datasets[2].data = fCS;
-    cChart.update('none');
+    cChart._barScales = sc; cChart.update('none');
     renderBdFrame(oD, nD, et);
     if (!done) {{ transId = requestAnimationFrame(tick); }}
     else {{
+      dChart._barScales = null; cChart._barScales = null;
+      dChart.data.datasets[1].spanGaps = false; dChart.data.datasets[3].spanGaps = false;
+      dChart.options.scales.x.ticks.color = C.text;
+      dChart.options.scales.yL.ticks.color = C.text; dChart.options.scales.yP.ticks.color = C.text;
+      delete dChart.options.scales.x.ticks.minRotation; dChart.options.scales.x.ticks.maxRotation = 50;
+      delete dChart.options.scales.yL.ticks.minRotation; delete dChart.options.scales.yL.ticks.maxRotation;
+      delete dChart.options.scales.yP.ticks.minRotation; delete dChart.options.scales.yP.ticks.maxRotation;
       delete dChart.options.scales.yL.max; delete dChart.options.scales.yP.max;
       delete cChart.options.scales.yL.max; delete cChart.options.scales.yP.max;
+      delete dChart.options.scales.yL.afterFit; delete dChart.options.scales.yP.afterFit;
+      delete cChart.options.scales.yL.afterFit; delete cChart.options.scales.yP.afterFit;
+      delete dChart.options.scales.x.afterFit; delete cChart.options.scales.x.afterFit;
       transId = 0; build(range); updateBreakdown(range);
     }}
   }});

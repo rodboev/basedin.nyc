@@ -1648,6 +1648,12 @@ body.pr #tl-cumulative-wrap {
   }
 }
 
+body.pr .cumul-short { display: none; }
+@media (max-width: 420px) {
+  body.pr .cumul-full { display: none; }
+  body.pr .cumul-short { display: inline; }
+}
+
 body.pr .tl-repo-pills {
   justify-content: center;
   margin: 0.75rem 0 2rem;
