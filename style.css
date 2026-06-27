@@ -1960,6 +1960,29 @@ body.pr .separator-row td {
     width: calc(100% - 2rem);
   }
 
+  body.pr .landscape-row {
+    display: block;
+  }
+
+  body.pr .landscape-row h2 {
+    display: inline;
+    margin-right: 0.6rem;
+    vertical-align: middle;
+  }
+
+  body.pr .landscape-row .pr-filter-group {
+    display: contents;
+  }
+
+  body.pr .landscape-row .sort-pills {
+    display: inline;
+  }
+
+  body.pr .landscape-row .sort-pill {
+    margin: 0.2rem 0.35rem 0.2rem 0;
+    vertical-align: middle;
+  }
+
   body.pr .grid:not(.grid-summary) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1984,10 +2007,6 @@ body.pr .separator-row td {
 
   body.pr .pr-list-table th:nth-child(6) {
     box-shadow: inset 0 -1px 0 var(--pr-border);
-  }
-
-  body.pr #pr-landscape-row {
-    flex-direction: column;
   }
 
   body.pr .pr-filter-group-right {

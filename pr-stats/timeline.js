@@ -46,12 +46,51 @@ Chart.register({
       if (value >= 0 && value < eC.length && value === (value | 0)) return eC[value];
       return chart._origGetPixel(value);
     };
-    var labelItems = xS._labelItems;
-    if (labelItems) {
-      for (var li = 0; li < labelItems.length && li < eC.length; li++) {
-        labelItems[li].translation[0] = eC[li];
+    chart._origGetLabelItems = xS.getLabelItems.bind(xS);
+    var adjustLabelItems = function(labelItems) {
+      if (!labelItems) return labelItems;
+      var rotation = xS.labelRotation || 0;
+      var rotationRad = -rotation * Math.PI / 180;
+      var ctx = chart.ctx;
+      for (var li = 0; li < labelItems.length; li++) {
+        var item = labelItems[li];
+        var tick = xS.ticks && xS.ticks[li];
+        var ci = tick && typeof tick.value === 'number' ? tick.value : li;
+        if ((ci < 0 || ci >= eC.length || chart.data.labels[ci] !== item.label) && item.label != null) {
+          var fi = chart.data.labels.indexOf(item.label);
+          if (fi >= 0) ci = fi;
+        }
+        if (ci < 0 || ci >= eC.length) continue;
+        var opts = item.options || item;
+        if (typeof opts.rotation === 'number') opts.rotation = rotationRad;
+        if (!opts.translation && !item.translation) continue;
+        ctx.save();
+        ctx.font = item.font && item.font.string ? item.font.string : ctx.font;
+        var label = Array.isArray(item.label) ? item.label.join(' ') : item.label;
+        var w = ctx.measureText(label || '').width;
+        ctx.restore();
+        var align = opts.textAlign || 'center';
+        var localCenterX = align === 'right' || align === 'end' ? -w / 2 : align === 'left' || align === 'start' ? w / 2 : 0;
+        var localCenterY = item.textOffset || 0;
+        var centerOffset = Math.cos(rotationRad) * localCenterX - Math.sin(rotationRad) * localCenterY;
+        var defaultCenter = eC[ci] + centerOffset;
+        var startCenters = chart._xLabelStartCenters;
+        var targetCenters = chart._xLabelTargetCenters;
+        var targetFactor = typeof chart._xLabelTargetFactor === 'number' ? chart._xLabelTargetFactor : 0;
+        var startCenter = startCenters && label != null ? startCenters[label] : null;
+        var targetCenter = targetCenters && label != null ? targetCenters[label] : null;
+        if (typeof startCenter !== 'number') startCenter = defaultCenter;
+        if (typeof targetCenter !== 'number') targetCenter = defaultCenter;
+        var desiredCenter = startCenter + (targetCenter - startCenter) * targetFactor;
+        if (opts.translation) opts.translation[0] = desiredCenter - centerOffset;
+        else item.translation[0] = desiredCenter - centerOffset;
       }
-    }
+      return labelItems;
+    };
+    xS.getLabelItems = function(area) {
+      return adjustLabelItems(chart._origGetLabelItems(area));
+    };
+    adjustLabelItems(xS._labelItems);
   },
   beforeDatasetsDraw: function(chart) {
     var sc = chart._barScales;
@@ -103,7 +142,12 @@ Chart.register({
   afterDraw: function(chart) {
     if (chart._origGetPixel) {
       chart.scales.x.getPixelForValue = chart._origGetPixel;
+      if (chart._origGetLabelItems) chart.scales.x.getLabelItems = chart._origGetLabelItems;
       delete chart._origGetPixel;
+      delete chart._origGetLabelItems;
+      delete chart._xLabelStartCenters;
+      delete chart._xLabelTargetCenters;
+      delete chart._xLabelTargetFactor;
       delete chart._smoothECs;
       delete chart._smoothECW;
     }
@@ -193,6 +237,30 @@ function trendFrame(regO, regN, et, done, n) {
 function ease(t) { return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
 var textRgb = (function(c){return parseInt(c.slice(1,3),16)+','+parseInt(c.slice(3,5),16)+','+parseInt(c.slice(5,7),16);})(C.text);
 function textAlpha(a) { return 'rgba('+textRgb+','+a+')'; }
+function labelVisualCenters(chart) {
+  var xS = chart.scales.x, ctx = chart.ctx, items = xS.getLabelItems ? xS.getLabelItems() : xS._labelItems;
+  var centers = {};
+  if (!items) return centers;
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i], opts = item.options || item;
+    if (!opts.translation) continue;
+    ctx.save();
+    ctx.font = item.font && item.font.string ? item.font.string : ctx.font;
+    var label = Array.isArray(item.label) ? item.label.join(' ') : item.label;
+    var w = ctx.measureText(label || '').width;
+    ctx.restore();
+    var align = opts.textAlign || 'center';
+    var localCenterX = align === 'right' || align === 'end' ? -w / 2 : align === 'left' || align === 'start' ? w / 2 : 0;
+    var localCenterY = item.textOffset || 0;
+    centers[label] = opts.translation[0] + Math.cos(opts.rotation || 0) * localCenterX - Math.sin(opts.rotation || 0) * localCenterY;
+  }
+  return centers;
+}
+function setXLabelTransition(chart, starts, targets, factor) {
+  chart._xLabelStartCenters = starts || null;
+  chart._xLabelTargetCenters = targets || null;
+  chart._xLabelTargetFactor = factor;
+}
 function lerpFading(data, sc, len, keep) {
   var out = data.slice();
   for (var i = 0; i < len; i++) {
@@ -240,7 +308,11 @@ function updateBreakdown(r) {
       lastDate = d.date;
     }
   }
-  if (lastDate === TL_TODAY && activeDays > 1) { activeDays--; lastDate = prevDate; }
+  var displayDays = activeDays;
+  if (lastDate === TL_TODAY) {
+    displayDays = Math.max(0, displayDays - 1);
+    lastDate = prevDate;
+  }
   var lostSup = lost + superseded;
   var closedDenom = shipped + lost + superseded;
   var rate = closedDenom > 0 ? Math.round(shipped / closedDenom * 100) : 'N/A';
@@ -251,7 +323,7 @@ function updateBreakdown(r) {
   if (el = document.getElementById('bd-lost-sup')) el.textContent = lostSup;
   if (el = document.getElementById('bd-rate')) el.textContent = typeof rate === 'number' ? rate + '%' : rate;
   if (el = document.getElementById('bd-rate-label')) el.textContent = 'Acceptance (' + superseded + ' superseded, ' + lost + ' lost)';
-  var dayStr = activeDays === 1 ? '1 day' : activeDays + ' days';
+  var dayStr = displayDays === 1 ? '1 day' : displayDays + ' days';
   if (el = document.getElementById('bd-days')) el.textContent = dayStr;
   if (firstDate && lastDate) {
     var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -413,8 +485,8 @@ function bdStats(r) {
     sp += (d.clsSuperseded||0); l += (d.clsLost||0); loc += d.loc;
     if (d.prsOpened > 0) { ad++; if (d.date === TL_TODAY) todayActive = true; }
   }
-  if (todayActive && ad > 1) ad--;
-  return {total:t, shipped:s, open:o, sup:sp, lost:l, loc:loc, activeDays:ad};
+  var dd = todayActive ? Math.max(0, ad - 1) : ad;
+  return {total:t, shipped:s, open:o, sup:sp, lost:l, loc:loc, activeDays:ad, displayDays:dd};
 }
 function bdDisplay(b) {
   var ls = b.lost + b.sup, cd = b.shipped + b.lost + b.sup;
@@ -423,7 +495,7 @@ function bdDisplay(b) {
   var avgPrs = b.total / ad, avgLoc = b.loc / ad;
   var bT = b.total || 1;
   return {total:b.total, shipped:b.shipped, open:b.open, sup:b.sup, lost:b.lost, lostSup:ls,
-    rate:rate, activeDays:ad, avgPrs:avgPrs, avgLoc:avgLoc,
+    rate:rate, activeDays:ad, displayDays:b.displayDays, avgPrs:avgPrs, avgLoc:avgLoc,
     barSh:b.shipped/bT*100, barSp:b.sup/bT*100, barL:b.lost/bT*100, barO:b.open/bT*100};
 }
 function renderBdFrame(oD, nD, et) {
@@ -433,7 +505,7 @@ function renderBdFrame(oD, nD, et) {
   var cSp = Math.round(oD.sup+et*(nD.sup-oD.sup));
   var cL = Math.round(oD.lost+et*(nD.lost-oD.lost));
   var cR = Math.round(oD.rate+et*(nD.rate-oD.rate));
-  var cAd = Math.max(1, Math.round(oD.activeDays+et*(nD.activeDays-oD.activeDays)));
+  var cDd = Math.max(0, Math.round(oD.displayDays+et*(nD.displayDays-oD.displayDays)));
   var cAp = oD.avgPrs+et*(nD.avgPrs-oD.avgPrs);
   var cAl = oD.avgLoc+et*(nD.avgLoc-oD.avgLoc);
   var rL = Math.round(cAl);
@@ -445,7 +517,7 @@ function renderBdFrame(oD, nD, et) {
   if (el = document.getElementById('bd-rate')) el.textContent = cR + '%';
   if (el = document.getElementById('bd-avg-prs')) el.textContent = cAp.toFixed(1);
   if (el = document.getElementById('bd-avg-loc')) el.textContent = rL >= 1000 ? (rL/1000).toFixed(1)+'k' : rL;
-  if (el = document.getElementById('bd-days')) el.textContent = cAd === 1 ? '1 day' : cAd + ' days';
+  if (el = document.getElementById('bd-days')) el.textContent = cDd === 1 ? '1 day' : cDd + ' days';
   [['bd-bar-shipped',cSh,oD.barSh,nD.barSh],['bd-bar-superseded',cSp,oD.barSp,nD.barSp],
    ['bd-bar-lost',cL,oD.barL,nD.barL],['bd-bar-open',cO,oD.barO,nD.barO]].forEach(function(s) {
     var el = document.getElementById(s[0]); if (!el) return;
@@ -503,6 +575,7 @@ function transitionRange(newR) {
   var cYLw0 = cChart.scales.yL.width, cYPw0 = cChart.scales.yP.width, cXh0 = cChart.scales.x.height;
   var dXrot0 = dChart.scales.x.labelRotation, dYLrot0 = dChart.scales.yL.labelRotation, dYProt0 = dChart.scales.yP.labelRotation;
   var cXrot0 = cChart.scales.x.labelRotation, cYLrot0 = cChart.scales.yL.labelRotation, cYProt0 = cChart.scales.yP.labelRotation;
+  var dXStarts = labelVisualCenters(dChart), cXStarts = labelVisualCenters(cChart);
   build(newR);
   var endDL = dChart.scales.yL.max, endDP = dChart.scales.yP.max;
   var endCL = cChart.scales.yL.max, endCP = cChart.scales.yP.max;
@@ -511,6 +584,7 @@ function transitionRange(newR) {
   var dXh1 = dChart.scales.x.height, cXh1 = cChart.scales.x.height;
   var dXrot1 = dChart.scales.x.labelRotation, dYLrot1 = dChart.scales.yL.labelRotation, dYProt1 = dChart.scales.yP.labelRotation;
   var cXrot1 = cChart.scales.x.labelRotation, cYLrot1 = cChart.scales.yL.labelRotation, cYProt1 = cChart.scales.yP.labelRotation;
+  var dXTargets = labelVisualCenters(dChart), cXTargets = labelVisualCenters(cChart);
   var dXhCur = dXh0, cXhCur = cXh0;
   var dXrotCur = dXrot0, cXrotCur = cXrot0;
   var dYLwCur = dYLw0, dYPwCur = dYPw0, cYLwCur = cYLw0, cYPwCur = cYPw0;
@@ -541,6 +615,7 @@ function transitionRange(newR) {
   var cYLslide = Math.abs(cYLw0 - cYLw1) < 1 && cYLrot0 === cYLrot1;
   var cYPslide = Math.abs(cYPw0 - cYPw1) < 1 && cYProt0 === cYProt1;
   dChart._barScales = initSc;
+  setXLabelTransition(dChart, dXStarts, dXTargets, 0);
   dChart._clipEdges = true;
   dChart.options.scales.x.ticks.autoSkip = false;
   dChart.config._config.options.scales.x.ticks.color = function(ctx) { return initSc[ctx.index] > 0.99 ? C.text : 'transparent'; };
@@ -550,6 +625,7 @@ function transitionRange(newR) {
   dChart.options.scales.yL.max = startDL; dChart.options.scales.yP.max = startDP;
   if (dVis) dChart.update('none');
   cChart._barScales = initSc;
+  setXLabelTransition(cChart, cXStarts, cXTargets, 0);
   cChart._clipEdges = true;
   cChart.options.scales.x.ticks.autoSkip = false;
   cChart.config._config.options.scales.x.ticks.color = function(ctx) { return initSc[ctx.index] > 0.99 ? C.text : 'transparent'; };
@@ -605,7 +681,7 @@ function transitionRange(newR) {
     dXrotCur = dXrot0+et*(dXrot1-dXrot0); cXrotCur = cXrot0+et*(cXrot1-cXrot0);
     dYLwCur = dYLw0+et*(dYLw1-dYLw0); dYPwCur = dYPw0+et*(dYPw1-dYPw0);
     cYLwCur = cYLw0+et*(cYLw1-cYLw0); cYPwCur = cYPw0+et*(cYPw1-cYPw0);
-    dChart._barScales = sc; if (dVis) dChart.update('none');
+    dChart._barScales = sc; setXLabelTransition(dChart, dXStarts, dXTargets, et); if (dVis) dChart.update('none');
     var cf0 = [], cf1 = [], cf2 = [];
     for (var i = 0; i < supLen; i++) {
       if (sc[i] > 0.99) { cf0.push(cS[0][i]); cf1.push(cS[1][i]); cf2.push(cS[2][i]); }
@@ -614,15 +690,17 @@ function transitionRange(newR) {
     cChart.data.datasets[0].data = cf0;
     cChart.data.datasets[1].data = cf1;
     cChart.data.datasets[2].data = cf2;
-    cChart._barScales = sc; if (cVis) cChart.update('none');
+    cChart._barScales = sc; setXLabelTransition(cChart, cXStarts, cXTargets, et); if (cVis) cChart.update('none');
     var vc = dVis ? dChart : cChart;
     if (window._animLog) window._animLog.push({f:window._animLog.length, ms:Math.round(elapsed), et:+et.toFixed(3), effN:+nExact.toFixed(1), area:[Math.round(vc.chartArea.left),Math.round(vc.chartArea.right)], ticks:vc.scales.x.ticks?vc.scales.x.ticks.length:0, xRot:+vc.scales.x.labelRotation.toFixed(1), xH:Math.round(vc.scales.x.height), sc:sc.map(function(v){return +v.toFixed(2)})});
     renderBdFrame(oD, nD, et);
     if (!done) { transId = requestAnimationFrame(tick); }
     else {
       if (window._animLog) { window._lastAnimLog = window._animLog; window._animLog = null; }
-      cleanupAnim();
-      transId = 0; build(newR); updateBreakdown(newR);
+      transId = requestAnimationFrame(function() {
+        cleanupAnim();
+        transId = 0; build(newR); updateBreakdown(newR);
+      });
     }
   });
 }
@@ -638,7 +716,7 @@ build(range);
     sup += (d.clsSuperseded || 0); lost += (d.clsLost || 0); totalLoc += d.loc;
     if (d.prsOpened > 0) { activeDays++; if (d.date === TL_TODAY) todayActive = true; }
   }
-  if (todayActive && activeDays > 1) activeDays--;
+  var displayDays = todayActive ? Math.max(0, activeDays - 1) : activeDays;
   var phases = [];
   var prev = 0;
   [7, 14, 30].forEach(function(days) {
@@ -653,9 +731,10 @@ build(range);
     var o = Math.round(f * opn), sp = Math.round(f * sup), l = Math.round(f * lost);
     var cd = sh + l + sp, rate = cd > 0 ? Math.round(sh / cd * 100) : 0;
     var ad = Math.max(1, Math.round(f * activeDays)), loc = Math.round(f * totalLoc);
+    var dd = Math.max(0, Math.round(f * displayDays));
     var bT = t || 1;
     return {total:t, shipped:sh, open:o, sup:sp, lost:l, lostSup:l+sp,
-      rate:rate, activeDays:ad, avgPrs:t/ad, avgLoc:loc/ad,
+      rate:rate, activeDays:ad, displayDays:dd, avgPrs:t/ad, avgLoc:loc/ad,
       barSh:sh/bT*100, barSp:sp/bT*100, barL:l/bT*100, barO:o/bT*100};
   }
   phases.forEach(function(ph) {
@@ -671,6 +750,7 @@ build(range);
   var dFull = dChart.data.datasets.map(function(ds) { return ds.data.slice(); });
   var cFull = cChart.data.datasets.map(function(ds) { return ds.data.slice(); });
   var totalPts = dLabsFull.length;
+  var dLoadTargets = labelVisualCenters(dChart), cLoadTargets = labelVisualCenters(cChart);
   dChart.config._config.options.scales.x.ticks.color = textAlpha(0);
   cChart.config._config.options.scales.x.ticks.color = textAlpha(0);
   animId = requestAnimationFrame(function tick(now) {
@@ -688,8 +768,8 @@ build(range);
     var labelA = prog>0.7 ? (prog-0.7)/0.3 : 0;
     dChart.config._config.options.scales.x.ticks.color = labelA<0.01 ? 'transparent' : textAlpha(labelA);
     cChart.config._config.options.scales.x.ticks.color = labelA<0.01 ? 'transparent' : textAlpha(labelA);
-    dChart._barScales = sc; dChart.update('none');
-    cChart._barScales = sc;
+    dChart._barScales = sc; setXLabelTransition(dChart, null, dLoadTargets, prog); dChart.update('none');
+    cChart._barScales = sc; setXLabelTransition(cChart, null, cLoadTargets, prog);
     var pi = done ? phases.length - 1 : Math.min(Math.floor(elapsed / phaseDur), phases.length - 1);
     var phase = phases[pi];
     var et = done ? 1 : ease(Math.min((elapsed - pi * phaseDur) / phaseDur, 1));
@@ -703,6 +783,7 @@ build(range);
     else {
       animId = 0;
       dChart._barScales = null; cChart._barScales = null;
+      setXLabelTransition(dChart, null, null, 0); setXLabelTransition(cChart, null, null, 0);
       dChart.config._config.options.scales.x.ticks.color = C.text;
       cChart.config._config.options.scales.x.ticks.color = C.text;
       dChart.update('none'); cChart.update('none');
@@ -780,6 +861,7 @@ pillsEl.addEventListener('click', function(e) {
   var cYLw0 = cChart.scales.yL.width, cYPw0 = cChart.scales.yP.width, cXh0 = cChart.scales.x.height;
   var dXrot0 = dChart.scales.x.labelRotation, dYLrot0 = dChart.scales.yL.labelRotation, dYProt0 = dChart.scales.yP.labelRotation;
   var cXrot0 = cChart.scales.x.labelRotation, cYLrot0 = cChart.scales.yL.labelRotation, cYProt0 = cChart.scales.yP.labelRotation;
+  var dXStarts = labelVisualCenters(dChart), cXStarts = labelVisualCenters(cChart);
   build(range);
   var endDL = dChart.scales.yL.max, endDP = dChart.scales.yP.max;
   var endCL = cChart.scales.yL.max, endCP = cChart.scales.yP.max;
@@ -788,6 +870,7 @@ pillsEl.addEventListener('click', function(e) {
   var dXh1 = dChart.scales.x.height, cXh1 = cChart.scales.x.height;
   var dXrot1 = dChart.scales.x.labelRotation, dYLrot1 = dChart.scales.yL.labelRotation, dYProt1 = dChart.scales.yP.labelRotation;
   var cXrot1 = cChart.scales.x.labelRotation, cYLrot1 = cChart.scales.yL.labelRotation, cYProt1 = cChart.scales.yP.labelRotation;
+  var dXTargets = labelVisualCenters(dChart), cXTargets = labelVisualCenters(cChart);
   var dXhCur = dXh0, cXhCur = cXh0;
   var dXrotCur = dXrot0, cXrotCur = cXrot0;
   var dYLwCur = dYLw0, dYPwCur = dYPw0, cYLwCur = cYLw0, cYPwCur = cYPw0;
@@ -822,6 +905,7 @@ pillsEl.addEventListener('click', function(e) {
   var rOold = wregression(oV.po, oTwts), rSold = wregression(oV.ps, oTwts);
   var rOnew = wregression(nV.po, nTwts), rSnew = wregression(nV.ps, nTwts);
   dChart._barScales = initSc;
+  setXLabelTransition(dChart, dXStarts, dXTargets, 0);
   dChart.options.scales.x.ticks.autoSkip = false;
   dChart.config._config.options.scales.x.ticks.color = function(ctx) { return initSc[ctx.index] > 0.99 ? C.text : 'transparent'; };
   if (!dYLslide) dChart.options.scales.yL.ticks.color = textAlpha(0);
@@ -834,6 +918,7 @@ pillsEl.addEventListener('click', function(e) {
   cChart.data.datasets[2].data = oV.cs.slice();
   cChart.options.scales.yL.max = startCL; cChart.options.scales.yP.max = startCP;
   cChart._barScales = initSc;
+  setXLabelTransition(cChart, cXStarts, cXTargets, 0);
   cChart.options.scales.x.ticks.autoSkip = false;
   cChart.config._config.options.scales.x.ticks.color = function(ctx) { return initSc[ctx.index] > 0.99 ? C.text : 'transparent'; };
   if (!cYLslide) cChart.options.scales.yL.ticks.color = textAlpha(0);
@@ -907,19 +992,21 @@ pillsEl.addEventListener('click', function(e) {
     dXrotCur = dXrot0+et*(dXrot1-dXrot0); cXrotCur = cXrot0+et*(cXrot1-cXrot0);
     dYLwCur = dYLw0+et*(dYLw1-dYLw0); dYPwCur = dYPw0+et*(dYPw1-dYPw0);
     cYLwCur = cYLw0+et*(cYLw1-cYLw0); cYPwCur = cYPw0+et*(cYPw1-cYPw0);
-    dChart._barScales = sc; if (dVis) dChart.update('none');
+    dChart._barScales = sc; setXLabelTransition(dChart, dXStarts, dXTargets, et); if (dVis) dChart.update('none');
     cChart.data.datasets[0].data = fCL;
     cChart.data.datasets[1].data = fCO;
     cChart.data.datasets[2].data = fCS;
-    cChart._barScales = sc; if (cVis) cChart.update('none');
+    cChart._barScales = sc; setXLabelTransition(cChart, cXStarts, cXTargets, et); if (cVis) cChart.update('none');
     var vc = dVis ? dChart : cChart;
     if (window._animLog) window._animLog.push({f:window._animLog.length, ms:Math.round(elapsed), et:+et.toFixed(3), effN:+nExact.toFixed(1), area:[Math.round(vc.chartArea.left),Math.round(vc.chartArea.right)], xRot:+vc.scales.x.labelRotation.toFixed(1), xH:Math.round(vc.scales.x.height), cat:cat.join(''), sc:sc.map(function(v){return +v.toFixed(2)})});
     renderBdFrame(oD, nD, et);
     if (!done) { transId = requestAnimationFrame(tick); }
     else {
       if (window._animLog) { window._lastAnimLog = window._animLog; window._animLog = null; }
-      cleanupAnim();
-      transId = 0; build(range); updateBreakdown(range);
+      transId = requestAnimationFrame(function() {
+        cleanupAnim();
+        transId = 0; build(range); updateBreakdown(range);
+      });
     }
   });
 });

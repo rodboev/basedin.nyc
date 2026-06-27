@@ -1,9 +1,19 @@
 param(
     [string]$Author = "rodboev",
-    [string[]]$Repos = @("nesquena/hermes-webui", "kenn-io/agentsview", "thedotmack/claude-mem",
-        "headroomlabs-ai/headroom", "mem0ai/mem0", "stablyai/orca"
-        # "cline/cline", "continuedev/continue", "CopilotKit/CopilotKit",
-        # "MemPalace/mempalace", "mastra-ai/mastra", "github/github-mcp-server",
+    [string[]]$Repos = @("nesquena/hermes-webui"
+        , "kenn-io/agentsview"
+        , "thedotmack/claude-mem"
+        , "headroomlabs-ai/headroom"
+        , "mem0ai/mem0"
+        # , "NVIDIA/SkillSpector"
+        # , "stablyai/orca"
+        # , "NousResearch/hermes-agent"
+        # , "cline/cline",
+        # , "continuedev/continue"
+        # , "CopilotKit/CopilotKit"
+        # , "MemPalace/mempalace"
+        # , "mastra-ai/mastra"
+        # , "github/github-mcp-server"
         # "lsdefine/GenericAgent"
     ),
     [Nullable[datetime]]$StartDate = $null,
@@ -41,6 +51,7 @@ $supersededPatterns = @("supersede", "consolidat")
 # this co-occurs with shipping evidence (a release tag or a shipping verb), a
 # "superseded"/"integrated" close is actually a credited landing, not a loss.
 $creditPatterns = @("co-author", "coauthor", "co-authored", "authorship", "attribution", "credited")
+$continuationPatterns = @("same credit", "same commit", "same change", "reopen")
 $withdrawnPattern = '(?i)\bwithdraw(?:ing|n)?\b'
 $authorClosePattern = '(?i)\bclos(?:ing|ed|e)\b'
 $DefaultLeaderboardVisible = 10
@@ -685,7 +696,9 @@ function Test-IsSupersededEvidence([object]$PullRequest, [object]$Evidence) {
         if ($authorLogin -and $comment.author.login -eq $authorLogin) { continue }
         if (-not (Test-IsMaintainerComment -Repo $PullRequest.repo -Comment $comment)) { continue }
         if (Test-MatchesAnyPattern -Text ([string]$comment.body) -Patterns $supersededPatterns) {
-            return $true
+            if (-not (Test-MatchesAnyPattern -Text ([string]$comment.body) -Patterns $continuationPatterns)) {
+                return $true
+            }
         }
     }
 
@@ -699,7 +712,9 @@ function Test-HasSupersededReference([object]$PullRequest, [object]$Evidence) {
     foreach ($comment in @($Evidence.comments.nodes)) {
         if ($authorLogin -and $comment.author.login -eq $authorLogin) { continue }
         if (Test-MatchesAnyPattern -Text ([string]$comment.body) -Patterns $supersededPatterns) {
-            return $true
+            if (-not (Test-MatchesAnyPattern -Text ([string]$comment.body) -Patterns $continuationPatterns)) {
+                return $true
+            }
         }
     }
     return $false
@@ -1826,7 +1841,7 @@ function Get-ClosedPullRequestClassification([object]$PullRequest) {
         $viaLabel = "#$($acceptedSibling.number)"
         $viaUrl = $acceptedSibling.url
         $logLabel = "accepted indirectly via #$($acceptedSibling.number)"
-    } elseif ($creditedShip -and -not $isSuperseded) {
+    } elseif ($creditedShip) {
         # Maintainer carried the work forward with the author's credit preserved
         # (co-author trailer / authorship attribution) and shipped it, even
         # though the close was phrased as "superseded"/"integrated".
@@ -2254,9 +2269,7 @@ foreach ($repo in $displayRepos) {
                 $projRows += "  <tr><td>$($entry.Key)</td><td>$($s.credited) (+$gap)</td><td>$($s.rate)/d</td><td>${days}d ($($when.ToString("MMM d")))</td></tr>`n"
             }
         }
-        $projBody = "<table>`n  <tr><th>Contributor</th><th>Credited</th><th>Rate (7d)</th><th>Catch-up</th></tr>`n$projRows</table>"
-    } elseif ($myRank -eq 1) {
-        $projBody = '<p class="note">No contributors ahead at current credited totals.</p>'
+        $projBody = "<table>`n  <tr><th>Contributor</th><th>Shipped</th><th>Rate (7d)</th><th>Catch-up</th></tr>`n$projRows</table>"
     }
     if ($projBody) {
         $projectionsHtml = @"
@@ -2274,7 +2287,7 @@ $projBody
 <h2>$repoShort Community Leaderboard</h2>
 <div class="collapsible-table leaderboard$collapsedClass" id="lb-$repoShort" data-collapse-mode="$collapseMode"$topCollapseAttrs>
 <table>
-  <thead><tr><th>Rank</th><th>Contributor</th><th>Credited</th><th>Open</th><th>Rate (7d)</th><th>Status</th></tr></thead>
+  <thead><tr><th>Rank</th><th>Contributor</th><th>Shipped</th><th>Open</th><th>Rate (7d)</th><th>Status</th></tr></thead>
   <tbody>
 $leaderboardRows  </tbody>
 </table>
@@ -2791,6 +2804,51 @@ if (typeof ResizeObserver !== 'undefined') {
 window.addEventListener('resize', syncLandscapeStickyOffset);
 updatePrFilterPills();
 renderPrTable(CURRENT_PR_FILTER.statusKey, CURRENT_PR_FILTER.repoKey);
+
+document.querySelectorAll('details.projections').forEach(function(details) {
+  var lb = details.previousElementSibling;
+  while (lb && !lb.classList.contains('leaderboard')) lb = lb.previousElementSibling;
+  if (!lb) return;
+  var selfRow = lb.querySelector('tr.is-self');
+  if (!selfRow) return;
+  var cells = selfRow.querySelectorAll('td');
+  var myOpen = parseInt(cells[3].textContent) || 0;
+  if (!myOpen) return;
+  var summaryEl = details.querySelector('summary');
+  var myRate = parseFloat((summaryEl.textContent.match(/([\d.]+)\/day/) || [])[1]) || 0;
+  if (!myRate) return;
+  var myCredited = parseInt(cells[2].textContent) || 0;
+  details.querySelectorAll('table tr').forEach(function(row) {
+    var td = row.querySelectorAll('td');
+    if (td.length < 4) return;
+    var name = td[0].textContent.trim();
+    var lbRow = null;
+    lb.querySelectorAll('tbody tr').forEach(function(r) {
+      var a = r.querySelector('a');
+      if (a && a.textContent.trim() === name) lbRow = r;
+    });
+    var theirOpen = lbRow ? (parseInt(lbRow.querySelectorAll('td')[3].textContent) || 0) : 0;
+    var theirRate = parseFloat(td[2].textContent) || 0;
+    var rawGap = parseInt((td[1].textContent.match(/\+(\d+)/) || [])[1]) || 0;
+    var effectiveGap = rawGap - myOpen + theirOpen;
+    var netRate = myRate - theirRate;
+    var catchupTd = td[3];
+    if (effectiveGap <= 0 && myRate > 0) {
+      var days = Math.round(rawGap / myRate * 10) / 10;
+      var when = new Date(Date.now() + days * 86400000);
+      var dateStr = when.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      var pending = myOpen - rawGap + theirOpen;
+      catchupTd.className = '';
+      catchupTd.innerHTML = days + 'd (' + dateStr + ') <span class="note">(' + pending + ' surplus)</span>';
+    } else if (effectiveGap > 0 && netRate > 0) {
+      var days = Math.round(effectiveGap / netRate * 10) / 10;
+      var when = new Date(Date.now() + days * 86400000);
+      var dateStr = when.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      catchupTd.innerHTML = days + 'd (' + dateStr + ') <span class="note">(' + myOpen + ' pending)</span>';
+    }
+  });
+  summaryEl.textContent = summaryEl.textContent.replace(/rank #/, myOpen + ' open, rank #');
+});
 </script>
 
 </body>

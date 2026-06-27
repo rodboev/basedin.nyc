@@ -1,0 +1,135 @@
+<svg viewBox="0 0 960 470" xmlns="http://www.w3.org/2000/svg" width="960" height="470" style="font-family:Helvetica,Arial,sans-serif">
+
+  <!-- Row 1 background -->
+  <rect x="8" y="8" width="944" height="214" rx="10" fill="#081c15" stroke="#1b4332"/>
+  <text x="22" y="28" fill="#3a7a5a" font-size="10" font-weight="700" letter-spacing="1.5">PIPELINE</text>
+
+  <!-- Research -->
+  <rect x="20" y="40" width="200" height="138" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="120" y="71" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Research</text>
+  <text x="120" y="92" text-anchor="middle" fill="#95d5b2" font-size="11">architecture scan</text>
+  <text x="120" y="108" text-anchor="middle" fill="#95d5b2" font-size="11">style norms</text>
+  <text x="120" y="124" text-anchor="middle" fill="#95d5b2" font-size="11">search dimensions</text>
+  <text x="120" y="140" text-anchor="middle" fill="#95d5b2" font-size="11">overlay configs</text>
+  <text x="120" y="156" text-anchor="middle" fill="#95d5b2" font-size="11">bot ecosystems</text>
+
+  <!-- Research to Find arrow -->
+  <path d="M220,109 L268,109" fill="none" stroke="#52b788" stroke-width="1.5"/>
+  <polygon points="268,106 276,109 268,112" fill="#52b788"/>
+
+  <!-- Find -->
+  <rect x="278" y="40" width="210" height="138" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="383" y="71" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Find</text>
+  <text x="383" y="92" text-anchor="middle" fill="#95d5b2" font-size="11">parallel scouts per dimension</text>
+  <text x="383" y="108" text-anchor="middle" fill="#95d5b2" font-size="11">freshness gate</text>
+  <text x="383" y="124" text-anchor="middle" fill="#95d5b2" font-size="11">issue-thread analysis</text>
+  <text x="383" y="140" text-anchor="middle" fill="#95d5b2" font-size="11">competing-PR search</text>
+  <text x="383" y="156" text-anchor="middle" fill="#95d5b2" font-size="11">claimed-work filter</text>
+
+  <!-- Find to Diamond arrow -->
+  <path d="M488,67 L526,67" fill="none" stroke="#52b788" stroke-width="1.5"/>
+  <polygon points="526,64 534,67 526,70" fill="#52b788"/>
+
+  <!-- Architecture Decision (diamond) -->
+  <polygon points="584,22 634,67 584,112 534,67" fill="#14291e" stroke="#d4a040" stroke-width="1.5"/>
+  <text x="584" y="62" text-anchor="middle" fill="#e8e8e8" font-size="12" font-weight="600">Architecture</text>
+  <text x="584" y="76" text-anchor="middle" fill="#e8e8e8" font-size="12" font-weight="600">Decision</text>
+  <text x="584" y="91" text-anchor="middle" fill="#d4a040" font-size="10">7 fields</text>
+
+  <!-- Architecture Decision annotation -->
+  <rect x="509" y="117" width="150" height="90" rx="4" fill="#14291e" stroke="#d4a040" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="584" y="131" text-anchor="middle" fill="#95d5b2" font-size="10">semantic surface</text>
+  <text x="584" y="143" text-anchor="middle" fill="#95d5b2" font-size="10">application count</text>
+  <text x="584" y="155" text-anchor="middle" fill="#95d5b2" font-size="10">amplification assessment</text>
+  <text x="584" y="167" text-anchor="middle" fill="#95d5b2" font-size="10">ownership decision</text>
+  <text x="584" y="179" text-anchor="middle" fill="#95d5b2" font-size="10">consumer map</text>
+  <text x="584" y="191" text-anchor="middle" fill="#95d5b2" font-size="10">invariants</text>
+  <text x="584" y="203" text-anchor="middle" fill="#95d5b2" font-size="10">bypass risks</text>
+
+  <!-- Diamond to Spec arrow -->
+  <path d="M634,67 L692,67" fill="none" stroke="#52b788" stroke-width="1.5"/>
+  <polygon points="692,64 700,67 692,70" fill="#52b788"/>
+
+  <!-- Spec Competition -->
+  <rect x="702" y="40" width="230" height="138" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="817" y="71" text-anchor="middle" fill="#e8e8e8" font-size="14" font-weight="600">Spec Competition</text>
+  <text x="817" y="92" text-anchor="middle" fill="#95d5b2" font-size="11">A + B -&gt; C synthesis</text>
+  <text x="817" y="108" text-anchor="middle" fill="#95d5b2" font-size="11">approach comparison table</text>
+  <text x="817" y="124" text-anchor="middle" fill="#95d5b2" font-size="11">proof matrix</text>
+  <text x="817" y="140" text-anchor="middle" fill="#95d5b2" font-size="11">test surfaces</text>
+  <text x="817" y="156" text-anchor="middle" fill="#95d5b2" font-size="11">structural validator</text>
+
+  <!-- Spec to Code connector (between rows) -->
+  <path d="M817,178 L817,244 L95,244 L95,280" fill="none" stroke="#52b788" stroke-width="1.5"/>
+  <polygon points="92,280 95,288 98,280" fill="#52b788"/>
+
+  <!-- Gate fail to Code connector (inside row 2) -->
+  <path d="M465,316 L465,272 L140,272 L140,280" fill="none" stroke="#c06060" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <polygon points="137,280 140,288 143,280" fill="#c06060"/>
+  <text x="310" y="267" text-anchor="middle" fill="#c06060" font-size="10">fail</text>
+
+  <!-- Row 2 background -->
+  <rect x="8" y="258" width="944" height="200" rx="10" fill="#081c15" stroke="#1b4332"/>
+  <text x="22" y="278" fill="#3a7a5a" font-size="10" font-weight="700" letter-spacing="1.5">QUALITY LOOP</text>
+
+  <!-- Code -->
+  <rect x="20" y="290" width="150" height="140" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="95" y="322" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Code</text>
+  <text x="95" y="343" text-anchor="middle" fill="#95d5b2" font-size="11">isolated worktrees</text>
+  <text x="95" y="359" text-anchor="middle" fill="#95d5b2" font-size="11">mandatory test coverage</text>
+  <text x="95" y="375" text-anchor="middle" fill="#95d5b2" font-size="11">proof matrix execution</text>
+  <text x="95" y="391" text-anchor="middle" fill="#95d5b2" font-size="11">regression contracts</text>
+  <text x="95" y="407" text-anchor="middle" fill="#95d5b2" font-size="11">workers never commit</text>
+
+  <!-- Code to Review arrow -->
+  <path d="M170,360 L190,360" fill="none" stroke="#52b788" stroke-width="1.5"/>
+  <polygon points="190,357 198,360 190,363" fill="#52b788"/>
+
+  <!-- Adversarial Review -->
+  <rect x="200" y="290" width="185" height="140" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="292" y="322" text-anchor="middle" fill="#e8e8e8" font-size="14" font-weight="600">Adversarial Review</text>
+  <text x="292" y="343" text-anchor="middle" fill="#95d5b2" font-size="11">cross-provider pass</text>
+  <text x="292" y="359" text-anchor="middle" fill="#95d5b2" font-size="11">same-family pass</text>
+  <text x="292" y="375" text-anchor="middle" fill="#95d5b2" font-size="11">call-site tracing</text>
+  <text x="292" y="391" text-anchor="middle" fill="#95d5b2" font-size="11">import verification</text>
+  <text x="292" y="407" text-anchor="middle" fill="#95d5b2" font-size="11">stale assertion detection</text>
+
+  <!-- Review to Gate arrow -->
+  <path d="M385,360 L407,360" fill="none" stroke="#52b788" stroke-width="1.5"/>
+  <polygon points="407,357 415,360 407,363" fill="#52b788"/>
+
+  <!-- Gate (diamond) -->
+  <polygon points="465,316 513,360 465,404 417,360" fill="#14291e" stroke="#d4a040" stroke-width="1.5"/>
+  <text x="465" y="356" text-anchor="middle" fill="#e8e8e8" font-size="13" font-weight="600">Gate</text>
+  <text x="465" y="372" text-anchor="middle" fill="#d4a040" font-size="10">7 rules</text>
+
+  <!-- Gate to Converge arrow -->
+  <path d="M513,360 L537,360" fill="none" stroke="#52b788" stroke-width="1.5"/>
+  <polygon points="537,357 545,360 537,363" fill="#52b788"/>
+  <text x="529" y="351" text-anchor="middle" fill="#52b788" font-size="9" font-weight="600">publish</text>
+
+  <!-- Converge -->
+  <rect x="547" y="290" width="175" height="140" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="634" y="322" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Converge</text>
+  <text x="634" y="343" text-anchor="middle" fill="#95d5b2" font-size="11">CI status polling</text>
+  <text x="634" y="359" text-anchor="middle" fill="#95d5b2" font-size="11">bot triage</text>
+  <text x="634" y="375" text-anchor="middle" fill="#95d5b2" font-size="11">maintainer feedback</text>
+  <text x="634" y="391" text-anchor="middle" fill="#95d5b2" font-size="11">per-repo timing</text>
+  <text x="634" y="407" text-anchor="middle" fill="#95d5b2" font-size="11">quiet-window check</text>
+
+  <!-- Converge to Rework arrow -->
+  <path d="M722,360 L759,360" fill="none" stroke="#52b788" stroke-width="1.5"/>
+  <polygon points="759,357 767,360 759,363" fill="#52b788"/>
+  <text x="745" y="351" text-anchor="middle" fill="#52b788" font-size="9" font-weight="600">feedback</text>
+
+  <!-- Rework -->
+  <rect x="769" y="305" width="145" height="110" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="841" y="335" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Rework</text>
+  <text x="841" y="356" text-anchor="middle" fill="#95d5b2" font-size="11">diagnose failure</text>
+  <text x="841" y="372" text-anchor="middle" fill="#95d5b2" font-size="11">plan · fix · push</text>
+  <text x="841" y="388" text-anchor="middle" fill="#95d5b2" font-size="11">thread resolution</text>
+
+  <!-- Rework to Review curve -->
+  <path d="M 841,415 C 750,445 450,445 385,415" fill="none" stroke="#52b788" stroke-width="1.5"/>
+  <polygon points="394,416 385,415 391,421" fill="#52b788"/>
+</svg>
