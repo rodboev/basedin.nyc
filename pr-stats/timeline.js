@@ -35,7 +35,7 @@ Chart.register({
       chart._smoothECW = eCW;
     } else {
       var cum = [], cpos = 0;
-      for (var i = 0; i < n; i++) { var s = i < sc.length ? sc[i] : 1; cum.push(cpos); cpos += s * s * s; }
+      for (var i = 0; i < n; i++) { var s = i < sc.length ? sc[i] : 1; cum.push(cpos); cpos += s; }
       var denom = n > 1 ? cum[n - 1] : 1;
       if (denom < 0.01) denom = 0.01;
       for (var i = 0; i < n; i++) eC.push(aL + (cum[i] / denom) * aW);
@@ -46,6 +46,12 @@ Chart.register({
       if (value >= 0 && value < eC.length && value === (value | 0)) return eC[value];
       return chart._origGetPixel(value);
     };
+    var labelItems = xS._labelItems;
+    if (labelItems) {
+      for (var li = 0; li < labelItems.length && li < eC.length; li++) {
+        labelItems[li].translation[0] = eC[li];
+      }
+    }
   },
   beforeDatasetsDraw: function(chart) {
     var sc = chart._barScales;
@@ -74,9 +80,21 @@ Chart.register({
       }
     }
     var aL = chart.chartArea.left, aW = chart.chartArea.right - aL;
+    var clipL = aL, clipR = aL + aW;
+    if (chart._clipEdges) {
+      var fi = -1, li = -1;
+      for (var ci = 0; ci < n; ci++) {
+        var sv = ci < sc.length ? sc[ci] : 1;
+        if (sv > 0.99) { if (fi < 0) fi = ci; li = ci; }
+      }
+      if (fi >= 0 && fi < eC.length) {
+        clipL = Math.max(aL, eC[fi] - eCW * 0.5);
+        clipR = Math.min(aL + aW, eC[li] + eCW * 0.5);
+      }
+    }
     chart.ctx.save();
     chart.ctx.beginPath();
-    chart.ctx.rect(aL, 0, aW, chart.canvas.height);
+    chart.ctx.rect(clipL, 0, clipR - clipL, chart.canvas.height);
     chart.ctx.clip();
   },
   afterDatasetsDraw: function(chart) {
@@ -137,6 +155,40 @@ function wtrendline(vals, wts) {
   var r=vals.map(function(){return null;});
   r[fi]=Math.max(0,m*fi+b); r[li]=Math.max(0,m*li+b);
   return r;
+}
+function wregression(vals, wts) {
+  var n = vals.length;
+  var sw=0,sx=0,sy=0,sxx=0,sxy=0;
+  for (var i=0;i<n;i++){var w=wts[i];sw+=w;sx+=w*i;sy+=w*vals[i];sxx+=w*i*i;sxy+=w*i*vals[i];}
+  if (sw<0.01) return null;
+  var d=sw*sxx-sx*sx;
+  if(Math.abs(d)<1e-10) return null;
+  var m=(sw*sxy-sx*sy)/d, b=(sy-m*sx)/sw;
+  var fi=-1,li=-1;
+  for(var i=0;i<n;i++) if(wts[i]>0.01){if(fi<0)fi=i;li=i;}
+  if(fi<0||fi===li) return null;
+  return {m:m, b:b, fi:fi, li:li};
+}
+function trendFrame(regO, regN, et, done, n) {
+  var arr = new Array(n);
+  for (var i=0;i<n;i++) arr[i]=null;
+  if (!regO && !regN) return arr;
+  if (!regO) {
+    arr[regN.fi] = done ? Math.max(0,regN.m*regN.fi+regN.b) : Math.max(0,regN.m*regN.fi+regN.b)*et;
+    arr[regN.li] = done ? Math.max(0,regN.m*regN.li+regN.b) : Math.max(0,regN.m*regN.li+regN.b)*et;
+    return arr;
+  }
+  if (!regN) {
+    arr[regO.fi] = done ? null : Math.max(0,regO.m*regO.fi+regO.b)*(1-et);
+    arr[regO.li] = done ? null : Math.max(0,regO.m*regO.li+regO.b)*(1-et);
+    return arr;
+  }
+  var m = regO.m+et*(regN.m-regO.m), b = regO.b+et*(regN.b-regO.b);
+  var fi = Math.round(regO.fi+et*(regN.fi-regO.fi));
+  var li = Math.round(regO.li+et*(regN.li-regO.li));
+  arr[fi] = Math.max(0,m*fi+b);
+  arr[li] = Math.max(0,m*li+b);
+  return arr;
 }
 function ease(t) { return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
 var textRgb = (function(c){return parseInt(c.slice(1,3),16)+','+parseInt(c.slice(3,5),16)+','+parseInt(c.slice(5,7),16);})(C.text);
@@ -244,6 +296,24 @@ function updateBreakdown(r) {
 }
 
 var range = 0, dChart, cChart, animId = 0, transId = 0;
+function cleanupAnim() {
+  if (!dChart || !cChart) return;
+  dChart._barScales = null; cChart._barScales = null;
+  dChart._clipEdges = false; cChart._clipEdges = false;
+  dChart.data.datasets.forEach(function(ds) { ds.spanGaps = false; });
+  cChart.data.datasets.forEach(function(ds) { ds.spanGaps = false; });
+  dChart.config._config.options.scales.x.ticks.color = C.text;
+  cChart.config._config.options.scales.x.ticks.color = C.text;
+  dChart.options.scales.yL.ticks.color = C.text; dChart.options.scales.yP.ticks.color = C.text;
+  cChart.options.scales.yL.ticks.color = C.text; cChart.options.scales.yP.ticks.color = C.text;
+  delete dChart.options.scales.x.ticks.autoSkip; dChart.options.scales.x.ticks.maxRotation = 50;
+  delete cChart.options.scales.x.ticks.autoSkip; cChart.options.scales.x.ticks.maxRotation = 50;
+  delete dChart.options.scales.yL.max; delete dChart.options.scales.yP.max;
+  delete cChart.options.scales.yL.max; delete cChart.options.scales.yP.max;
+  delete dChart.options.scales.yL.afterFit; delete dChart.options.scales.yP.afterFit;
+  delete cChart.options.scales.yL.afterFit; delete cChart.options.scales.yP.afterFit;
+  delete dChart.options.scales.x.afterFit; delete cChart.options.scales.x.afterFit;
+}
 function isToday(ctx) { return ctx.chart.data.labels[ctx.dataIndex] === TL_TODAY_LABEL; }
 function segToday(ctx) { return ctx.chart.data.labels[ctx.p1DataIndex] === TL_TODAY_LABEL ? 'transparent' : undefined; }
 function build(r) {
@@ -314,13 +384,13 @@ function build(r) {
       labels: labs,
       datasets: [
         { label: 'Cum. LOC', data: sl.map(function(d){return d.cumLoc}),
-           borderColor: C.green, borderWidth: 2, backgroundColor: C.green+'20', fill: true, tension: 0.3, yAxisID: 'yL',
+           borderColor: C.green, borderWidth: 2, backgroundColor: C.green+'20', fill: true, tension: 0, yAxisID: 'yL',
            pointRadius: 3, pointBackgroundColor: function(ctx) { return isToday(ctx) ? C.green+'80' : C.green; } },
         { label: 'Cum. PRs opened', data: sl.map(function(d){return d.cumOpened}),
-           borderColor: C.blue, borderWidth: 2, tension: 0.3, yAxisID: 'yP',
+           borderColor: C.blue, borderWidth: 2, tension: 0, yAxisID: 'yP',
            pointRadius: 3, pointBackgroundColor: function(ctx) { return isToday(ctx) ? C.blue+'80' : C.blue; } },
         { label: 'Cum. PRs shipped', data: sl.map(function(d){return d.cumShipped}),
-           borderColor: C.purple, borderWidth: 2, borderDash: [5,3], tension: 0.3, yAxisID: 'yP',
+           borderColor: C.purple, borderWidth: 2, borderDash: [5,3], tension: 0, yAxisID: 'yP',
            pointRadius: 3, pointBackgroundColor: function(ctx) { return isToday(ctx) ? C.purple+'80' : C.purple; } },
       ],
     },
@@ -394,7 +464,7 @@ function renderBdFrame(oD, nD, et) {
   }
 }
 function transitionRange(newR) {
-  if (transId) { cancelAnimationFrame(transId); transId = 0; }
+  if (transId) { cancelAnimationFrame(transId); transId = 0; cleanupAnim(); build(range); }
   var oldSl = sliceData(range);
   var newSl = sliceData(newR);
   var oldN = oldSl.length, newN = newSl.length;
@@ -413,9 +483,20 @@ function transitionRange(newR) {
   var expanding = newN > oldN;
   var edgeCount = Math.abs(newN - oldN);
   var lastIsToday = supDates[supLen - 1] === TL_TODAY;
-  var tO0 = trendline((lastIsToday ? dS[1].slice(0,-1) : dS[1]) || []);
-  var tS0 = trendline((lastIsToday ? dS[3].slice(0,-1) : dS[3]) || []);
-  if (lastIsToday) { tO0.push(null); tS0.push(null); }
+  var oldTwts = [];
+  for (var i = 0; i < supLen; i++) {
+    if (supDates[i] === TL_TODAY) oldTwts.push(0);
+    else if (expanding) oldTwts.push(i >= edgeCount ? 1 : 0);
+    else oldTwts.push(1);
+  }
+  var newTwts = [];
+  for (var i = 0; i < supLen; i++) {
+    if (supDates[i] === TL_TODAY) newTwts.push(0);
+    else if (expanding) newTwts.push(1);
+    else newTwts.push(i >= edgeCount ? 1 : 0);
+  }
+  var rO0 = wregression(dS[1], oldTwts), rS0 = wregression(dS[3], oldTwts);
+  var rO1 = wregression(dS[1], newTwts), rS1 = wregression(dS[3], newTwts);
   var startDL = dChart.scales.yL.max, startDP = dChart.scales.yP.max;
   var startCL = cChart.scales.yL.max, startCP = cChart.scales.yP.max;
   var dYLw0 = dChart.scales.yL.width, dYPw0 = dChart.scales.yP.width, dXh0 = dChart.scales.x.height;
@@ -442,14 +523,13 @@ function transitionRange(newR) {
   dChart.data.labels = supLabs;
   dChart.data.datasets[0].data = dS[0];
   dChart.data.datasets[1].data = dS[1];
-  dChart.data.datasets[2].data = tO0;
+  dChart.data.datasets[2].data = trendFrame(rO0, rO1, 0, false, supLen);
   dChart.data.datasets[3].data = dS[3];
-  dChart.data.datasets[4].data = tS0;
+  dChart.data.datasets[4].data = trendFrame(rS0, rS1, 0, false, supLen);
   cChart.data.labels = supLabs;
   cChart.data.datasets[0].data = cS[0];
   cChart.data.datasets[1].data = cS[1];
   cChart.data.datasets[2].data = cS[2];
-  cChart.data.datasets[0].tension = 0; cChart.data.datasets[1].tension = 0; cChart.data.datasets[2].tension = 0;
   var initSc = [];
   for (var i = 0; i < supLen; i++) {
     if (expanding) initSc.push(i < edgeCount ? 0 : 1);
@@ -461,6 +541,7 @@ function transitionRange(newR) {
   var cYLslide = Math.abs(cYLw0 - cYLw1) < 1 && cYLrot0 === cYLrot1;
   var cYPslide = Math.abs(cYPw0 - cYPw1) < 1 && cYProt0 === cYProt1;
   dChart._barScales = initSc;
+  dChart._clipEdges = true;
   dChart.options.scales.x.ticks.autoSkip = false;
   dChart.config._config.options.scales.x.ticks.color = function(ctx) { return initSc[ctx.index] > 0.99 ? C.text : 'transparent'; };
   if (!dYLslide) dChart.options.scales.yL.ticks.color = textAlpha(0);
@@ -469,6 +550,7 @@ function transitionRange(newR) {
   dChart.options.scales.yL.max = startDL; dChart.options.scales.yP.max = startDP;
   if (dVis) dChart.update('none');
   cChart._barScales = initSc;
+  cChart._clipEdges = true;
   cChart.options.scales.x.ticks.autoSkip = false;
   cChart.config._config.options.scales.x.ticks.color = function(ctx) { return initSc[ctx.index] > 0.99 ? C.text : 'transparent'; };
   if (!cYLslide) cChart.options.scales.yL.ticks.color = textAlpha(0);
@@ -496,10 +578,9 @@ function transitionRange(newR) {
       }
     }
     sc._xTransform = { effectiveN: Math.max(0.5, nExact) };
-    var twts = [];
-    for (var i=0;i<supLen;i++) twts.push(supDates[i]===TL_TODAY ? 0 : sc[i]);
-    var tOa = wtrendline(dS[1], twts), tSa = wtrendline(dS[3], twts);
-    var lineO = lerpFading(dS[1], sc, supLen, expanding), lineS = lerpFading(dS[3], sc, supLen, expanding);
+    var tOa = trendFrame(rO0, rO1, et, done, supLen);
+    var tSa = trendFrame(rS0, rS1, et, done, supLen);
+    var lineO = lerpFading(dS[1], sc, supLen, true), lineS = lerpFading(dS[3], sc, supLen, true);
     dChart.data.datasets[1].data = lineO;
     dChart.data.datasets[2].data = tOa;
     dChart.data.datasets[3].data = lineS;
@@ -525,9 +606,14 @@ function transitionRange(newR) {
     dYLwCur = dYLw0+et*(dYLw1-dYLw0); dYPwCur = dYPw0+et*(dYPw1-dYPw0);
     cYLwCur = cYLw0+et*(cYLw1-cYLw0); cYPwCur = cYPw0+et*(cYPw1-cYPw0);
     dChart._barScales = sc; if (dVis) dChart.update('none');
-    cChart.data.datasets[0].data = cS[0];
-    cChart.data.datasets[1].data = cS[1];
-    cChart.data.datasets[2].data = cS[2];
+    var cf0 = [], cf1 = [], cf2 = [];
+    for (var i = 0; i < supLen; i++) {
+      if (sc[i] > 0.99) { cf0.push(cS[0][i]); cf1.push(cS[1][i]); cf2.push(cS[2][i]); }
+      else { cf0.push(null); cf1.push(null); cf2.push(null); }
+    }
+    cChart.data.datasets[0].data = cf0;
+    cChart.data.datasets[1].data = cf1;
+    cChart.data.datasets[2].data = cf2;
     cChart._barScales = sc; if (cVis) cChart.update('none');
     var vc = dVis ? dChart : cChart;
     if (window._animLog) window._animLog.push({f:window._animLog.length, ms:Math.round(elapsed), et:+et.toFixed(3), effN:+nExact.toFixed(1), area:[Math.round(vc.chartArea.left),Math.round(vc.chartArea.right)], ticks:vc.scales.x.ticks?vc.scales.x.ticks.length:0, xRot:+vc.scales.x.labelRotation.toFixed(1), xH:Math.round(vc.scales.x.height), sc:sc.map(function(v){return +v.toFixed(2)})});
@@ -535,21 +621,7 @@ function transitionRange(newR) {
     if (!done) { transId = requestAnimationFrame(tick); }
     else {
       if (window._animLog) { window._lastAnimLog = window._animLog; window._animLog = null; }
-      dChart._barScales = null; cChart._barScales = null;
-      dChart.data.datasets[1].spanGaps = false; dChart.data.datasets[3].spanGaps = false;
-      cChart.data.datasets[0].spanGaps = false; cChart.data.datasets[1].spanGaps = false; cChart.data.datasets[2].spanGaps = false;
-      cChart.data.datasets[0].tension = 0.3; cChart.data.datasets[1].tension = 0.3; cChart.data.datasets[2].tension = 0.3;
-      dChart.config._config.options.scales.x.ticks.color = C.text;
-      cChart.config._config.options.scales.x.ticks.color = C.text;
-      dChart.options.scales.yL.ticks.color = C.text; dChart.options.scales.yP.ticks.color = C.text;
-      cChart.options.scales.yL.ticks.color = C.text; cChart.options.scales.yP.ticks.color = C.text;
-      delete dChart.options.scales.x.ticks.autoSkip; dChart.options.scales.x.ticks.maxRotation = 50;
-      delete cChart.options.scales.x.ticks.autoSkip; cChart.options.scales.x.ticks.maxRotation = 50;
-      delete dChart.options.scales.yL.max; delete dChart.options.scales.yP.max;
-      delete cChart.options.scales.yL.max; delete cChart.options.scales.yP.max;
-      delete dChart.options.scales.yL.afterFit; delete dChart.options.scales.yP.afterFit;
-      delete cChart.options.scales.yL.afterFit; delete cChart.options.scales.yP.afterFit;
-      delete dChart.options.scales.x.afterFit; delete cChart.options.scales.x.afterFit;
+      cleanupAnim();
       transId = 0; build(newR); updateBreakdown(newR);
     }
   });
@@ -643,7 +715,7 @@ build(range);
 document.getElementById('bd-range-pills').addEventListener('click', function(e) {
   var p = e.target.closest('.sort-pill'); if (!p) return;
   var newR = parseInt(p.getAttribute('data-range'), 10);
-  if (transId) { cancelAnimationFrame(transId); transId = 0; }
+  if (transId) { cancelAnimationFrame(transId); transId = 0; cleanupAnim(); build(range); }
   document.querySelectorAll('#bd-range-pills .sort-pill').forEach(function(x){ x.classList.remove('active') });
   p.classList.add('active');
   if (animId) { cancelAnimationFrame(animId); animId = 0; range = newR; build(newR); updateBreakdown(newR); }
@@ -662,7 +734,7 @@ document.getElementById('tl-view-pills').addEventListener('click', function(e) {
 pillsEl.addEventListener('click', function(e) {
   var p = e.target.closest('.sort-pill'); if (!p) return;
   if (animId) { cancelAnimationFrame(animId); animId = 0; }
-  if (transId) { cancelAnimationFrame(transId); transId = 0; }
+  if (transId) { cancelAnimationFrame(transId); transId = 0; cleanupAnim(); build(range); }
   var oD = bdDisplay(bdStats(range));
   var oldSl = sliceData(range);
   activeRepo = p.getAttribute('data-repo') || null;
@@ -696,6 +768,12 @@ pillsEl.addEventListener('click', function(e) {
     oV.cl.push(ocl);oV.co.push(oco);oV.cs.push(ocs);
     nV.cl.push(ncl);nV.co.push(nco);nV.cs.push(ncs);
   });
+  for (var i = 0; i < uLen; i++) {
+    if (cat[i] === 'o') { nV.cl[i]=oV.cl[i]; nV.co[i]=oV.co[i]; nV.cs[i]=oV.cs[i]; }
+    else if (cat[i] === 'n') { oV.cl[i]=nV.cl[i]; oV.co[i]=nV.co[i]; oV.cs[i]=nV.cs[i]; }
+  }
+  var firstS = -1, lastS = -1;
+  for (var i = 0; i < uLen; i++) if (cat[i] === 's') { if (firstS < 0) firstS = i; lastS = i; }
   var startDL = dChart.scales.yL.max, startDP = dChart.scales.yP.max;
   var startCL = cChart.scales.yL.max, startCP = cChart.scales.yP.max;
   var dYLw0 = dChart.scales.yL.width, dYPw0 = dChart.scales.yP.width, dXh0 = dChart.scales.x.height;
@@ -723,9 +801,9 @@ pillsEl.addEventListener('click', function(e) {
   dChart.data.labels = uLabs;
   dChart.data.datasets[0].data = oV.loc.slice();
   dChart.data.datasets[1].data = oV.po.slice();
-  dChart.data.datasets[2].data = nullArr;
+  dChart.data.datasets[2].data = trendFrame(rOold, rOnew, 0, false, uLen);
   dChart.data.datasets[3].data = oV.ps.slice();
-  dChart.data.datasets[4].data = nullArr;
+  dChart.data.datasets[4].data = trendFrame(rSold, rSnew, 0, false, uLen);
   dChart.options.scales.yL.max = startDL; dChart.options.scales.yP.max = startDP;
   var initSc = [];
   for (var i = 0; i < uLen; i++) initSc.push(cat[i] === 'n' ? 0 : 1);
@@ -735,6 +813,14 @@ pillsEl.addEventListener('click', function(e) {
   var cYLslide = Math.abs(cYLw0 - cYLw1) < 1 && cYLrot0 === cYLrot1;
   var cYPslide = Math.abs(cYPw0 - cYPw1) < 1 && cYProt0 === cYProt1;
   var keepArr = cat.map(function(c) { return c !== 'o'; });
+  var oTwts = [], nTwts = [];
+  for (var i = 0; i < uLen; i++) {
+    var tod = uDates[i] === TL_TODAY ? 0 : 1;
+    oTwts.push(cat[i] !== 'n' ? tod : 0);
+    nTwts.push(cat[i] !== 'o' ? tod : 0);
+  }
+  var rOold = wregression(oV.po, oTwts), rSold = wregression(oV.ps, oTwts);
+  var rOnew = wregression(nV.po, nTwts), rSnew = wregression(nV.ps, nTwts);
   dChart._barScales = initSc;
   dChart.options.scales.x.ticks.autoSkip = false;
   dChart.config._config.options.scales.x.ticks.color = function(ctx) { return initSc[ctx.index] > 0.99 ? C.text : 'transparent'; };
@@ -746,7 +832,6 @@ pillsEl.addEventListener('click', function(e) {
   cChart.data.datasets[0].data = oV.cl.slice();
   cChart.data.datasets[1].data = oV.co.slice();
   cChart.data.datasets[2].data = oV.cs.slice();
-  cChart.data.datasets[0].tension = 0; cChart.data.datasets[1].tension = 0; cChart.data.datasets[2].tension = 0;
   cChart.options.scales.yL.max = startCL; cChart.options.scales.yP.max = startCP;
   cChart._barScales = initSc;
   cChart.options.scales.x.ticks.autoSkip = false;
@@ -778,21 +863,28 @@ pillsEl.addEventListener('click', function(e) {
         fCL.push(oV.cl[i]+et*(nV.cl[i]-oV.cl[i]));
         fCO.push(oV.co[i]+et*(nV.co[i]-oV.co[i]));
         fCS.push(oV.cs[i]+et*(nV.cs[i]-oV.cs[i]));
-      } else if (cat[i] === 'o') {
-        fLoc.push(oV.loc[i]*(1-et)); fPO.push(oV.po[i]*(1-et)); fPS.push(oV.ps[i]*(1-et));
-        fCL.push(oV.cl[i]+et*(nV.cl[i]-oV.cl[i])); fCO.push(oV.co[i]+et*(nV.co[i]-oV.co[i])); fCS.push(oV.cs[i]+et*(nV.cs[i]-oV.cs[i]));
       } else {
-        fLoc.push(nV.loc[i]*et); fPO.push(nV.po[i]*et); fPS.push(nV.ps[i]*et);
-        fCL.push(oV.cl[i]+et*(nV.cl[i]-oV.cl[i])); fCO.push(oV.co[i]+et*(nV.co[i]-oV.co[i])); fCS.push(oV.cs[i]+et*(nV.cs[i]-oV.cs[i]));
+        var isOld = cat[i] === 'o', fade = isOld ? 1-et : et, rv = isOld ? oV : nV;
+        fLoc.push(rv.loc[i]*fade); fPO.push(rv.po[i]*fade); fPS.push(rv.ps[i]*fade);
+        var anchor = firstS >= 0 && i < firstS ? firstS : lastS >= 0 && i > lastS ? lastS : -1;
+        if (anchor >= 0) {
+          var sCl = oV.cl[anchor]+et*(nV.cl[anchor]-oV.cl[anchor]);
+          var sCo = oV.co[anchor]+et*(nV.co[anchor]-oV.co[anchor]);
+          var sCs = oV.cs[anchor]+et*(nV.cs[anchor]-oV.cs[anchor]);
+          fCL.push(rv.cl[anchor]>0 ? rv.cl[i]/rv.cl[anchor]*sCl : null);
+          fCO.push(rv.co[anchor]>0 ? rv.co[i]/rv.co[anchor]*sCo : null);
+          fCS.push(rv.cs[anchor]>0 ? rv.cs[i]/rv.cs[anchor]*sCs : null);
+        } else {
+          fCL.push(null); fCO.push(null); fCS.push(null);
+        }
       }
     }
     dChart.options.scales.yL.max = Math.round(startDL+et*(endDL-startDL));
     dChart.options.scales.yP.max = Math.round(startDP+et*(endDP-startDP));
     cChart.options.scales.yL.max = Math.round(startCL+et*(endCL-startCL));
     cChart.options.scales.yP.max = Math.round(startCP+et*(endCP-startCP));
-    var twts = [];
-    for (var i=0;i<uLen;i++) twts.push(uDates[i]===TL_TODAY ? 0 : sc[i]);
-    var tOa = wtrendline(fPO, twts), tSa = wtrendline(fPS, twts);
+    var tOa = trendFrame(rOold, rOnew, et, done, uLen);
+    var tSa = trendFrame(rSold, rSnew, et, done, uLen);
     var linePO = lerpFading(fPO, sc, uLen, keepArr), linePS = lerpFading(fPS, sc, uLen, keepArr);
     dChart.data.datasets[0].data = fLoc;
     dChart.data.datasets[1].data = linePO;
@@ -826,21 +918,7 @@ pillsEl.addEventListener('click', function(e) {
     if (!done) { transId = requestAnimationFrame(tick); }
     else {
       if (window._animLog) { window._lastAnimLog = window._animLog; window._animLog = null; }
-      dChart._barScales = null; cChart._barScales = null;
-      dChart.data.datasets[1].spanGaps = false; dChart.data.datasets[3].spanGaps = false;
-      cChart.data.datasets[0].spanGaps = false; cChart.data.datasets[1].spanGaps = false; cChart.data.datasets[2].spanGaps = false;
-      cChart.data.datasets[0].tension = 0.3; cChart.data.datasets[1].tension = 0.3; cChart.data.datasets[2].tension = 0.3;
-      dChart.config._config.options.scales.x.ticks.color = C.text;
-      cChart.config._config.options.scales.x.ticks.color = C.text;
-      dChart.options.scales.yL.ticks.color = C.text; dChart.options.scales.yP.ticks.color = C.text;
-      cChart.options.scales.yL.ticks.color = C.text; cChart.options.scales.yP.ticks.color = C.text;
-      delete dChart.options.scales.x.ticks.autoSkip; dChart.options.scales.x.ticks.maxRotation = 50;
-      delete cChart.options.scales.x.ticks.autoSkip; cChart.options.scales.x.ticks.maxRotation = 50;
-      delete dChart.options.scales.yL.max; delete dChart.options.scales.yP.max;
-      delete cChart.options.scales.yL.max; delete cChart.options.scales.yP.max;
-      delete dChart.options.scales.yL.afterFit; delete dChart.options.scales.yP.afterFit;
-      delete cChart.options.scales.yL.afterFit; delete cChart.options.scales.yP.afterFit;
-      delete dChart.options.scales.x.afterFit; delete cChart.options.scales.x.afterFit;
+      cleanupAnim();
       transId = 0; build(range); updateBreakdown(range);
     }
   });
