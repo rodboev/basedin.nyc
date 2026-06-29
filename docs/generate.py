@@ -75,7 +75,7 @@ def file_timestamps(path: Path) -> tuple[datetime, datetime]:
 
     return (
         created or fallback_created,
-        modified or fallback_modified,
+        max(modified, fallback_modified) if modified else fallback_modified,
     )
 
 

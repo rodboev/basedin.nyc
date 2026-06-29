@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """Post-process pr-stats/index.html: inject a Progress chart and avg stat cards.
 
-Reads the classification cache from generate.ps1 and fetches LOC data from GitHub.
-Run after generate.ps1 to augment its output in-place.
+Reads enriched PR_DATA from generate.ps1 so the post-pass stays aligned with the
+already-rendered Breakdown counts and classifications.
 """
 
 import json
 import re
-import subprocess
 import sys
 from collections import defaultdict
 from datetime import datetime
@@ -15,55 +14,17 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 SCRIPT_DIR = Path(__file__).parent
-CACHE_FILE = SCRIPT_DIR / ".pr-classification-cache.json"
 INDEX_FILE = SCRIPT_DIR / "index.html"
 GENERATE_PS1 = SCRIPT_DIR / "generate.ps1"
 
-AUTHOR = "rodboev"
 SHIPPED_CLASSIFICATIONS = {"shipped", "accepted-indirect"}
 EASTERN = ZoneInfo("America/New_York")
 
 CHART_MARKER = "<!-- timeline-chart -->"
 
-
-def fetch_prs(repo, author):
-    result = subprocess.run(
-        ["gh", "pr", "list", "--repo", repo, "--author", author,
-         "--state", "all", "--limit", "500",
-         "--json", "number,state,createdAt,closedAt,mergedAt,additions,deletions,changedFiles"],
-        capture_output=True, text=True, timeout=120
-    )
-    if result.returncode != 0:
-        print(f"    WARN: fetch failed for {repo}", file=sys.stderr)
-        return []
-    return json.loads(result.stdout)
-
-
-def load_classifications(cache_file):
-    if not cache_file.exists():
-        return {}
-    with open(cache_file, encoding="utf-8") as f:
-        cache = json.load(f)
-    return {
-        key: entry.get("classification", "")
-        for key, entry in cache.get("entries", {}).items()
-    }
-
-
 def to_eastern_date(iso_str):
     dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
     return dt.astimezone(EASTERN).strftime("%Y-%m-%d")
-
-
-def classify_pr(pr, repo, classifications):
-    cache_key = f"{repo}#{pr['number']}"
-    if pr["state"] == "OPEN":
-        return "open"
-    if cache_key in classifications:
-        return classifications[cache_key]
-    if pr.get("mergedAt"):
-        return "shipped"
-    return "lost"
 
 
 def repo_short_name(full_name):
@@ -84,6 +45,20 @@ def load_active_repos(ps1_path):
     if not repos:
         raise ValueError(f"no active repos found in {ps1_path}")
     return repos
+
+
+def load_pr_data(index_file):
+    html = index_file.read_text(encoding="utf-8")
+    match = re.search(r"var PR_DATA = (\[.*?\]);", html, re.DOTALL)
+    if not match:
+        raise ValueError(f"could not find PR_DATA in {index_file}")
+
+    items = json.loads(match.group(1))
+    required = {"repo", "classification", "createdAt", "closedAt", "mergedAt", "additions", "deletions", "changedFiles"}
+    missing = required.difference(items[0].keys() if items else set())
+    if missing:
+        raise ValueError(f"PR_DATA missing fields required for timeline injection: {', '.join(sorted(missing))}")
+    return items
 
 
 def _aggregate_daily(prs):
@@ -266,36 +241,34 @@ def main():
 
     try:
         repos = load_active_repos(GENERATE_PS1)
-    except (OSError, ValueError) as exc:
+        pr_items = load_pr_data(INDEX_FILE)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         sys.exit(1)
 
-    classifications = load_classifications(CACHE_FILE)
-    print(f"Loaded {len(classifications)} classifications from cache", file=sys.stderr)
+    print(f"Loaded {len(pr_items)} PR_DATA items from index.html", file=sys.stderr)
 
     all_prs = []
-    for repo in repos:
-        print(f"  {repo}...", file=sys.stderr)
-        prs = fetch_prs(repo, AUTHOR)
-        for pr in prs:
-            classification = classify_pr(pr, repo, classifications)
-            is_shipped = classification in SHIPPED_CLASSIFICATIONS
+    for item in pr_items:
+        classification = item["classification"]
+        is_shipped = classification in SHIPPED_CLASSIFICATIONS
 
-            created_date = to_eastern_date(pr["createdAt"])
-            resolved_iso = pr.get("mergedAt") or pr.get("closedAt") or ""
-            resolved_date = to_eastern_date(resolved_iso) if resolved_iso else ""
+        created_iso = item.get("createdAt") or ""
+        created_date = to_eastern_date(created_iso) if created_iso else ""
+        resolved_iso = item.get("mergedAt") or item.get("closedAt") or ""
+        resolved_date = to_eastern_date(resolved_iso) if resolved_iso else ""
 
-            all_prs.append(dict(
-                repo=repo,
-                number=pr["number"],
-                additions=pr.get("additions", 0) or 0,
-                deletions=pr.get("deletions", 0) or 0,
-                changedFiles=pr.get("changedFiles", 0) or 0,
-                classification=classification,
-                isShipped=is_shipped,
-                createdDate=created_date,
-                resolvedDate=resolved_date,
-            ))
+        all_prs.append(dict(
+            repo=item["repo"],
+            number=item["number"],
+            additions=item.get("additions", 0) or 0,
+            deletions=item.get("deletions", 0) or 0,
+            changedFiles=item.get("changedFiles", 0) or 0,
+            classification=classification,
+            isShipped=is_shipped,
+            createdDate=created_date,
+            resolvedDate=resolved_date,
+        ))
 
     print(f"  {len(all_prs)} PRs total", file=sys.stderr)
 

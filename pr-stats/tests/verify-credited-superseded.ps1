@@ -13,7 +13,7 @@ function Get-ProbeFunctions([string]$Path) {
 $Author = "rodboev"
 $shippedPatterns = @("shipped", "cherry-picked", "merged-via", "salvaged into")
 $duplicatePatterns = @("duplicate")
-$supersededPatterns = @("supersede", "consolidat")
+$supersededPatterns = @("supersede", "consolidat", "closing in favor", "closed in favor")
 $creditPatterns = @("co-author", "coauthor", "co-authored", "authorship", "attribution", "credited")
 $continuationPatterns = @("same credit", "same commit", "same change", "reopen")
 $withdrawnPattern = '(?i)\bwithdraw(?:ing|n)?\b'
@@ -33,6 +33,10 @@ $script:ClassificationCache = @{
     prAuthorsByNumber = @{}
 }
 $RepoLeaderboardConfig = @{
+    "nesquena/hermes-webui" = @{
+        MaintainerLogins = @("nesquena")
+        IntegrationBots = @("nesquena-hermes")
+    }
     "stablyai/orca" = @{
         MaintainerLogins = @("nwparker", "AmethystLiang", "Jinwoo-H", "brennanb2025", "tmchow")
         IntegrationBots = @("buf0-bot[bot]")
@@ -96,3 +100,20 @@ if ($mem0Classification.Classification -ne "superseded") {
     throw "Expected mem0 #5508 to classify as superseded, found '$($mem0Classification.Classification)'."
 }
 Write-Host "mem0 #5508 -> superseded"
+
+$webui5185 = Get-ProbePullRequest -Repo "nesquena/hermes-webui" -Number 5185
+$webui5185Classification = Get-ClosedPullRequestClassification -PullRequest $webui5185
+if ($webui5185Classification.Classification -ne "superseded") {
+    throw "Expected hermes-webui #5185 to classify as superseded, found '$($webui5185Classification.Classification)'."
+}
+Write-Host "hermes-webui #5185 -> superseded"
+
+$webui5208 = Get-ProbePullRequest -Repo "nesquena/hermes-webui" -Number 5208
+$webui5208Classification = Get-ClosedPullRequestClassification -PullRequest $webui5208
+if ($webui5208Classification.Classification -ne "shipped") {
+    throw "Expected hermes-webui #5208 to classify as shipped, found '$($webui5208Classification.Classification)'."
+}
+if ($webui5208Classification.ViaLabel -ne "#5222") {
+    throw "Expected hermes-webui #5208 viaLabel #5222, found '$($webui5208Classification.ViaLabel)'."
+}
+Write-Host "hermes-webui #5208 -> shipped via #5222"

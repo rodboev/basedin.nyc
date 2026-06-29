@@ -13,7 +13,7 @@ function Get-ProbeFunctions([string]$Path) {
 $Author = "rodboev"
 $shippedPatterns = @("shipped", "cherry-picked", "merged-via", "salvaged into")
 $duplicatePatterns = @("duplicate")
-$supersededPatterns = @("supersede", "consolidat")
+$supersededPatterns = @("supersede", "consolidat", "closing in favor", "closed in favor")
 $creditPatterns = @("co-author", "coauthor", "co-authored", "authorship", "attribution", "credited")
 $withdrawnPattern = '(?i)\bwithdraw(?:ing|n)?\b'
 $authorClosePattern = '(?i)\bclos(?:ing|ed|e)\b'

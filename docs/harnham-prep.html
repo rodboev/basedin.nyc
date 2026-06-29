@@ -1,237 +1,566 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="darkreader-lock" />
-<meta name="color-scheme" content="light dark" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="darkreader-lock"/>
+<meta content="light dark" name="color-scheme"/>
 <title>Interview Prep: Harnham / AI-Augmented Dev</title>
-<link rel="stylesheet" href="../style.css?v=52940991">
+<link href="../style.css?v=52940991" rel="stylesheet"/>
+<style>
+  .expandable-notes { margin-top: 0.5rem; }
+  .expandable-notes details { margin: 0.5rem 0; padding: 0.65rem 0.75rem; border: 1px solid rgba(148, 163, 184, 0.35); border-radius: 0.5rem; background: rgba(15, 23, 42, 0.18); }
+  .expandable-notes summary { cursor: pointer; font-weight: 700; }
+  .expandable-notes ol { margin-bottom: 0; }
+  .diff-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.75rem; margin: 0.75rem 0; }
+  .diff-side { border-radius: 0.5rem; padding: 0.65rem; overflow-x: auto; }
+  .diff-side.before { background: rgba(127, 29, 29, 0.22); border: 1px solid rgba(248, 113, 113, 0.45); }
+  .diff-side.after { background: rgba(20, 83, 45, 0.22); border: 1px solid rgba(74, 222, 128, 0.45); }
+  .diff-label { display: block; margin-bottom: 0.35rem; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; opacity: 0.82; }
+  .diff-side pre { margin: 0; white-space: pre-wrap; }
+  .diff-side.before code::before { content: "- "; color: #f87171; }
+  .diff-side.after code::before { content: "+ "; color: #4ade80; }
+  .maintainability-bubbles { counter-reset: maintainability; display: grid; gap: 0.7rem; margin: 0.85rem 0; }
+  .maintainability-bubble { counter-increment: maintainability; position: relative; padding: 0.75rem 0.85rem 0.75rem 3rem; border: 1px solid rgba(96, 165, 250, 0.35); border-radius: 0.75rem; background: rgba(30, 64, 175, 0.13); }
+  .maintainability-bubble::before { content: counter(maintainability); position: absolute; left: 0.85rem; top: 0.8rem; width: 1.45rem; height: 1.45rem; display: grid; place-items: center; border-radius: 999px; background: rgba(96, 165, 250, 0.24); color: #93c5fd; font-weight: 800; }
+  .maintainability-bubble p { margin: 0.35rem 0 0; }
+  .qa-list { display: grid; gap: 0.85rem; margin: 0.85rem 0 1.4rem; }
+  .qa-box { padding: 0.85rem 1rem; border: 1px solid rgba(148, 163, 184, 0.35); border-radius: 0.85rem; background: rgba(15, 23, 42, 0.16); }
+  .qa-box h4 { margin: 0 0 0.5rem; font-size: 1rem; }
+  .qa-box p { margin: 0.45rem 0; }
+  .qa-box ul { margin-bottom: 0; }
+</style>
 </head>
 <body class="pr">
 <main class="doc-page">
-<h1>Interview Prep: Harnham / AI-Augmented Dev</h1>
-<p class="subtitle">Senior/Principal Software Engineer (AI Augmented) &middot; NYC hybrid 3 days/week &middot; Recruiter: Sasha Hoherchak &middot; Phone screen June 23, 2026 2:30 PM</p>
-
-<div class="landscape-row" data-doc-nav>
-  <h2>Sections</h2>
-  <div class="sort-pills">
-    <button class="sort-pill active" data-target="role-shape" type="button">Role Shape</button>
-    <button class="sort-pill" data-target="context" type="button">Context</button>
-    <button class="sort-pill" data-target="ai-augmented" type="button">AI-Augmented</button>
-    <button class="sort-pill" data-target="ssr" type="button">SSR</button>
-    <button class="sort-pill" data-target="functional" type="button">FP</button>
-    <button class="sort-pill" data-target="composable" type="button">Composable Systems</button>
-    <button class="sort-pill" data-target="testing" type="button">Testing</button>
-    <button class="sort-pill" data-target="leadership" type="button">Leadership</button>
-    <button class="sort-pill" data-target="fit" type="button">Fit</button>
-    <button class="sort-pill" data-target="questions" type="button">Questions</button>
-  </div>
+<h1><a class="back-link" href="../docs/"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>Interview Prep: Harnham / AI-Augmented Dev</h1>
+<p class="subtitle">Senior/Principal Software Engineer (AI Augmented) · NYC hybrid 3 days/week · Recruiter: Sasha Hoherchak · Round 2: July 1, 2026 1:15 PM EST · Interviewer: Jerome Dane</p>
+<div class="landscape-row" data-doc-nav="">
+<h2>Sections</h2>
+<div class="sort-pills">
+<button class="sort-pill active" data-target="role-shape" type="button">Role Shape</button>
+<button class="sort-pill" data-target="code-challenge" type="button">Code Challenge</button>
+<button class="sort-pill" data-target="context" type="button">Context</button>
+<button class="sort-pill" data-target="ai-augmented" type="button">AI-Augmented</button>
+<button class="sort-pill" data-target="ssr" type="button">SSR</button>
+<button class="sort-pill" data-target="functional" type="button">FP</button>
+<button class="sort-pill" data-target="composable" type="button">Composable Systems</button>
+<button class="sort-pill" data-target="testing" type="button">Testing</button>
+<button class="sort-pill" data-target="leadership" type="button">Leadership</button>
+<button class="sort-pill" data-target="fit" type="button">Fit</button>
+<button class="sort-pill" data-target="questions" type="button">Questions</button>
 </div>
-
+</div>
 <h2 class="doc-nav-target" id="role-shape">What This Role Actually Is</h2>
 <div class="card">
-  <p>The JD frames it upfront: "This role is not about producing baseline code quickly. Modern AI tools can do that." The core ask is a <strong>senior frontend-leaning full-stack engineer who sets technical direction</strong>. The AI angle differentiates it from a standard senior role: they want someone who uses AI tooling fluently and maintains quality standards when AI generates the initial code.</p>
-
-  <h3>What a recruiter screen will cover</h3>
-  <p>Sasha is at Harnham, which specializes in data, analytics, and AI placements. This call is a fit check. Expect:</p>
-  <ul>
-    <li>Stack alignment (TypeScript, React, Next.js)</li>
-    <li>Hybrid logistics (3 days/week in NYC office)</li>
-    <li>Seniority level (the title says both Principal and Senior; they may be deciding based on candidate)</li>
-    <li>AI-assisted development comfort</li>
-    <li>Comp expectations, availability, timeline</li>
-  </ul>
-  <h3>The company</h3>
-  <p>The JD was sent anonymized, but the exact language (including the Reshaped UI mention) appears on public boards under <strong>MoneyLion / Engine by Gen</strong> (Gen Digital Inc., NASDAQ: GEN). The specific team is likely <strong>Engine by Gen</strong>, their embedded finance marketplace that partners with financial institutions to deliver personalized consumer experiences. Engine was formerly Even Financial (founded 2014 in NYC), acquired by MoneyLion in 2022; Gen Digital then acquired MoneyLion. GitHub org is still <code>@EVENFinancial</code>. Office at 30 W 21st St, NYC (Flatiron).</p>
-  <p>Gen Digital is the Norton/Avast/LifeLock parent; MoneyLion is their consumer fintech super app. A Lensa cross-post describes the company as operating at the intersection of "financial technology, consumer platforms, and digital security" with "hundreds of millions of users worldwide." Gen Digital serves nearly 500 million users across 150+ countries.</p>
-  <p>Public postings show <strong>$190K&ndash;$200K base + bonus &amp; equity</strong>.</p>
-  <p>Keep this in your back pocket. Sasha sent it anonymized, so let her reveal the name.</p>
+<p>The JD frames it upfront: "This role is not about producing baseline code quickly. Modern AI tools can do that." The core ask is a <strong>senior frontend-leaning full-stack engineer who sets technical direction</strong>. The AI angle differentiates it from a standard senior role: they want someone who uses AI tooling fluently and maintains quality standards when AI generates the initial code.</p>
+<h3>What Jerome's round covers</h3>
+<p>This is a technical reasoning and mindset evaluation, not a coding test. It builds on the code challenge and focuses on five areas:</p>
+<ol>
+<li>Follow-up on your code challenge — decisions, tradeoffs, what you'd improve</li>
+<li>What makes software testable (near-certain to come up)</li>
+<li>Whether you understand LLMs under the hood (called out as make-or-break)</li>
+<li>How you use AI tools in your daily workflow</li>
+<li>How you stay current (screening signal disguised as casual conversation)</li>
+</ol>
+<p>The candidate they passed on most recently (Bhrigu) was too backend-focused and not used to building user-facing applications. Jerome is looking for full-stack engineers who can own the frontend product experience, not just the APIs that power it.</p>
+</div><div class="card"><h3>Must-have skills</h3>
+<p>TypeScript, server-side rendering (Next.js), Kubernetes. Nice-to-have: React Suspense boundaries, functional programming.</p>
+</div><div class="card"><h3>The company</h3>
+<p>The JD was sent anonymized, but the exact language (including the Reshaped UI mention) appears on public boards under <strong>MoneyLion / Engine by Gen</strong> (Gen Digital Inc., NASDAQ: GEN). The specific team is likely <strong>Engine by Gen</strong>, their embedded finance marketplace that partners with financial institutions to deliver personalized consumer experiences. Engine was formerly Even Financial (founded 2014 in NYC), acquired by MoneyLion in 2022; Gen Digital then acquired MoneyLion. GitHub org is still <code>@EVENFinancial</code>. Office at 30 W 21st St, NYC (Flatiron).</p>
+<p>Gen Digital is the Norton/Avast/LifeLock parent; MoneyLion is their consumer fintech super app. A Lensa cross-post describes the company as operating at the intersection of "financial technology, consumer platforms, and digital security" with "hundreds of millions of users worldwide." Gen Digital serves nearly 500 million users across 150+ countries.</p>
+<p>Public postings show $190K–$200K base + bonus &amp; equity.</p>
 </div>
-
+<h2 class="doc-nav-target" id="code-challenge">Code Challenge Follow-Up</h2>
+<div class="card">
+<p>The PR is at <a href="https://github.com/rodboev/gen-digital/pull/1">github.com/rodboev/gen-digital/pull/1</a>. Jerome has read access. The challenge was to review a junior engineer's Next.js art search prototype, identify issues, and suggest improvements. You went beyond pointing things out and fixed everything, with each commit addressing one thing.</p>
+<h3>What you found in the original code</h3>
+<ul>
+<li><strong>State mutation:</strong> <code>data.sort()</code> sorted in place. React detects change by reference, so mutation is invisible to the renderer. <code>[...data].sort()</code> produces a new array reference; React sees the change.</li>
+<li><strong>False-positive content filter:</strong> The nudity regex matched substrings ("Denude", "Knudsen"). Word-boundary matching (<code>\bnud(?:es?|ity)\b</code>) scopes it correctly.</li>
+<li><strong>Unstable React keys:</strong> <code>image_id</code> can be null and isn't unique across artworks. Switched to the canonical integer <code>id</code> from the ARTIC API.</li>
+<li><strong>No fetch error handling:</strong> A 500 response was silently treated as success. <code>res.ok</code> check throws on failure.</li>
+<li><strong>No URL encoding:</strong> Queries with special characters (<code>&amp;</code>, <code>+</code>) corrupted the API request. <code>URLSearchParams</code> handles encoding correctly.</li>
+<li><strong>Boolean state soup:</strong> Multiple <code>isLoading</code>/<code>isError</code> booleans that can desync. Replaced with a discriminated <code>'idle' | 'loading' | 'success' | 'error'</code> union: invalid combinations are unrepresentable at compile time.</li>
+<li><strong>Test tooling in production deps:</strong> <code>vitest</code> and <code>@vitejs/plugin-react</code> were in <code>dependencies</code>, so they ship to production. Moved to <code>devDependencies</code>.</li>
+<li><strong>Gibberish queries returning results:</strong> The ARTIC API returns near-zero Elasticsearch scores (~0.00002) for unmatched queries. Real matches score 50+. A <code>_score &gt;= 1</code> floor filters the noise.</li>
+<li><strong>Broken images:</strong> <code>next/image</code> proxies external URLs through <code>/_next/image</code>; the IIIF server rejects proxied requests with 403. Direct URLs return 200. The <code>unoptimized</code> prop bypasses the proxy.</li>
+</ul>
+</div><div class="card"><h3>Structural decisions and rationale</h3>
+<ul>
+<li><strong>Discriminated Status union over boolean flags:</strong> Boolean flags allow impossible combinations (loading and error simultaneously). A union type enforces mutual exclusivity at the type level.</li>
+<li><strong><code>filterArtworks</code> as an exported pure function:</strong> Separating filter logic from the component makes it unit-testable without rendering. The filter runs on data, returns data, has no side effects. 16 tests cover it.</li>
+<li><strong>AbortController on every fetch:</strong> Without cancellation, a slow request for query A can resolve after query B fires and overwrite the newer results. Each effect invocation creates a controller; cleanup aborts the in-flight request.</li>
+<li><strong>Generation counter for async safety:</strong> Even with AbortController, an ABA race persists: search A, page 2 loads, switch to B, switch back to A. String comparison sees two identical queries and lets the stale page-2 data through. A monotonic counter incremented on every query change is unambiguous regardless of query values.</li>
+<li><strong>In-memory Map cache:</strong> Session-lifetime, zero dependencies. Trade-off: doesn't survive page refresh. Acceptable for this context. Repeat searches are instant.</li>
+</ul>
+</div><div class="card"><h3>What you'd improve with more time</h3>
+<div class="expandable-notes">
+<details>
+<summary>Include <code>pagination.total_pages</code> from the ARTIC API response to know the exact page count instead of relying on an empty-results signal to stop paginating.</summary>
+<div aria-label="Pagination implementation change" class="diff-pair">
+<div class="diff-side before">
+<span class="diff-label">Current</span>
+<pre><code>artFetcher(...) returns Artwork[] only
+hasMore is inferred from empty/filtered results
+loadMore may discover the end one request late</code></pre>
+</div>
+<div class="diff-side after">
+<span class="diff-label">With more time</span>
+<pre><code>artFetcher(...) returns { data, pagination }
+hasMore = current_page &lt; total_pages
+loadMore stops before requesting past the last page</code></pre>
+</div>
+</div>
+<p><strong>What I would implement:</strong></p>
+<ol>
+<li>Change the API return type so <code>artFetcher</code> returns both the artwork data and the pagination metadata, not just <code>Artwork[]</code>.</li>
+<li>Update <code>ArtSearchResponse</code> to include the ARTIC pagination object, especially <code>pagination.current_page</code> and <code>pagination.total_pages</code>.</li>
+<li>Optionally return a narrower app-facing shape from <code>artFetcher</code>, for example <code>{ data, currentPage, totalPages }</code>, so the UI does not need to know the exact ARTIC response structure.</li>
+<li>On the first-page fetch, set the artwork data from the response and set <code>hasMore</code> with <code>currentPage &lt; totalPages</code>.</li>
+<li>In <code>loadMore</code>, after fetching page N, append that page's <code>data</code>, update <code>pageRef.current</code>, then recompute <code>hasMore</code> from the pagination metadata.</li>
+<li>Remove the empty-results heuristic as the primary way to detect exhaustion.</li>
+</ol>
+<p><strong>Why it matters:</strong> the current version infers the end by waiting for an empty or fully filtered page. That works, but it is indirect and can discover the end one request late. If the API already tells us the total number of pages, using it is more explicit, avoids unnecessary requests, and makes pagination behavior less dependent on whatever filtering rules happen to run on the client.</p>
+</details>
+<details>
+<summary>A Next.js Route Handler with <code>Cache-Control: s-maxage=300</code> for CDN caching at scale.</summary>
+<div aria-label="Route handler implementation change" class="diff-pair">
+<div class="diff-side before">
+<span class="diff-label">Current</span>
+<pre><code>browser -&gt; api.artic.edu
+client owns ARTIC URL construction
+each user can hit ARTIC directly</code></pre>
+</div>
+<div class="diff-side after">
+<span class="diff-label">With more time</span>
+<pre><code>browser -&gt; /api/artworks -&gt; api.artic.edu
+Route Handler owns ARTIC URL construction
+CDN can cache repeated searches for 300s</code></pre>
+</div>
+</div>
+<p><strong>What I would implement:</strong></p>
+<ol>
+<li>Add a server route in the App Router at <code>src/app/api/artworks/route.ts</code>.</li>
+<li>In that route, read <code>q</code> and <code>page</code> from <code>request.nextUrl.searchParams</code>.</li>
+<li>Build the ARTIC URL on the server using <code>URLSearchParams</code> and the known field list.</li>
+<li>Fetch ARTIC from the route handler, check <code>res.ok</code>, and return either a normalized JSON response or a clear error response.</li>
+<li>Return the JSON with cache headers such as <code>Cache-Control: s-maxage=300, stale-while-revalidate=60</code>.</li>
+<li>Change the client <code>artFetcher</code> to call our route, for example <code>/api/artworks?q=...&amp;page=...</code>, instead of calling ARTIC directly from the browser.</li>
+</ol>
+<p><strong>Why it matters:</strong> that gives us a backend boundary we control. At scale, a CDN or hosting layer can cache repeated searches for five minutes instead of every browser hitting ARTIC directly. It also gives us one place to normalize the API response, hide third-party details, add logging, add rate limiting, perform runtime validation, or introduce future auth if needed.</p>
+</details>
+<details>
+<summary>Rendering tests with React Testing Library (requires jsdom setup not included in the current test suite).</summary>
+<div aria-label="Testing implementation change" class="diff-pair">
+<div class="diff-side before">
+<span class="diff-label">Current</span>
+<pre><code>Vitest unit tests exercise helpers
+no browser-like DOM environment
+limited coverage of user-visible states</code></pre>
+</div>
+<div class="diff-side after">
+<span class="diff-label">With more time</span>
+<pre><code>Vitest + jsdom + React Testing Library
+render components and interact like a user
+assert loading, success, error, retry, pagination UI</code></pre>
+</div>
+</div>
+<p><strong>What I would implement:</strong></p>
+<ol>
+<li>Install <code>@testing-library/react</code>, <code>@testing-library/jest-dom</code>, and <code>jsdom</code> as dev dependencies.</li>
+<li>Add a <code>vitest.config.ts</code> file using <code>@vitejs/plugin-react</code>.</li>
+<li>Configure Vitest with <code>test.environment = 'jsdom'</code> so components can render against a browser-like DOM.</li>
+<li>Add a setup file, for example <code>src/test/setup.ts</code>, importing <code>@testing-library/jest-dom/vitest</code>.</li>
+<li>Mock Next-specific pieces that do not run naturally in jsdom, especially <code>next/image</code>, <code>next/navigation</code>, and <code>IntersectionObserver</code>.</li>
+<li>Write rendering tests for <code>Search</code> and <code>Results</code>: initial idle state, loading state, successful artwork cards, error and retry UI, no premature “No results” message, and pagination when the sentinel intersects.</li>
+</ol>
+<p><strong>Why it matters:</strong> the current tests prove helper behavior and fetch behavior. React Testing Library would prove user-visible behavior: what appears on screen, what happens when the user types, and how loading/error states render. That catches integration bugs that pure function tests will not catch.</p>
+</details>
+</div>
+</div><div class="card"><h3>Improvements beyond fixes</h3>
+<p>The README explicitly asks for improvements, so beyond correctness: search-as-you-type with 300ms debounce (no submit button), URL param sync (<code>?q=monet</code> for shareable links), infinite scroll via <code>IntersectionObserver</code> with exhaustion detection, auto-retry with countdown on fetch error, and an in-memory cache.</p>
+</div>
 <h2 class="doc-nav-target" id="context">Fintech Domain Context</h2>
 <div class="card">
-  <p>Engine by Gen operates an embedded finance marketplace. Partner financial institutions (banks, lenders, insurers, credit card issuers) plug their products into Engine's platform. Consumers see personalized offers with specific APRs, computed monthly payments, insurance quotes, savings yields. The frontend renders financial data that consumers act on.</p>
-
-  <h3>What the product does</h3>
-  <ul>
-    <li><strong>Offer matching:</strong> user submits financial profile data (income, credit score range, debt-to-income, location). The platform queries partner APIs, applies eligibility rules, returns ranked offers with terms: APR, monthly payment, fees, rewards. The frontend renders these in real time.</li>
-    <li><strong>Application flows:</strong> multi-step forms collecting PII (SSN, income verification, employment history), submitting to partner APIs. State must be consistent across steps. Partial completion, session resumption, timeout handling.</li>
-    <li><strong>Rate display compliance:</strong> financial product advertising is regulated by TILA, Reg Z, and state-level consumer protection laws. Incorrect APR display, omitted disclosures, or expired offers can trigger regulatory action.</li>
-    <li><strong>Personalization at scale:</strong> every user sees different offers based on their profile. Content is dynamic and per-request; static generation can't work.</li>
-  </ul>
-
-  <h3>How this shapes the JD requirements</h3>
-  <ul>
-    <li><strong>Immutability:</strong> a mutation bug that causes React to skip a re-render means the user sees stale financial data. If a rate changed and the UI still shows the old one, that's a compliance exposure.</li>
-    <li><strong>Testing:</strong> fintech test coverage serves dual purposes: engineering quality and regulatory audit trail. Regulators can ask for evidence that rate display logic is tested.</li>
-    <li><strong>SSR:</strong> personalized offers require per-request rendering. Time-to-content directly affects conversion on comparison flows.</li>
-    <li><strong>AI quality gates:</strong> a component that renders the right APR in the happy path but shows a stale value after a state transition passes cursory review. The quality bar has to account for the regulatory surface of the rendered data.</li>
-  </ul>
+<p>Engine by Gen operates an embedded finance marketplace. Partner financial institutions (banks, lenders, insurers, credit card issuers) plug their products into Engine's platform. Consumers see personalized offers with specific APRs, computed monthly payments, insurance quotes, savings yields. The frontend renders financial data that consumers act on.</p>
+<h3>What the product does</h3>
+<ul>
+<li><strong>Offer matching:</strong> user submits financial profile data (income, credit score range, debt-to-income, location). The platform queries partner APIs, applies eligibility rules, returns ranked offers with terms: APR, monthly payment, fees, rewards. The frontend renders these in real time.</li>
+<li><strong>Application flows:</strong> multi-step forms collecting PII (SSN, income verification, employment history), submitting to partner APIs. State must be consistent across steps. Partial completion, session resumption, timeout handling.</li>
+<li><strong>Rate display compliance:</strong> financial product advertising is regulated by TILA, Reg Z, and state-level consumer protection laws. Incorrect APR display, omitted disclosures, or expired offers can trigger regulatory action.</li>
+<li><strong>Personalization at scale:</strong> every user sees different offers based on their profile. Content is dynamic and per-request; static generation can't work.</li>
+</ul>
+</div><div class="card"><h3>How this shapes the JD requirements</h3>
+<ul>
+<li><strong>Immutability:</strong> a mutation bug that causes React to skip a re-render means the user sees stale financial data. If a rate changed and the UI still shows the old one, that's a compliance exposure.</li>
+<li><strong>Testing:</strong> fintech test coverage serves dual purposes: engineering quality and regulatory audit trail. Regulators can ask for evidence that rate display logic is tested.</li>
+<li><strong>SSR:</strong> personalized offers require per-request rendering. Time-to-content directly affects conversion on comparison flows.</li>
+<li><strong>AI quality gates:</strong> a component that renders the right APR in the happy path but shows a stale value after a state transition passes cursory review. The quality bar has to account for the regulatory surface of the rendered data.</li>
+</ul>
 </div>
-
 <h2 class="doc-nav-target" id="ai-augmented">AI-Augmented Development</h2>
 <div class="card">
-  <p>"AI-augmented" here means a specific workflow: generate with AI agents (prototyping, scaffolding, refactoring), harden the output with engineering judgment, validate through testing and edge-case review. The human is the quality gate.</p>
-  <p>AI-augmented development raises the bar for the senior engineer. When code is cheap to produce, the bottleneck shifts to judgment. AI-generated code tends to be plausible, pass happy-path tests, and hide subtle issues (race conditions, N+1 queries, memory leaks, mutable state bugs) that surface in production.</p>
-
-  <h3>What "force multiplier" means concretely</h3>
-  <ul>
-    <li><strong>Prototyping:</strong> AI generates a working prototype quickly. The engineer evaluates whether the approach is sound before hardening it.</li>
-    <li><strong>Refactoring:</strong> AI handles mechanical transformations (rename across 40 components, extract a shared utility). The engineer decides <em>what</em> to refactor.</li>
-    <li><strong>Exploratory development:</strong> trying multiple approaches quickly. "Show me this with a reducer vs. a state machine" and comparing tradeoffs before committing.</li>
-    <li><strong>Code review augmentation:</strong> AI flags potential issues in PRs; the engineer decides which flags are real.</li>
-  </ul>
+<p>AI-augmented development raises the bar for the senior engineer. When code is cheap to produce, the bottleneck shifts to judgment. AI-generated code tends to be plausible, pass happy-path tests, and hide subtle issues (race conditions, N+1 queries, memory leaks, mutable state bugs) that surface in production.</p>
+<p>"AI-augmented" here means a specific workflow: generate with AI agents (prototyping, scaffolding, refactoring), harden the output with engineering judgment, validate through testing and edge-case review. The human is the quality gate.</p>
+<h3>LLM internals (make-or-break)</h3>
+<p>Jerome will likely ask directly: "Do you know what LLMs are actually doing under the hood?" The expected answer covers:</p>
+<ul>
+<li>LLMs predict the next token based on probabilities learned from training data. They don't understand truth; they model likelihood.</li>
+<li>Output is non-deterministic by default. Temperature, top-p, and system constraints pull it toward determinism, but the model has no mechanism to verify its own output.</li>
+<li>Hallucinations are probability artifacts, not bugs. If a plausible-sounding token sequence follows a pattern, the model generates it regardless of factual accuracy.</li>
+<li>Context window is the reasoning scope. The model has no memory beyond what's in the window; complexity that overflows it degrades output quality.</li>
+<li>LLMs are strong at pattern completion and weak at verification. They pass the happy path easily and hide subtle errors confidently.</li>
+</ul>
+<p>Connect to engineering practice: you must validate outputs, you don't trust generated code blindly, and quality gates and testing are required precisely because the model can't self-verify. This is why AI-augmented development keeps the human as the quality gate.</p>
+</div><div class="card"><h3>Staying current (screening signal)</h3>
+<p>The honest answer isn't "I follow releases." It's: contributing to the repos AI developers use to build and run agents. Five production tooling projects, spanning UI to storage:</p>
+<ul>
+<li><strong>hermes-webui</strong> (github.com/nesquena/hermes-webui, 15K+ stars): AI agent web interface. #1 contributor of ~300 total. Most of the work is reliability: profile-scoped model routing that silently ran chats on the wrong provider; virtual-scroll DOM recycling to fix anchor oscillation in long transcripts; bounding HTTP worker dispatch under reconnect storms; collapsing config reload stampedes after restarts. Also feature work: saved prompts library, web push notifications, conversation navigation.</li>
+<li><em>Composable extension point:</em> agentsview <a href="https://github.com/kenn-io/agentsview/pull/733">#733</a> is the composability example. Before the registry, adding a new agent format meant editing bespoke discovery logic in the core sync path. Adding Reasonix forced the better abstraction: formats register themselves behind a common interface. The next format becomes a registration, not a rewrite. That is the Open/Closed Principle in practical form: open for extension, closed for modification.</li>
+<li><strong>headroom</strong> (github.com/headroomlabs-ai/headroom, 50K+ stars): Token compression proxy for LLMs. Byte-faithful Anthropic tool forwarding; mutations that seemed harmless were breaking prefix-cache hit stability across repeated turns.</li>
+<li><strong>claude-mem</strong> (github.com/thedotmack/claude-mem, 80K+ stars): Persistent memory compression for Claude Code. Spawn storm defense: connection mutex, process guard, and circuit breaker to cap ChromaSync database connections when hundreds of concurrent processes race on startup.</li>
+<li><strong>mem0</strong> (github.com/mem0ai/mem0, 59K+ stars): Universal memory layer for AI agents. TypeScript pgvector parity: connection-string and SSL support so managed Postgres works without manual URL splitting. Scale-threshold fixes across Redis, Valkey, Elasticsearch, and OpenSearch backends that were silently returning zero and suppressing capacity warnings.</li>
+</ul>
+<p>The pattern: these tools break in specific, non-obvious ways at the intersection of AI runtime behavior and infrastructure. Fixing them requires reading the source. 306 shipped PRs, 97% acceptance, 30 active days.</p>
+<p>On model behavior: empirical. 306 PRs reviewed by both GPT-5.5 and Claude Opus over 30 active days. GPT-5.5 caught the ABA race (string comparison failing A→B→A); Claude Opus caught the stale catch/finally. Different training distributions, different failure surfaces. That's not release-notes familiarity.</p>
+</div><div class="card"><h3>How to rein in AI outputs (fill-in answers for implied questions)</h3>
+<p>The article at <a href="https://www.linkedin.com/pulse/what-agent-orchestration-platforms-get-wrong-rod-boev-9m7bc/">What Agent Orchestration Platforms Get Wrong</a> maps four failure modes to four mechanical solutions. These are the answers to questions like "how do you prevent AI from declaring success without evidence?" or "what does responsible AI use look like?"</p>
+<ul>
+<li><strong>Agents declare success without evidence.</strong> Fix: a continuation guard, a Node.js script that hooks into the model's turn boundary. Every time the model tries to stop, the script checks a status tracker for incomplete stages and kicks it back into the loop. The model can't reason past a bash script; the harness decides when work is done, not the model.</li>
+<li><strong>Lack of planning.</strong> Fix: cross-provider spec competition. Two models independently write implementation plans; a deterministic validator rejects unsound architecture. Each execution prompt carries a proof matrix defining what "done" means: behavioral proof, reproduction anchors, regression tests that fail on the base branch and pass after the fix. Not a prompt, a contract.</li>
+<li><strong>Confirmation bias.</strong> Fix: cross-provider adversarial review. Same-model review is an echo chamber; the weights and biases carry over even across separate sessions with the same provider. A different provider has different failure modes. Two-pass review: cross-provider first, same-family second reviewing post-fix branch state.</li>
+<li><strong>No follow-up.</strong> Fix: a convergence loop that polls CI, bot reviews, and maintainer feedback on per-repo cycles until every signal is clean through a quiet window. The PR isn't done when the code is pushed.</li>
+</ul>
+<p>The common thread: every gate is a subprocess the model can't talk its way past. Worktrees, dashboards, and watchdogs are the easy problems. Quality judgment, verification, and engineering discipline are the hard ones, and they're mechanical too, just more complex.</p>
+</div><div class="card"><h3>Where AI accelerates: generating scaffolding</h3>
+<p>The code challenge original was scaffolding. It had the shape right: Next.js page, ARTIC API integration, infinite scroll concept, basic search UI. That structure took minutes to generate. What it couldn't produce correctly: the <code>_score &gt;= 1</code> threshold (requires knowing actual Elasticsearch score distributions from the live ARTIC API, not training data), the ABA generation counter (requires reasoning about async effect boundaries across multiple renders), the discriminated Status union (requires knowing the component's full state space, not just the happy path), or the React key correctness (requires knowing that <code>image_id</code> is nullable in the API response). Scaffolding is fast and structurally right. It's wrong in the details that matter for correctness.</p>
+<p>In daily workflow: the first pass on a new test file, a new API route, a new component. AI produces something that runs, covers the happy path, and has the right shape. It misses: edge cases for empty inputs, error state coverage, race conditions in async flows, and cases where the correct behavior depends on data that only the API documentation or production logs would reveal. That last category is the one you own — there's no way to inject that context into a prompt reliably.</p>
+<p>pr-sweep generates specs and PR bodies as scaffolding. The orchestrator doesn't use them verbatim — the spec gate validates them against structural rules, and adversarial review checks implementation against the spec's proof matrix. The scaffolding compresses the mechanical work; the gates catch what the scaffold missed.</p>
+</div><div class="card"><h3>Where AI fails: assumptions, missing context, incorrect logic</h3>
+<ul>
+<li><strong>Assumptions:</strong> The code challenge's original AbortController code assumed aborting on query change was sufficient to prevent stale results. That assumption is correct for the simple case (new query supersedes old query). It fails the ABA case: search A, page 2 loads, switch to B, return to A. String comparison sees two identical query strings and lets the stale page-2 data through. The model's assumption was locally coherent and globally wrong. The fix requires reasoning across effect boundaries and navigation sequences the model didn't simulate.</li>
+<li><strong>Missing context:</strong> The <code>_score &gt;= 1</code> threshold came from observing real ARTIC Elasticsearch scores: gibberish queries return ~0.00002; real matches score 50+. A model generating the filter without that context would either omit the threshold (returning garbage results) or guess an arbitrary one. The same failure pattern appears in headroom <a href="https://github.com/headroomlabs-ai/headroom/pull/1222">#1222</a> — the proxy was making mutations to Anthropic tool definitions that looked harmless in the code but broke prefix-cache hit stability, because the Anthropic API uses byte-exact comparison for cache key matching. No amount of reading the code reveals that; it requires reading the API documentation or observing cache behavior in production.</li>
+<li><strong>Incorrect logic:</strong> The in-place sort (<code>data.sort()</code>) is correct JavaScript. It's incorrect in React's change detection model, which uses reference equality. A model trained on generic JavaScript makes that call because mutation is idiomatic outside React. It passes all tests that don't check re-render behavior. The incorrectness is context-dependent: right in one environment, wrong in another. The same failure appears in claude-mem spawn storm (<a href="https://github.com/thedotmack/claude-mem/pull/1065">#1065</a>): a generated connection pool is correct for one process. It's wrong when 400 concurrent Claude Code processes all initialize ChromaSync simultaneously. The model can't generate code that handles a deployment topology it doesn't know about.</li>
+</ul>
+<p>The thread across all three: the model produces output that is internally consistent and locally correct. The failures are at integration boundaries — where the code meets the API, the runtime, the deployment environment, or the user's navigation behavior. Those boundaries are what review, testing, and production monitoring exist to cover.</p>
+</div><div class="card"><h3>What "force multiplier" means concretely</h3>
+<ul>
+<li><strong>Scaffolding:</strong> new component, new test file, new API route — generate the shape, then harden the details.</li>
+<li><strong>Refactoring:</strong> AI handles mechanical transformations (rename across 40 components, extract a shared utility). The engineer decides <em>what</em> to refactor.</li>
+<li><strong>Exploratory development:</strong> trying multiple approaches quickly. "Show me this with a reducer vs. a state machine" and comparing tradeoffs before committing.</li>
+<li><strong>Code review augmentation:</strong> AI flags potential issues in PRs; the engineer decides which flags are real.</li>
+</ul>
 </div>
-
 <h2 class="doc-nav-target" id="ssr">Server-Side Rendering</h2>
 <div class="card">
-  <p>The JD says "server-side rendered Next.js," a deliberate distinction from just "Next.js." For a fintech marketplace serving personalized offers, SSR is the only viable strategy: per-user, per-request content.</p>
-
-  <h3>Rendering strategies in Next.js</h3>
-  <ul>
-    <li><strong>CSR:</strong> empty shell, JS builds page client-side. Fast subsequent navigation, slow initial load, poor SEO.</li>
-    <li><strong>SSR:</strong> server renders HTML per-request, browser hydrates for interactivity. In Pages Router: <code>getServerSideProps</code>. In App Router: any uncached data fetch.</li>
-    <li><strong>SSG:</strong> HTML rendered at build time, served from CDN. Fast and cheap, frozen until next build. Pages Router: <code>getStaticProps</code>. App Router: the default for cacheable data.</li>
-    <li><strong>ISR:</strong> SSG with background revalidation on a timer. <code>revalidate: 60</code> means rebuild if older than 60 seconds.</li>
-  </ul>
-
-  <h3>Where the complexity lives</h3>
-  <ul>
-    <li><strong>Hydration gap:</strong> SSR delivers visible content fast, but the page is inert until hydration completes. Selective Hydration (React 18) prioritizes interactive regions. <code>Suspense</code> boundaries control the granularity: wrap each independent section so they hydrate in priority order. For a financial comparison page, the offer cards need to be interactive before the footer.</li>
-    <li><strong>Streaming:</strong> server streams HTML as each <code>Suspense</code> boundary resolves. <code>loading.js</code> files in App Router define the fallback UI per route segment. Useful when some data (partner API responses) is slow and shouldn't block the rest of the page.</li>
-    <li><strong>Caching:</strong> App Router has three caching layers: fetch cache (per-request dedup and <code>revalidate</code> timers), full route cache (static shell), router cache (client-side prefetch). Opt-outs: <code>cache: 'no-store'</code> on fetch, <code>export const dynamic = 'force-dynamic'</code> on route segments, <code>revalidatePath</code>/<code>revalidateTag</code> for on-demand invalidation. The defaults changed between Next.js 14 and 15 (14 cached aggressively by default; 15 made <code>fetch</code> uncached by default).</li>
-    <li><strong>Server Actions:</strong> <code>'use server'</code> functions replacing API routes for mutations. Compose with <code>revalidatePath</code>/<code>revalidateTag</code> to refresh cached data after writes. Can be called from <code>form action={}</code> for progressive enhancement (works without JS).</li>
-    <li><strong>Middleware:</strong> <code>middleware.ts</code> runs at the edge before the request reaches the page. Use cases: auth redirects, A/B test bucketing, geolocation-based routing, header injection. Runs on every request; keep it fast.</li>
-    <li><strong>Route handlers:</strong> <code>route.ts</code> files for REST-style API endpoints when Server Actions don't fit (webhooks, third-party callbacks, streaming responses).</li>
-    <li><strong><code>generateMetadata</code>:</strong> async function for per-page dynamic metadata (SEO titles, OG tags). Can fetch data; deduped with the page's own fetches.</li>
-    <li><strong>Parallel and intercepting routes:</strong> <code>@slot</code> folders for rendering multiple pages in the same layout (modals over lists, split views). Intercepting routes (<code>(.)path</code>) for soft navigation that renders a route in-context without a full page transition.</li>
-  </ul>
+<p>The JD says "server-side rendered Next.js," a deliberate distinction from just "Next.js." For a fintech marketplace serving personalized offers, SSR is the only viable strategy: per-user, per-request content.</p>
+<h3>Rendering strategies in Next.js</h3>
+<ul>
+<li><strong>CSR:</strong> empty shell, JS builds page client-side. Fast subsequent navigation, slow initial load, poor SEO.</li>
+<li><strong>SSR:</strong> server renders HTML per-request, browser hydrates for interactivity. In Pages Router: <code>getServerSideProps</code>. In App Router: any uncached data fetch.</li>
+<li><strong>SSG:</strong> HTML rendered at build time, served from CDN. Fast and cheap, frozen until next build. Pages Router: <code>getStaticProps</code>. App Router: the default for cacheable data.</li>
+<li><strong>ISR:</strong> SSG with background revalidation on a timer. <code>revalidate: 60</code> means rebuild if older than 60 seconds.</li>
+</ul>
+</div><div class="card"><h3>Where the complexity lives</h3>
+<ul>
+<li><strong>Hydration gap:</strong> SSR delivers visible content fast, but the page is inert until hydration completes. Selective Hydration (React 18) prioritizes interactive regions. <code>Suspense</code> boundaries control the granularity: wrap each independent section so they hydrate in priority order. For a financial comparison page, the offer cards need to be interactive before the footer.</li>
+<li><strong>Streaming:</strong> server streams HTML as each <code>Suspense</code> boundary resolves. <code>loading.js</code> files in App Router define the fallback UI per route segment. Useful when some data (partner API responses) is slow and shouldn't block the rest of the page.</li>
+<li><strong>Caching:</strong> App Router has three caching layers: fetch cache (per-request dedup and <code>revalidate</code> timers), full route cache (static shell), router cache (client-side prefetch). Opt-outs: <code>cache: 'no-store'</code> on fetch, <code>export const dynamic = 'force-dynamic'</code> on route segments, <code>revalidatePath</code>/<code>revalidateTag</code> for on-demand invalidation. The defaults changed between Next.js 14 and 15 (14 cached aggressively by default; 15 made <code>fetch</code> uncached by default).</li>
+<li><strong>Server Actions:</strong> <code>'use server'</code> functions replacing API routes for mutations. Compose with <code>revalidatePath</code>/<code>revalidateTag</code> to refresh cached data after writes. Can be called from <code>form action={}</code> for progressive enhancement (works without JS).</li>
+<li><strong>Middleware:</strong> <code>middleware.ts</code> runs at the edge before the request reaches the page. Use cases: auth redirects, A/B test bucketing, geolocation-based routing, header injection. Runs on every request; keep it fast.</li>
+<li><strong>Route handlers:</strong> <code>route.ts</code> files for REST-style API endpoints when Server Actions don't fit (webhooks, third-party callbacks, streaming responses).</li>
+<li><strong><code>generateMetadata</code>:</strong> async function for per-page dynamic metadata (SEO titles, OG tags). Can fetch data; deduped with the page's own fetches.</li>
+<li><strong>Parallel and intercepting routes:</strong> <code>@slot</code> folders for rendering multiple pages in the same layout (modals over lists, split views). Intercepting routes (<code>(.)path</code>) for soft navigation that renders a route in-context without a full page transition.</li>
+</ul>
 </div>
-
 <h2 class="doc-nav-target" id="functional">Functional Programming and Immutability</h2>
 <div class="card">
-  <p>The JD asks candidates to "champion functional programming principles and immutability." The specificity matters: React's entire rendering model is built on FP guarantees. Components are pure functions of props to UI. State updates are immutable replacements. Hooks are function composition. Reconciliation, memoization, concurrent rendering all depend on these guarantees holding.</p>
-
-  <h3>Why immutability is critical in React</h3>
-  <p>React detects change by reference (<code>===</code>). Mutate an object in place and the reference stays the same; React skips the re-render; the UI goes stale. In a fintech context, "stale UI" can mean displaying an outdated APR.</p>
-  <ul>
-    <li><strong>Immutable updates:</strong> spreads, <code>map</code>/<code>filter</code> returning new arrays, <code>structuredClone</code> for deep copies.</li>
-    <li><strong>Reducers:</strong> <code>useReducer</code> formalizes immutable transitions. Related state updates atomically. Redux, Zustand, Jotai build on this.</li>
-    <li><strong>Immer:</strong> mutable-looking syntax producing immutable updates via structural sharing. Used in Redux Toolkit. Useful when deeply nested spreads become unreadable.</li>
-    <li><strong>Memoization:</strong> <code>React.memo</code>, <code>useMemo</code>, <code>useCallback</code> depend on reference stability. Immutable patterns make memoization actually work.</li>
-  </ul>
-
-  <h3>Where FP breaks down in React codebases</h3>
-  <ul>
-    <li><strong>"You might not need an effect":</strong> <code>useState</code> + <code>useEffect</code> to synchronize derived values instead of computing them. If it can be calculated from existing state or props, it should be a <code>const</code> in the render body. Every unnecessary effect is a potential stale-value bug and an extra render cycle.</li>
-    <li><strong>Refs as mutable instance variables:</strong> <code>useRef</code> bypasses React's rendering model. Sometimes necessary (DOM handles, animation frames), but reaching for it as a default means you're fighting the framework.</li>
-    <li><strong>Related state that can desync:</strong> multiple <code>useState</code> calls for values that must change together. A reducer collapses these into a single atomic transition.</li>
-    <li><strong>Prop drilling mutable objects:</strong> breaks referential equality, defeats memoization, creates timing-dependent bugs.</li>
-  </ul>
-
-  <h3>Composition patterns</h3>
-  <ul>
-    <li><strong>Pipeline transformations:</strong> <code>map</code>/<code>filter</code>/<code>reduce</code>/<code>flatMap</code>/<code>sort</code> chains. Practical applications: normalizing API responses (flatten nested partner data into a uniform offer shape), deriving display state from raw data (filter eligible offers, sort by APR, group by product type), building form submission payloads from component state.</li>
-    <li><strong>Function composition:</strong> <code>pipe(validate, normalize, enrich, serialize)</code>. Ramda, lodash/fp (<code>_.flow</code>), or a 3-line <code>pipe</code> utility. Point-free style (<code>map(getName)</code> vs <code>map(x => getName(x))</code>) is readable for simple transforms; Ramda-style point-free composition gets unreadable past two or three steps and makes stack traces opaque.</li>
-    <li><strong>Closures and partial application:</strong> <code>const withAuth = (handler) => (req) => { verify(req.token); return handler(req); }</code>. Middleware chains, event handler factories (<code>onClick={handleSelect(item.id)}</code>), custom hooks that close over config. <code>_.partial</code>, <code>_.curry</code> from lodash. Manual currying for dependency injection in test-friendly code.</li>
-    <li><strong>Discriminated unions:</strong> <code>type Result&lt;T&gt; = {ok: true, data: T} | {ok: false, error: string}</code>. Exhaustive <code>switch</code> checked at compile time. Invalid states become unrepresentable. State machines vs. status enums: a state machine (<code>type State = {status: 'idle'} | {status: 'loading'} | {status: 'error', error: Error} | {status: 'success', data: T}</code>) makes it impossible to have <code>data</code> and <code>error</code> set simultaneously; a flat <code>{status, data, error}</code> object allows that inconsistency.</li>
-    <li><strong>Derived state:</strong> compute values from existing state instead of storing them separately. <code>const total = items.reduce((sum, i) => sum + i.price, 0)</code> in the render body, not a separate <code>useState</code> synced via <code>useEffect</code>. <code>useMemo</code> for expensive derivations. Selectors in Zustand/Redux (<code>useStore(state => state.items.filter(i => i.active))</code>).</li>
-    <li><strong>Transducers:</strong> composable reducers that avoid intermediate array allocations. <code>transduce(compose(filter(isActive), map(toName)), append, [], items)</code>. Ramda has them. Rarely needed in practice but worth knowing the concept: when you chain <code>filter().map().reduce()</code> on a large array, each step allocates a new array; a transducer fuses the steps into a single pass.</li>
-  </ul>
-
-  <h3>The pragmatic boundary</h3>
-  <p>Data transformation pipelines (normalize, expand, filter, group, optimize) are naturally functional. But some problems are genuinely imperative. A tight loop doing gap-packing and merge passes over thousands of objects, with early breaks and index tracking, is clearer as a <code>for</code> loop with mutation than a chain of <code>reduce</code> calls copying the array each iteration. Knowing when to break the rule is part of championing it.</p>
+<p>The JD asks candidates to "champion functional programming principles and immutability." The specificity matters: React's entire rendering model is built on FP guarantees. Components are pure functions of props to UI. State updates are immutable replacements. Hooks are function composition. Reconciliation, memoization, concurrent rendering all depend on these guarantees holding.</p>
+<h3>Why immutability is critical in React</h3>
+<p>React detects change by reference (<code>===</code>). Mutate an object in place and the reference stays the same; React skips the re-render; the UI goes stale. In a fintech context, "stale UI" can mean displaying an outdated APR.</p>
+<ul>
+<li><strong>Immutable updates:</strong> spreads, <code>map</code>/<code>filter</code> returning new arrays, <code>structuredClone</code> for deep copies.</li>
+<li><strong>Reducers:</strong> <code>useReducer</code> formalizes immutable transitions. Related state updates atomically. Redux, Zustand, Jotai build on this.</li>
+<li><strong>Immer:</strong> mutable-looking syntax producing immutable updates via structural sharing. Used in Redux Toolkit. Useful when deeply nested spreads become unreadable.</li>
+<li><strong>Memoization:</strong> <code>React.memo</code>, <code>useMemo</code>, <code>useCallback</code> depend on reference stability. Immutable patterns make memoization actually work.</li>
+</ul>
+</div><div class="card"><h3>Where FP breaks down in React codebases</h3>
+<ul>
+<li><strong>"You might not need an effect":</strong> <code>useState</code> + <code>useEffect</code> to synchronize derived values instead of computing them. If it can be calculated from existing state or props, it should be a <code>const</code> in the render body. Every unnecessary effect is a potential stale-value bug and an extra render cycle.</li>
+<li><strong>Refs as mutable instance variables:</strong> <code>useRef</code> bypasses React's rendering model. Sometimes necessary (DOM handles, animation frames), but reaching for it as a default means you're fighting the framework.</li>
+<li><strong>Related state that can desync:</strong> multiple <code>useState</code> calls for values that must change together. A reducer collapses these into a single atomic transition.</li>
+<li><strong>Prop drilling mutable objects:</strong> breaks referential equality, defeats memoization, creates timing-dependent bugs.</li>
+</ul>
+</div><div class="card"><h3>Composition patterns</h3>
+<ul>
+<li><strong>Pipeline transformations:</strong> <code>map</code>/<code>filter</code>/<code>reduce</code>/<code>flatMap</code>/<code>sort</code> chains. Practical applications: normalizing API responses (flatten nested partner data into a uniform offer shape), deriving display state from raw data (filter eligible offers, sort by APR, group by product type), building form submission payloads from component state.</li>
+<li><strong>Function composition:</strong> <code>pipe(validate, normalize, enrich, serialize)</code>. Ramda, lodash/fp (<code>_.flow</code>), or a 3-line <code>pipe</code> utility. Point-free style (<code>map(getName)</code> vs <code>map(x =&gt; getName(x))</code>) is readable for simple transforms; Ramda-style point-free composition gets unreadable past two or three steps and makes stack traces opaque.</li>
+<li><strong>Closures and partial application:</strong> <code>const withAuth = (handler) =&gt; (req) =&gt; { verify(req.token); return handler(req); }</code>. Middleware chains, event handler factories (<code>onClick={handleSelect(item.id)}</code>), custom hooks that close over config. <code>_.partial</code>, <code>_.curry</code> from lodash. Manual currying for dependency injection in test-friendly code.</li>
+<li><strong>Discriminated unions:</strong> <code>type Result&lt;T&gt; = {ok: true, data: T} | {ok: false, error: string}</code>. Exhaustive <code>switch</code> checked at compile time. Invalid states become unrepresentable. State machines vs. status enums: a state machine (<code>type State = {status: 'idle'} | {status: 'loading'} | {status: 'error', error: Error} | {status: 'success', data: T}</code>) makes it impossible to have <code>data</code> and <code>error</code> set simultaneously; a flat <code>{status, data, error}</code> object allows that inconsistency.</li>
+<li><strong>Derived state:</strong> compute values from existing state instead of storing them separately. <code>const total = items.reduce((sum, i) =&gt; sum + i.price, 0)</code> in the render body, not a separate <code>useState</code> synced via <code>useEffect</code>. <code>useMemo</code> for expensive derivations. Selectors in Zustand/Redux (<code>useStore(state =&gt; state.items.filter(i =&gt; i.active))</code>).</li>
+<li><strong>Transducers:</strong> composable reducers that avoid intermediate array allocations. <code>transduce(compose(filter(isActive), map(toName)), append, [], items)</code>. Ramda has them. Rarely needed in practice but worth knowing the concept: when you chain <code>filter().map().reduce()</code> on a large array, each step allocates a new array; a transducer fuses the steps into a single pass.</li>
+</ul>
+</div><div class="card"><h3>The pragmatic boundary</h3>
+<p>Data transformation pipelines (normalize, expand, filter, group, optimize) are naturally functional. But some problems are genuinely imperative. A tight loop doing gap-packing and merge passes over thousands of objects, with early breaks and index tracking, is clearer as a <code>for</code> loop with mutation than a chain of <code>reduce</code> calls copying the array each iteration. Knowing when to break the rule is part of championing it.</p>
 </div>
-
 <h2 class="doc-nav-target" id="composable">Composable, Changeable Systems</h2>
+<div class="card"><h3>Refactorability</h3><p>if you can't rename, move, or delete a module without fear, the architecture failed.</p></div>
+<div class="card"><h3>Feature flags</h3><p>ship behind flags, toggle without deploys. LaunchDarkly, Statsig.</p></div>
+<div class="card"><h3>Low coupling</h3><p>changing one module doesn't cascade. Dependencies flow one direction.</p></div>
+<div class="card"><h3>Headless patterns</h3><p>logic separated from presentation. A <code>useCombobox</code> hook handling keyboard nav, filtering, selection without rendering anything. Radix, React Aria.</p></div>
+<div class="card"><h3>Component-driven development</h3><p>small, single-responsibility components composing into larger views. Reshaped UI (mentioned in the JD) is a design-system-first library where primitives (Box, Text, Stack, Grid) compose into higher-order patterns.</p></div>
+<h2 class="doc-nav-target" id="testing">What Makes Software Testable</h2>
 <div class="card">
-  <p>The JD says "intentionally small, composable, and resilient to evolving product requirements." This is architectural philosophy.</p>
-  <ul>
-    <li><strong>Component-driven development:</strong> small, single-responsibility components composing into larger views. Reshaped UI (mentioned in the JD) is a design-system-first library where primitives (Box, Text, Stack, Grid) compose into higher-order patterns.</li>
-    <li><strong>Headless patterns:</strong> logic separated from presentation. A <code>useCombobox</code> hook handling keyboard nav, filtering, selection without rendering anything. Radix, React Aria.</li>
-    <li><strong>Low coupling:</strong> changing one module doesn't cascade. Dependencies flow one direction.</li>
-    <li><strong>Feature flags:</strong> ship behind flags, toggle without deploys. LaunchDarkly, Statsig.</li>
-    <li><strong>Refactorability:</strong> if you can't rename, move, or delete a module without fear, the architecture failed.</li>
-  </ul>
+<h3>Clear separation of concerns</h3>
+<p>Each module does one thing, with no bleed between layers. The code challenge example is <code>filterArtworks</code>: the component doesn't filter, the function doesn't render. It takes <code>(artworks, query, threshold)</code> and returns a filtered array — nothing else. It has no knowledge of React, fetch, or the DOM. The 16 tests run without mounting a component, without mocking the API, without rendering a single node. The filter could be moved to a server action or a CLI script without changing a line of its own code.</p>
+<p><strong>Trade-off:</strong> two files instead of one; an explicit import to manage. The payoff is that the filter logic can be relocated, reused, or replaced without touching the component. Entangling them saves 10 minutes of setup and costs days of refactoring later.</p>
+<p><strong>Upstream example:</strong> hermes-webui <a href="https://github.com/nesquena/hermes-webui/pull/3448">#3448</a> is the same separation-of-concerns lesson at a larger scale. Profile-scoped model routing was being applied too late, after session startup had already chosen a provider, so chats could silently run against the wrong model. The fix was not just "move code around"; it made the sequence explicit: resolve the profile first, then initialize the session from that resolved profile. That is the same maintainability principle as this challenge's <code>artFetcher</code>/<code>filterArtworks</code> split: the layer that owns the decision should make the decision before downstream code depends on it.</p>
+</div><div class="card"><h3>Small, composable functions</h3>
+<p><code>filterArtworks</code> has three parameters, one return value, one responsibility. The score threshold (1.0) is a named constant, not a magic number inline. The generation counter is a single ref with one job: tracking request authority. Decomposition down to this level means each piece has one reason to break and one place to fix it.</p>
+<p>The ABA fix demonstrates the value of single-purpose decomposition: "is this request current?" had been answered by comparing query strings — a comparison that conflated request content with request identity. A monotonic counter answers the identity question independently of what the query contains. Two different concerns; two different mechanisms.</p>
+<p><strong>Trade-off:</strong> more function calls to trace. But when the ARTIC API changes its score range, only the threshold constant changes — not the entire filter function, and not the component.</p>
+</div><div class="card"><h3>Deterministic behavior (same input → same output)</h3>
+<p><code>filterArtworks</code> is fully deterministic: same artworks, same query, same threshold always produces the same filtered array. No randomness, no shared state, no clock dependency. This is what makes it unit-testable with no setup.</p>
+<p>The ABA race is the failure case showing why this matters. String comparison (<code>currentQuery === completedQuery</code>) is not deterministic in an async context — the same string can appear twice while pointing to different async states. A generation counter is deterministic: integer N is always and only the Nth request. That's not an abstraction; it's a factual property of monotonically incrementing integers.</p>
+<p><strong>Trade-off:</strong> achieving determinism means pushing side effects to the boundary. <code>filterArtworks</code> is pure because the component manages the async lifecycle explicitly. That explicitness is the cost — and why the component's effect is longer than it would be if the function handled its own fetching.</p>
+<p><strong>Applied to AI:</strong> LLM outputs are non-deterministic. The spec gate and review gate in pr-sweep are deterministic subprocess calls — pass or fail on structure. The non-determinism happens inside a deterministic envelope.</p>
+</div><div class="card"><h3>Dependency injection instead of hard coupling</h3>
+<p><code>filterArtworks</code> receives artworks as a parameter; it does not import a global store, read from context, or call the API. The caller injects the data. The 16 tests have zero setup because there are no dependencies to wire. <code>AbortController</code> is created fresh per <code>useEffect</code> invocation — not a module-level singleton — so each async lifecycle has an independent controller scoped to its own cleanup. A singleton would create cross-request cancellation interference.</p>
+<p><strong>Trade-off:</strong> the calling site has more responsibility. The function has less. That trade is always worth making when the data source might change — and it always might.</p>
+<p><strong>Upstream example:</strong> mem0 <a href="https://github.com/mem0ai/mem0/pull/5789">#5789</a> is a dependency-injection example, not just a pgvector cleanup. The TypeScript client forced callers to manually decompose <code>DATABASE_URL</code> into host, port, database, user, and password, which leaked deployment-specific parsing into the wrong place. Accepting a connection string made the storage layer depend on one clear input instead of a pile of caller-side plumbing. That is the same idea as keeping <code>filterArtworks</code> parameter-driven and keeping fetch behavior behind <code>artFetcher</code>: callers provide the dependency; the module owns the behavior.</p>
+</div><div class="card"><h3>Mockable external services</h3>
+<p>The API call is one <code>fetch</code> inside <code>useEffect</code>. <code>filterArtworks</code> has no knowledge of the API — it operates on whatever array the component passes in. You can test filtering with a hand-crafted array of artwork objects with <code>_score</code> fields; no HTTP mock required. You can test the fetch independently by mocking <code>fetch</code>; no filter logic involved. The two concerns are never entangled.</p>
+<p>The <code>_score &gt;= 1</code> threshold is also relevant here: tests for <code>filterArtworks</code> don't have to reproduce Elasticsearch's scoring model. Any object with a numeric <code>_score</code> field is a valid test fixture. That's a thin, stable interface — one that doesn't change when the API's internal scoring algorithm does.</p>
+<p><strong>Trade-off:</strong> there's still a gap. The test suite covers the filter logic; it doesn't verify that real Elasticsearch responses actually score as expected. That requires at least one integration test against the live API. That gap is acknowledged and in the "what I'd add with more time" column.</p>
+<p><strong>Upstream example:</strong> claude-mem <a href="https://github.com/thedotmack/claude-mem/pull/1065">#1065</a> shows why mockable boundaries matter under load. The bug was not "the database connection fails" in isolation; it was that hundreds of concurrent Claude Code processes could all initialize ChromaSync at once and create a spawn storm. Wrapping access in a circuit-breaker-style boundary gave the system a testable interface: acquire, guard, operate, fail fast. That is the same testing shape as this challenge: once the boundary is explicit, tests can exercise the guard behavior without needing to reproduce the whole production storm.</p>
+</div><div class="card"><h3>Clear interfaces between components</h3>
+<p>The discriminated Status union (<code>'idle' | 'loading' | 'success' | 'error'</code>) is the interface between the async state machine and the UI. It is exhaustive by construction: TypeScript will error if a new status is added without being handled in every callsite. The previous approach — multiple boolean flags — was an implicit interface with no enforcement. Any combination was representable; invalid states were possible at runtime. Loading AND error simultaneously: representable with booleans, unrepresentable with the union.</p>
+<p>The <code>filterArtworks</code> type signature is a complete specification: <code>(artworks: Artwork[], query: string, threshold: number) =&gt; Artwork[]</code>. If the implementation returns something else, TypeScript catches it before it reaches production.</p>
+<p><strong>Trade-off:</strong> defining the interface up front requires knowing the contract. Boolean flags look faster to write. They defer the interface design and collect interest when you debug a state combination you didn't anticipate.</p>
+<p><strong>Upstream example:</strong> hermes-webui <a href="https://github.com/nesquena/hermes-webui/pull/4478">#4478</a> is a concrete example of interface clarity preventing UI instability. Virtual scrolling and DOM recycling were both trying to reason about the current transcript anchor, but their handoff was implicit. When recycled nodes changed underneath the scroll calculation, the anchor oscillated. The fix made ownership and sequencing explicit between the scroll engine and recycler. In this challenge, the equivalent is the <code>Status</code> union and the request-generation guard: the UI should consume a clear state contract, not infer truth from loosely related flags or stale callbacks.</p>
+</div><div class="card"><h3>Observability hooks (logs, metrics)</h3>
+<p>URL param sync (<code>useSearchParams</code> + Suspense boundary) makes search state observable through the URL for free. A user can paste <code>?q=monet&amp;page=3</code> in a bug report; support can reproduce the exact state without instrumentation. The 3-second auto-retry countdown is visible in the UI — the system announces its intent rather than retrying silently. These cost nothing and remove whole categories of "I can't reproduce it."</p>
+<p>The generation counter has an observability property: every async resolution can be logged with its counter value alongside the current counter (<code>request 4 resolved; current is 6; discarding</code>). That trace reconstructs the full lifecycle of an ABA race after the fact.</p>
+<p><strong>Trade-off in the challenge:</strong> no server-side structured logging, no metrics. URL state and UI countdowns are lightweight, not comprehensive.</p>
+<p><strong>Upstream example — fills the gap:</strong> mem0 <a href="https://github.com/mem0ai/mem0/pull/5687">#5687</a> shows why observability is part of maintainability, not an afterthought. Redis, Valkey, Elasticsearch, and OpenSearch backends were reporting collection sizes as zero, so scale warnings never fired. The system was not merely wrong; it was silent. The fix made capacity state visible so operators could act before the failure became user-facing. In this challenge the observability is lighter — URL state, retry countdown, and a generation counter that could be logged — but the principle is the same: code is easier to maintain when it exposes enough state to diagnose behavior without reproducing every timing edge case locally.</p>
+<p>In a fintech context: regulatory audit trails require evidence that rate display logic was tested. You can't produce evidence for what you didn't log.</p>
+</div><div class="card"><h3>Avoiding hidden state and side effects</h3>
+<p><code>filterArtworks</code> is the baseline: zero side effects, zero hidden state, no mutations. The function's complete behavior is visible from its signature.</p>
+<p><code>[...data].sort()</code> vs <code>data.sort()</code>: the original in-place sort mutated the array the caller passed in. React's reference-based change detection couldn't see the update because the reference didn't change. Spreading before sorting makes immutability explicit and removes the hidden mutation. This is why the re-render didn't fire: the bug was a side effect the renderer had no way to observe.</p>
+<p>The ABA bug was caused by hidden state: the closure over <code>currentQuery</code> carried an assumption that the closure value reflects the current UI state — an assumption that breaks when React batches state updates. The generation counter removes the hidden dependency by making request identity independent of closure values.</p>
+<p><code>AbortController</code> per effect: the cleanup function calls <code>controller.abort()</code>. This makes the side effect explicit in the code. Without it, the previous request's controller is a hidden reference that can resolve and overwrite current state after the component has already moved on.</p>
+<p><strong>Trade-off:</strong> immutability allocates. <code>[...data].sort()</code> creates a new array on every sort. For a small artwork list, irrelevant. For 100,000 rows, you'd measure before deciding. Correctness-first is the right default; optimize when profiling justifies it.</p>
 </div>
-
-<h2 class="doc-nav-target" id="testing">Testing Strategy</h2>
-<div class="card">
-  <p>The JD names the testing pyramid and lists four layers: unit, integration/contract, component/UI, E2E. They want "fast feedback loops in CI."</p>
-  <ul>
-    <li><strong>Unit (base, many):</strong> isolated functions/modules. Jest or Vitest. Fast, deterministic.</li>
-    <li><strong>Integration/contract (middle):</strong> modules working together. Contract tests guard boundaries: if the API response shape changes, the contract test breaks before the frontend does.</li>
-    <li><strong>Component/UI (middle-upper):</strong> React Testing Library. Assert behavior ("click submit, spinner appears"), not implementation ("useState called with X").</li>
-    <li><strong>E2E (top, few):</strong> Playwright or Cypress. Reserve for critical flows. If the suite takes 30 minutes, there are too many.</li>
-  </ul>
-  <p>Inverting the pyramid (heavy E2E, few unit tests) creates slow CI and flaky builds. Fast feedback means sub-5-minute CI on the common case.</p>
-
-  <h3>AI-generated test failure modes</h3>
-  <ul>
-    <li>Happy path only, missing edge cases</li>
-    <li>Asserting implementation details instead of behavior</li>
-    <li>Hardcoded values that don't match source data</li>
-    <li>Over-mocking so the test passes even when the real integration is broken</li>
-    <li>False confidence: 90% coverage exercising code paths without verifying correctness</li>
-  </ul>
-</div>
-
 <h2 class="doc-nav-target" id="leadership">Technical Leadership</h2>
-<div class="card">
-  <p>The JD asks for "proven technical leadership through mentorship, delegation, and high-quality code reviews."</p>
-  <ul>
-    <li><strong>Code reviews as teaching:</strong> "this will re-render on every keystroke because the object is created inline; extract it to useMemo" teaches a pattern. "This is wrong" teaches nothing.</li>
-    <li><strong>Design reviews:</strong> evaluate the approach before code is written. What are the failure modes? What changes if the requirement shifts?</li>
-    <li><strong>Trade-off articulation:</strong> stakeholders need to understand what they're trading, not just what you're building.</li>
-    <li><strong>Delegation:</strong> set direction, define interfaces, review results. Leverage comes from making the team faster.</li>
-  </ul>
-  <p>In an AI-augmented team, the bottleneck becomes review quality. The senior engineer sets the standards for what AI output is acceptable.</p>
-</div>
-
 <h2 class="doc-nav-target" id="fit">Where pr-sweep Maps to This JD</h2>
 <div class="card">
-  <p>The JD describes a workflow (generate, harden, validate) and a set of engineering values (quality gates, composable architecture, testing discipline, AI as force multiplier). pr-sweep implements all of these at scale.</p>
-
-  <h3>AI as force multiplier with judgment as the gate</h3>
-  <p>pr-sweep dispatches AI agents across five tiers (scout, planner, coder, reviewer, orchestrator) with model selection matched to judgment requirements. Coders run on cheaper models because spec and review phases constrain their output. AI-generated code is untrusted by default: nothing ships without passing deterministic gates the models can't override.</p>
-
-  <h3>Deterministic quality gates</h3>
-  <ul>
-    <li><strong>Continuation guard:</strong> hooks into the model's turn boundary. Checks a status tracker for incomplete stages, blocks premature completion. Makes cheaper models viable because the harness decides when work is done.</li>
-    <li><strong>Spec gate:</strong> validates cross-provider spec competition produced sound architecture (A/B/C comparison, mandatory sections, regression-proof contracts for bugfixes). Blocks implementation on failure.</li>
-    <li><strong>Review gate:</strong> classifies each review pass as substantive or malformed using 7 structural rules. Both passes must be substantive, no unresolved P1s. Re-fires after every code change.</li>
-  </ul>
-
-  <h3>Cross-provider adversarial review</h3>
-  <p>Same-model review is an echo chamber. Two-pass review: cross-provider first pass, same-family second pass reviewing post-fix branch state. Reviewers dispatched as separate processes, no shared context. Each pass scoped to concrete verification: call-site tracing, import path verification, lifecycle completeness, stale string-assertion detection.</p>
-
-  <h3>Cross-provider spec competition</h3>
-  <p>Two providers independently plan the same implementation. A deterministic validator blocks progression unless the synthesis is sound. Execution prompts carry a Required Proof Matrix: behavioral proof for behavior changes, reproduction anchors and base-fails/head-passes regression contracts for bugfixes. Review verifies these were met.</p>
-
-  <h3>Testing discipline</h3>
-  <p>Every new function, method, error path, or fallback requires a covering test. Existing tests kept in sync: signature changes trigger mock/patch verification, renamed symbols updated in references. Adversarial review checks test correctness: hardcoded strings match source, mocks preserve real semantics, assertions are behavioral.</p>
-
-  <h3>Convergence loops</h3>
-  <p>The convergence loop polls CI, merge state, bot reviews, and maintainer feedback on per-repo cycles tuned to each project's infrastructure. Bot comments fingerprinted to avoid re-triaging. A PR reaches "done" only after a quiet window with every signal clean. No iteration cap.</p>
-
-  <h3>Results</h3>
-  <p>The article Sasha has (<a href="https://www.linkedin.com/pulse/what-agent-orchestration-platforms-get-wrong-rod-boev-9m7bc/">What Agent Orchestration Platforms Get Wrong</a>) frames why existing platforms miss these problems. Live stats at <a href="https://basedin.nyc/pr-stats">basedin.nyc/pr-stats</a>.</p>
+<p>The JD describes a workflow (generate, harden, validate) and a set of engineering values (quality gates, composable architecture, testing discipline, AI as force multiplier). pr-sweep implements all of these at scale.</p>
+<p>The JD asks for "proven technical leadership through mentorship, delegation, and high-quality code reviews."</p>
+<ul>
+<li><strong>Code reviews as teaching:</strong> "this will re-render on every keystroke because the object is created inline; extract it to useMemo" teaches a pattern. "This is wrong" teaches nothing.</li>
+<li><strong>Design reviews:</strong> evaluate the approach before code is written. What are the failure modes? What changes if the requirement shifts?</li>
+<li><strong>Trade-off articulation:</strong> stakeholders need to understand what they're trading, not just what you're building.</li>
+<li><strong>Delegation:</strong> set direction, define interfaces, review results. Leverage comes from making the team faster.</li>
+</ul>
+<p>In an AI-augmented team, the bottleneck becomes review quality. The senior engineer sets the standards for what AI output is acceptable.</p>
+<h3>AI as force multiplier with judgment as the gate</h3>
+<p>pr-sweep dispatches AI agents across five tiers (scout, planner, coder, reviewer, orchestrator) with model selection matched to judgment requirements. Coders run on cheaper models because spec and review phases constrain their output. AI-generated code is untrusted by default: nothing ships without passing deterministic gates the models can't override.</p>
+</div><div class="card"><h3>Deterministic quality gates</h3>
+<ul>
+<li><strong>Continuation guard:</strong> hooks into the model's turn boundary. Checks a status tracker for incomplete stages, blocks premature completion. Makes cheaper models viable because the harness decides when work is done.</li>
+<li><strong>Spec gate:</strong> validates cross-provider spec competition produced sound architecture (A/B/C comparison, mandatory sections, regression-proof contracts for bugfixes). Blocks implementation on failure.</li>
+<li><strong>Review gate:</strong> classifies each review pass as substantive or malformed using 7 structural rules. Both passes must be substantive, no unresolved P1s. Re-fires after every code change.</li>
+</ul>
+</div><div class="card"><h3>Cross-provider adversarial review</h3>
+<p>Same-model review is an echo chamber. Two-pass review: cross-provider first pass, same-family second pass reviewing post-fix branch state. Reviewers dispatched as separate processes, no shared context. Each pass scoped to concrete verification: call-site tracing, import path verification, lifecycle completeness, stale string-assertion detection.</p>
+</div><div class="card"><h3>Cross-provider spec competition</h3>
+<p>Two providers independently plan the same implementation. A deterministic validator blocks progression unless the synthesis is sound. Execution prompts carry a Required Proof Matrix: behavioral proof for behavior changes, reproduction anchors and base-fails/head-passes regression contracts for bugfixes. Review verifies these were met.</p>
+</div><div class="card"><h3>Testing discipline</h3>
+<p>Every new function, method, error path, or fallback requires a covering test. Existing tests kept in sync: signature changes trigger mock/patch verification, renamed symbols updated in references. Adversarial review checks test correctness: hardcoded strings match source, mocks preserve real semantics, assertions are behavioral.</p>
+</div><div class="card"><h3>Convergence loops</h3>
+<p>The convergence loop polls CI, merge state, bot reviews, and maintainer feedback on per-repo cycles tuned to each project's infrastructure. Bot comments fingerprinted to avoid re-triaging. A PR reaches "done" only after a quiet window with every signal clean. No iteration cap.</p>
+</div><div class="card"><h3>Results</h3>
+<p>The article Sasha has (<a href="https://www.linkedin.com/pulse/what-agent-orchestration-platforms-get-wrong-rod-boev-9m7bc/">What Agent Orchestration Platforms Get Wrong</a>) frames why existing platforms miss these problems. Live stats at <a href="https://basedin.nyc/pr-stats">basedin.nyc/pr-stats</a>.</p>
 </div>
-
-<h2 class="doc-nav-target" id="questions">Questions to Ask</h2>
+<h2 class="doc-nav-target" id="questions">Questions</h2>
+<h3>Likely Questions</h3><div class="card qa-box">
+<h4>"What tradeoffs did you make during the exercise?"</h4>
+<p>I made a few pragmatic tradeoffs. The biggest one was scope: I fixed the correctness issues and added targeted improvements, but I avoided turning a small coding challenge into a full production architecture.</p>
+<ul>
+<li>I used TypeScript interfaces to model the ARTIC response, but I did not add runtime schema validation. For production I'd consider Zod or a similar parser, but for this challenge the API boundary was small and trusted enough.</li>
+<li>I used a simple in-memory <code>Map</code> cache instead of a persistent or CDN-backed cache. That keeps the implementation lightweight, but it only lasts for the current session and has no TTL or eviction.</li>
+<li>I let the client call ARTIC directly instead of adding a Next.js Route Handler. A route handler would give better caching, normalization, and control, but it adds another server boundary and wasn't necessary at this scale.</li>
+<li>I added unit tests around the risky logic, but I did not add React Testing Library/jsdom rendering tests. That would be the next step to verify user-visible behavior.</li>
+<li>I used <code>unoptimized</code> on <code>next/image</code> to bypass the ARTIC IIIF 403 issue instead of reverse-engineering which request header the IIIF server validates when the <code>/_next/image</code> proxy rewrites the request. That was a practical fix because direct IIIF URLs worked and image optimization was not essential for small thumbnails.</li>
+<li>I added generation guards for async safety. That may be more defensive than strictly necessary for mostly static artwork data, but once debounce, retry, and pagination exist, it keeps UI state tied to the latest user intent.</li>
+</ul>
+<p><strong>Closing frame:</strong> The theme was: fix real correctness issues, keep the code easy to reason about, and avoid adding production-grade infrastructure before there's a signal that the app needs it.</p>
+</div><div class="card qa-box">
+<h4>"What is your approach to maintainability?" / "How do you keep code maintainable?"</h4>
+<p>My maintainability approach is to reduce hidden coupling and hidden assumptions. In this PR, that meant tightening the boundaries that already existed, making API assumptions visible in code, and keeping the architecture proportional to the size of the problem.</p>
+<div aria-label="Maintainability themes grounded in the PR" class="maintainability-bubbles">
+<div class="maintainability-bubble">
+<strong>Separate concerns where the PR actually reduced coupling.</strong>
+<p>The original app already had <code>Search → Results → Display</code>, so I wouldn't claim I invented the architecture. The maintainability improvement was tightening those boundaries: <code>Results</code> no longer receives <code>isLoading</code>, because loading belongs to the search lifecycle in <code>Search</code>; <code>filterArtworks</code> was extracted from JSX so data rules are not tangled with rendering; <code>artFetcher</code> owns URL construction and HTTP error semantics instead of leaking that into components.</p>
+</div>
+<div class="maintainability-bubble">
+<strong>Make hidden assumptions explicit.</strong>
+<p>Several fixes turned implicit assumptions into visible code: <code>image_id</code> is not the React identity, <code>id</code> is; <code>_score</code> can be <code>null</code>; <code>fetch</code> does not throw for HTTP 500; <code>&amp;</code> in a query is URL syntax unless encoded; <code>sort()</code> mutates. The PR makes those assumptions explicit through types, checks, and standard APIs.</p>
+</div>
+<div class="maintainability-bubble">
+<strong>Use domain names and avoid duplicate shapes.</strong>
+<p><code>ImageType</code> became <code>Artwork</code>, which matches the ARTIC domain better. The duplicate <code>DisplayProps</code> interface was removed because it mirrored the artwork fields. That reduces drift: if the domain shape changes, there is one primary type to update instead of multiple lookalike shapes.</p>
+</div>
+<div class="maintainability-bubble">
+<strong>Keep React state as the declarative UI model.</strong>
+<p>The render-driving values are still state: <code>status</code>, <code>data</code>, <code>hasMore</code>, <code>loadingMore</code>, and <code>countdown</code>. The refs are the moat around that state machine: <code>generationRef</code> blocks stale callbacks, <code>paginationAbortRef</code> cancels old work, <code>loadingMoreRef</code> guards duplicate pagination calls, <code>pageRef</code> tracks paging, and <code>sentinelRef</code> connects the browser observer.</p>
+</div>
+<div class="maintainability-bubble">
+<strong>Replace boolean soup with an explicit lifecycle.</strong>
+<p>The original <code>isLoading</code> and <code>error</code> flags could drift into impossible combinations. The <code>Status</code> union makes the lifecycle easier to scan: <code>idle</code>, <code>loading</code>, <code>success</code>, or <code>error</code>. That reduces the number of UI states a future maintainer has to reason about.</p>
+</div>
+<div class="maintainability-bubble">
+<strong>Prefer standard platform APIs over hand-rolled behavior.</strong>
+<p><code>URLSearchParams</code> replaced manual query-string interpolation, <code>AbortController</code> handled cancellation, <code>IntersectionObserver</code> handled infinite-scroll detection, and <code>Map</code> expressed cache semantics. These are recognizable tools with documented behavior, which is easier to maintain than custom parsing, scroll math, or ad hoc cache objects.</p>
+</div>
+<div class="maintainability-bubble">
+<strong>Keep side effects at the boundary.</strong>
+<p>The network boundary is <code>artFetcher</code>. Request lifecycle and URL sync live in effects in <code>Search</code>. Filtering and sorting are plain data transformation in <code>filterArtworks</code>. Image rendering stays in the card. That makes it easier to find where a behavior belongs when changing the app later.</p>
+</div>
+<div class="maintainability-bubble">
+<strong>Reduce prop coupling without over-architecting.</strong>
+<p>The PR did not add Context or a state library because the prop chain is shallow and appropriate. The maintainability move was smaller: remove <code>isLoading</code> from <code>Results</code>, use stable artwork IDs for keys, and let each component receive only the data it actually uses.</p>
+</div>
+<div class="maintainability-bubble">
+<strong>Make async behavior defensive and readable.</strong>
+<p>Once debounce, retry, and infinite scroll exist, timing becomes part of the feature. The PR made that timing explicit with abort cleanup, generation checks, duplicate-load guards, and pagination cleanup. The point is not that ARTIC data is highly volatile; it is that only the latest user intent should be allowed to mutate the UI state.</p>
+</div>
+<div class="maintainability-bubble">
+<strong>Keep production architecture proportional.</strong>
+<p>I left clear seams for a Route Handler, CDN caching, runtime validation, and rendering tests, but did not add all of that infrastructure up front. Maintainability is not just adding layers; it is adding the right layer when the problem justifies it.</p>
+</div>
+</div>
+</div><div class="card qa-box">
+<h4>"Walk me through your submission."</h4>
+<p>I started with correctness issues in the original React code, especially the in-place <code>data.sort()</code>. That was a small line with a big implication: <code>sort()</code> mutates the array, and React state should be treated as immutable. The fix was to copy first with <code>[...data].sort()</code>, so the original state is preserved and React sees a new reference.</p>
+<p>From there I hardened the API boundary and UI lifecycle: encode searches with <code>URLSearchParams</code>, throw on non-OK HTTP responses, use the canonical ARTIC <code>id</code> as the React key, filter out invalid/low-quality results, and replace boolean loading/error flags with a single explicit status. Then I added improvements like debounce, URL sync, infinite scroll, retry, abort handling, generation guards, and a lightweight in-memory cache.</p>
+</div><div class="card qa-box">
+<h4>"Why a discriminated union instead of boolean flags?"</h4>
+<p>Boolean flags allow impossible combinations at runtime. You can accidentally be both loading and errored, or keep showing an old error after a successful fetch. A status union like <code>'idle' | 'loading' | 'success' | 'error'</code> makes the lifecycle mutually exclusive and easier to scan in the render.</p>
+<p>The practical benefit is maintainability: every render branch maps to one valid state. Future changes have an obvious place to hook in, and the component no longer has to reason about every combination of independent booleans.</p>
+</div><div class="card qa-box">
+<h4>"What does AI-augmented development look like day to day?"</h4>
+<p>My pattern is generate, harden, validate. AI is useful for scaffolding a component, a test file, a first pass at an API route, or a mechanical refactor. But the engineer still owns the correctness criteria: API contracts, lifecycle edge cases, performance, accessibility, and whether the design is maintainable.</p>
+<p>The bottleneck shifts from producing code to reviewing and validating it. I treat AI output like a junior engineer's draft: helpful starting point, but it needs call-site tracing, tests, and integration checks before I trust it.</p>
+</div><div class="card qa-box">
+<h4>"How do you know when AI output is wrong?"</h4>
+<p>You do not know just by reading the prose around it. You validate it the same way you validate any code: trace the call sites, check lifecycle completeness, run the tests, exercise the edge cases, and compare behavior against the real API/runtime.</p>
+<p>AI-generated code often looks internally consistent while missing integration boundaries: URL encoding, HTTP error semantics, mutable state, async races, null fields, or deployment differences. Those are exactly the places review and testing need to focus.</p>
+</div><div class="card qa-box">
+<h4>"What's your biggest concern about AI-generated code at scale?"</h4>
+<p>Confirmation bias in review. If the same model or same style of model generates the code and then reviews it, it may approve the same assumptions that produced the bug. The output can look polished while still being wrong at the boundary where it meets the API, runtime, or user behavior.</p>
+<p>The mitigation is independent verification: deterministic tests, linters/type checks, real execution, adversarial review when warranted, and reviewers who are willing to challenge the premise rather than just polish the diff.</p>
+</div><div class="card qa-box">
+<h4>"How do you use AI in your workflow?"</h4>
+<p>I use AI for prototyping, refactoring, code review augmentation, research, and mechanical transformations. It is especially useful when I can give it a constrained target: extract this helper, generate tests for these edge cases, compare two approaches, or review this diff against a spec.</p>
+<p>I do not treat it as an authority. I validate output with the same engineering loop I would use for human-written code: inspect the actual files, run the code, test the risky paths, and keep the final decision with the engineer.</p>
+</div><div class="card qa-box">
+<h4>"How do you stay current?"</h4>
+<p>I stay current by building things and hitting real limits. Reading release notes and posts is useful, but it is passive. You learn the shape of a tool by trying to ship with it: where it saves time, where it hallucinates, where the APIs are awkward, and where the production failure modes are.</p>
+<p>That is also why I build tooling on top of APIs, not just chat with models. It forces me to understand the primitives: prompts, context windows, tool calls, evals, orchestration, and validation.</p>
+</div><div class="card qa-box">
+<h4>"What makes software testable?"</h4>
+<p>Testable software is predictable, decoupled, and observable. Predictable means deterministic behavior where possible: same input, same output. Decoupled means business logic is separated from hard-to-control dependencies like network, time, routing, or the DOM. Observable means failures produce enough signal to understand what happened.</p>
+<p>In this PR, extracting <code>filterArtworks</code> made the filtering rules testable without rendering React, and isolating <code>artFetcher</code> made URL encoding, HTTP failures, abort signals, caching, and pagination testable without mounting the UI.</p>
+</div><div class="card qa-box">
+<h4>"What's the tradeoff you made in the challenge that you'd revisit?"</h4>
+<p>The in-memory cache is the one I would revisit first. It is intentionally lightweight: session-lifetime, zero dependencies, and instant repeat searches. But it does not survive refresh, has no TTL, and cannot be shared across users.</p>
+<p>At production scale, I would consider a Next.js Route Handler with <code>Cache-Control</code> so a CDN can cache repeated ARTIC searches. I did not add that here because it introduces a server hop, a new file, and caching strategy for a problem that does not exist at this scale. I would introduce it when there is a concrete performance or traffic signal.</p>
+</div><div class="card"><h3>Framing phrases: soundbytes with examples</h3>
+<p>Each phrase is a lead-in. The bullets are specific things to say so you don't freeze searching for an example to fit what Jerome just asked.</p>
+<dl>
+<dt><strong>"The tradeoff here is..."</strong></dt>
+<dd>
+<ul>
+<li><em>Architecture Decision threshold:</em> Under 3 concern instances, the overhead of naming a semantic surface, mapping all consumers, and documenting bypass risks outweighs the benefit. Below the threshold, local implementations with a no-drift justification. At 3+, amplification risk justifies the structure. The threshold is the tradeoff made explicit.</li>
+<li><em>Layer purity vs. DRY:</em> Moving a concern into a more generic layer looks like deduplication, but it introduces a downward bypass that the layer-boundary audit will flag. Sometimes local copies with explicit no-drift contracts are the right call. The spec comparison table scores layer fit so the tradeoff is documented, not left implicit in the diff.</li>
+<li><em>Workers never commit:</em> Build-then-review-then-commit is more complex than committing as you go. The tradeoff is intentional: history contains only gate-passing work. If review fails, the work stays uncommitted. Commit authority belongs to the orchestrator, not the worker that produced the diff.</li>
+<li><em>In-memory cache vs. Route Handler:</em> Session-scope Map is zero dependencies and instant repeat searches. A Route Handler with <code>Cache-Control</code> adds a network hop, cache invalidation strategy, and a new file. The right call when there's a measured performance signal; introducing it earlier is complexity without a benefit you can point to.</li>
+<li><em>Infinite scroll lifecycle cost:</em> Better UX than a button, but requires a generation counter, loadingMoreRef guard, hasMore gating, and pagination abort on query change. I chose UX because each failure mode was individually testable and fixable. Skipping that work and shipping anyway is not a tradeoff; it's technical debt with a deferred failure date.</li>
+</ul>
+</dd>
+<dt><strong>"At scale, this becomes..."</strong></dt>
+<dd>
+<ul>
+<li><em>Boolean state flags:</em> At one engineer, impossible state combinations are hypothetical. Across a team, they're a class of bugs reproducible only by triggering the right combination at the right time. A discriminated union moves the invariant from "we all know this combination is impossible" to structural enforcement. The cost of that enforcement is zero.</li>
+<li><em>Same-model review blind spots:</em> For one-off review, blind spots are manageable. Across 251 PRs to 16 repos, they compound systematically. GPT-5.5 caught the ABA race, the stale catch/finally paths, and the stuck loadingMoreRef that Claude passed. These weren't random; they reflect that different training distributions produce different attention to different failure modes in async lifecycle code. Cross-provider review is a structural fix, not a thoroughness fix.</li>
+<li><em>ABA race conditions:</em> With slow users on fast networks, the first request resolves before the second fires almost every time. At scale, fast typists on variable-latency connections hit the race routinely. String comparison looked sufficient for the query guard until adversarial review found it fails when the user searches A, switches to B, returns to A. The generation counter is O(1) overhead; you add it whether or not you've observed the bug.</li>
+<li><em>Convergence requirements:</em> "Wait for CI to be green" works when you have one repo and know the CI timing. Across repos with different bot ecosystems, some auto-close PRs on compliance violations within 2 hours, others auto-merge the instant checks pass, compressing the rework window to before approval. Per-repo config with bot fingerprinting is the only policy that holds. A universal wait policy breaks on the tail cases.</li>
+<li><em>The score threshold:</em> In development against a small test dataset, omitting the <code>_score &gt;= 1</code> filter is barely noticeable — there aren't many near-zero results to pollute the list. Against the full ARTIC production corpus, unmatched queries return thousands of records scoring ~0.00002. At scale, the filter is a correctness gate, not a stylistic preference. The decision to add it came from observing actual score distributions, not from anticipating scale.</li>
+<li><em>In-memory cache:</em> Session-scope Map is right for a single user and a single tab. On an SSR deployment serving many users, each server process holds its own cache in memory, none of them shared. At scale, the session-scope cache becomes a per-process cache that either has to be replaced with a distributed layer (Redis, Route Handler + CDN) or scoped explicitly to the client. The code challenge version acknowledges this; the upgrade path is clear because the cache is isolated in one place.</li>
+</ul>
+</dd>
+<dt><strong>"I would validate this in production by..."</strong></dt>
+<dd>
+<ul>
+<li><em>Proof matrix as the validation contract:</em> Before implementation, you define what "done" means per surface. For bug fixes: a test that fails on the base branch and passes on head. Source inspection alone is rejected explicitly. The distinction matters because a reviewer can read code and generate plausible text about why it looks correct. A test that fails on base is not plausible text; it's observable behavior.</li>
+<li><em>Score distribution monitoring:</em> The <code>_score &gt;= 1</code> threshold was validated by comparing live API responses (gibberish: ~0.00002; real matches: 50+). In production, you monitor that distribution. If the Elasticsearch index or scoring model changes, your threshold assumption needs re-validation before users notice the regression.</li>
+<li><em>The 7-rule gate as a review quality contract:</em> A review passing all 7 structural malformation rules is substantive by definition: it named call sites, traced imports, checked lifecycle completeness. "Clean verdict without trace evidence" fails the gate. This makes review quality mechanical, not dependent on reviewer discipline.</li>
+<li><em>SSR diffing as base-vs-head contract:</em> We ran two dev servers simultaneously and compared HTML output. Base SSR showed "Loading…" on mount; head showed an empty div. Same principle as a base-fails/head-passes regression contract: asserting observable behavior, not code structure.</li>
+<li><em>Convergence is not CI green:</em> The convergence loop checks CI status, bot findings, maintainer feedback, and a quiet window with all signals clean together each cycle. "CI is green" is necessary; it's not sufficient. Some repos need coverage reports to land before evaluation; others have time-sensitive bots. The definition of done is per-repo.</li>
+<li><em>URL param round-trip:</em> The <code>useSearchParams</code> sync is correct if and only if pasting <code>?q=monet</code> into a fresh tab fires the search and returns the same results as typing "monet" directly. That's a behavioral boundary test at the URL layer, not a unit test of the hook. You validate it by doing it, not by reading the implementation.</li>
+<li><em>Production signal beats intuition:</em> hermes-webui <a href="https://github.com/nesquena/hermes-webui/pull/5210">#5210</a> is the example I would use when talking about observability and production readiness. The reconnect storm fix was not validated by saying "the code now looks bounded"; it was validated by a concrete signal: worker dispatch events per reconnect event. Before the fix, reconnects could fan out into unbounded worker dispatch. After the fix, the ratio is capped. That is the kind of metric that turns a concurrency bug from a scary anecdote into something you can monitor.</li>
+</ul>
+</dd>
+<dt><strong>"This approach keeps the system more maintainable because..."</strong></dt>
+<dd>
+<ul>
+<li><em>Consumer map in Architecture Decision:</em> When a shared semantic authority has an explicit consumer map, changing it means you know who's affected before you touch anything. Without it, coupling is implicit and regressions are surprises. With it, the bypass audit can check mechanically whether all consumers are accounted for.</li>
+<li><em>Layer boundary declaration:</em> The architecture fit check verifies no planned modification introduces a new downward bypass. Without the declaration, layer violations accumulate until they become architectural debt. With it, a single-site violation is flagged regardless of amplification count, before it gets merged.</li>
+<li><em>filterArtworks as an exported pure function:</em> The 16 tests don't know React exists. No mounted component, no mocked network calls, no running server. When filter logic changes, tests run in isolation and name what broke. Refactoring the rendering context doesn't invalidate the filter tests; they're coupled to the data contract, not the presentation.</li>
+<li><em>Discriminated Status union:</em> Adding a 'retrying' state requires updating the union. TypeScript then enforces exhaustive handling at every switch site, naming the locations you missed. Boolean flags don't give you this; the compiler has no way to know that <code>isLoading &amp;&amp; isError</code> is supposed to be impossible.</li>
+<li><em>Workers never commit:</em> History contains only reviewed, gate-passing commits. When a regression surfaces later, <code>git bisect</code> finds an introducing commit that has a paired test naming the invariant. That's only possible if intermediate, unreviewed work never entered history.</li>
+<li><em>Debounce in one place:</em> The 300ms debounce on search-as-you-type lives in the input handler, not in the network layer, the filter function, or the pagination logic. When the debounce interval changes, it changes once. Same principle as a consumer map: concentrated change point means known change surface. Distributed debouncing (added at multiple layers "just in case") turns a one-line change into a grep-and-audit.</li>
+<li><em>Composable extension point:</em> agentsview <a href="https://github.com/kenn-io/agentsview/pull/733">#733</a> is the composability example. Before the registry, adding a new agent format meant editing bespoke discovery logic in the core sync path. Adding Reasonix forced the better abstraction: formats register themselves behind a common interface. The next format becomes a registration, not a rewrite. That is the Open/Closed Principle in practical form: open for extension, closed for modification.</li>
+<li><em>Dependency injection as future-proofing:</em> mem0 <a href="https://github.com/mem0ai/mem0/pull/5789">#5789</a> is the dependency-injection example. The old TypeScript pgvector path made the library care about how each Postgres provider decomposed connection details. The improved path accepts a connection string and lets the lower layer own connection setup. That keeps the client code provider-agnostic: Neon, Supabase, RDS, or self-hosted Postgres should not require new branches in the library.</li>
+</ul>
+</dd>
+<dt><strong>"AI accelerates me, but I own correctness."</strong></dt>
+<dd>
+<ul>
+<li><em>The continuation guard addresses a specific failure mode:</em> Models self-assess as done when stages are incomplete. The guard checks a status tracker in the filesystem; the model cannot update it by generating text. The two information sources have different reliability properties. This is not about model capability; it's about using the right mechanism for the right job.</li>
+<li><em>"Clean without trace evidence" is a structural malformation:</em> The review gate's 7 rules include this one explicitly. A review that says "I checked this and found no issues" without naming what was checked fails the gate. Absence of a named finding is not evidence of absence; it's an incomplete review. The gate enforces this without relying on reviewer discipline.</li>
+<li><em>The adversarial review found what the author missed, specifically:</em> The model that wrote the initial AbortController code reasoned that aborting on query change was sufficient. GPT-5.5 found the ABA case (round 3): search A, page 2 loads, switch to B, return to A. String comparison sees two identical queries and lets the stale page-2 data append. The fix requires reasoning across effect boundaries that the original author didn't cross. Different family, different failure mode surface.</li>
+<li><em>Spec validator vs. model confidence:</em> The spec gate checks deterministic fields: all 7 Architecture Decision fields present, consumer map populated, contract-isolation proof row for shared-authority plans. Pass/fail. Model confidence about architecture quality is irrelevant; structural completeness is not a judgment call.</li>
+<li><em>Workers never commit is the same principle applied to history:</em> The worker produces output; the orchestrator verifies and commits. Commit authority is contingent on gate passage. If review fails, the work stays uncommitted. You don't get to rationalize the history clean; the quality gate precedes the write.</li>
+</ul>
+</dd>
+</dl>
+</div><div class="card"><h3>Questions to ask Jerome</h3>
+<ol>
+<li>"What does the team use for AI tooling today? Copilot, Cursor, Claude, something internal?"</li>
+<li>"How many engineers on the team, and how are they organized?"</li>
+<li>"What does the interview process look like from here?"</li>
+<li>"Is this backfilling a role or new headcount?"</li>
+<li>"What's the biggest technical challenge on the roadmap right now?"</li>
+<li>"What's the comp range?"</li>
+</ol>
+</div>
+<h2>Recruiter Draft If Timing Gets Tight</h2>
 <div class="card">
-  <ol>
-    <li>"What company is this for? Can you share anything about what they build?"</li>
-    <li>"Is this a Principal or Senior hire, or are they deciding based on the candidate?"</li>
-    <li>"What does the team use for AI tooling today? Copilot, Cursor, Claude, something internal?"</li>
-    <li>"What does the interview process look like after this call?"</li>
-    <li>"How many engineers on the team, and how are they organized?"</li>
-    <li>"Is this backfilling a role or new headcount?"</li>
-    <li>"What's the comp range?"</li>
-  </ol>
+<p>Use this only if there is real momentum and start-date timing becomes the issue. Each version starts from zero context. The goal is to position the LLC path as a clean operational fallback, not as the main ask.</p>
+<blockquote>
+<p>I want to flag one timing item early so we have options, not surprises. I am a lawful permanent resident and I am in the process of replacing lost identity documents. If the client wants to move quickly and the final replacement evidence has not landed by the start date, I can bridge immediately through my LLC on a C2C basis, then convert to the permanent arrangement once the replacement documents are back. If the timing lines up normally, great, we proceed as permanent. I just want to make sure we have a practical fallback that does not slow the hire.</p>
+</blockquote>
+<blockquote>
+<p>I want to mention one practical item now in case the team wants to move quickly. I am fully established to work through my LLC if needed, and I also have a permanent path in progress for my replacement documents as a lawful permanent resident. If timing becomes tight before the permanent paperwork is fully back in hand, I can start immediately on a C2C basis and then convert to the permanent arrangement once that is finalized. If timing is normal, we can simply proceed as permanent from the outset.</p>
+</blockquote>
+<blockquote>
+<p>If Gen Engine wants to accelerate timing, I can bridge through my LLC on a C2C basis and then move onto the permanent arrangement once my replacement documents are back in hand. If the timing works cleanly, we can keep it straightforward and proceed directly as permanent.</p>
+</blockquote>
 </div>
-
 </main>
 <script src="doc-nav.js"></script>
 <script src="../assets/script.js?v=20260609u"></script>

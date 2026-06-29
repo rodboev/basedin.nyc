@@ -10,18 +10,22 @@
 </head>
 <body class="pr">
 <main class="doc-page">
-<h1>Interview Prep: SimpleClosure</h1>
+<h1><a class="back-link" href="../docs/"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>Interview Prep: SimpleClosure</h1>
 <p class="subtitle">Mid-Level Full Stack Engineer &middot; $120K&ndash;$170K + equity &middot; Midtown hybrid (2 days in office) &middot; Recruiter: Robyn Purvin (external, fractional) &middot; via LinkedIn June 23, 2026</p>
 
 <div class="landscape-row" data-doc-nav>
   <h2>Sections</h2>
   <div class="sort-pills">
     <button class="sort-pill active" data-target="company" type="button">Company</button>
-    <button class="sort-pill" data-target="domain" type="button">Domain</button>
+    <button class="sort-pill" data-target="role" type="button">Role</button>
+    <button class="sort-pill" data-target="background" type="button">Background</button>
+    <button class="sort-pill" data-target="domain-knowledge" type="button">Domain Knowledge</button>
     <button class="sort-pill" data-target="stack" type="button">Stack</button>
     <button class="sort-pill" data-target="compliance" type="button">Compliance</button>
     <button class="sort-pill" data-target="third-party" type="button">Integrations</button>
     <button class="sort-pill" data-target="ai-native" type="button">AI-Native</button>
+    <button class="sort-pill" data-target="inference" type="button">Inference</button>
+    <button class="sort-pill" data-target="soundbytes" type="button">Soundbytes</button>
     <button class="sort-pill" data-target="questions" type="button">Questions</button>
   </div>
 </div>
@@ -35,17 +39,56 @@
     <li><strong>$15M Series A</strong> (2024/2025)</li>
     <li><strong>Break-even:</strong> crossed seven figures in revenue and hit profitability, unusual for a Series A startup</li>
     <li><strong>Fast Company Most Innovative Companies 2025</strong> (top 50)</li>
-    <li><strong>Headcount:</strong> ~20&ndash;30 people total. Engineering team is 6 engineers plus a Staff Engineer (Scott Stevens, joined Feb 2026). This hire would bring the team to ~8.</li>
+    <li><strong>Headcount:</strong> still roughly startup-sized overall, but the call corrected the engineering estimate upward: <strong>11&ndash;12 engineers</strong>, not the earlier public-source estimate of ~7&ndash;8.</li>
   </ul>
 
   <h3>Engineering team</h3>
-  <p>Per The Org: 3 Senior Software Engineers (Brandon Durham, James Daubert, Synclair Wang), 3 Software Engineers (Aja Singer, Arthur Liu, Eric Wang), plus Staff Engineer Scott Stevens. Reports to the CTO directly. Small team, high ownership per person.</p>
+  <p>Public sources were directionally useful but stale. Per the CTO on the call: 11&ndash;12 engineers total, mostly in New York, with one person in Colombia and one in Oregon; mixed full-stack team with some frontend-leaning and some backend-leaning engineers, plus a recently added data engineer. Two PMs sit in New York, three designers in LA. Reports still appear close to the CTO in practice, with high ownership per person.</p>
 
   <h3>Public repos</h3>
-  <p>GitHub org (<code>@simpleclosure</code>) has 5 public repos, three related to PDF generation: <code>react-pdf</code> (fork), <code>pdf-renderer</code>, <code>pdf-layout</code>. PDF generation is clearly a core technical problem; dissolution paperwork means generating legal documents programmatically.</p>
+  <p>GitHub org (<code>@simpleclosure</code>) exposes 5 public repos as of June 29, 2026. Three are related to PDF generation: <code>react-pdf</code> (fork), <code>pdf-renderer</code>, <code>pdf-layout</code>. PDF generation is clearly a core technical problem; dissolution paperwork means generating legal documents programmatically. No public code-challenge repo is currently visible on the org, so do not anchor interview prep to the assumption that the take-home is published there.</p>
 </div>
 
-<h2 class="doc-nav-target" id="domain">Domain: Business Dissolution</h2>
+<h2 class="doc-nav-target" id="role">Role Shape and Technical Round</h2>
+<div class="card">
+  <p>The call narrowed the role materially. This is not generic full-stack staffing for the whole product. The near-term focus is <strong>pre-sale</strong>: landing pages, partnerships, embedded experiences, conversion, and the website as the top of the funnel.</p>
+
+  <h3>How the org is structured</h3>
+  <ul>
+    <li><strong>Pods:</strong> they operate in pods with a PM, designer, stakeholder, and lead engineer meeting twice a week around initiatives and OKRs.</li>
+    <li><strong>Three pods:</strong> a separate "Six" pod, plus <strong>pre-sale</strong> and <strong>post-sale</strong>.</li>
+    <li><strong>This role:</strong> starts more in pre-sale. Less app/admin depth at the beginning, more website, partnership surfaces, and funnel work.</li>
+  </ul>
+
+  <h3>What the hands-on round is likely to measure</h3>
+  <ul>
+    <li><strong>Judgment over difficulty:</strong> the CTO explicitly framed the home task as something to spend only a few hours on and said it may be beneath your level.</li>
+    <li><strong>Explanation quality:</strong> after the take-home, you will meet two engineers who will ask how you think, how you plan, and how you use tooling.</li>
+    <li><strong>Product sense:</strong> because the role is pre-sale, expect questions about conversion, friction, embedding, experimentation, and tradeoffs in landing-page or funnel flows.</li>
+    <li><strong>Scope control:</strong> they are not asking for perfect code. They want to see what you choose to do, what you leave out, and how you justify that.</li>
+  </ul>
+
+  <h3>What to optimize for in the take-home</h3>
+  <ul>
+    <li><strong>Show your reasoning:</strong> make the tradeoffs legible. State assumptions, call out what you would instrument, and identify the next highest-leverage improvement.</li>
+    <li><strong>Tie frontend work to business outcomes:</strong> discuss conversion, clarity, loading states, trust, analytics, and how partnership-specific entry points should change the experience.</li>
+    <li><strong>Lean into cross-stack fluency:</strong> the role is frontend-heavy, but the surrounding system is not. A mostly-Node stack with Python pockets, serverless integrations, OCR, browser agents, and document automation rewards someone who can think in TypeScript first and still move comfortably across adjacent ecosystems when the funnel or integration boundary demands it.</li>
+    <li><strong>Make verification visible:</strong> your own workflow already emphasizes mandatory tests for new code surfaces and bugfixes, adversarial review, and proof-backed completion. That lines up well with a team that says it uses AI heavily but still wants engineers who verify outputs rather than narrate confidence.</li>
+    <li><strong>Use tools well, but visibly verify:</strong> the company is AI-forward, but the CTO's framing still rewards critical review over speed theater.</li>
+    <li><strong>Keep implementation crisp:</strong> a small, coherent solution with good boundaries will likely score better than an overbuilt "senior engineer flex" answer.</li>
+  </ul>
+
+  <h3>Why pre-sale is a particularly good fit</h3>
+  <ul>
+    <li><strong>Frontend strength maps directly:</strong> landing pages, embedded partner surfaces, and funnel optimization are all user-facing systems where strong UI judgment compounds quickly.</li>
+    <li><strong>Ad-ops instincts transfer:</strong> pre-sale engineering is not only page-building. It is understanding acquisition surfaces, conversion friction, attribution, and how small UX changes affect business outcomes.</li>
+    <li><strong>Cross-ecosystem comfort matters:</strong> the "Python for Node.js Developers" angle is relevant here, and your background supports it in practice. Their product is mostly TypeScript/Node, but the call confirmed Python, OCR, browser automation, and third-party operational glue. You already contribute upstream in Python-heavy environments and are the top contributor to <code>hermes-webui</code>, whose tests run on <code>pytest</code>. That is a better signal than generic "I can pick up Python quickly."</li>
+    <li><strong>This is product engineering, not narrow frontend theming:</strong> the website is the top of the funnel, partnerships route through it, and Sanity-backed content plus app code plus analytics likely all meet there. That is a systems problem with a business KPI attached.</li>
+    <li><strong>Your workflow matches the cultural ask:</strong> the published workflow artifact emphasizes research, architecture decisions, proof matrices, mandatory test coverage, adversarial review, and convergence loops. That is unusually aligned with their stated "AI-native, trusts but verifies" posture.</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="background">Background: Business Dissolution</h2>
 <div class="card">
   <p>Shutting down a company is a multi-step, multi-party, jurisdiction-dependent workflow. The product automates and orchestrates what used to require manual coordination across legal, accounting, tax, and state agencies.</p>
 
@@ -63,16 +106,69 @@
   <p>The platform is a stateful workflow engine. Each dissolution is a long-running process (weeks to months) with dependencies between steps, jurisdiction-specific rules, waiting periods, and external blocking conditions. Think of it as a project management tool where the project template varies by entity type and state, steps have legal deadlines, and some steps require integration with government systems or third-party services.</p>
 </div>
 
+<h2 class="doc-nav-target" id="domain-knowledge">Domain Knowledge</h2>
+<div class="card">
+  <p>The legal workflow is only the surface layer. The hard part is encoding enough business and compliance context that the software can tell the difference between two dissolutions that sound similar in plain English but diverge materially in obligations, sequencing, and risk.</p>
+
+  <h3>Entity structure changes the whole playbook</h3>
+  <ul>
+    <li><strong>LLC vs corporation:</strong> LLC dissolutions are governed by operating agreements and state LLC acts; corporations add board approvals, stockholder approvals, and more formal statutory steps.</li>
+    <li><strong>C-corp vs S-corp:</strong> federal tax treatment changes the final tax return process, how distributions are characterized, and which forms matter.</li>
+    <li><strong>Delaware startup vs local small business:</strong> venture-backed Delaware entities often have SAFEs, preferred stock, option plans, foreign qualifications in multiple states, and a cap table that must be unwound correctly.</li>
+    <li><strong>Subsidiaries and multi-entity groups:</strong> dissolving one entity inside a corporate structure raises intercompany balances, shared contracts, and sequencing constraints across related entities.</li>
+  </ul>
+
+  <h3>Corporate governance is part of the product surface</h3>
+  <ul>
+    <li><strong>Approvals and consents:</strong> the system has to know whether the next required artifact is a board consent, stockholder consent, member vote, or manager resolution.</li>
+    <li><strong>Cap table correctness:</strong> distribution rights depend on who owns what, what class of security they hold, and whether liquidation preferences or special rights apply.</li>
+    <li><strong>Document assembly:</strong> many steps are not API calls, they are legally meaningful documents whose content depends on the entity's history and governing docs.</li>
+  </ul>
+
+  <h3>Taxes are not a single checkbox</h3>
+  <ul>
+    <li><strong>Final federal and state returns:</strong> "file the last return" hides a lot of detail, including short tax years, payroll reporting, information returns, and state-specific clearance rules.</li>
+    <li><strong>Franchise tax and annual report exposure:</strong> a company can be operationally dead but still accrue penalties if those obligations remain open.</li>
+    <li><strong>Sales tax, payroll tax, and nexus:</strong> obligations may exist in states where the company hired people or sold product, not only where it was incorporated.</li>
+    <li><strong>EIN closure and account closure:</strong> the IRS and state tax agencies do not expose a neat, unified shutdown API; the platform has to track when a task is complete versus merely submitted.</li>
+  </ul>
+
+  <h3>Claims, liabilities, and waterfall logic matter</h3>
+  <ul>
+    <li><strong>Creditor process:</strong> known-claim notice, unknown-claim publication, and statutory wait periods can determine when assets may safely be distributed.</li>
+    <li><strong>Priority of payments:</strong> creditors, taxes, employees, and equity holders do not sit at the same level; software must enforce the legal order of operations.</li>
+    <li><strong>Contingent liabilities:</strong> pending litigation, chargebacks, indemnity obligations, and contract disputes can keep a case open even after most paperwork is filed.</li>
+    <li><strong>Escheat and abandoned property:</strong> unclaimed amounts may need to go to a state rather than back to the company or founders.</li>
+  </ul>
+
+  <h3>Operational shutdown extends beyond legal dissolution</h3>
+  <ul>
+    <li><strong>People operations:</strong> final payroll, PTO payout rules, COBRA, benefit terminations, and contractor wrap-up each have their own deadlines and evidence requirements.</li>
+    <li><strong>Vendor and SaaS teardown:</strong> canceling subscriptions is easy in principle, but the real problem is proving what remains active, who owns it, and when data retention obligations end.</li>
+    <li><strong>Banking and treasury:</strong> account closure, final wires, reserve holds, and signatory changes create dependencies between finance ops and legal completion.</li>
+    <li><strong>IP and records retention:</strong> domains, trademarks, source code ownership, and document archives still need a home after the entity stops operating.</li>
+  </ul>
+
+  <h3>What this implies technically</h3>
+  <ul>
+    <li><strong>Case modeling:</strong> a "dissolution" record is not flat, it is a graph of tasks, prerequisites, deadlines, evidence artifacts, external accounts, and stakeholders.</li>
+    <li><strong>Rules as data:</strong> jurisdiction, entity type, financing history, and employment footprint should drive generated work plans from configuration and rule tables.</li>
+    <li><strong>Evidence capture:</strong> uploaded notices, signed consents, tax confirmations, filing receipts, and bank confirmations are first-class system objects.</li>
+    <li><strong>Operator tooling:</strong> internal users need override paths, exception queues, and visibility into why a case is blocked, not just the current status badge.</li>
+  </ul>
+</div>
+
 <h2 class="doc-nav-target" id="stack">Tech Stack</h2>
 <div class="card">
-  <p>Confirmed from the JD, LinkedIn tech signals, and infrastructure probes:</p>
+  <p>Confirmed from the JD, public signals, infrastructure probes, and the CTO call:</p>
   <ul>
     <li><strong>Frontend:</strong> React, TypeScript, Next.js (confirmed via CDN headers and JD preference). Tailwind CSS.</li>
-    <li><strong>Backend:</strong> Node.js. The JD says "APIs and data models," and the LinkedIn tech stack lists Python alongside TypeScript, so there may be Python services for specific tasks (document generation, data pipelines).</li>
+    <li><strong>Frontend CMS/content layer:</strong> Sanity appears to back at least part of the website and content workflows, which fits the pre-sale focus on landing pages and partnership surfaces.</li>
+    <li><strong>Backend:</strong> mostly Node.js, with a bit of Python here and there. The Python guess from earlier prep turned out to be right, but secondary.</li>
     <li><strong>Database:</strong> "relational and/or NoSQL." Snowflake appears in their LinkedIn tech stack (analytics/data warehouse). Primary transactional DB is unconfirmed; likely Postgres given the ecosystem.</li>
-    <li><strong>Infrastructure:</strong> Google Cloud (CDN confirmed), Docker. dbt and Fivetran for data pipeline/ETL.</li>
+    <li><strong>Infrastructure:</strong> serverless systems were called out explicitly on the call. Google Cloud (CDN confirmed), Docker, and likely a serverless-heavy app/integration layer. dbt and Fivetran remain plausible for data pipeline/ETL.</li>
     <li><strong>PDF generation:</strong> custom stack built on react-pdf (forked). Three repos dedicated to this. Legal document generation is a core feature.</li>
-    <li><strong>Integrations:</strong> Salesforce, HubSpot, Carta, Brex, Notion, Slack. Carta integration is notable since many shutting-down startups use Carta for cap table management.</li>
+    <li><strong>Integrations:</strong> Salesforce, HubSpot, Carta, Brex, Notion, Slack. The call also confirmed third parties for fax, mail, DocuSign, OCR/scanning flows, and browser-agent style automation.</li>
   </ul>
 </div>
 
@@ -119,9 +215,92 @@
   </ul>
 </div>
 
+<h2 class="doc-nav-target" id="inference">Inference Inside the Workflow</h2>
+<div class="card">
+  <p>The interesting AI angle here is not "replace the workflow with agents." It is to insert inference into bounded points of a deterministic workflow. The state machine should still own progression, deadlines, and completion criteria. Models help interpret messy inputs, draft outputs, and prioritize human attention.</p>
+
+  <h3>Where inference probably helps</h3>
+  <ul>
+    <li><strong>Document intake and normalization:</strong> read tax notices, charter docs, board consents, cap table exports, payroll reports, and bank statements; extract structured facts with source anchors and confidence scores.</li>
+    <li><strong>Case classification:</strong> determine which dissolution path applies based on entity type, jurisdiction footprint, financing history, employees, open liabilities, and whether the company is actually dissolving or merely winding down operations.</li>
+    <li><strong>Gap detection:</strong> compare the current case record against the required evidence set for that entity and jurisdiction, then ask the customer or operator for the missing facts instead of showing a generic checklist.</li>
+    <li><strong>Document drafting:</strong> generate first-pass notices, resolutions, explanatory emails, and state-specific packets from structured case state, then pass them through rule validation and human review.</li>
+    <li><strong>Exception triage:</strong> summarize why a case is blocked, what changed since the last touch, and what the likely next actions are for an internal specialist.</li>
+    <li><strong>Knowledge retrieval for operators:</strong> surface the relevant state rule, prior internal playbook, and similar resolved cases when an operator hits an edge case.</li>
+  </ul>
+
+  <h3>Where inference should not be the authority</h3>
+  <ul>
+    <li><strong>Completion status:</strong> a model should not get to declare "the Delaware step is done." Completion should come from explicit evidence, validated document generation, or a confirmed external event.</li>
+    <li><strong>Money movement or filing submission:</strong> any operation with irreversible side effects needs deterministic checks, not a model's confidence.</li>
+    <li><strong>Rule interpretation without constraints:</strong> free-form legal reasoning is too soft for a product with compliance exposure. The safer pattern is retrieval plus bounded classification against known rule tables.</li>
+  </ul>
+
+  <h3>How your pipeline thinking maps here</h3>
+  <ul>
+    <li><strong>Inference as a stage, not a supervisor:</strong> the workflow calls the model for a bounded task, such as "extract officers from this PDF" or "classify this notice," then passes the output to a verifier.</li>
+    <li><strong>Deterministic gates:</strong> the model's output should be checked against schemas, required fields, rule tables, and source-document anchors before the case state changes.</li>
+    <li><strong>Continuation guards:</strong> a model-generated summary saying "all docs are present" should not advance the case if the required artifact list still has gaps.</li>
+    <li><strong>Cross-checking on expensive steps:</strong> for high-risk judgments, use two inference passes or a model-plus-rules check, then escalate disagreements to a human.</li>
+    <li><strong>Convergence loops:</strong> when a case is blocked on external agencies or customer responses, the system should keep polling, reminding, and re-evaluating state until every dependent signal is actually clean.</li>
+    <li><strong>Evidence over prose:</strong> store extracted values together with page references, snippets, and the originating document version so support and compliance teams can audit the decision path.</li>
+  </ul>
+
+  <h3>What this suggests about their likely technical needs</h3>
+  <ul>
+    <li><strong>Evaluation harnesses:</strong> golden test sets for each document type and jurisdiction, with precision requirements around fields that matter legally.</li>
+    <li><strong>Human-in-the-loop tooling:</strong> review UIs for low-confidence extractions, conflicting classifications, and blocked cases.</li>
+    <li><strong>Prompt and model versioning:</strong> if an extraction pipeline changes behavior, they need to know which model and prompt version touched which case.</li>
+    <li><strong>Case-level provenance:</strong> every inferred fact should be traceable back to source material and downstream effects.</li>
+    <li><strong>Fallback paths:</strong> if inference fails or confidence is low, the workflow still needs a manual route that preserves throughput.</li>
+  </ul>
+
+  <h3>Why this matches the economics</h3>
+  <p>The labor-intensive parts of dissolution are not only filings. They are reading messy inputs, reconciling inconsistent records, drafting repetitive but consequential documents, and pushing blocked cases forward. Inference can compress specialist time on exactly those steps. The constraint is that SimpleClosure cannot let a model improvise the control plane. The business case is lower manual cost per case; the engineering requirement is that the workflow remains auditable and deterministic even when inference is embedded throughout it.</p>
+</div>
+
+<h2 class="doc-nav-target" id="soundbytes">Soundbytes</h2>
+<div class="card">
+  <h3>Core framing</h3>
+  <blockquote>
+    <p>I'd think about SimpleClosure as building durable execution for business dissolution. Each case is a long-running workflow with persisted state, jurisdiction-specific branching, human-in-the-loop steps, and strict audit requirements. Technically that resembles a saga orchestrator or a Temporal-style workflow engine more than a conventional request-response application.</p>
+  </blockquote>
+
+  <h3>Why this is a software-engineering statement, not just a metaphor</h3>
+  <ul>
+    <li><strong>Persisted state:</strong> a case cannot live only in memory or in a user session. The system has to survive deploys, retries, queue delays, and human handoffs without losing where the case stands.</li>
+    <li><strong>Durable timers:</strong> creditor waiting periods, agency response windows, and payroll deadlines require scheduled wake-ups that still fire days or months later.</li>
+    <li><strong>External events:</strong> a workflow advances when a tax clearance arrives, a filing is accepted, a customer uploads a signed consent, or an operator resolves an exception.</li>
+    <li><strong>Idempotency:</strong> if a filing submission or bank operation is retried after a timeout, the platform must avoid duplicate side effects.</li>
+    <li><strong>Compensation and exception handling:</strong> some steps fail after partial progress, so the system needs explicit recovery paths, not just "try again" buttons.</li>
+    <li><strong>Deterministic auditability:</strong> for any case, the company should be able to answer what happened, who triggered it, which rule justified it, and what evidence supports completion.</li>
+  </ul>
+
+  <h3>Concrete engineering examples that fit this company</h3>
+  <ul>
+    <li><strong>Case plan generation:</strong> ingest entity type, state of incorporation, foreign registrations, payroll footprint, and cap table source; emit a tailored task graph with deadlines and required documents.</li>
+    <li><strong>Document pipeline:</strong> collect structured data once, then generate state-specific filings, board consents, notices to creditors, tax letters, and closure packets with traceable source fields.</li>
+    <li><strong>Async integration layer:</strong> Carta, payroll providers, banks, and agency portals all return data on different schedules and with different failure modes, so adapters, webhooks, retries, and reconciliation jobs are central.</li>
+    <li><strong>Operator review queues:</strong> when the rules engine finds missing ownership data, contradictory tax status, or a blocked filing, an internal specialist needs a queue, context, and safe override controls.</li>
+    <li><strong>Customer-facing progress model:</strong> the UI should expose a clear current phase, blockers, next required input, and expected wait time, even when the true backend state spans dozens of tasks.</li>
+  </ul>
+
+  <h3>Other concise lines you could use</h3>
+  <ul>
+    <li><strong>"This looks less like CRUD and more like durable orchestration with legal rules encoded as configuration."</strong> Good when you want to emphasize system shape.</li>
+    <li><strong>"The product challenge is turning statute-driven operations into a reliable execution engine with human review at the edges."</strong> Good when you want to connect domain knowledge to implementation.</li>
+    <li><strong>"If they get the workflow model right, they can add jurisdictions and edge cases through rules and document templates instead of rewriting the app."</strong> Good when you want to highlight leverage and scalability.</li>
+    <li><strong>"The right AI shape here is inference inside a governed workflow, not an agent deciding when a case is complete."</strong> Good when you want to connect your orchestration point of view to their compliance surface.</li>
+    <li><strong>"I would treat model output as proposed state, never committed state, until rules and evidence checks pass."</strong> Good when you want to sound concrete about control boundaries.</li>
+  </ul>
+</div>
+
 <h2 class="doc-nav-target" id="questions">Questions to Ask</h2>
 <div class="card">
   <ol>
+    <li>"For the take-home and the next round, what signals are you optimizing for most: product judgment, code quality, speed, experimentation sense, or something else?"</li>
+    <li>"How does pre-sale engineering work with growth, partnerships, and design when a funnel issue spans both content and product?"</li>
+    <li>"How much of the pre-sale surface is owned through Sanity or other content tooling versus in application code?"</li>
     <li>"How is the engineering team organized? Is there a frontend/backend split, or does everyone work full-stack?"</li>
     <li>"What does the backend stack look like in more detail? The JD mentions APIs; is that Node.js, Python, or both?"</li>
     <li>"What does the interview process look like after this call?"</li>

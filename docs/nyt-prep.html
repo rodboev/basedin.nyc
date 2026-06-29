@@ -10,7 +10,7 @@
 </head>
 <body class="pr">
 <main class="doc-page">
-<h1>Interview Prep: The New York Times</h1>
+<h1><a class="back-link" href="../docs/"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>Interview Prep: The New York Times</h1>
 <p class="subtitle">Senior Software Engineer, Frontend Video Advertising &middot; $140K&ndash;$160K base + 10% AIP + RSUs + sign-on &middot; NYC hybrid (or remote US) &middot; Recruiter: Emily Vlcek (internal, emily.vlcek@nytimes.com) &middot; via LinkedIn June 23, 2026</p>
 
 <div class="landscape-row" data-doc-nav>
@@ -23,6 +23,7 @@
     <button class="sort-pill" data-target="performance" type="button">Performance</button>
     <button class="sort-pill" data-target="standards" type="button">Standards</button>
     <button class="sort-pill" data-target="ai" type="button">AI Tooling</button>
+    <button class="sort-pill" data-target="soundbytes" type="button">Soundbytes</button>
     <button class="sort-pill" data-target="questions" type="button">Questions</button>
   </div>
 </div>
@@ -173,6 +174,90 @@
   <p>Note from the JD: "We ask that you submit your own work and not use GenAI tools to generate substantive content during the application and interview process. If you're an Engineering candidate, we'll let you know what specific GenAI tools you are permitted to use for your technical assessment." They want you to use AI at work but demonstrate your own skills in the interview.</p>
 </div>
 
+<h2 class="doc-nav-target" id="soundbytes">Soundbytes</h2>
+<div class="card">
+  <p>Use these as lead-ins, not scripts. The point is to have a clean opening sentence and a concrete angle behind it, so you can answer recruiter questions without sounding rehearsed or vague.</p>
+</div>
+<div class="soundbyte-grid">
+  <div class="card soundbyte-card">
+    <h3>"I'm a senior frontend-heavy engineer who likes revenue-critical surfaces."</h3>
+    <p class="meta">Use this for "Tell me about yourself."</p>
+    <p>I’ve spent a lot of time on performance-sensitive product surfaces, messy third-party integrations, and systems where small technical choices show up quickly in user experience and business outcomes. That’s why this role makes sense to me: video advertising sits right at the intersection of browser performance, product quality, and monetization.</p>
+  </div>
+
+  <div class="card soundbyte-card">
+    <h3>"What interests me here is that frontend quality and yield are part of the same system."</h3>
+    <p class="meta">Use this for "Why this role?" or "Why NYT?"</p>
+    <p>This is not generic frontend work. Decisions about loading strategy, player behavior, identity signals, and auction latency affect both reader experience and revenue. The New York Times is especially interesting because the ad experience has to perform without degrading the core reading product, which makes the engineering bar higher and the tradeoffs more real.</p>
+  </div>
+
+  <div class="card soundbyte-card">
+    <h3>"I understand the mechanics well enough to be useful quickly."</h3>
+    <p class="meta">Use this if they ask about direct AdTech depth.</p>
+    <p>I’m comfortable with the shape of the programmatic system: header bidding, bidder configuration, identity signals, auction timing, viewability, and the tradeoff between auction depth and latency. If my exact experience is stronger on frontend systems than on owning a publisher ad stack end to end, I’d still expect a short ramp because the engineering problems are familiar.</p>
+  </div>
+
+  <div class="card soundbyte-card">
+    <h3>"Outstream is fundamentally a product-and-performance tradeoff problem."</h3>
+    <p class="meta">Use this for video-specific questions.</p>
+    <p>What makes outstream interesting is that you’re trying to capture video-value inventory inside a text-first experience without making the page feel heavier or more intrusive. That pushes you toward viewport-aware loading, stable slot geometry, careful play-pause behavior, and a clear view of when a unit is helping revenue versus when it’s hurting the product.</p>
+  </div>
+
+  <div class="card soundbyte-card">
+    <h3>"The performance side is the cleanest fit for me."</h3>
+    <p class="meta">Use this for Core Web Vitals or time-to-first-frame.</p>
+    <p>I tend to think in terms of main-thread budget, startup cost, deferred work, layout stability, and how external code changes the shape of a page. In a role like this I’d look closely at lazy initialization, reserved slot sizing, player bundle cost, auction timeout strategy, and the path from viewport eligibility to first frame.</p>
+  </div>
+
+  <div class="card soundbyte-card">
+    <h3>"Identity is a constrained optimization problem."</h3>
+    <p class="meta">Use this for identity and privacy.</p>
+    <p>You want the highest possible match rate and auction quality, but only within disciplined consent and privacy boundaries. That’s why the implementation matters: signal quality affects bids, while sloppy data handling creates a completely different class of risk. I like problems where the right answer is not just more data, but better-engineered data flow.</p>
+  </div>
+
+  <div class="card soundbyte-card">
+    <h3>"I like roles where performance is treated as a product requirement."</h3>
+    <p class="meta">Use this for seniority and ownership.</p>
+    <p>On publisher surfaces, the monetization layer is often one of the biggest sources of LCP, CLS, and interaction pain. That makes ad engineering a high-leverage area to own. I’m most useful in environments where that work is treated as core product engineering rather than cleanup work after the fact.</p>
+  </div>
+
+  <div class="card soundbyte-card">
+    <h3>"As a senior IC, I try to make the tradeoffs legible."</h3>
+    <p class="meta">Use this for mentorship and leadership.</p>
+    <p>That usually means turning fuzzy concerns into explicit engineering choices: what we load when, what we measure, where the failure modes are, and which invariants we enforce in code instead of tribal knowledge. Mentorship, for me, is often about making those hidden assumptions visible so the team can reason about them together.</p>
+  </div>
+
+  <div class="card soundbyte-card">
+    <h3>"AI tools accelerate me, but I still own correctness."</h3>
+    <p class="meta">Use this for the AI qualification.</p>
+    <p>I use tools like Claude Code or Cursor for scaffolding, refactoring passes, and review assistance, but I don’t confuse generated code with verified code. The common failure mode is plausible logic with hidden edge-case bugs, missing constraints, or race conditions. My workflow is generate, inspect, test, and tighten.</p>
+  </div>
+
+  <div class="card soundbyte-card">
+    <h3>"A lot of the work I enjoy lives in systems that break in non-obvious ways."</h3>
+    <p class="meta">Use this if they ask why you’re credible for a senior role.</p>
+    <p>The problems I gravitate toward involve concurrency, stale state, reconnect behavior, external dependencies, and lifecycle edge cases that only show up under real conditions. Video ads and programmatic systems have that same character: they look simple in diagrams and get subtle in production.</p>
+  </div>
+
+  <div class="card soundbyte-card">
+    <h3>"I'm looking for a role where frontend engineering is strategic, not cosmetic."</h3>
+    <p class="meta">Use this for "What are you looking for next?"</p>
+    <p>I want technical ownership, meaningful product impact, and a problem space with real constraints. This role checks those boxes because the frontend work affects user experience, standards compliance, privacy handling, and revenue outcomes all at once.</p>
+  </div>
+
+  <div class="card soundbyte-card">
+    <h3>"The posted range looks workable; I'd want to understand the full package."</h3>
+    <p class="meta">Use this for compensation.</p>
+    <p>The base range looks broadly in family for the kind of role I’d consider. I’d want to understand the full package, base, bonus, RSUs, and any sign-on flexibility, but I’m not looking to create friction at the recruiter stage.</p>
+  </div>
+
+  <div class="card soundbyte-card">
+    <h3>"I'm comfortable with hybrid for a role like this."</h3>
+    <p class="meta">Use this for location or logistics.</p>
+    <p>For work that sits between product, revenue, and platform concerns, being in the room has real value, especially early on. I’m comfortable with hybrid and would mostly care about how the team actually collaborates day to day.</p>
+  </div>
+</div>
+
 <h2 class="doc-nav-target" id="questions">Questions to Ask</h2>
 <div class="card">
   <ol>
@@ -184,6 +269,11 @@
     <li>"The listing says NYC hybrid or remote US. Is there a preference?"</li>
     <li>"What's the biggest technical challenge the team is working on right now?"</li>
   </ol>
+</div>
+
+<div class="card soundbyte-card">
+  <h3>Decline Template</h3>
+  <p>Thanks again for the conversation. After thinking it over, I’m going to step back from this process. The timed algorithm-style coding round doesn’t line up with how I evaluate roles or how I do my best work, so I don’t think this is the right fit. I appreciate your time and wish the team the best.</p>
 </div>
 
 </main>

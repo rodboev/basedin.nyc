@@ -5,8 +5,8 @@ param(
         , "thedotmack/claude-mem"
         , "headroomlabs-ai/headroom"
         , "mem0ai/mem0"
-        # , "NVIDIA/SkillSpector"
         , "stablyai/orca"
+        # , "NVIDIA/SkillSpector"
         # , "NousResearch/hermes-agent"
         # , "cline/cline",
         # , "continuedev/continue"
@@ -46,7 +46,7 @@ $script:GenerateStartedAt = Get-Date
 
 $shippedPatterns = @("shipped", "cherry-picked", "merged-via", "salvaged into")
 $duplicatePatterns = @("duplicate")
-$supersededPatterns = @("supersede", "consolidat")
+$supersededPatterns = @("supersede", "consolidat", "closing in favor", "closed in favor")
 # Maintainer phrasing that preserves the author's credit on shipped work. When
 # this co-occurs with shipping evidence (a release tag or a shipping verb), a
 # "superseded"/"integrated" close is actually a credited landing, not a loss.
@@ -66,6 +66,8 @@ $ClassificationCacheVersion = 3
 $DefaultReportStartDate = [datetime]"2026-06-02"
 $GhInvokeTimeoutSeconds = 120
 $GhInvokeSlowLogSeconds = 5
+$GhRetryBaseDelaySeconds = 5
+$GhRetryMaxDelaySeconds = 300
 
 $RepoLeaderboardConfig = @{
     "nesquena/hermes-webui" = @{
@@ -166,8 +168,27 @@ function Set-ProcessEnvironmentFromCurrent([System.Diagnostics.ProcessStartInfo]
         $ProcessInfo.Environment[$entry.Key] = [string]$entry.Value
     }
     $ProcessInfo.Environment["GIT_TERMINAL_PROMPT"] = "0"
+    $ProcessInfo.Environment["GH_PROMPT_DISABLED"] = "1"
     $ProcessInfo.Environment["GH_NO_UPDATE_NOTIFIER"] = "1"
     $ProcessInfo.Environment["GCM_INTERACTIVE"] = "never"
+}
+
+function Test-IsWindowsRuntime {
+    if (Get-Variable -Name IsWindows -Scope Global -ErrorAction SilentlyContinue) {
+        return [bool]$global:IsWindows
+    }
+    return [System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform(
+        [System.Runtime.InteropServices.OSPlatform]::Windows
+    )
+}
+
+function Resolve-GhExecutable {
+    $command = Get-Command gh.exe -CommandType Application -ErrorAction SilentlyContinue
+    if (-not $command) {
+        $command = Get-Command gh -CommandType Application -ErrorAction SilentlyContinue
+    }
+    if ($command) { return $command.Source }
+    return "gh"
 }
 
 function Get-GhCommandDisplayText([string]$ArgText, [int]$MaxLength = 160) {
@@ -177,6 +198,41 @@ function Get-GhCommandDisplayText([string]$ArgText, [int]$MaxLength = 160) {
     return $ArgText.Substring(0, $MaxLength) + "..."
 }
 
+function Get-GhRetryReason {
+    param(
+        [string]$StdErr,
+        [switch]$TimedOut
+    )
+
+    if ($TimedOut) {
+        return "gh timeout"
+    }
+
+    if ([string]::IsNullOrWhiteSpace($StdErr)) {
+        return $null
+    }
+
+    $message = $StdErr.Trim()
+    if ($message -match '(?i)secondary rate limit|rate limit exceeded|api rate limit|abuse detection') {
+        return "GitHub rate limit"
+    }
+    if ($message -match '(?i)HTTP 5\d\d|status code 5\d\d|bad gateway|service unavailable|gateway timeout') {
+        return "GitHub server error"
+    }
+    if ($message -match '(?i)timed out|timeout|context deadline exceeded|i/o timeout|tls handshake timeout|connection.*(reset|closed|refused|aborted)|unexpected eof|request canceled|temporary failure|temporarily unavailable') {
+        return "network error"
+    }
+    return $null
+}
+
+function Get-GhRetryDelaySeconds([int]$Attempt, [string]$Reason) {
+    $delay = [math]::Min($GhRetryMaxDelaySeconds, $GhRetryBaseDelaySeconds * [math]::Pow(2, [math]::Min($Attempt - 1, 6)))
+    if ($Reason -eq "GitHub rate limit") {
+        $delay = [math]::Max(60, $delay)
+    }
+    return [int][math]::Ceiling($delay)
+}
+
 function Invoke-Gh {
     param(
         [switch]$SuppressErrors,
@@ -184,8 +240,9 @@ function Invoke-Gh {
         [string[]]$GhArgs
     )
 
-    if ($env:OS -ne "Windows_NT") {
+    if (-not (Test-IsWindowsRuntime)) {
         $env:GIT_TERMINAL_PROMPT = "0"
+        $env:GH_PROMPT_DISABLED = "1"
         $env:GH_NO_UPDATE_NOTIFIER = "1"
         $env:GCM_INTERACTIVE = "never"
         if ($SuppressErrors) {
@@ -217,50 +274,85 @@ function Invoke-Gh {
 
     $commandLabel = "gh $(Get-GhCommandDisplayText -ArgText ($normalizedArgs -join ' '))"
     Write-ProgressHost "  > $commandLabel" -ForegroundColor DarkGray
-    $ghExe = (Get-Command gh -ErrorAction SilentlyContinue).Source
-    if (-not $ghExe) { $ghExe = "gh" }
+    $ghExe = Resolve-GhExecutable
+    $attempt = 0
+    while ($true) {
+        $attempt++
 
-    $psi = [System.Diagnostics.ProcessStartInfo]::new($ghExe)
-    foreach ($arg in $normalizedArgs) {
-        [void]$psi.ArgumentList.Add($arg)
-    }
-    $psi.UseShellExecute = $false
-    $psi.CreateNoWindow = $true
-    $psi.RedirectStandardOutput = $true
-    $psi.RedirectStandardError = $true
-    Set-ProcessEnvironmentFromCurrent -ProcessInfo $psi
-    $p = [System.Diagnostics.Process]::Start($psi)
-    # Read streams before WaitForExit to prevent deadlock when output exceeds the OS pipe buffer.
-    $stdoutTask = $p.StandardOutput.ReadToEndAsync()
-    $stderrTask = $p.StandardError.ReadToEndAsync()
-    $sw = [System.Diagnostics.Stopwatch]::StartNew()
-    $timedOut = -not $p.WaitForExit($GhInvokeTimeoutSeconds * 1000)
-    $sw.Stop()
+        $psi = [System.Diagnostics.ProcessStartInfo]::new($ghExe)
+        foreach ($arg in $normalizedArgs) {
+            [void]$psi.ArgumentList.Add($arg)
+        }
+        $psi.UseShellExecute = $false
+        $psi.CreateNoWindow = $true
+        $psi.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+        $psi.RedirectStandardOutput = $true
+        $psi.RedirectStandardError = $true
+        Set-ProcessEnvironmentFromCurrent -ProcessInfo $psi
 
-    if ($timedOut) {
-        Write-ProgressHost "  gh timed out after ${GhInvokeTimeoutSeconds}s: $commandLabel" -ForegroundColor Red
-        try {
-            if (-not $p.HasExited) {
-                $p.Kill($true)
+        $p = [System.Diagnostics.Process]::Start($psi)
+        # Read streams before WaitForExit to prevent deadlock when output exceeds the OS pipe buffer.
+        $stdoutTask = $p.StandardOutput.ReadToEndAsync()
+        $stderrTask = $p.StandardError.ReadToEndAsync()
+        $sw = [System.Diagnostics.Stopwatch]::StartNew()
+        $timedOut = -not $p.WaitForExit($GhInvokeTimeoutSeconds * 1000)
+        $sw.Stop()
+
+        if ($timedOut) {
+            try {
+                if (-not $p.HasExited) {
+                    $p.Kill($true)
+                }
+            } catch {}
+            try {
+                $p.WaitForExit()
+            } catch {}
+            $global:LASTEXITCODE = 124
+        } else {
+            $global:LASTEXITCODE = $p.ExitCode
+        }
+
+        if ($sw.Elapsed.TotalSeconds -ge $GhInvokeSlowLogSeconds) {
+            Write-ProgressHost "  ^ slow ($([math]::Round($sw.Elapsed.TotalSeconds, 1))s)" -ForegroundColor Yellow
+        }
+
+        $stdout = $stdoutTask.GetAwaiter().GetResult()
+        $stderr = $stderrTask.GetAwaiter().GetResult()
+        $retryReason = if ($global:LASTEXITCODE -ne 0) {
+            Get-GhRetryReason -StdErr $stderr -TimedOut:$timedOut
+        } else {
+            $null
+        }
+
+        if ($global:LASTEXITCODE -eq 0) {
+            if ($stderr -and -not $SuppressErrors) {
+                [Console]::Error.Write($stderr)
             }
-        } catch {}
-        $global:LASTEXITCODE = 124
-        return ""
+            return $stdout.TrimEnd()
+        }
+
+        if ($retryReason) {
+            $delaySeconds = Get-GhRetryDelaySeconds -Attempt $attempt -Reason $retryReason
+            $detail = ""
+            if (-not [string]::IsNullOrWhiteSpace($stderr)) {
+                $detail = Get-GhCommandDisplayText -ArgText (($stderr -replace '\s+', ' ').Trim()) -MaxLength 140
+            }
+            Write-ProgressHost "  WARN: $retryReason for $commandLabel; retry $attempt in ${delaySeconds}s" -ForegroundColor Yellow
+            if ($detail) {
+                Write-ProgressHost "    $detail" -ForegroundColor DarkYellow
+            }
+            Start-Sleep -Seconds $delaySeconds
+            continue
+        }
+
+        if ($timedOut) {
+            Write-ProgressHost "  gh timed out after ${GhInvokeTimeoutSeconds}s: $commandLabel" -ForegroundColor Red
+        }
+        if ($stderr -and -not $SuppressErrors) {
+            [Console]::Error.Write($stderr)
+        }
+        return $stdout.TrimEnd()
     }
-
-    $global:LASTEXITCODE = $p.ExitCode
-    if ($sw.Elapsed.TotalSeconds -ge $GhInvokeSlowLogSeconds) {
-        Write-ProgressHost "  ^ slow ($([math]::Round($sw.Elapsed.TotalSeconds, 1))s)" -ForegroundColor Yellow
-    }
-
-    $stdout = $stdoutTask.GetAwaiter().GetResult()
-    $stderr = $stderrTask.GetAwaiter().GetResult()
-
-    if ($stderr -and -not $SuppressErrors) {
-        [Console]::Error.Write($stderr)
-    }
-
-    $stdout.TrimEnd()
 }
 
 function Read-Utf8TextFile([string]$Path) {
@@ -814,6 +906,62 @@ function Get-PullRequestReferenceText([string]$Repo, [int]$Number) {
     ) -join "`n---`n"
 }
 
+function Get-PullRequestReferenceContexts(
+    [string]$Text,
+    [string]$Repo,
+    [int]$Number,
+    [int]$Radius = 80
+) {
+    if (-not $Text) { return @() }
+
+    $repoEscaped = [regex]::Escape($Repo)
+    $pattern = "(?i)(https://github\.com/$repoEscaped/pull/$Number\b|(?<![\w/])#$Number\b)"
+    $contexts = @()
+    foreach ($line in ($Text -split "\r?\n")) {
+        if ($line -match $pattern) {
+            $contexts += $line
+        }
+    }
+    foreach ($match in [regex]::Matches($Text, $pattern)) {
+        $start = [Math]::Max(0, $match.Index - $Radius)
+        $length = [Math]::Min($Text.Length - $start, $match.Length + (2 * $Radius))
+        $contexts += $Text.Substring($start, $length)
+    }
+    return @($contexts | Select-Object -Unique)
+}
+
+function Test-HasPositivePullRequestReferenceContext(
+    [string]$Text,
+    [string]$Repo,
+    [int]$Number,
+    [string]$AuthorLogin
+) {
+    $negativePattern = '(?i)\b(?:supersed(?:e|ed|es|ing)|alternative|chosen\s+over|rather\s+than|instead\s+of|in\s+favor\s+of|browser-reserved|moot)\b'
+    $positivePattern = '(?i)\b(?:ship(?:s|ped|ping)?|release(?:d)?|credit(?:ed)?|co-auth(?:or|ored)|authorship|attribution|carry(?:ing|ied)\s+forward|land(?:ed|ing)|merge(?:d|s|ing)?|fix(?:es|ed)?|close(?:s|d)?)\b'
+    $authorPattern = if ($AuthorLogin) { "(?i)(?:^|[^\w])@$([regex]::Escape($AuthorLogin))(?:[^\w]|$)" } else { "" }
+
+    foreach ($context in @(Get-PullRequestReferenceContexts -Text $Text -Repo $Repo -Number $Number)) {
+        if ($context -match $negativePattern) { continue }
+        if ($context -match $positivePattern) { return $true }
+        if ($authorPattern -and $context -match $authorPattern) { return $true }
+    }
+
+    return $false
+}
+
+function Test-IsPositiveReleaseReferenceToPullRequest(
+    [string]$Repo,
+    [object]$OriginalPr,
+    [object]$ReleasePr
+) {
+    if (-not $ReleasePr) { return $false }
+    $referenceText = Get-PullRequestReferenceText -Repo $Repo -Number ([int]$ReleasePr.number)
+    if (-not $referenceText) { return $false }
+
+    $authorLogin = [string](Get-ScalarValue $OriginalPr.author.login)
+    return Test-HasPositivePullRequestReferenceContext -Text $referenceText -Repo $Repo -Number ([int]$OriginalPr.number) -AuthorLogin $authorLogin
+}
+
 function Test-HasMaintainerCreditedReferenceToPullRequest(
     [string]$Repo,
     [object]$OriginalPr,
@@ -869,14 +1017,9 @@ function Test-IsCreditedMergedSibling([string]$Repo, [object]$OriginalPr, [objec
     $originalNumber = [int]$OriginalPr.number
     $referenceText = Get-PullRequestReferenceText -Repo $Repo -Number $MergedPr.number
     if ($referenceText) {
-        $prNeedles = @(
-            "#$originalNumber",
-            "https://github.com/$Repo/pull/$originalNumber"
-        )
-        foreach ($needle in $prNeedles) {
-            if ($referenceText -match [regex]::Escape($needle)) {
-                return $true
-            }
+        $originalLogin = [string](Get-ScalarValue $OriginalPr.author.login)
+        if (Test-HasPositivePullRequestReferenceContext -Text $referenceText -Repo $Repo -Number $originalNumber -AuthorLogin $originalLogin) {
+            return $true
         }
     }
 
@@ -1873,15 +2016,21 @@ function Get-ClosedPullRequestClassification([object]$PullRequest) {
     $closedEvent = @($timelineNodes | Where-Object { $_.__typename -eq "ClosedEvent" }) | Select-Object -First 1
     $mergedReleaseCloser = $null
     if ($closedEvent -and $closedEvent.closer.__typename -eq "PullRequest" -and $closedEvent.closer.merged -and (Test-IsReleaseTitle $closedEvent.closer.title)) {
-        $mergedReleaseCloser = $closedEvent.closer
+        if (Test-IsPositiveReleaseReferenceToPullRequest -Repo $PullRequest.repo -OriginalPr $PullRequest -ReleasePr $closedEvent.closer) {
+            $mergedReleaseCloser = $closedEvent.closer
+        }
     }
-    $mergedReleaseCrossRef = Select-BestCrossReference -Candidates @($timelineNodes |
+    $mergedReleaseCrossRefCandidate = Select-BestCrossReference -Candidates @($timelineNodes |
             Where-Object {
                 $_.__typename -eq "CrossReferencedEvent" -and
                 $_.source.__typename -eq "PullRequest" -and
                 $_.source.merged -and
                 (Test-IsReleaseTitle $_.source.title)
             }) -ClosedAt $closedEvent.createdAt
+    $mergedReleaseCrossRef = $null
+    if ($mergedReleaseCrossRefCandidate -and (Test-IsPositiveReleaseReferenceToPullRequest -Repo $PullRequest.repo -OriginalPr $PullRequest -ReleasePr $mergedReleaseCrossRefCandidate)) {
+        $mergedReleaseCrossRef = $mergedReleaseCrossRefCandidate
+    }
     $releaseRefCommit = ($timelineNodes |
             Where-Object {
                 $_.__typename -eq "ReferencedEvent" -and
@@ -2066,7 +2215,7 @@ $rawFetchedCount = 0
 foreach ($repo in $Repos) {
     $repoShort = ($repo -split '/')[-1]
     Write-Host "  $repo..." -ForegroundColor DarkGray
-    $raw = Invoke-Gh pr list --repo $repo --author $Author --state all --limit 500 --json 'number,state,title,createdAt,closedAt,mergedAt,headRefName,author' 2>$null
+    $raw = Invoke-Gh pr list --repo $repo --author $Author --state all --limit 500 --json 'number,state,title,createdAt,closedAt,mergedAt,headRefName,author,additions,deletions,changedFiles' 2>$null
     if (-not $raw) {
         $repoFetchFailed += $repo
         Write-Host "    WARNING: PR fetch failed for $repo" -ForegroundColor Yellow
@@ -2540,6 +2689,7 @@ foreach ($pr in $reportedPRs) {
         repo = $pr.repo
         repoLabel = Get-RepoLabel -Repo $pr.repo
         title = $pr.title
+        classification = $classificationKey
         statusKey = $statusKey
         statusLabel = $statusLabel
         statusClass = $statusClass
@@ -2547,6 +2697,12 @@ foreach ($pr in $reportedPRs) {
         releaseLabel = Get-ScalarValue $releaseLabel
         viaLabel = Get-ScalarValue $pr.viaLabel
         viaUrl = Get-ScalarValue $pr.viaUrl
+        createdAt = Get-ScalarValue $pr.createdAt
+        closedAt = Get-ScalarValue $pr.closedAt
+        mergedAt = Get-ScalarValue $pr.mergedAt
+        additions = [int](Get-ScalarValue $pr.additions)
+        deletions = [int](Get-ScalarValue $pr.deletions)
+        changedFiles = [int](Get-ScalarValue $pr.changedFiles)
         sortDate = $sortDate
     }
 }
@@ -2618,8 +2774,10 @@ $prDataJson = (@(
         [pscustomobject][ordered]@{
             number = $_.number
             url = "https://github.com/$($_.repo)/pull/$($_.number)"
+            repo = $_.repo
             repoLabel = $_.repoLabel
             title = $_.title
+            classification = $_.classification
             statusKey = $_.statusKey
             statusLabel = $_.statusLabel
             statusClass = $_.statusClass
@@ -2627,6 +2785,12 @@ $prDataJson = (@(
             releaseLabel = $_.releaseLabel
             viaLabel = $_.viaLabel
             viaUrl = $_.viaUrl
+            createdAt = $_.createdAt
+            closedAt = $_.closedAt
+            mergedAt = $_.mergedAt
+            additions = $_.additions
+            deletions = $_.deletions
+            changedFiles = $_.changedFiles
         }
     }
 ) | ConvertTo-Json -Depth 4 -Compress) -replace '</script', '<\/script'
@@ -2728,11 +2892,15 @@ $html = @"
 <div class="top-row">
   <h1><a class="back-link" href="../"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>GitHub Contributions</h1>
   <nav class="nav-links">
+    <a href="../resume/">Resume</a>
+    <span class="nav-sep">/</span>
     <a href="../projects/">Projects</a>
     <span class="nav-sep">/</span>
     <span class="current">Stats</span>
     <span class="nav-sep">/</span>
-    <span class="nav-repo"><a href="https://github.com/rodboev/pr-sweep">Repo</a><span class="private">(private)</span></span>
+    <a href="https://github.com/rodboev">GitHub</a>
+    <span class="nav-sep">/</span>
+    <a href="https://linkedin.com/in/rodboev">LinkedIn</a>
   </nav>
 </div>
 
@@ -2797,7 +2965,7 @@ $prListOverlayHtml
 
 <p class="footer">Generated $dateStr from GitHub API. Source: <a href="https://github.com/$ReadmeRepo">$ReadmeRepo</a></p>
 
-<script src="../assets/script.js?v=20260616f"></script>
+<script src="../assets/script.js"></script>
 <script>
 var PR_FILTERS = $prFiltersJson;
 var PR_DATA = $prDataJson;

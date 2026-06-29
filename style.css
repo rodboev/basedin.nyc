@@ -55,18 +55,37 @@ body.home .home-links {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 4.5vh;
+  min-width: 8rem;
   font: 400 0.92rem var(--font);
 }
 body.home .home-links a {
   color: rgba(255, 255, 255, 0.56);
   text-decoration: none;
+  text-align: center;
+}
+body.home .home-links-sep {
+  display: none;
+  color: rgba(255, 255, 255, 0.22);
+}
+body.home .home-links a.home-link--icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+body.home .home-links .home-links-icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.1rem;
+}
+body.home .home-links a.home-link--icon svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: currentColor;
+  display: block;
 }
 body.home .home-links a:is(:hover, .hover) {
   color: rgba(255, 255, 255, 0.88);
-}
-body.home .home-links-gap {
-  height: 4.5vh;
-  pointer-events: none;
 }
 body.home a.preview {
   background: #fff url("assets/loading.svg") center no-repeat;
@@ -195,16 +214,18 @@ body.home a.preview:is(:hover, :focus, :active, .hover) > span > span:first-chil
     order: 3;
     flex-direction: row;
     flex-wrap: nowrap;
+    gap: 0;
     margin: 4vh auto 0;
   }
-  body.home .home-link--desktop,
-  body.home .home-links-gap {
-    display: none;
+  body.home .home-links-sep {
+    display: inline;
+    padding: 0.9rem;
   }
-  body.home .home-link--slash::after {
-    content: "/";
-    padding: 0 0.65rem;
-    color: rgba(255, 255, 255, 0.22);
+  body.home .home-links .home-links-icons {
+    gap: 0.9rem;
+  }
+  body.home .home-link--desktop {
+    display: none;
   }
 }
 
@@ -214,9 +235,6 @@ body.home a.preview:is(:hover, :focus, :active, .hover) > span > span:first-chil
   }
   body.home .home-links a:is(:hover, .hover) {
     color: #1a1a1a;
-  }
-  body.home .home-link--slash::after {
-    color: #c6c2bc;
   }
 }
 
@@ -241,8 +259,7 @@ body.home a.preview:is(:hover, :focus, :active, .hover) > span > span:first-chil
   border-radius: 3px;
 }
 
-body.projects .top-row,
-body.pr .top-row {
+body .top-row {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -251,8 +268,7 @@ body.pr .top-row {
   margin: 1.5rem 0 2em;
 }
 
-body.projects .top-row h1,
-body.pr .top-row h1,
+body .top-row h1,
 body.pr h1 {
   position: relative;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -264,12 +280,12 @@ body.pr h1 {
   text-transform: none;
 }
 
-body.projects .nav-links,
-body.pr .nav-links {
+body .nav-links {
   display: flex;
   align-items: baseline;
   flex-wrap: wrap;
   gap: 0.35rem;
+  margin-left: auto;
   font-family: inherit;
   font-size: 0.95rem;
   font-weight: 400;
@@ -277,97 +293,60 @@ body.pr .nav-links {
   text-transform: none;
 }
 
-body.projects .nav-links {
-  margin-left: auto;
+body .nav-sep {
+  margin: 0 0.9rem 0 0.35rem;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-body.projects .nav-sep,
-body.pr .nav-sep {
-  margin: 0 0.5rem;
-}
-
-body.projects .top-row h1 {
+body .top-row h1 {
   color: var(--page-h1);
 }
 
-body.projects .nav-links a,
-body.projects .nav-links .current {
-  color: var(--page-dim);
+body .nav-links a,
+body .nav-links .current {
+  color: var(--nav-link-dim);
 }
 
-body.projects .nav-links a:hover {
-  color: var(--page-active);
+body .nav-links a {
   text-decoration: none;
 }
 
-body.projects .nav-links .current {
-  color: var(--page-active);
+body .nav-links a:hover {
+  color: var(--nav-link-hover);
+  text-decoration: underline;
+}
+
+body .nav-links .current {
+  color: var(--nav-current);
   font-weight: 600;
 }
 
-body.projects .nav-links .nav-sep {
-  color: var(--page-sep);
+body .nav-links .nav-sep {
+  color: var(--nav-sep);
+  opacity: 0.5;
 }
 
-body.projects .back-link {
-  color: var(--page-link);
+body:not(.home) .back-link {
+  color: var(--page-link, var(--link-color));
   box-shadow:
     0 0 0 1px rgb(107 163 232 / 20%),
     0 1px 2px rgb(0 0 0 / 15%);
 }
 
-body.projects .back-link:hover {
-  background: var(--page-link-hover-bg);
-  color: var(--page-link-hover-fg);
+body:not(.home) .back-link:hover {
+  background: var(--page-link-hover-bg, var(--link-color));
+  color: var(--page-link-hover-fg, #fff);
   text-decoration: none;
 }
 
-body.pr .nav-links a {
-  color: var(--pr-dim);
-}
-
-body.pr .nav-links a:hover {
-  color: var(--pr-link);
-}
-
-body.pr .nav-links .current {
-  color: var(--pr-text);
-  font-weight: 600;
+body .nav-links .current {
   cursor: default;
   text-decoration: none;
 }
 
-body.pr .nav-sep {
-  color: var(--pr-dim);
-}
-
-body.pr .nav-repo {
-  white-space: nowrap;
-}
-
-body.pr .nav-links .private {
-  margin-left: 0.2rem;
-  font-size: 0.75rem;
-  font-style: italic;
-  color: var(--pr-dim);
-}
-
-body.pr .back-link {
-  color: var(--pr-link);
-  box-shadow:
-    0 0 0 1px rgb(107 163 232 / 20%),
-    0 1px 2px rgb(0 0 0 / 15%);
-}
-
-body.pr .back-link:hover {
-  background: var(--pr-link);
-  color: #0d1117;
-  text-decoration: none;
-}
-
 @media (min-width: 1100px) {
-  body.pr .back-link,
-  body.projects .back-link {
+  body:not(.home) .back-link {
     position: absolute;
     left: -4em;
     top: 0.25em;
@@ -385,6 +364,10 @@ body.projects {
   --page-active: rgba(255, 255, 255, 0.88);
   --page-link: #6ba3e8;
   --page-sep: rgba(255, 255, 255, 0.22);
+  --nav-link-dim: var(--page-dim);
+  --nav-link-hover: var(--page-active);
+  --nav-current: var(--page-active);
+  --nav-sep: var(--page-sep);
   --page-link-hover-bg: #6ba3e8;
   --page-link-hover-fg: #1a1a1a;
   color: rgba(255, 255, 255, 0.88);
@@ -592,7 +575,7 @@ body.preview .btn span {
 }
 
 @media (max-width: 620px) {
-  body.projects .nav-links {
+  body .nav-links {
     margin-left: 0;
   }
   .project {
@@ -669,6 +652,15 @@ body.pr {
   --pr-border: rgba(0, 0, 0, 0.08);
   --pr-text: #1a1a1a;
   --pr-dim: #888;
+  --pr-sep: #b6b6b6;
+  --page-h1: var(--pr-text);
+  --page-link: var(--pr-link);
+  --page-link-hover-bg: var(--pr-link);
+  --page-link-hover-fg: var(--pr-bg);
+  --nav-link-dim: var(--pr-dim);
+  --nav-link-hover: var(--pr-link);
+  --nav-current: var(--pr-text);
+  --nav-sep: var(--pr-sep);
   --pr-link: #3376d2;
   --pr-green: #1a7f37;
   --pr-red: #cf222e;
@@ -702,6 +694,11 @@ body.pr {
     --pr-border: #30363d;
     --pr-text: #e6edf3;
     --pr-dim: #8b949e;
+    --pr-sep: #5f6770;
+    --nav-link-dim: var(--pr-dim);
+    --nav-link-hover: var(--pr-link);
+    --nav-current: var(--pr-text);
+    --nav-sep: var(--pr-sep);
     --pr-link: #58a6ff;
     --pr-green: #3fb950;
     --pr-red: #f85149;
@@ -720,6 +717,11 @@ body.pr a {
   color: var(--pr-link);
 }
 
+body.pr .nav-links a,
+body.pr .nav-links .current {
+  color: var(--nav-link-dim);
+}
+
 body.pr h2 {
   font-size: 1.1rem;
   font-weight: 600;
@@ -728,7 +730,7 @@ body.pr h2 {
   border-bottom: 1px solid var(--pr-border);
 }
 
-body.pr .top-row + h2 {
+body:not(.home) .top-row + h2 {
   margin-top: -0.5rem;
 }
 
@@ -1092,6 +1094,30 @@ body.pr .methodology-section code {
 body.pr .card {
   padding: 1.1rem 1.25rem;
   margin: 1rem 0 1.25rem;
+}
+
+body.pr .soundbyte-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.25rem;
+}
+
+body.pr .soundbyte-grid .soundbyte-card {
+  margin: 0;
+}
+
+body.pr .soundbyte-card h3 {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+body.pr .soundbyte-card .meta {
+  margin: 0.55rem 0 0.75rem;
+}
+
+body.pr .soundbyte-card p + p {
+  margin-top: 0.75rem;
 }
 
 body.pr .card > :first-child,

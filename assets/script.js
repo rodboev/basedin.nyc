@@ -28,6 +28,8 @@ function injectLocalNavLinks() {
 
   var nav = document.querySelector('.nav-links');
   if (!nav) return;
+  var pathname = document.location.pathname;
+  var onDocs = pathname.indexOf('/docs') !== -1;
 
   function makeSep() {
     var sep = document.createElement('span');
@@ -36,51 +38,16 @@ function injectLocalNavLinks() {
     return sep;
   }
 
-  var repoEl = nav.querySelector('.nav-repo') ||
-    nav.querySelector('a[href*="github.com/rodboev/pr-sweep"]');
   var currentEl = nav.querySelector('.current');
-  var nodes = [];
-
-  var hasTargets = nav.querySelector('a[href*="pr-targets"]') ||
-    (currentEl && currentEl.textContent.trim() === 'Targets');
-  if (!hasTargets) {
-    var onTargets = document.location.pathname.indexOf('/pr-targets') !== -1;
-    var targetsEl = onTargets ? document.createElement('span') : document.createElement('a');
-    if (onTargets) {
-      targetsEl.className = 'current';
-      targetsEl.textContent = 'Targets';
-    } else {
-      targetsEl.href = '../pr-targets/';
-      targetsEl.textContent = 'Targets';
-    }
-    nodes.push(makeSep(), targetsEl);
-  }
 
   var hasDocsLink = nav.querySelector('a[href*="docs"]') ||
     (currentEl && currentEl.textContent.trim() === 'Docs');
   if (!hasDocsLink) {
     var docsLink = document.createElement('a');
-    docsLink.href = document.location.pathname.indexOf('/docs') !== -1 ? './' : '../docs/';
+    docsLink.href = onDocs ? './' : '../docs/';
     docsLink.textContent = 'Docs';
-    nodes.push(makeSep(), docsLink);
-  }
-
-  if (nodes.length) {
-    if (repoEl) {
-      for (var i = nodes.length - 1; i >= 0; i--) {
-        repoEl.parentNode.insertBefore(nodes[i], repoEl);
-      }
-    } else {
-      nodes.forEach(function(node) { nav.appendChild(node); });
-    }
-  }
-
-  if (!repoEl) {
-    var repoLink = document.createElement('a');
-    repoLink.href = 'https://github.com/rodboev/pr-sweep';
-    repoLink.textContent = 'Repo';
     nav.appendChild(makeSep());
-    nav.appendChild(repoLink);
+    nav.appendChild(docsLink);
   }
 }
 
@@ -94,19 +61,23 @@ if (document.body.classList.contains('home')) {
   var homeLinks = document.querySelector('.home-links');
 
   if (isLocalhost && homeLinks) {
+    function appendHomeSep() {
+      var sep = document.createElement('span');
+      sep.className = 'home-links-sep';
+      sep.setAttribute('aria-hidden', 'true');
+      sep.textContent = '/';
+      homeLinks.appendChild(sep);
+    }
+
     function appendHomeLink(href, text) {
-      var gap = document.createElement('span');
-      gap.className = 'home-links-gap home-link--desktop';
-      gap.setAttribute('aria-hidden', 'true');
-      homeLinks.appendChild(gap);
       var a = document.createElement('a');
-      a.className = 'home-link--desktop';
       a.href = href;
       a.textContent = text;
       homeLinks.appendChild(a);
     }
+
+    appendHomeSep();
     appendHomeLink('docs/', 'Docs');
-    appendHomeLink('https://github.com/rodboev/pr-sweep', 'Repo');
   }
 
   document.querySelectorAll('[data-pair]').forEach(function(el) {
@@ -168,114 +139,73 @@ if (document.body.classList.contains('pr')) {
       if (row.classList.contains('expand-row')) return;
       dataRowCount++;
       var itemIndex = Math.ceil(dataRowCount / rowsPerItem);
+      row.classList.remove('top-collapsed-row');
       row.classList.toggle('collapse-hidden', collapsed && itemIndex > visibleItems);
     });
   }
 
-  function topModeAnchorRow(block) {
+  function setupTopCollapsedBlock(block) {
+    if (!block || block.getAttribute('data-collapse-mode') !== 'top') return;
     var visibleItems = collapsibleVisibleItems(block);
-    if (!visibleItems) return null;
-    var rowsPerItem = collapsibleRowsPerItem(block);
-    var targetDataRow = visibleItems * rowsPerItem;
+    if (!visibleItems) return;
     var tbody = block.querySelector('tbody');
-    if (!tbody) return null;
-    var dataRowCount = 0;
-    var anchor = null;
-    tbody.querySelectorAll('tr').forEach(function(row) {
-      if (row.classList.contains('expand-row')) return;
-      dataRowCount++;
-      if (dataRowCount === targetDataRow) anchor = row;
-    });
-    return anchor;
-  }
-
-  function initCollapsibleTables() {
-    document.querySelectorAll('.collapsible-table[data-collapse-mode="top"]').forEach(syncTopCollapsedRows);
-  }
-
-  function setCollapsibleCollapsed(block, collapsed) {
-    if (!block) return;
-    block.classList.toggle('collapsed', collapsed);
+    if (!tbody) return;
+    var colspan = parseInt(block.getAttribute('data-expand-colspan') || '0', 10);
+    if (!colspan) {
+      var firstRow = tbody.querySelector('tr');
+      colspan = firstRow ? firstRow.children.length : 1;
+    }
+    if (!tbody.querySelector('.expand-row')) {
+      tbody.insertAdjacentHTML('afterbegin', expandRowHtml(block.id, 'Show latest ' + visibleItems, colspan));
+    }
     syncTopCollapsedRows(block);
   }
 
-  window.collapsibleVisibleItems = collapsibleVisibleItems;
-  window.expandRowHtml = expandRowHtml;
-  window.collapseOverlayHtml = collapseOverlayHtml;
-  window.setCollapsibleCollapsed = setCollapsibleCollapsed;
-  window.initCollapsibleTables = initCollapsibleTables;
-
-  // The collapse overlay is always shown at the bottom of an expanded table
-  // (CSS handles visibility), mirroring the expand row's position. Kept as a
-  // no-op so existing callers remain safe.
-  window.updateCollapsedOverlays = function() {};
-
-  window.toggleCollapsedTable = function(id, evt) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    var willCollapse = !el.classList.contains('collapsed');
-    var collapseMode = el.getAttribute('data-collapse-mode');
-
-    if (willCollapse) {
-      // Collapsing: keep whatever the user is anchored on fixed in the viewport.
-      // Collapsing only hides the rows *below* the boundary row, so leaving the
-      // scroll position untouched naturally keeps every surviving row exactly
-      // where it is. We only scroll-correct in two cases:
-      //  1. The top of the table is on screen -> you are reading from the top, so
-      //     keep the table top pinned (corrects for any scroll clamping).
-      //  2. The top has scrolled off above AND the bottom of the collapsed table
-      //     would not land within the viewport -> pin the clicked control to
-      //     where the floating overlay was, so "Show all" stays reachable at the
-      //     bottom of the viewport.
-      // Otherwise (top off-screen, but the surviving rows keep the collapsed
-      // bottom in view) we leave the scroll alone so the top edge does not jump
-      // back into view. Geometry-only, so it stays width-agnostic.
-      var vh = window.innerHeight || document.documentElement.clientHeight;
-      var tableEl = el.querySelector('table');
-      var tableTopBefore = tableEl ? tableEl.getBoundingClientRect().top : null;
-      var topVisible = tableTopBefore != null && tableTopBefore >= 0 && tableTopBefore < vh;
-      var overlay = el.querySelector('.overlay-row');
-      var overlayTopBefore = overlay ? overlay.getBoundingClientRect().top : null;
-
-      el.classList.toggle('collapsed');
-      syncTopCollapsedRows(el);
-
-      if (topVisible) {
-        window.scrollBy(0, tableEl.getBoundingClientRect().top - tableTopBefore);
-      } else {
-        var expandRow = el.querySelector('tr.expand-row');
-        var controlRect = expandRow ? expandRow.getBoundingClientRect() : null;
-        var controlInView = controlRect && controlRect.top >= 0 && controlRect.bottom <= vh;
-        if (!controlInView && overlayTopBefore != null && expandRow && expandRow.offsetParent) {
-          window.scrollBy(0, expandRow.getBoundingClientRect().top - overlayTopBefore);
-        }
-      }
-    } else {
-      // Expanding: keep the last visible row fixed so the newly revealed rows
-      // flow in below it.
-      var anchor = null;
-      if (collapseMode === 'context') {
-        anchor = el.querySelector('tr.is-self') || el.querySelector('tr[data-rank]');
-      } else if (collapseMode === 'top') {
-        anchor = topModeAnchorRow(el);
-      }
-      var anchorTop = anchor ? anchor.getBoundingClientRect().top : null;
-      el.classList.toggle('collapsed');
-      syncTopCollapsedRows(el);
-      if (anchor && anchorTop != null) {
-        window.scrollBy(0, anchor.getBoundingClientRect().top - anchorTop);
-      }
+  function syncBottomCollapsedRows(block) {
+    if (!block || block.getAttribute('data-collapse-mode') !== 'bottom') return;
+    var visibleItems = collapsibleVisibleItems(block);
+    if (!visibleItems) return;
+    var rowsPerItem = collapsibleRowsPerItem(block);
+    var tbody = block.querySelector('tbody');
+    if (!tbody) return;
+    var rows = Array.from(tbody.querySelectorAll('tr')).filter(function(row) {
+      return !row.classList.contains('expand-row');
+    });
+    var totalItems = Math.ceil(rows.length / rowsPerItem);
+    var collapsed = block.classList.contains('collapsed');
+    rows.forEach(function(row, index) {
+      var itemIndex = Math.floor(index / rowsPerItem) + 1;
+      row.classList.remove('bottom-collapsed-row');
+      row.classList.toggle('collapse-hidden', collapsed && itemIndex <= totalItems - visibleItems);
+    });
+    var overlay = block.querySelector('.overlay-row');
+    if (overlay) {
+      overlay.hidden = collapsed || totalItems <= visibleItems;
     }
+  }
 
-    updateCollapsedOverlays();
+  function setupBottomCollapsedBlock(block) {
+    if (!block || block.getAttribute('data-collapse-mode') !== 'bottom') return;
+    var visibleItems = collapsibleVisibleItems(block);
+    if (!visibleItems) return;
+    var overlayLabel = block.getAttribute('data-collapse-label') || 'Collapse';
+    if (!block.querySelector('.overlay-row')) {
+      block.insertAdjacentHTML('beforeend', collapseOverlayHtml(block.id, overlayLabel));
+    }
+    syncBottomCollapsedRows(block);
+  }
+
+  window.toggleCollapsedTable = function(blockId, event) {
+    if (event) event.preventDefault();
+    var block = document.getElementById(blockId);
+    if (!block) return;
+    block.classList.toggle('collapsed');
+    syncTopCollapsedRows(block);
+    syncBottomCollapsedRows(block);
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-      initCollapsibleTables();
-    });
-  } else {
-    initCollapsibleTables();
-  }
+  document.querySelectorAll('.collapsible-table').forEach(function(block) {
+    setupTopCollapsedBlock(block);
+    setupBottomCollapsedBlock(block);
+  });
 }
-
