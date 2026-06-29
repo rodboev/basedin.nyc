@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>Python for Node.js Developers</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+</head>
+<body class="pr">
+<main class="doc-page">
+<h1>Python for Node.js Developers</h1>
+<p class="subtitle">Learning resources for someone who thinks in JavaScript and needs to ship Python. Prioritized for AI/ML roles that use FastAPI, LangGraph, and typed Python.</p>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="why" type="button">Why</button>
+    <button class="sort-pill" data-target="core" type="button">Core</button>
+    <button class="sort-pill" data-target="types" type="button">Types</button>
+    <button class="sort-pill" data-target="async" type="button">Async</button>
+    <button class="sort-pill" data-target="ecosystem" type="button">Ecosystem</button>
+    <button class="sort-pill" data-target="testing" type="button">Testing</button>
+    <button class="sort-pill" data-target="cheatsheet" type="button">Cheat Sheet</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="why">Why Python is non-negotiable</h2>
+<div class="card">
+  <p>Every AI/ML engineering role assumes Python fluency. LangGraph, LangChain, LiveKit Agents, FastAPI, and every major LLM framework are Python-first. Some have JS/TS ports, but the production codebases, the docs, the examples, and the hiring filters all assume Python. This isn't a preference; it's the water supply.</p>
+  <p>The good news: if you know JavaScript well, Python is a short hop. The concepts transfer directly. The syntax differences are small. The hard part is building muscle memory for the ecosystem (pip vs npm, pytest vs jest, Pydantic vs Zod, virtual environments vs node_modules).</p>
+</div>
+
+<h2 class="doc-nav-target" id="core">Core Python (for someone who already programs)</h2>
+<div class="card">
+  <p>Skip the "what is a variable" tutorials. These resources assume you can program and teach Python's specific idioms.</p>
+  <h3>Start here</h3>
+  <ul>
+    <li><a href="https://docs.python.org/3/tutorial/">The Official Python Tutorial</a> — surprisingly good. Skim chapters 1-4, read 5 (data structures), 6 (modules), 7 (I/O), 9 (classes) carefully</li>
+    <li><a href="https://learnxinyminutes.com/python/">Learn Python in Y Minutes</a> — single-page syntax reference for developers who already know another language. Bookmark this</li>
+    <li><a href="https://sayazamurai.github.io/python-vs-javascript/">How to write X in both Python 3 and JavaScript</a> — side-by-side code blocks for every common pattern, organized by category. The ctrl+F reference</li>
+    <li><a href="https://realpython.com/python-vs-javascript/">Real Python: Python vs JavaScript</a> (<a href="https://realpython.com/videos/python-vs-javascript-overview/">video</a>) — high-level comparison of the syntax, runtime, typing, and ecosystem differences</li>
+  </ul>
+  <h3>Key differences from JS</h3>
+  <ul>
+    <li>Indentation is syntax, not style. 4 spaces, no braces.</li>
+    <li>No <code>let</code>/<code>const</code>/<code>var</code>. Assignment creates the variable. Scope is function-level by default, not block-level.</li>
+    <li><code>None</code> instead of <code>null</code>/<code>undefined</code>. There's only one "nothing" value.</li>
+    <li>Lists (<code>[]</code>) instead of arrays. Dicts (<code>{}</code>) instead of objects. Tuples (<code>()</code>) are immutable lists.</li>
+    <li>List comprehensions: <code>[x * 2 for x in items if x > 0]</code> replaces <code>.filter().map()</code> chains.</li>
+    <li>No semicolons. Newlines end statements.</li>
+    <li><code>import</code> is file-based like Node, but there's no <code>export</code>: everything at module scope is importable.</li>
+    <li>Truthiness: empty collections, <code>0</code>, <code>""</code>, and <code>None</code> are falsy. Everything else is truthy. Same instinct as JS minus the <code>undefined</code> edge cases.</li>
+  </ul>
+  <h3>Go deeper</h3>
+  <ul>
+    <li><a href="https://docs.python.org/3/library/">Python Standard Library reference</a> — the "batteries included" stdlib. Skim the table of contents to know what exists: <code>pathlib</code>, <code>json</code>, <code>re</code>, <code>subprocess</code>, <code>collections</code>, <code>datetime</code>, <code>zoneinfo</code></li>
+    <li><a href="https://book.pythontips.com/en/latest/">Intermediate Python</a> — free book covering generators, decorators, <code>*args/**kwargs</code>, context managers, and other Python-specific patterns you won't learn from JS analogies</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="types">Type hints and Pydantic</h2>
+<div class="card">
+  <p>Python has types at runtime (everything is a typed object). Since 3.5, you can annotate functions and variables with type hints. The runtime ignores them; external tools (mypy, pyright) enforce them. Think of it like TypeScript for Python, except the community adopted it later and adoption is still uneven across libraries.</p>
+  <h3>Start here</h3>
+  <ul>
+    <li><a href="https://realpython.com/python-type-checking/">Real Python: Type Checking Guide</a> — comprehensive tutorial on type hints, from basics to generics. The best single resource</li>
+    <li><a href="https://docs.python.org/3/library/typing.html">typing module docs</a> — reference for <code>Optional</code>, <code>Union</code>, <code>TypedDict</code>, <code>Protocol</code>, generics</li>
+    <li><a href="https://mypy.readthedocs.io/en/stable/getting_started.html">mypy Getting Started</a> — how to run the type checker, configure strict mode, interpret errors</li>
+  </ul>
+  <h3>Pydantic (Python's Zod)</h3>
+  <ul>
+    <li><a href="https://docs.pydantic.dev/latest/concepts/models/">Pydantic Models</a> — define a class, get validation, serialization, and JSON schema for free. This is what replaces <code>z.object()</code> in Python land</li>
+    <li><a href="https://docs.pydantic.dev/latest/concepts/types/">Pydantic Types</a> — constrained types, custom validators, computed fields</li>
+    <li><a href="https://docs.pydantic.dev/latest/concepts/serialization/">Pydantic Serialization</a> — <code>model_dump()</code>, <code>model_dump_json()</code>, custom serializers</li>
+  </ul>
+  <h3>dataclasses (lightweight alternative)</h3>
+  <ul>
+    <li><a href="https://docs.python.org/3/library/dataclasses.html">dataclasses module</a> — like Pydantic but without validation. Use for internal data structures where you control the input. Think of it as a typed <code>interface</code> that also generates <code>__init__</code>, <code>__eq__</code>, and <code>__repr__</code></li>
+  </ul>
+  <h3>TypeScript ↔ Python type mapping</h3>
+  <ul>
+    <li><code>string</code> → <code>str</code></li>
+    <li><code>number</code> → <code>int</code> or <code>float</code> (Python distinguishes them)</li>
+    <li><code>boolean</code> → <code>bool</code></li>
+    <li><code>string | null</code> → <code>str | None</code> (or <code>Optional[str]</code>)</li>
+    <li><code>string[]</code> → <code>list[str]</code></li>
+    <li><code>Record&lt;string, number&gt;</code> → <code>dict[str, int]</code></li>
+    <li><code>{ name: string; age: number }</code> → <code>TypedDict</code> or Pydantic model</li>
+    <li><code>interface</code> → <code>Protocol</code> (structural typing) or <code>ABC</code> (nominal)</li>
+    <li><code>enum</code> → <code>enum.Enum</code> or <code>Literal["a", "b", "c"]</code></li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="async">Async Python</h2>
+<div class="card">
+  <p>Python's async model is conceptually identical to Node's: single-threaded event loop, <code>async</code>/<code>await</code> keywords, non-blocking I/O. The difference is that Python was synchronous for 25 years before asyncio arrived, so the ecosystem is split. Some libraries are sync-only, some are async-only, some offer both. FastAPI uses async by default, which is why this matters.</p>
+  <h3>Start here</h3>
+  <ul>
+    <li><a href="https://realpython.com/async-io-python/">Real Python: Async IO Guide</a> — the best intro. Covers <code>asyncio.run()</code>, <code>await</code>, <code>asyncio.gather()</code>, and when to use async vs sync</li>
+    <li><a href="https://docs.python.org/3/library/asyncio.html">asyncio docs</a> — official reference. Dense but complete</li>
+  </ul>
+  <h3>Key differences from Node</h3>
+  <ul>
+    <li>Node is async by default; Python is sync by default. You opt in with <code>async def</code>.</li>
+    <li>Node's event loop runs automatically; Python's requires <code>asyncio.run()</code> to start.</li>
+    <li><code>Promise.all()</code> → <code>asyncio.gather()</code></li>
+    <li><code>setTimeout()</code> → <code>asyncio.sleep()</code></li>
+    <li>No equivalent of Node's callback pattern. Python went straight from threads to async/await.</li>
+    <li>The GIL (Global Interpreter Lock) means CPU-bound work doesn't parallelize across threads. Use <code>multiprocessing</code> or <code>concurrent.futures.ProcessPoolExecutor</code> for CPU parallelism.</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="ecosystem">Ecosystem: pip, venv, project setup</h2>
+<div class="card">
+  <p>The Python packaging ecosystem is more fragmented than Node's. There's no single <code>npm</code> equivalent; you'll encounter pip, poetry, uv, pdm, and conda. For new projects, <code>uv</code> (from the ruff/astral team) is the modern choice. For existing projects, follow whatever they already use.</p>
+  <h3>Package management</h3>
+  <ul>
+    <li><a href="https://docs.astral.sh/uv/">uv</a> — fast Python package manager (written in Rust). Handles venvs, dependencies, and Python version management in one tool. The <code>pnpm</code> of Python. <strong>Start here for new projects</strong></li>
+    <li><a href="https://pip.pypa.io/en/stable/getting-started/">pip basics</a> — the default package manager. <code>pip install requests</code> is <code>npm install axios</code></li>
+    <li><a href="https://docs.python.org/3/library/venv.html">venv</a> — virtual environments isolate dependencies per project. <code>python -m venv .venv</code> then <code>.venv/Scripts/activate</code>. Think of it as a scoped <code>node_modules</code></li>
+  </ul>
+  <h3>npm ↔ Python tooling map</h3>
+  <ul>
+    <li><code>package.json</code> → <code>pyproject.toml</code></li>
+    <li><code>node_modules/</code> → <code>.venv/</code></li>
+    <li><code>npm install</code> → <code>uv sync</code> or <code>pip install -r requirements.txt</code></li>
+    <li><code>npx</code> → <code>uvx</code> or <code>pipx run</code></li>
+    <li><code>nvm</code> → <code>uv python</code> or <code>pyenv</code></li>
+    <li><code>eslint</code> → <code>ruff</code> (linter + formatter, very fast)</li>
+    <li><code>prettier</code> → <code>ruff format</code> or <code>black</code></li>
+    <li><code>tsc --noEmit</code> → <code>mypy</code> or <code>pyright</code></li>
+  </ul>
+  <h3>Project structure</h3>
+  <ul>
+    <li><a href="https://docs.astral.sh/uv/guides/projects/">uv Project Guide</a> — creating and managing Python projects with uv</li>
+    <li><a href="https://packaging.python.org/en/latest/tutorials/packaging-projects/">Python Packaging Tutorial</a> — pyproject.toml, src layout, building distributions</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="testing">Testing with pytest</h2>
+<div class="card">
+  <p>pytest is Python's Jest. It discovers test files automatically, has a fixture system (like <code>beforeEach</code> but more powerful), and supports parametrized tests for covering many cases with minimal boilerplate.</p>
+  <h3>Start here</h3>
+  <ul>
+    <li><a href="https://docs.pytest.org/en/stable/getting-started.html">pytest Getting Started</a> — write your first test in 2 minutes</li>
+    <li><a href="https://docs.pytest.org/en/stable/how-to/fixtures.html">pytest Fixtures</a> — dependency injection for tests. This is the key concept that makes pytest different from unittest</li>
+    <li><a href="https://docs.pytest.org/en/stable/how-to/parametrize.html">pytest Parametrize</a> — run the same test with 20 different inputs. Essential for testing classification logic</li>
+  </ul>
+  <h3>Jest ↔ pytest mapping</h3>
+  <ul>
+    <li><code>describe/it</code> → plain functions named <code>test_*()</code> in files named <code>test_*.py</code></li>
+    <li><code>expect(x).toBe(y)</code> → <code>assert x == y</code> (plain Python asserts, pytest rewrites them for good error messages)</li>
+    <li><code>beforeEach</code> → <code>@pytest.fixture</code></li>
+    <li><code>jest.mock()</code> → <code>unittest.mock.patch()</code> or <code>monkeypatch</code> fixture</li>
+    <li><code>test.each</code> → <code>@pytest.mark.parametrize</code></li>
+    <li><code>npm test</code> → <code>pytest</code> (auto-discovers all test files)</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="cheatsheet">Quick reference cheat sheet</h2>
+<div class="card">
+  <h3>Everyday patterns</h3>
+  <table>
+    <tr><th style="min-width: 45%">JavaScript/Node.js</th><th>Python</th></tr>
+    <tr><td><code>const items = arr.filter(x => x > 0)</code></td><td><code>items = [x for x in arr if x > 0]</code></td></tr>
+    <tr><td><code>const mapped = arr.map(x => x * 2)</code></td><td><code>mapped = [x * 2 for x in arr]</code></td></tr>
+    <tr><td><code>const obj = { name, age }</code></td><td><code>obj = {"name": name, "age": age}</code></td></tr>
+    <tr><td><code>const { name, age } = obj</code></td><td><code>name, age = obj["name"], obj["age"]</code></td></tr>
+    <tr><td><code>arr.forEach(x => console.log(x))</code></td><td><code>for x in arr: print(x)</code></td></tr>
+    <tr><td><code>`Hello ${name}`</code></td><td><code>f"Hello {name}"</code></td></tr>
+    <tr><td><code>obj?.prop ?? "default"</code></td><td><code>getattr(obj, "prop", "default")</code> or <code>obj.get("prop", "default")</code> for dicts</td></tr>
+    <tr><td><code>[...arr1, ...arr2]</code></td><td><code>[*arr1, *arr2]</code></td></tr>
+    <tr><td><code>{...obj1, ...obj2}</code></td><td><code>{**obj1, **obj2}</code></td></tr>
+    <tr><td><code>Object.keys(obj)</code></td><td><code>obj.keys()</code> (returns a view, not a list)</td></tr>
+    <tr><td><code>Object.entries(obj)</code></td><td><code>obj.items()</code></td></tr>
+    <tr><td><code>JSON.parse(str)</code></td><td><code>json.loads(str)</code></td></tr>
+    <tr><td><code>JSON.stringify(obj)</code></td><td><code>json.dumps(obj)</code></td></tr>
+    <tr><td><code>path.join(__dirname, "file")</code></td><td><code>Path(__file__).parent / "file"</code></td></tr>
+    <tr><td><code>fs.readFileSync(path, "utf-8")</code></td><td><code>Path(path).read_text(encoding="utf-8")</code></td></tr>
+    <tr><td><code>try { } catch (e) { }</code></td><td><code>try: ... except Exception as e: ...</code></td></tr>
+    <tr><td><code>throw new Error("msg")</code></td><td><code>raise ValueError("msg")</code></td></tr>
+    <tr><td><code>console.log()</code></td><td><code>print()</code></td></tr>
+    <tr><td><code>class Foo extends Bar { }</code></td><td><code>class Foo(Bar): ...</code></td></tr>
+  </table>
+</div>
+
+<p class="footer">Written June 28, 2026.</p>
+</main>
+<script src="doc-nav.js?v=ea01d90e"></script>
+</body>
+</html>

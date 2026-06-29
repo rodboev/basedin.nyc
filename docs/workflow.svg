@@ -5,62 +5,72 @@
   <text x="22" y="28" fill="#3a7a5a" font-size="10" font-weight="700" letter-spacing="1.5">PIPELINE</text>
 
   <!-- Research -->
-  <rect x="20" y="40" width="200" height="138" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
-  <text x="120" y="71" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Research</text>
-  <text x="120" y="92" text-anchor="middle" fill="#95d5b2" font-size="11">architecture scan</text>
-  <text x="120" y="108" text-anchor="middle" fill="#95d5b2" font-size="11">style norms</text>
-  <text x="120" y="124" text-anchor="middle" fill="#95d5b2" font-size="11">search dimensions</text>
-  <text x="120" y="140" text-anchor="middle" fill="#95d5b2" font-size="11">overlay configs</text>
-  <text x="120" y="156" text-anchor="middle" fill="#95d5b2" font-size="11">bot ecosystems</text>
+  <rect x="16" y="40" width="148" height="138" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="90" y="71" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Research</text>
+  <text x="90" y="92" text-anchor="middle" fill="#95d5b2" font-size="11">architecture scan</text>
+  <text x="90" y="108" text-anchor="middle" fill="#95d5b2" font-size="11">style norms</text>
+  <text x="90" y="124" text-anchor="middle" fill="#95d5b2" font-size="11">search dimensions</text>
+  <text x="90" y="140" text-anchor="middle" fill="#95d5b2" font-size="11">overlay configs</text>
+  <text x="90" y="156" text-anchor="middle" fill="#95d5b2" font-size="11">bot ecosystems</text>
+  <text x="90" y="170" text-anchor="middle" fill="#95d5b2" font-size="11">layer boundaries</text>
 
   <!-- Research to Find arrow -->
-  <path d="M220,109 L268,109" fill="none" stroke="#52b788" stroke-width="1.5"/>
-  <polygon points="268,106 276,109 268,112" fill="#52b788"/>
+  <path d="M164,109 L184,109" fill="none" stroke="#52b788" stroke-width="1.5"/>
+  <polygon points="180,106 188,109 180,112" fill="#52b788"/>
 
   <!-- Find -->
-  <rect x="278" y="40" width="210" height="138" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
-  <text x="383" y="71" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Find</text>
-  <text x="383" y="92" text-anchor="middle" fill="#95d5b2" font-size="11">parallel scouts per dimension</text>
-  <text x="383" y="108" text-anchor="middle" fill="#95d5b2" font-size="11">freshness gate</text>
-  <text x="383" y="124" text-anchor="middle" fill="#95d5b2" font-size="11">issue-thread analysis</text>
-  <text x="383" y="140" text-anchor="middle" fill="#95d5b2" font-size="11">competing-PR search</text>
-  <text x="383" y="156" text-anchor="middle" fill="#95d5b2" font-size="11">claimed-work filter</text>
+  <rect x="190" y="40" width="168" height="138" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="274" y="71" text-anchor="middle" fill="#e8e8e8" font-size="15" font-weight="600">Find</text>
+  <text x="274" y="92" text-anchor="middle" fill="#95d5b2" font-size="10">parallel scouts per dimension</text>
+  <text x="274" y="108" text-anchor="middle" fill="#95d5b2" font-size="11">freshness gate</text>
+  <text x="274" y="124" text-anchor="middle" fill="#95d5b2" font-size="11">issue-thread analysis</text>
+  <text x="274" y="140" text-anchor="middle" fill="#95d5b2" font-size="11">competing-PR search</text>
+  <text x="274" y="156" text-anchor="middle" fill="#95d5b2" font-size="11">claimed-work filter</text>
+  <text x="274" y="170" text-anchor="middle" fill="#95d5b2" font-size="11">layer-boundary gate</text>
 
   <!-- Find to Diamond arrow -->
-  <path d="M488,67 L526,67" fill="none" stroke="#52b788" stroke-width="1.5"/>
-  <polygon points="526,64 534,67 526,70" fill="#52b788"/>
+  <path d="M358,67 L486,67" fill="none" stroke="#52b788" stroke-width="1.5"/>
+  <polygon points="482,64 490,67 482,70" fill="#52b788"/>
 
   <!-- Architecture Decision (diamond) -->
-  <polygon points="584,22 634,67 584,112 534,67" fill="#14291e" stroke="#d4a040" stroke-width="1.5"/>
-  <text x="584" y="62" text-anchor="middle" fill="#e8e8e8" font-size="12" font-weight="600">Architecture</text>
-  <text x="584" y="76" text-anchor="middle" fill="#e8e8e8" font-size="12" font-weight="600">Decision</text>
-  <text x="584" y="91" text-anchor="middle" fill="#d4a040" font-size="10">7 fields</text>
+  <polygon points="540,22 590,67 540,112 490,67" fill="#14291e" stroke="#d4a040" stroke-width="1.5"/>
+  <text x="540" y="62" text-anchor="middle" fill="#e8e8e8" font-size="12" font-weight="600">Architecture</text>
+  <text x="540" y="76" text-anchor="middle" fill="#e8e8e8" font-size="12" font-weight="600">Decision</text>
 
-  <!-- Architecture Decision annotation -->
-  <rect x="509" y="117" width="150" height="90" rx="4" fill="#14291e" stroke="#d4a040" stroke-width="1" stroke-dasharray="4,3"/>
-  <text x="584" y="131" text-anchor="middle" fill="#95d5b2" font-size="10">semantic surface</text>
-  <text x="584" y="143" text-anchor="middle" fill="#95d5b2" font-size="10">application count</text>
-  <text x="584" y="155" text-anchor="middle" fill="#95d5b2" font-size="10">amplification assessment</text>
-  <text x="584" y="167" text-anchor="middle" fill="#95d5b2" font-size="10">ownership decision</text>
-  <text x="584" y="179" text-anchor="middle" fill="#95d5b2" font-size="10">consumer map</text>
-  <text x="584" y="191" text-anchor="middle" fill="#95d5b2" font-size="10">invariants</text>
-  <text x="584" y="203" text-anchor="middle" fill="#95d5b2" font-size="10">bypass risks</text>
+  <!-- Triggers annotation -->
+  <rect x="396" y="117" width="132" height="62" rx="4" fill="#14291e" stroke="#d4a040" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="462" y="132" text-anchor="middle" fill="#d4a040" font-size="9" font-weight="600">TRIGGERS</text>
+  <text x="462" y="147" text-anchor="middle" fill="#95d5b2" font-size="10">3+ concern spread</text>
+  <text x="462" y="160" text-anchor="middle" fill="#95d5b2" font-size="10">shared-auth change</text>
+  <text x="462" y="173" text-anchor="middle" fill="#95d5b2" font-size="10">cross-layer owner move</text>
+
+  <!-- Fields annotation -->
+  <rect x="552" y="117" width="132" height="100" rx="4" fill="#14291e" stroke="#d4a040" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="618" y="132" text-anchor="middle" fill="#d4a040" font-size="9" font-weight="600">FIELDS</text>
+  <text x="618" y="146" text-anchor="middle" fill="#95d5b2" font-size="10">semantic surface</text>
+  <text x="618" y="157" text-anchor="middle" fill="#95d5b2" font-size="10">application count</text>
+  <text x="618" y="168" text-anchor="middle" fill="#95d5b2" font-size="10">amplification</text>
+  <text x="618" y="179" text-anchor="middle" fill="#95d5b2" font-size="10">ownership decision</text>
+  <text x="618" y="190" text-anchor="middle" fill="#95d5b2" font-size="10">consumer map</text>
+  <text x="618" y="201" text-anchor="middle" fill="#95d5b2" font-size="10">invariants</text>
+  <text x="618" y="212" text-anchor="middle" fill="#95d5b2" font-size="10">bypass risks</text>
 
   <!-- Diamond to Spec arrow -->
-  <path d="M634,67 L692,67" fill="none" stroke="#52b788" stroke-width="1.5"/>
-  <polygon points="692,64 700,67 692,70" fill="#52b788"/>
+  <path d="M590,67 L698,67" fill="none" stroke="#52b788" stroke-width="1.5"/>
+  <polygon points="694,64 702,67 694,70" fill="#52b788"/>
 
   <!-- Spec Competition -->
-  <rect x="702" y="40" width="230" height="138" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
-  <text x="817" y="71" text-anchor="middle" fill="#e8e8e8" font-size="14" font-weight="600">Spec Competition</text>
-  <text x="817" y="92" text-anchor="middle" fill="#95d5b2" font-size="11">A + B -&gt; C synthesis</text>
-  <text x="817" y="108" text-anchor="middle" fill="#95d5b2" font-size="11">approach comparison table</text>
-  <text x="817" y="124" text-anchor="middle" fill="#95d5b2" font-size="11">proof matrix</text>
-  <text x="817" y="140" text-anchor="middle" fill="#95d5b2" font-size="11">test surfaces</text>
-  <text x="817" y="156" text-anchor="middle" fill="#95d5b2" font-size="11">structural validator</text>
+  <rect x="704" y="40" width="232" height="138" rx="8" fill="#1b4332" stroke="#40916c" stroke-width="1.5"/>
+  <text x="820" y="71" text-anchor="middle" fill="#e8e8e8" font-size="14" font-weight="600">Spec Competition</text>
+  <text x="820" y="92" text-anchor="middle" fill="#95d5b2" font-size="11">A + B -&gt; C synthesis</text>
+  <text x="820" y="108" text-anchor="middle" fill="#95d5b2" font-size="11">approach comparison table</text>
+  <text x="820" y="124" text-anchor="middle" fill="#95d5b2" font-size="11">proof matrix</text>
+  <text x="820" y="140" text-anchor="middle" fill="#95d5b2" font-size="11">test surfaces</text>
+  <text x="820" y="156" text-anchor="middle" fill="#95d5b2" font-size="11">structural validator</text>
+  <text x="820" y="170" text-anchor="middle" fill="#95d5b2" font-size="11">layer fit scoring</text>
 
   <!-- Spec to Code connector (between rows) -->
-  <path d="M817,178 L817,244 L95,244 L95,280" fill="none" stroke="#52b788" stroke-width="1.5"/>
+  <path d="M820,178 L820,244 L95,244 L95,280" fill="none" stroke="#52b788" stroke-width="1.5"/>
   <polygon points="92,280 95,288 98,280" fill="#52b788"/>
 
   <!-- Gate fail to Code connector (inside row 2) -->
@@ -80,6 +90,7 @@
   <text x="95" y="375" text-anchor="middle" fill="#95d5b2" font-size="11">proof matrix execution</text>
   <text x="95" y="391" text-anchor="middle" fill="#95d5b2" font-size="11">regression contracts</text>
   <text x="95" y="407" text-anchor="middle" fill="#95d5b2" font-size="11">workers never commit</text>
+  <text x="95" y="421" text-anchor="middle" fill="#95d5b2" font-size="11">layer placement audit</text>
 
   <!-- Code to Review arrow -->
   <path d="M170,360 L190,360" fill="none" stroke="#52b788" stroke-width="1.5"/>
@@ -93,6 +104,7 @@
   <text x="292" y="375" text-anchor="middle" fill="#95d5b2" font-size="11">call-site tracing</text>
   <text x="292" y="391" text-anchor="middle" fill="#95d5b2" font-size="11">import verification</text>
   <text x="292" y="407" text-anchor="middle" fill="#95d5b2" font-size="11">stale assertion detection</text>
+  <text x="292" y="421" text-anchor="middle" fill="#95d5b2" font-size="11">layer-boundary audit</text>
 
   <!-- Review to Gate arrow -->
   <path d="M385,360 L407,360" fill="none" stroke="#52b788" stroke-width="1.5"/>
