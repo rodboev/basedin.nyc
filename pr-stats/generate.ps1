@@ -6,7 +6,7 @@ param(
         , "headroomlabs-ai/headroom"
         , "mem0ai/mem0"
         # , "NVIDIA/SkillSpector"
-        # , "stablyai/orca"
+        , "stablyai/orca"
         # , "NousResearch/hermes-agent"
         # , "cline/cline",
         # , "continuedev/continue"
@@ -54,6 +54,7 @@ $creditPatterns = @("co-author", "coauthor", "co-authored", "authorship", "attri
 $continuationPatterns = @("same credit", "same commit", "same change", "reopen")
 $withdrawnPattern = '(?i)\bwithdraw(?:ing|n)?\b'
 $authorClosePattern = '(?i)\bclos(?:ing|ed|e)\b'
+$mergedCarryForwardPattern = '(?i)\bmerge(?:d|s|ing)?(?:\s+to\s+main)?\b'
 $DefaultLeaderboardVisible = 10
 $DefaultPrTableVisible = 20
 $LeaderboardMax = 50
@@ -148,6 +149,7 @@ $ClassificationMeta = [ordered]@{
 $EasternTimeZone = [System.TimeZoneInfo]::FindSystemTimeZoneById("Eastern Standard Time")
 $script:RepoOwnerCache = @{}
 $script:PullRequestStateCache = @{}
+$script:PullRequestCommitAuthorCache = @{}
 $script:PullRequestEvidenceCache = @{}
 $script:ClassificationCache = @{
     version = $ClassificationCacheVersion
@@ -259,6 +261,11 @@ function Invoke-Gh {
     }
 
     $stdout.TrimEnd()
+}
+
+function Read-Utf8TextFile([string]$Path) {
+    $utf8 = [System.Text.UTF8Encoding]::new($false, $true)
+    return [System.IO.File]::ReadAllText($Path, $utf8)
 }
 
 function Write-ProgressHost {
@@ -559,63 +566,112 @@ function Get-ScalarValue([object]$Value) {
     return $Value
 }
 
-function Get-PullRequestState([string]$Repo, [int]$Number, [switch]$Quiet) {
+function Get-PullRequestState([string]$Repo, [int]$Number, [switch]$Quiet, [switch]$RequireBody) {
     $cacheKey = "$Repo#$Number"
     if ($script:PullRequestStateCache.ContainsKey($cacheKey)) {
-        return $script:PullRequestStateCache[$cacheKey]
+        $cached = $script:PullRequestStateCache[$cacheKey]
+        $cachedBody = if ($cached) { [string](Get-ScalarValue $cached.body) } else { "" }
+        if (-not $RequireBody -or $cachedBody) {
+            return $cached
+        }
     }
-    if ($script:ClassificationCache.prPullStates -and $script:ClassificationCache.prPullStates.ContainsKey($cacheKey)) {
-        $stored = $script:ClassificationCache.prPullStates[$cacheKey]
+    if (-not $script:ClassificationCache) {
+        $script:ClassificationCache = @{}
+    }
+    if (-not $script:ClassificationCache["prPullStates"]) {
+        $script:ClassificationCache["prPullStates"] = @{}
+    }
+    if ($script:ClassificationCache["prPullStates"].ContainsKey($cacheKey)) {
+        $stored = $script:ClassificationCache["prPullStates"][$cacheKey]
         if ($stored.state -eq "NOT_FOUND") {
             $script:PullRequestStateCache[$cacheKey] = $null
             return $null
         }
-        $result = [pscustomobject]@{
-            number = $Number
-            state = [string]$stored.state
-            mergedAt = if ($stored.mergedAt) { $stored.mergedAt } else { $null }
-            title = [string]$stored.title
-            url = "https://github.com/$Repo/pull/$Number"
-            author = @{ login = [string]$stored.author }
-            body = ""
+        $storedBody = [string](Get-ScalarValue $stored.body)
+        if (-not $RequireBody -or $storedBody) {
+            $result = [pscustomobject]@{
+                number = $Number
+                state = [string]$stored.state
+                mergedAt = if ($stored.mergedAt) { $stored.mergedAt } else { $null }
+                title = [string]$stored.title
+                url = "https://github.com/$Repo/pull/$Number"
+                author = @{ login = [string]$stored.author }
+                body = $storedBody
+            }
+            $script:PullRequestStateCache[$cacheKey] = $result
+            return $result
         }
-        $script:PullRequestStateCache[$cacheKey] = $result
-        return $result
     }
     $ghParams = @{
         SuppressErrors = [bool]$Quiet
         GhArgs = @('pr', 'view', "$Number", '--repo', $Repo, '--json', 'number,state,mergedAt,title,url,author,body')
     }
-    $raw = Invoke-Gh @ghParams 2>$null
+    $raw = $null
+    try {
+        $raw = Invoke-Gh @ghParams 2>$null
+    } catch {}
     $result = $null
     if ($raw) {
         try { $result = $raw | ConvertFrom-Json } catch {}
     }
     $script:PullRequestStateCache[$cacheKey] = $result
-    if (-not $script:ClassificationCache.prPullStates) {
-        $script:ClassificationCache.prPullStates = @{}
-    }
     if ($result) {
         $authorLogin = ""
         if ($result.author -and $result.author.login) {
             $authorLogin = [string](Get-ScalarValue $result.author.login)
         }
-        $script:ClassificationCache.prPullStates[$cacheKey] = @{
+        $script:ClassificationCache["prPullStates"][$cacheKey] = @{
             state = [string]$result.state
             mergedAt = if ($result.mergedAt) { [string]$result.mergedAt } else { "" }
             title = [string]$result.title
             author = $authorLogin
+            body = [string](Get-ScalarValue $result.body)
         }
         if ($authorLogin) {
-            if (-not $script:ClassificationCache.prAuthorsByNumber) {
-                $script:ClassificationCache.prAuthorsByNumber = @{}
+            if (-not $script:ClassificationCache["prAuthorsByNumber"]) {
+                $script:ClassificationCache["prAuthorsByNumber"] = @{}
             }
-            $script:ClassificationCache.prAuthorsByNumber[$cacheKey] = $authorLogin
+            $script:ClassificationCache["prAuthorsByNumber"][$cacheKey] = $authorLogin
         }
     } else {
-        $script:ClassificationCache.prPullStates[$cacheKey] = @{ state = "NOT_FOUND" }
+        $script:ClassificationCache["prPullStates"][$cacheKey] = @{ state = "NOT_FOUND" }
     }
     return $result
+}
+
+function Get-PullRequestCommitAuthorLogins([string]$Repo, [int]$Number, [switch]$Quiet) {
+    $cacheKey = "$Repo#$Number"
+    if ($script:PullRequestCommitAuthorCache.ContainsKey($cacheKey)) {
+        return $script:PullRequestCommitAuthorCache[$cacheKey]
+    }
+
+    $logins = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+    $ghParams = @{
+        SuppressErrors = [bool]$Quiet
+        GhArgs = @('pr', 'view', "$Number", '--repo', $Repo, '--json', 'commits')
+    }
+    $raw = $null
+    try {
+        $raw = Invoke-Gh @ghParams 2>$null
+    } catch {}
+    $result = $null
+    if ($raw) {
+        try { $result = $raw | ConvertFrom-Json } catch {}
+    }
+
+    if ($result -and $result.commits) {
+        foreach ($commit in @($result.commits)) {
+            foreach ($author in @($commit.authors)) {
+                $login = [string](Get-ScalarValue $author.login)
+                if ($login) {
+                    $null = $logins.Add($login)
+                }
+            }
+        }
+    }
+
+    $script:PullRequestCommitAuthorCache[$cacheKey] = $logins
+    return $logins
 }
 
 function Test-IsExplicitPullRequestReference([string]$Text, [int]$Number) {
@@ -747,7 +803,7 @@ function Get-CreditedShipEvidence([object]$PullRequest, [object]$Evidence) {
 }
 
 function Get-PullRequestReferenceText([string]$Repo, [int]$Number) {
-    $details = Get-PullRequestState -Repo $Repo -Number $Number -Quiet
+    $details = Get-PullRequestState -Repo $Repo -Number $Number -Quiet -RequireBody
     if (-not $details) { return "" }
 
     $evidence = Get-PullRequestEvidence -Repo $Repo -Number $Number
@@ -758,19 +814,30 @@ function Get-PullRequestReferenceText([string]$Repo, [int]$Number) {
     ) -join "`n---`n"
 }
 
-function Test-IsCreditedMergedSibling([string]$Repo, [object]$OriginalPr, [object]$MergedPr) {
-    if (-not $MergedPr) { return $false }
+function Test-HasMaintainerCreditedReferenceToPullRequest(
+    [string]$Repo,
+    [object]$OriginalPr,
+    [object]$Evidence,
+    [int]$MergedPrNumber
+) {
+    if (-not $Evidence) { return $false }
 
-    $originalNumber = [int]$OriginalPr.number
-    $referenceText = Get-PullRequestReferenceText -Repo $Repo -Number $MergedPr.number
-    if (-not $referenceText) { return $false }
+    $authorLogin = Get-ScalarValue $OriginalPr.author.login
+    if (-not $authorLogin) { $authorLogin = $Author }
 
-    $prNeedles = @(
-        "#$originalNumber",
-        "https://github.com/$Repo/pull/$originalNumber"
-    )
-    foreach ($needle in $prNeedles) {
-        if ($referenceText -match [regex]::Escape($needle)) {
+    foreach ($comment in @($Evidence.comments.nodes)) {
+        if ($authorLogin -and $comment.author.login -eq $authorLogin) { continue }
+        if (-not (Test-IsMaintainerComment -Repo $Repo -Comment $comment)) { continue }
+
+        $body = [string]$comment.body
+        if (-not $body) { continue }
+        if (-not ($body -match "(?i)(?:^|[^\w])#$MergedPrNumber(?:[^\w]|$)" -or (Test-IsExplicitPullRequestReference -Text $body -Number $MergedPrNumber))) { continue }
+        if (-not (Test-MatchesAnyPattern -Text $body -Patterns $creditPatterns)) { continue }
+        if (
+            (Test-MatchesAnyPattern -Text $body -Patterns $supersededPatterns) -or
+            (Test-MatchesAnyPattern -Text $body -Patterns $continuationPatterns) -or
+            ($body -match $mergedCarryForwardPattern)
+        ) {
             return $true
         }
     }
@@ -778,7 +845,45 @@ function Test-IsCreditedMergedSibling([string]$Repo, [object]$OriginalPr, [objec
     return $false
 }
 
-function Get-ReferencedMergedPullRequest([string]$Repo, [object]$OriginalPr, [string]$Text) {
+function Test-IsCreditedMergedSiblingByMaintainerCarryForward(
+    [string]$Repo,
+    [object]$OriginalPr,
+    [object]$Evidence,
+    [object]$MergedPr
+) {
+    if (-not $MergedPr) { return $false }
+    if (-not (Test-HasMaintainerCreditedReferenceToPullRequest -Repo $Repo -OriginalPr $OriginalPr -Evidence $Evidence -MergedPrNumber ([int]$MergedPr.number))) {
+        return $false
+    }
+
+    $originalLogin = [string](Get-ScalarValue $OriginalPr.author.login)
+    if (-not $originalLogin) { return $false }
+
+    $mergedAuthorLogins = Get-PullRequestCommitAuthorLogins -Repo $Repo -Number ([int]$MergedPr.number) -Quiet
+    return $mergedAuthorLogins.Contains($originalLogin)
+}
+
+function Test-IsCreditedMergedSibling([string]$Repo, [object]$OriginalPr, [object]$MergedPr, [object]$Evidence) {
+    if (-not $MergedPr) { return $false }
+
+    $originalNumber = [int]$OriginalPr.number
+    $referenceText = Get-PullRequestReferenceText -Repo $Repo -Number $MergedPr.number
+    if ($referenceText) {
+        $prNeedles = @(
+            "#$originalNumber",
+            "https://github.com/$Repo/pull/$originalNumber"
+        )
+        foreach ($needle in $prNeedles) {
+            if ($referenceText -match [regex]::Escape($needle)) {
+                return $true
+            }
+        }
+    }
+
+    return Test-IsCreditedMergedSiblingByMaintainerCarryForward -Repo $Repo -OriginalPr $OriginalPr -Evidence $Evidence -MergedPr $MergedPr
+}
+
+function Get-ReferencedMergedPullRequest([string]$Repo, [object]$OriginalPr, [object]$Evidence, [string]$Text) {
     if (-not $Text) { return $null }
     $matches = [regex]::Matches($Text, '#(\d+)')
     $seen = @{}
@@ -788,7 +893,7 @@ function Get-ReferencedMergedPullRequest([string]$Repo, [object]$OriginalPr, [st
         $seen[$num] = $true
         if (-not (Test-ShouldResolveReferencedPullRequest -Text $Text -Number $num)) { continue }
         $pr = Get-PullRequestState -Repo $Repo -Number $num -Quiet
-        if ($pr -and ($pr.state -eq "MERGED" -or $pr.mergedAt) -and (Test-IsCreditedMergedSibling -Repo $Repo -OriginalPr $OriginalPr -MergedPr $pr)) {
+        if ($pr -and ($pr.state -eq "MERGED" -or $pr.mergedAt) -and (Test-IsCreditedMergedSibling -Repo $Repo -OriginalPr $OriginalPr -MergedPr $pr -Evidence $Evidence)) {
             return $pr
         }
     }
@@ -801,8 +906,10 @@ function Get-TimelineCreditedMergedPullRequest([string]$Repo, [object]$OriginalP
         if (-not $node.source -or $node.source.__typename -ne "PullRequest") { continue }
         if (-not $node.source.merged -and -not $node.source.mergedAt) { continue }
 
-        $pr = Get-PullRequestState -Repo $Repo -Number $node.source.number -Quiet
-        if ($pr -and (Test-IsCreditedMergedSibling -Repo $Repo -OriginalPr $OriginalPr -MergedPr $pr)) {
+        $mergedPrNumber = [int](Get-ScalarValue $node.source.number)
+        if ($mergedPrNumber -le 0) { continue }
+        $pr = Get-PullRequestState -Repo $Repo -Number $mergedPrNumber -Quiet
+        if ($pr -and (Test-IsCreditedMergedSibling -Repo $Repo -OriginalPr $OriginalPr -MergedPr $pr -Evidence $Evidence)) {
             return $pr
         }
     }
@@ -956,7 +1063,7 @@ function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild, [switc
     }
 
     try {
-        $raw = Get-Content -Raw -LiteralPath $Path | ConvertFrom-Json
+        $raw = Read-Utf8TextFile -Path $Path | ConvertFrom-Json
     } catch {
         return New-ClassificationCache
     }
@@ -1070,6 +1177,7 @@ function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild, [switc
                 mergedAt = [string]$prop.Value.mergedAt
                 title = [string]$prop.Value.title
                 author = [string]$prop.Value.author
+                body = [string]$prop.Value.body
             }
         }
     }
@@ -1210,7 +1318,7 @@ function Import-ClassificationCache([string]$Path, [switch]$ForceRebuild, [switc
 function Get-PreviousReportTotalPrs([string]$Path) {
     if (-not (Test-Path -LiteralPath $Path)) { return $null }
     try {
-        $content = Get-Content -Raw -LiteralPath $Path
+        $content = Read-Utf8TextFile -Path $Path
     } catch {
         return $null
     }
@@ -1376,6 +1484,7 @@ function Export-ClassificationCache([string]$Path) {
                 mergedAt = [string]$entry.mergedAt
                 title = [string]$entry.title
                 author = [string]$entry.author
+                body = [string]$entry.body
             }
         }
         $cacheForJson["prPullStates"] = $sortedStates
@@ -1454,7 +1563,9 @@ function Export-ClassificationCache([string]$Path) {
         $cacheForJson["commitScanMeta"] = $sorted
     }
 
-    $cacheForJson | ConvertTo-Json -Depth 8 | Out-File -LiteralPath $Path -Encoding utf8
+    $json = $cacheForJson | ConvertTo-Json -Depth 8
+    $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+    [System.IO.File]::WriteAllText($Path, $json, $utf8NoBom)
 }
 
 function Get-ClassificationCacheKey([string]$Repo, [int]$Number) {
@@ -1799,7 +1910,7 @@ function Get-ClosedPullRequestClassification([object]$PullRequest) {
     $isAuthorWithdrawn = Test-IsAuthorWithdrawnEvidence -PullRequest $PullRequest -Evidence $raw
     $acceptedSibling = Get-TimelineCreditedMergedPullRequest -Repo $PullRequest.repo -OriginalPr $PullRequest -Evidence $raw
     if (-not $acceptedSibling -and ($isDuplicate -or $isSuperseded -or $comments)) {
-        $acceptedSibling = Get-ReferencedMergedPullRequest -Repo $PullRequest.repo -OriginalPr $PullRequest -Text $comments
+        $acceptedSibling = Get-ReferencedMergedPullRequest -Repo $PullRequest.repo -OriginalPr $PullRequest -Evidence $raw -Text $comments
     }
     $creditedShip = Get-CreditedShipEvidence -PullRequest $PullRequest -Evidence $raw
 
@@ -1835,7 +1946,7 @@ function Get-ClosedPullRequestClassification([object]$PullRequest) {
         $classification = "withdrawn"
         $evidenceKind = "author-withdrawn"
         $logLabel = "withdrawn (author withdrew)"
-    } elseif ($acceptedSibling -and -not $isSuperseded) {
+    } elseif ($acceptedSibling) {
         $classification = "accepted-indirect"
         $evidenceKind = "accepted-indirect"
         $viaLabel = "#$($acceptedSibling.number)"
@@ -2303,7 +2414,7 @@ Export-ClassificationCache -Path $CacheFile
 
 if (Test-Path -LiteralPath $ReadmePath) {
     Write-Host "`nReading representative PRs from $ReadmePath..." -ForegroundColor DarkGray
-    $readmeText = Get-Content -Raw -Path $ReadmePath
+    $readmeText = Read-Utf8TextFile -Path $ReadmePath
 } else {
     Write-Host "`nFetching representative PRs from $ReadmeRepo README..." -ForegroundColor DarkGray
     $readmeB64 = Invoke-Gh api "repos/$ReadmeRepo/contents/README.md" --jq '.content' 2>$null
@@ -2864,7 +2975,8 @@ if (-not $ForceWrite) {
     }
 }
 
-$html | Out-File -FilePath $OutFile -Encoding utf8
+$utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+[System.IO.File]::WriteAllText($OutFile, $html, $utf8NoBom)
 Write-Host "`nWritten to $OutFile" -ForegroundColor Green
 Write-Host "  Total: $($reportedPRs.Count) | Shipped: $totalAccepted | Open: $($open.Count) | Lost: $($lost.Count) | Rate: ${acceptanceRate}%"
 Write-Host "  Closed classification cache hits: $script:ClassificationCacheHits | Leaderboard cache hits: $script:LeaderboardCacheHits | Cache file: $CacheFile" -ForegroundColor DarkGray

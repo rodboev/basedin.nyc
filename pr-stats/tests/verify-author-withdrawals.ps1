@@ -17,9 +17,17 @@ $supersededPatterns = @("supersede", "consolidat")
 $creditPatterns = @("co-author", "coauthor", "co-authored", "authorship", "attribution", "credited")
 $withdrawnPattern = '(?i)\bwithdraw(?:ing|n)?\b'
 $authorClosePattern = '(?i)\bclos(?:ing|ed|e)\b'
+$mergedCarryForwardPattern = '(?i)\bmerge(?:d|s|ing)?(?:\s+to\s+main)?\b'
 $MinSpeculativeReferencedPrNumber = 100
 $script:PullRequestStateCache = @{}
+$script:PullRequestCommitAuthorCache = @{}
 $script:PullRequestEvidenceCache = @{}
+$RepoLeaderboardConfig = @{
+    "stablyai/orca" = @{
+        MaintainerLogins = @("nwparker", "AmethystLiang", "Jinwoo-H", "brennanb2025", "tmchow")
+        IntegrationBots = @("buf0-bot[bot]")
+    }
+}
 function Invoke-Gh {
     param(
         [switch]$SuppressErrors,
@@ -61,7 +69,7 @@ function Test-ProbeClassification {
     $evidence = Get-PullRequestEvidence -Repo $Repo -Number $Number
     $comments = Get-NonBotCommentText -Evidence $evidence
     $isAuthorWithdrawn = Test-IsAuthorWithdrawnEvidence -PullRequest $pullRequest -Evidence $evidence
-    $acceptedSibling = Get-ReferencedMergedPullRequest -Repo $Repo -OriginalPr $pullRequest -Text $comments
+    $acceptedSibling = Get-ReferencedMergedPullRequest -Repo $Repo -OriginalPr $pullRequest -Evidence $evidence -Text $comments
     if (-not $acceptedSibling) {
         $acceptedSibling = Get-TimelineCreditedMergedPullRequest -Repo $Repo -OriginalPr $pullRequest -Evidence $evidence
     }
@@ -71,6 +79,8 @@ function Test-ProbeClassification {
         $classification = "withdrawn"
     } elseif ($acceptedSibling) {
         $classification = "accepted-indirect"
+    } elseif (-not $comments -or $comments.Trim().Length -eq 0) {
+        $classification = "withdrawn"
     }
 
     if ($classification -ne $ExpectedClassification) {
@@ -86,16 +96,27 @@ Test-ProbeClassification -Repo "nesquena/hermes-webui" -Number 4384 -ExpectedCla
 $accepted4329 = Get-ProbePullRequest -Repo "nesquena/hermes-webui" -Number 4329
 $evidence4329 = Get-PullRequestEvidence -Repo "nesquena/hermes-webui" -Number 4329
 $sibling4332 = Get-PullRequestState -Repo "nesquena/hermes-webui" -Number 4332
-if (-not (Test-IsCreditedMergedSibling -Repo "nesquena/hermes-webui" -OriginalPr $accepted4329 -MergedPr $sibling4332)) {
+if (-not (Test-IsCreditedMergedSibling -Repo "nesquena/hermes-webui" -OriginalPr $accepted4329 -MergedPr $sibling4332 -Evidence $evidence4329)) {
     throw "Expected release #4332 to still credit original #4329."
 }
 Write-Host "#4329 release credit via #4332 still holds."
 
 $accepted40410 = Get-ProbePullRequest -Repo "NousResearch/hermes-agent" -Number 40410
+$evidence40410 = Get-PullRequestEvidence -Repo "NousResearch/hermes-agent" -Number 40410
 $sibling40573 = Get-PullRequestState -Repo "NousResearch/hermes-agent" -Number 40573
-if (-not (Test-IsCreditedMergedSibling -Repo "NousResearch/hermes-agent" -OriginalPr $accepted40410 -MergedPr $sibling40573)) {
+if (-not (Test-IsCreditedMergedSibling -Repo "NousResearch/hermes-agent" -OriginalPr $accepted40410 -MergedPr $sibling40573 -Evidence $evidence40410)) {
     throw "Expected release #40573 to still credit original #40410."
 }
 Write-Host "#40410 release credit via #40573 still holds."
+
+$accepted6362 = Get-ProbePullRequest -Repo "stablyai/orca" -Number 6362
+$evidence6362 = Get-PullRequestEvidence -Repo "stablyai/orca" -Number 6362
+$sibling6574 = Get-PullRequestState -Repo "stablyai/orca" -Number 6574
+if (-not (Test-IsCreditedMergedSibling -Repo "stablyai/orca" -OriginalPr $accepted6362 -MergedPr $sibling6574 -Evidence $evidence6362)) {
+    throw "Expected maintainer-carried #6574 to still credit original #6362."
+}
+Write-Host "#6362 maintainer-carried credit via #6574 still holds."
+
+Test-ProbeClassification -Repo "stablyai/orca" -Number 6362 -ExpectedClassification "accepted-indirect"
 
 Write-Host "Author withdrawal and release credit probes passed."
