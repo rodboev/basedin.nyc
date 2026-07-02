@@ -7,6 +7,7 @@ from core.credit import (
     CreditVerificationContext,
     PullRequestCreditState,
     best_ship_comment_classification,
+    cached_release_credit_inputs,
     cached_release_credit_counts,
     confirm_upstream_release_credit_map,
     credit_count_map,
@@ -15,6 +16,7 @@ from core.credit import (
     invoke_ship_comment_classifier,
     merge_credit_maps,
 )
+from core.models import Cache
 
 
 def test_changelog_credit_map_parses_supported_formats() -> None:
@@ -214,6 +216,28 @@ def test_release_vehicle_exclusion_uses_bot_and_case_insensitive_exclusions() ->
     )
 
     assert verified == {}
+
+def test_cached_ship_comment_map_skips_excluded_logins() -> None:
+    repo = "nesquena/hermes-webui"
+    cache = Cache(
+        prPullStates={
+            f"{repo}#1": {"state": "CLOSED", "title": "Seed", "author": "nesquena"},
+            f"{repo}#2": {"state": "CLOSED", "title": "Feature", "author": "nesquena"},
+        },
+        commitCreditMap={repo: {"credits": {"nesquena": [1]}}},
+        shipCommentClassifications={
+            f"{repo}#2": {"classification": "own-ship", "commentCount": 1},
+        },
+    )
+
+    inputs = cached_release_credit_inputs(
+        cache=cache,
+        repo=repo,
+        changelog_text="",
+        excluded_logins=("nesquena",),
+    )
+
+    assert inputs.ship_comment_map == {}
 
 def test_cached_webui_release_credit_counts_match_powershell_cache() -> None:
     repo = "nesquena/hermes-webui"

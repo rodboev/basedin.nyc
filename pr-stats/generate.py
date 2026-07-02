@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 
 from core.cache import load_cache
+from core.models import Cache
 from core.credit import cached_release_credit_counts
 from core.github import run_gh
 
@@ -42,6 +43,11 @@ def verify_webui_credits_only(
     contributors_file: Path | None,
 ) -> int:
     cache = load_cache(cache_file)
+    if changelog_file is None:
+        stale_reason = _live_release_credit_cache_stale_reason(cache, WEBUI_REPO)
+        if stale_reason:
+            print(stale_reason, file=sys.stderr)
+            return 1
     changelog_text = _read_fixture_or_repo_file(changelog_file, WEBUI_REPO, "CHANGELOG.md")
     contributors_text = _read_fixture_or_repo_file(contributors_file, WEBUI_REPO, "CONTRIBUTORS.md")
     counts = cached_release_credit_counts(
@@ -69,6 +75,33 @@ def _read_fixture_or_repo_file(path: Path | None, repo: str, file_path: str) -> 
         "-H",
         "Accept: application/vnd.github.raw",
     )
+
+def _live_release_credit_cache_stale_reason(cache: Cache, repo: str) -> str:
+    current_sha = run_gh(
+        "api",
+        f"https://api.github.com/repos/{repo}/contents/CHANGELOG.md",
+        "--jq",
+        ".sha",
+    ).strip()
+    expected_sha = _cached_release_credit_changelog_sha(cache, repo)
+    if not expected_sha:
+        return f"release credit cache for {repo} has no changelog SHA; rebuild is not implemented in Python yet"
+    if current_sha != expected_sha:
+        return (
+            f"release credit cache for {repo} is stale: cached CHANGELOG SHA {expected_sha}, "
+            f"current SHA {current_sha}; rebuild is not implemented in Python yet"
+        )
+    return ""
+
+def _cached_release_credit_changelog_sha(cache: Cache, repo: str) -> str:
+    entry = cache.leaderboards.get(f"{repo}|community-shipped-v4|all")
+    if entry is None:
+        return ""
+    meta = entry.get("releaseCreditMeta")
+    if not isinstance(meta, dict):
+        return ""
+    value = meta.get("changelogSha")
+    return value if isinstance(value, str) else ""
 
 if __name__ == "__main__":
     sys.exit(main())

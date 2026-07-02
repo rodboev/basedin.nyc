@@ -259,6 +259,7 @@ def cached_release_credit_inputs(
     excluded_logins: Iterable[str] = (),
     ship_comment_top: int = 10,
 ) -> CachedReleaseCreditInputs:
+    excluded = tuple(excluded_logins)
     changelog_map = get_webui_changelog_credit_map(changelog_text)
     commit_map = _cached_repo_credit_map(cache.commitCreditMap, repo)
     merged_map = _cached_repo_credit_map(cache.mergedPrCreditMap, repo)
@@ -271,8 +272,9 @@ def cached_release_credit_inputs(
         repo=repo,
         scan_logins=scan_logins,
         already_credited_map=premerged_map,
+        excluded_logins=excluded,
     )
-    context = cached_credit_verification_context(cache=cache, repo=repo, excluded_logins=excluded_logins)
+    context = cached_credit_verification_context(cache=cache, repo=repo, excluded_logins=excluded)
     return CachedReleaseCreditInputs(
         changelog_map=changelog_map,
         commit_map=commit_map,
@@ -292,11 +294,12 @@ def cached_release_credit_counts(
     excluded_logins: Iterable[str] = (),
     ship_comment_top: int = 10,
 ) -> dict[str, int]:
+    excluded = tuple(excluded_logins)
     inputs = cached_release_credit_inputs(
         cache=cache,
         repo=repo,
         changelog_text=changelog_text,
-        excluded_logins=excluded_logins,
+        excluded_logins=excluded,
         ship_comment_top=ship_comment_top,
     )
     verified = confirm_upstream_release_credit_map(
@@ -309,7 +312,7 @@ def cached_release_credit_counts(
         context=inputs.context,
     )
     counts = credit_count_map(verified)
-    for login, count in get_contributors_md_ranked_credits(contributors_text, excluded_logins).items():
+    for login, count in get_contributors_md_ranked_credits(contributors_text, excluded).items():
         if _existing_login_key(counts, login) not in counts:
             counts[login] = count
     return counts
@@ -406,8 +409,10 @@ def _cached_ship_comment_credit_map(
     repo: str,
     scan_logins: Iterable[str],
     already_credited_map: Mapping[str, Iterable[int]],
+    excluded_logins: Iterable[str],
 ) -> CreditMap:
     scan_login_set = {login.lower() for login in scan_logins}
+    excluded_login_set = {login.lower() for login in excluded_logins}
     result = new_empty_credit_map()
     for key, entry in cache.shipCommentClassifications.items():
         number = _repo_pr_number(repo, key)
@@ -418,6 +423,8 @@ def _cached_ship_comment_credit_map(
             continue
         author_login = _cached_pr_author(cache, repo, number)
         if not author_login or author_login.lower() not in scan_login_set:
+            continue
+        if is_leaderboard_bot(author_login) or author_login.lower() in excluded_login_set:
             continue
         existing_key = _existing_login_key(already_credited_map, author_login)
         credited_numbers = already_credited_map.get(existing_key, ())
