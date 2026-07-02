@@ -14,6 +14,16 @@ REPO_CREDIT_PROFILES = {
     "kenn-io/agentsview": GITHUB_EVIDENCE_PROFILE,
     "thedotmack/claude-mem": GITHUB_EVIDENCE_PROFILE,
 }
+REPO_LEADERBOARD_CONFIG: dict[str, tuple[tuple[str, ...], tuple[str, ...]]] = {
+    "nesquena/hermes-webui": (("nesquena",), ("nesquena-hermes",)),
+    "kenn-io/agentsview": (("wesm", "mariusvniekerk", "cpcloud"), ()),
+    "thedotmack/claude-mem": (("thedotmack",), ()),
+    "headroomlabs-ai/headroom": (("chopratejas", "DevanshiVyas", "JerrettDavis"), ()),
+    "mem0ai/mem0": (("taranjeet", "deshraj", "kartik-mem0", "chaithanyak42", "prathameshagrawal", "agumpandey"), ()),
+    "stablyai/orca": (("nwparker", "AmethystLiang", "Jinwoo-H", "brennanb2025", "tmchow"), ("buf0-bot[bot]",)),
+    "NVIDIA/SkillSpector": ((), ()),
+    "NousResearch/hermes-agent": ((), ()),
+}
 
 
 @dataclass(frozen=True)
@@ -76,6 +86,15 @@ def repo_leaderboard_exclusions(
         owner=owner,
         maintainers=tuple(login for login in maintainer_logins if login),
         integration_bots=tuple(login for login in integration_bots if login),
+    )
+
+
+def configured_repo_leaderboard_exclusions(repo: str) -> LeaderboardExclusions:
+    maintainers, integration_bots = REPO_LEADERBOARD_CONFIG.get(repo, ((), ()))
+    return repo_leaderboard_exclusions(
+        owner=repo.split("/", 1)[0],
+        maintainer_logins=maintainers,
+        integration_bots=integration_bots,
     )
 
 
@@ -203,7 +222,7 @@ def cached_leaderboard_rows(
             0 if profile == CHANGELOG_RELEASE_PROFILE else stat.credited,
         )
         open_count = stat.open
-        if author_login and login.lower() == author_login.lower() and author_credited > credited:
+        if author_login and login.lower() == author_login.lower():
             credited = author_credited
             open_count = author_open
         rows.append((
