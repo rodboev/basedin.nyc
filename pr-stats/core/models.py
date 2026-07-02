@@ -37,3 +37,54 @@ class Cache(StrictBaseModel):
 
     def section_needs_rebuild(self, name: str) -> bool:
         return name in self.invalid_sections
+
+
+class UserRef(StrictBaseModel):
+    login: str = ""
+
+
+class PullRequestRef(StrictBaseModel):
+    number: int = 0
+    title: str = ""
+    url: str = ""
+    merged: bool = False
+    mergedAt: str = ""
+    state: str = ""
+    author: UserRef = Field(default_factory=UserRef)
+    body: str = ""
+
+
+class CommitRef(StrictBaseModel):
+    oid: str = ""
+    url: str = ""
+    messageHeadline: str = ""
+
+
+class Comment(StrictBaseModel):
+    body: str = ""
+    author: UserRef = Field(default_factory=UserRef)
+    authorAssociation: str = ""
+
+
+class TimelineEvent(StrictBaseModel):
+    typename: str = Field(default="", alias="__typename")
+    createdAt: str = ""
+    closer: PullRequestRef | None = None
+    source: PullRequestRef | None = None
+    commit: CommitRef | None = None
+
+
+class Evidence(StrictBaseModel):
+    comments: list[Comment] = Field(default_factory=list)
+    timeline_items: list[TimelineEvent] = Field(default_factory=list)
+    reference_text_by_pr: dict[int, str] = Field(default_factory=dict)
+    pull_states_by_pr: dict[int, PullRequestRef] = Field(default_factory=dict)
+    commit_author_logins_by_pr: dict[int, set[str]] = Field(default_factory=dict)
+    maintainer_logins: set[str] = Field(default_factory=set)
+    integration_bots: set[str] = Field(default_factory=set)
+
+
+class PullRequest(PullRequestRef):
+    repo: str = ""
+    repoShort: str = ""
+    closedAt: str = ""
