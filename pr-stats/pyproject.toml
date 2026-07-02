@@ -1,0 +1,27 @@
+[project]
+name = "pr-stats"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "jinja2",
+    "pydantic>=2.0",
+    "rich",
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy",
+    "pytest",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "live: requires authenticated gh access or network",
+]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["core"]
+
