@@ -16,12 +16,30 @@ REPO_MAINTAINERS: dict[str, tuple[str, ...]] = {
     "nesquena/hermes-webui": ("nesquena",),
     "kenn-io/agentsview": ("wesm", "mariusvniekerk", "cpcloud"),
     "thedotmack/claude-mem": ("thedotmack",),
-    "stablyai/orca": ("nwparker", "AmethystLiang", "Jinwoo-H", "brennanb2025", "tmchow"),
+    "headroomlabs-ai/headroom": ("chopratejas", "DevanshiVyas", "JerrettDavis"),
     "mem0ai/mem0": ("taranjeet", "deshraj", "kartik-mem0", "chaithanyak42", "prathameshagrawal", "agumpandey"),
+    "stablyai/orca": ("nwparker", "AmethystLiang", "Jinwoo-H", "brennanb2025", "tmchow"),
+    "cline/cline": ("abeatrix", "BarreiroT", "celestial-vault", "robinnewhouse", "Garoth", "arafatkatze", "dominiccooney", "NightTrek", "tseglevskiy", "JicLotus", "mkondratek"),
+    "continuedev/continue": ("Patrick-Erichsen", "TyDunn", "tomasz-stefaniak", "BekahHW", "sestinj"),
+    "CopilotKit/CopilotKit": ("CopilotKit", "ataibarkai", "samjulien", "maxkorp", "NathanTarbert", "johnprg", "Anmol-Baranwal"),
+    "MemPalace/mempalace": ("igorls", "jphein", "milla-jovovich"),
+    "mastra-ai/mastra": ("abhiaiyer91", "TylerBarnes", "LekoArts", "NikAiyer", "smthomas", "YujohnNattrass", "CalebBarnes", "graysonhicks", "mikhael28", "taofeeq-deru", "jsumnersmith"),
+    "github/github-mcp-server": ("toby", "alondahari", "koesie10", "owenniblock", "rubiojr", "JoannaaKL", "juruen", "mntlty", "SamMorrowDrums", "williammartin", "tommaso-moro", "MattBabbage", "gokhanarkan", "stephenotalora", "tmelliottjr", "omgitsads", "GeekTrainer", "chiedo", "jshorty", "reneexeener", "timrogers"),
+    "lsdefine/GenericAgent": ("lsdefine",),
 }
 REPO_INTEGRATION_BOTS: dict[str, tuple[str, ...]] = {
     "nesquena/hermes-webui": ("nesquena-hermes",),
+    "continuedev/continue": ("continue-agent",),
+    "mastra-ai/mastra": ("devin-ai-integration",),
     "stablyai/orca": ("buf0-bot[bot]",),
+}
+ACTIVE_REPORT_REPOS = {
+    "nesquena/hermes-webui",
+    "kenn-io/agentsview",
+    "thedotmack/claude-mem",
+    "headroomlabs-ai/headroom",
+    "mem0ai/mem0",
+    "stablyai/orca",
 }
 ACCEPTED_CLASSIFICATION_DIVERGENCES: dict[str, str] = {
     "headroomlabs-ai/headroom#102": "cached before positive-context sibling credit tightened; current #107 text says continuation without credit vocabulary",
@@ -48,6 +66,8 @@ def test_live_classification_replay_matches_cached_powershell_results(live_cache
         if selected_keys is not None and key not in selected_keys:
             continue
         repo, number = _split_cache_key(key)
+        if selected_keys is None and not _should_replay_repo(repo):
+            continue
         pr = _cached_or_live_pr(cache, repo, number)
         if pr is None:
             mismatches.append(f"{key}: could not load PR state")
@@ -307,3 +327,6 @@ def _optional_key_filter(value: str | None) -> set[str] | None:
         return None
     keys = {item.strip() for item in value.split(",") if item.strip()}
     return keys if keys else None
+
+def _should_replay_repo(repo: str) -> bool:
+    return os.environ.get("PR_STATS_CLASSIFICATION_PARITY_ALL_REPOS") == "1" or repo in ACTIVE_REPORT_REPOS
