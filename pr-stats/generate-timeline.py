@@ -5,6 +5,7 @@ Reads enriched PR_DATA from generate.ps1 so the post-pass stays aligned with the
 already-rendered Breakdown counts and classifications.
 """
 
+import argparse
 import json
 import re
 import sys
@@ -12,6 +13,8 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
+
+from core import timeline as timeline_core
 
 SCRIPT_DIR = Path(__file__).parent
 INDEX_FILE = SCRIPT_DIR / "index.html"
@@ -235,50 +238,38 @@ var TL_TODAY = '{today}';
 
 
 def main():
-    if not INDEX_FILE.exists():
-        print(f"ERROR: {INDEX_FILE} not found. Run generate.ps1 first.", file=sys.stderr)
+    parser = argparse.ArgumentParser(description="Inject pr-stats timeline chart data into generated HTML.")
+    parser.add_argument("--in-file", type=Path, default=INDEX_FILE)
+    parser.add_argument("--out-file", type=Path, default=None)
+    parser.add_argument("--repos-file", type=Path, default=GENERATE_PS1)
+    args = parser.parse_args()
+
+    in_file = args.in_file
+    out_file = args.out_file or in_file
+    if not in_file.exists():
+        print(f"ERROR: {in_file} not found. Run generate.ps1 first.", file=sys.stderr)
         sys.exit(1)
 
     try:
-        repos = load_active_repos(GENERATE_PS1)
-        pr_items = load_pr_data(INDEX_FILE)
+        repos = timeline_core.load_active_repos_from_text(args.repos_file.read_text(encoding="utf-8"))
+        html = in_file.read_text(encoding="utf-8")
+        pr_items = timeline_core.load_pr_data_from_html(html)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         sys.exit(1)
 
-    print(f"Loaded {len(pr_items)} PR_DATA items from index.html", file=sys.stderr)
+    print(f"Loaded {len(pr_items)} PR_DATA items from {in_file}", file=sys.stderr)
 
-    all_prs = []
-    for item in pr_items:
-        classification = item["classification"]
-        is_shipped = classification in SHIPPED_CLASSIFICATIONS
-
-        created_iso = item.get("createdAt") or ""
-        created_date = to_eastern_date(created_iso) if created_iso else ""
-        resolved_iso = item.get("mergedAt") or item.get("closedAt") or ""
-        resolved_date = to_eastern_date(resolved_iso) if resolved_iso else ""
-
-        all_prs.append(dict(
-            repo=item["repo"],
-            number=item["number"],
-            additions=item.get("additions", 0) or 0,
-            deletions=item.get("deletions", 0) or 0,
-            changedFiles=item.get("changedFiles", 0) or 0,
-            classification=classification,
-            isShipped=is_shipped,
-            createdDate=created_date,
-            resolvedDate=resolved_date,
-        ))
+    all_prs = timeline_core.prepare_timeline_prs(pr_items)
 
     print(f"  {len(all_prs)} PRs total", file=sys.stderr)
 
-    chart_data, repo_data, repo_names = build_daily_data(all_prs, repos)
+    chart_data, repo_data, repo_names = timeline_core.build_daily_data(all_prs, repos)
     chart_json, repo_json, names_json, avg_prs, avg_loc = build_chart_html(chart_data, repo_data, repo_names)
 
-    html = INDEX_FILE.read_text(encoding="utf-8")
     html = inject_into_index(html, chart_json, repo_json, names_json, avg_prs, avg_loc)
-    INDEX_FILE.write_text(html, encoding="utf-8")
-    print(f"Injected chart + stat cards into {INDEX_FILE}", file=sys.stderr)
+    out_file.write_text(html, encoding="utf-8")
+    print(f"Injected chart + stat cards into {out_file}", file=sys.stderr)
 
 
 if __name__ == "__main__":
