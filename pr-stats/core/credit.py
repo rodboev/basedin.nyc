@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 
 from core.classify import get_release_tag
 from core.leaderboard import is_leaderboard_bot
+from core.models import Cache
 
 CreditMap = dict[str, set[int]]
 CreditSourceName = str
@@ -20,6 +21,7 @@ OWN_SHIP_PATTERN = re.compile(
     re.IGNORECASE,
 )
 PLAIN_SHIP_PATTERN = re.compile(r"\b(?:shipped|released)\b|\bv\d+\.\d+\.\d+", re.IGNORECASE)
+CONTRIBUTORS_RANKED_PATTERN = re.compile(r"\|\s*\d+\s*\|\s*\[@([\w-]+)\]\([^)]+\)\s*\|\s*(\d+)\s*\|")
 
 SOURCE_CHANGELOG = "changelog"
 SOURCE_COMMIT = "commit"
@@ -49,6 +51,16 @@ class CreditVerificationContext:
 
     def get_pr(self, number: int) -> PullRequestCreditState | None:
         return self.pull_requests.get(number)
+
+@dataclass(frozen=True)
+class CachedReleaseCreditInputs:
+    changelog_map: CreditMap
+    commit_map: CreditMap
+    merged_map: CreditMap
+    absorbed_map: CreditMap
+    absorb_commit_map: CreditMap
+    ship_comment_map: CreditMap
+    context: CreditVerificationContext
 
 
 def new_empty_credit_map() -> CreditMap:
@@ -105,6 +117,18 @@ def get_webui_changelog_credit_map(text: str) -> CreditMap:
             add_credit_pair(credit_map, login, int(pr_match.group(1)))
 
     return credit_map
+
+def get_contributors_md_ranked_credits(text: str, excluded_logins: Iterable[str] = ()) -> dict[str, int]:
+    folded_exclusions = {login.lower() for login in excluded_logins}
+    result: dict[str, int] = {}
+    for match in CONTRIBUTORS_RANKED_PATTERN.finditer(text):
+        login = match.group(1)
+        if is_leaderboard_bot(login) or login.lower() in folded_exclusions:
+            continue
+        if _existing_login_key(result, login) in result:
+            continue
+        result[login] = int(match.group(2))
+    return result
 
 
 def github_login_from_coauthor_trailer(trailer_line: str) -> str | None:
@@ -227,6 +251,111 @@ def confirm_upstream_release_credit_map(
 
     return verified
 
+def cached_release_credit_inputs(
+    *,
+    cache: Cache,
+    repo: str,
+    changelog_text: str,
+    excluded_logins: Iterable[str] = (),
+    ship_comment_top: int = 10,
+) -> CachedReleaseCreditInputs:
+    changelog_map = get_webui_changelog_credit_map(changelog_text)
+    commit_map = _cached_repo_credit_map(cache.commitCreditMap, repo)
+    merged_map = _cached_repo_credit_map(cache.mergedPrCreditMap, repo)
+    absorbed_map = _cached_repo_credit_map(cache.absorbedCreditMap, repo)
+    absorb_commit_map = _cached_repo_credit_map(cache.absorbCommitMap, repo)
+    premerged_map = merge_credit_maps((changelog_map, commit_map, merged_map, absorbed_map, absorb_commit_map))
+    scan_logins = _top_credit_logins(premerged_map, ship_comment_top)
+    ship_comment_map = _cached_ship_comment_credit_map(
+        cache=cache,
+        repo=repo,
+        scan_logins=scan_logins,
+        already_credited_map=premerged_map,
+    )
+    context = cached_credit_verification_context(cache=cache, repo=repo, excluded_logins=excluded_logins)
+    return CachedReleaseCreditInputs(
+        changelog_map=changelog_map,
+        commit_map=commit_map,
+        merged_map=merged_map,
+        absorbed_map=absorbed_map,
+        absorb_commit_map=absorb_commit_map,
+        ship_comment_map=ship_comment_map,
+        context=context,
+    )
+
+def cached_release_credit_counts(
+    *,
+    cache: Cache,
+    repo: str,
+    changelog_text: str,
+    contributors_text: str = "",
+    excluded_logins: Iterable[str] = (),
+    ship_comment_top: int = 10,
+) -> dict[str, int]:
+    inputs = cached_release_credit_inputs(
+        cache=cache,
+        repo=repo,
+        changelog_text=changelog_text,
+        excluded_logins=excluded_logins,
+        ship_comment_top=ship_comment_top,
+    )
+    verified = confirm_upstream_release_credit_map(
+        changelog_map=inputs.changelog_map,
+        commit_map=inputs.commit_map,
+        merged_map=inputs.merged_map,
+        absorbed_map=inputs.absorbed_map,
+        absorb_commit_map=inputs.absorb_commit_map,
+        ship_comment_map=inputs.ship_comment_map,
+        context=inputs.context,
+    )
+    counts = credit_count_map(verified)
+    for login, count in get_contributors_md_ranked_credits(contributors_text, excluded_logins).items():
+        if _existing_login_key(counts, login) not in counts:
+            counts[login] = count
+    return counts
+
+def cached_credit_verification_context(
+    *,
+    cache: Cache,
+    repo: str,
+    excluded_logins: Iterable[str] = (),
+) -> CreditVerificationContext:
+    pull_requests: dict[int, PullRequestCreditState] = {}
+
+    for key, raw_state in cache.prPullStates.items():
+        number = _repo_pr_number(repo, key)
+        if number is None:
+            continue
+        entry = cache.entries.get(key)
+        author_login = _string_value(raw_state.get("author"))
+        if not author_login:
+            author_login = cache.prAuthorsByNumber.get(key, "")
+        pull_requests[number] = PullRequestCreditState(
+            author_login=author_login,
+            state=_string_value(raw_state.get("state")),
+            title=_string_value(raw_state.get("title")),
+            classification=entry.classification if entry is not None else "",
+            via_url=entry.viaUrl if entry is not None else "",
+            persisted=True,
+        )
+
+    for key, author_login in cache.prAuthorsByNumber.items():
+        number = _repo_pr_number(repo, key)
+        if number is None or number in pull_requests:
+            continue
+        entry = cache.entries.get(key)
+        pull_requests[number] = PullRequestCreditState(
+            author_login=author_login,
+            classification=entry.classification if entry is not None else "",
+            via_url=entry.viaUrl if entry is not None else "",
+            persisted=False,
+        )
+
+    return CreditVerificationContext(
+        pull_requests=pull_requests,
+        excluded_logins=frozenset(excluded_logins),
+    )
+
 
 def is_vehicle_pull_request(pr: PullRequestCreditState, context: CreditVerificationContext) -> bool:
     if not get_release_tag(pr.title):
@@ -253,3 +382,88 @@ def _existing_login_key(credit_map: Mapping[str, object], login: str) -> str:
         if existing.lower() == folded:
             return existing
     return login
+
+def _cached_repo_credit_map(section: Mapping[str, Mapping[str, object]], repo: str) -> CreditMap:
+    entry = section.get(repo)
+    if entry is None:
+        return {}
+    credits = entry.get("credits")
+    if not isinstance(credits, Mapping):
+        return {}
+    result = new_empty_credit_map()
+    for login, raw_numbers in credits.items():
+        if not isinstance(login, str) or isinstance(raw_numbers, (str, bytes)) or not isinstance(raw_numbers, Iterable):
+            continue
+        for raw_number in raw_numbers:
+            number = _int_value(raw_number)
+            if number is not None:
+                add_credit_pair(result, login, number)
+    return result
+
+def _cached_ship_comment_credit_map(
+    *,
+    cache: Cache,
+    repo: str,
+    scan_logins: Iterable[str],
+    already_credited_map: Mapping[str, Iterable[int]],
+) -> CreditMap:
+    scan_login_set = {login.lower() for login in scan_logins}
+    result = new_empty_credit_map()
+    for key, entry in cache.shipCommentClassifications.items():
+        number = _repo_pr_number(repo, key)
+        if number is None:
+            continue
+        classification = _string_value(entry.get("classification"))
+        if classification not in {"own-ship", "co-author-ship", "plain-ship"}:
+            continue
+        author_login = _cached_pr_author(cache, repo, number)
+        if not author_login or author_login.lower() not in scan_login_set:
+            continue
+        existing_key = _existing_login_key(already_credited_map, author_login)
+        credited_numbers = already_credited_map.get(existing_key, ())
+        if number in {int(raw_number) for raw_number in credited_numbers}:
+            continue
+        add_credit_pair(result, author_login, number)
+    return result
+
+def _top_credit_logins(credit_map: Mapping[str, Iterable[int]], top: int) -> list[str]:
+    if top <= 0:
+        return []
+    return [
+        login
+        for login, _numbers in sorted(
+            credit_map.items(),
+            key=lambda item: len(set(item[1])),
+            reverse=True,
+        )[:top]
+    ]
+
+def _cached_pr_author(cache: Cache, repo: str, number: int) -> str:
+    key = f"{repo}#{number}"
+    state = cache.prPullStates.get(key)
+    if state is not None:
+        author = _string_value(state.get("author"))
+        if author:
+            return author
+    return cache.prAuthorsByNumber.get(key, "")
+
+def _repo_pr_number(repo: str, key: str) -> int | None:
+    prefix = f"{repo}#"
+    if not key.startswith(prefix):
+        return None
+    return _int_value(key[len(prefix):])
+
+def _string_value(value: object) -> str:
+    return value if isinstance(value, str) else ""
+
+def _int_value(value: object) -> int | None:
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str):
+        try:
+            return int(value)
+        except ValueError:
+            return None
+    return None
