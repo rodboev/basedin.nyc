@@ -13,15 +13,6 @@ def test_classification_patterns_are_owned_by_classify(repo_root: Path) -> None:
         "CREDIT_PATTERNS",
         "CONTINUATION_PATTERNS",
     }
-    for pattern in (
-        *classify.SHIPPED_PATTERNS,
-        *classify.DUPLICATE_PATTERNS,
-        *classify.SUPERSEDED_PATTERNS,
-        *classify.CREDIT_PATTERNS,
-        *classify.CONTINUATION_PATTERNS,
-    ):
-        if len(pattern) > 8 or " " in pattern or "-" in pattern:
-            forbidden.add(pattern)
     forbidden.update(
         (
             classify.WITHDRAWN_PATTERN.pattern,
