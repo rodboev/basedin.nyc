@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-import importlib.util
-from pathlib import Path
-from types import ModuleType
+from core.timeline import CHART_MARKER, inject_timeline_chart
 
 
-def test_timeline_injection_is_idempotent(repo_root: Path) -> None:
-    module = _load_generate_timeline(repo_root)
+def test_timeline_injection_is_idempotent() -> None:
     html = """<html><head></head><body>
 <div>
 <div class="legend">Legend</div>
@@ -16,18 +13,9 @@ def test_timeline_injection_is_idempotent(repo_root: Path) -> None:
 </body></html>
 """
 
-    once = module.inject_into_index(html, "[]", "{}", "[]", "0", "0")
-    twice = module.inject_into_index(once, "[]", "{}", "[]", "0", "0")
+    once = inject_timeline_chart(html, "[]", "{}", "[]", "0", "0", today="2026-07-02")
+    twice = inject_timeline_chart(once, "[]", "{}", "[]", "0", "0", today="2026-07-02")
 
     assert twice == once
     assert "\n\n\n<!-- timeline-chart -->" not in twice
-    assert twice.count(module.CHART_MARKER) == 2
-
-
-def _load_generate_timeline(repo_root: Path) -> ModuleType:
-    spec = importlib.util.spec_from_file_location("generate_timeline", repo_root / "generate-timeline.py")
-    assert spec is not None
-    module = importlib.util.module_from_spec(spec)
-    assert spec.loader is not None
-    spec.loader.exec_module(module)
-    return module
+    assert twice.count(CHART_MARKER) == 2

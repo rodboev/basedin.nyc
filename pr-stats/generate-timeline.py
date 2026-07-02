@@ -147,96 +147,11 @@ def build_daily_data(all_prs, repos):
 
 
 def build_chart_html(chart_data, repo_data, repo_names):
-    chart_json = json.dumps(chart_data).replace("</script", r"<\/script")
-    repo_json = json.dumps(repo_data).replace("</script", r"<\/script")
-    names_json = json.dumps(repo_names).replace("</script", r"<\/script")
-    active_days = len([d for d in chart_data if d["prsOpened"] > 0])
-    total_loc = sum(d["loc"] for d in chart_data)
-    total_opened = sum(d["prsOpened"] for d in chart_data)
-    raw_avg_loc = round(total_loc / active_days) if active_days else 0
-    avg_loc = f"{raw_avg_loc / 1000:.1f}k" if raw_avg_loc >= 1000 else str(raw_avg_loc)
-    avg_prs = str(round(total_opened / active_days, 1)) if active_days else "0"
-
-    return chart_json, repo_json, names_json, avg_prs, avg_loc
+    return timeline_core.build_chart_payload(chart_data, repo_data, repo_names)
 
 
 def inject_into_index(html, chart_json, repo_json, names_json, avg_prs, avg_loc):
-    today = datetime.now(EASTERN).strftime("%Y-%m-%d")
-    # Remove prior injection if re-running
-    html = re.sub(
-        rf'\s*{re.escape(CHART_MARKER)}.*?{re.escape(CHART_MARKER)}\s*',
-        '\n',
-        html,
-        flags=re.DOTALL,
-    )
-
-    # 1. Add Chart.js CDN before </head>
-    chartjs_tags = (
-        '<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>\n'
-        '    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>\n'
-    )
-    if "chart.js@4" not in html:
-        html = html.replace("</head>", f"    {chartjs_tags}  </head>")
-
-    # 2. Add avg stat cards before the active-days card
-    avg_cards = (
-        f'  <div class="stat-card"><div class="number" id="bd-avg-prs">{avg_prs}</div>'
-        f'<div class="label">Avg PRs/day</div></div>\n'
-        f'  <div class="stat-card"><div class="number" id="bd-avg-loc">{avg_loc}</div>'
-        f'<div class="label">Avg LOC/day</div></div>\n'
-    )
-    active_days_pattern = r'(<div class="stat-card"><div class="number blue"[^>]*>\d+ days?)'
-    html = re.sub(r'\s*<div class="stat-card"><div class="number"[^>]*>[^<]*</div><div class="label">Avg PRs/day</div></div>\n?', '', html)
-    html = re.sub(r'\s*<div class="stat-card"><div class="number"[^>]*>[^<]*</div><div class="label">Avg LOC/day</div></div>\n?', '', html)
-    html = re.sub(active_days_pattern, avg_cards + r'\1', html)
-
-    # 3. Remove range pills from Breakdown (now in Progress section)
-    html = re.sub(
-        r'<div class="landscape-row"[^>]*>\s*\n<h2>Breakdown</h2>\n'
-        r'<div class="sort-pills" id="bd-range-pills">.*?</div>\s*\n</div>\s*\n</div>',
-        '<h2>Breakdown</h2>', html, flags=re.DOTALL
-    )
-
-    # 4. Insert chart section before <h2>Methodology</h2>
-    chart_section = f"""{CHART_MARKER}
-<div class="landscape-row" style="margin-top:2rem;position:static">
-  <div class="pr-filter-group pr-filter-group-left">
-    <h2>Progress</h2>
-    <div class="sort-pills" id="tl-view-pills">
-    <div class="sort-pill active" data-view="daily">Daily</div>
-    <div class="sort-pill" data-view="cumulative"><span class="cumul-full">Cumulative</span><span class="cumul-short">Cum.</span></div>
-    </div>
-  </div>
-  <div class="pr-filter-group pr-filter-group-right">
-    <div class="sort-pills" id="bd-range-pills">
-      <div class="sort-pill" data-range="7">7d</div>
-      <div class="sort-pill" data-range="14">14d</div>
-      <div class="sort-pill" data-range="30">30d</div>
-      <div class="sort-pill active" data-range="0">All</div>
-    </div>
-  </div>
-</div>
-<div id="tl-daily-wrap"><canvas id="tlDailyChart"></canvas></div>
-<div id="tl-cumulative-wrap" style="display:none"><canvas id="tlCumulativeChart"></canvas></div>
-<div class="sort-pills tl-repo-pills" id="tl-repo-pills"></div>
-
-<script>
-var TL_ALL = {chart_json};
-var TL_REPOS = {repo_json};
-var TL_NAMES = {names_json};
-var TL_TODAY = '{today}';
-</script>
-<script src="timeline.js?v={today}"></script>
-{CHART_MARKER}
-"""
-    # Insert after the breakdown legend div (before the first repo heading)
-    m = re.search(r'(</div>\s*<div class="legend">.*?</div>\s*</div>)\s*\n', html, re.DOTALL)
-    if m:
-        insert_at = m.end()
-        html = html[:insert_at].rstrip() + '\n' + chart_section.strip() + '\n' + html[insert_at:].lstrip()
-    else:
-        html = html.replace("<h2>Methodology</h2>", chart_section.strip() + "\n<h2>Methodology</h2>")
-    return html
+    return timeline_core.inject_timeline_chart(html, chart_json, repo_json, names_json, avg_prs, avg_loc)
 
 
 def main():
