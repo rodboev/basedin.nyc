@@ -75,6 +75,19 @@ def test_new_leaderboard_stat_handles_missing_last_date() -> None:
     assert stat.idle == 999
 
 
+def test_new_leaderboard_stat_parses_legacy_cache_datetime() -> None:
+    stat = new_leaderboard_stat(
+        total=3,
+        open_count=0,
+        recent_count=0,
+        last_created_at="06/25/2026 12:39:14",
+        now=datetime(2026, 6, 26, 12, 39, 14, tzinfo=timezone.utc),
+        rate_window_days=7,
+    )
+
+    assert stat.idle == 1.0
+
+
 def test_top_credited_logins_sorts_by_credited_then_open_and_keeps_author() -> None:
     now = datetime(2026, 7, 2, tzinfo=timezone.utc)
     stats = {

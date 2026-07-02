@@ -214,6 +214,23 @@ def test_author_comment_without_maintainer_interaction_is_withdrawn(
     assert is_author_withdrawn(pr, evidence)
 
 
+def test_author_withdrawal_uses_default_author_when_pr_author_missing(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr(author={"login": ""})
+    evidence = make_evidence(
+        comments=[make_comment(body="Closing this", author={"login": "rodboev"}, authorAssociation="CONTRIBUTOR")],
+        default_author_login="rodboev",
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "withdrawn"
+    assert result.evidence_kind == "author-withdrawn"
+
+
 def test_maintainer_carry_forward_requires_commit_author_match(
     make_pr: Callable[..., PullRequest],
     make_ref: Callable[..., PullRequestRef],

@@ -82,6 +82,7 @@ class Evidence(StrictBaseModel):
     commit_author_logins_by_pr: dict[int, set[str]] = Field(default_factory=dict)
     maintainer_logins: set[str] = Field(default_factory=set)
     integration_bots: set[str] = Field(default_factory=set)
+    default_author_login: str = ""
 
 
 class PullRequest(PullRequestRef):

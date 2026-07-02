@@ -58,7 +58,8 @@ def new_empty_credit_map() -> CreditMap:
 def add_credit_pair(credit_map: CreditMap, login: str, number: int) -> None:
     if not login or number <= 0:
         return
-    credit_map.setdefault(login, set()).add(number)
+    key = _existing_login_key(credit_map, login)
+    credit_map.setdefault(key, set()).add(number)
 
 
 def normalize_credit_map(raw: Mapping[str, Iterable[int]]) -> CreditMap:
@@ -196,7 +197,7 @@ def confirm_upstream_release_credit_map(
     for login, numbers in sources.items():
         for number in numbers:
             pr = context.get_pr(number)
-            if pr is None or pr.author_login != login:
+            if pr is None or pr.author_login.lower() != login.lower():
                 continue
             if is_vehicle_pull_request(pr, context):
                 continue
@@ -220,6 +221,7 @@ def confirm_upstream_release_credit_map(
                 if pr.state == "CLOSED":
                     add_credit_pair(verified, login, number)
                 continue
+            # PS1 performs a live state lookup here; persisted marks that lookup as available in no-network tests.
             if SOURCE_CHANGELOG in source_names and pr.persisted and pr.state == "MERGED":
                 add_credit_pair(verified, login, number)
 
@@ -241,5 +243,13 @@ def _source_names_for_pair(source_maps: Mapping[CreditSourceName, CreditMap], lo
     return {
         source_name
         for source_name, credit_map in source_maps.items()
-        if login in credit_map and number in credit_map[login]
+        if _existing_login_key(credit_map, login) in credit_map and number in credit_map[_existing_login_key(credit_map, login)]
     }
+
+
+def _existing_login_key(credit_map: Mapping[str, object], login: str) -> str:
+    folded = login.lower()
+    for existing in credit_map:
+        if existing.lower() == folded:
+            return existing
+    return login

@@ -159,7 +159,10 @@ def _parse_datetime(value: str) -> datetime | None:
     try:
         parsed = datetime.fromisoformat(candidate)
     except ValueError:
-        return None
+        try:
+            parsed = datetime.strptime(value, "%m/%d/%Y %H:%M:%S")
+        except ValueError:
+            return None
     if parsed.tzinfo is None:
         return parsed.replace(tzinfo=timezone.utc)
     return parsed.astimezone(timezone.utc)

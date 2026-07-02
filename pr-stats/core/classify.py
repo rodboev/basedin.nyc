@@ -207,7 +207,7 @@ def is_maintainer_comment(repo: str, comment: Comment, evidence: Evidence) -> bo
 
 
 def has_maintainer_non_bot_comment(pr: PullRequest, evidence: Evidence) -> bool:
-    author_login = pr.author.login
+    author_login = author_login_for_classification(pr, evidence)
     for comment in evidence.comments:
         if comment.author.login == "greptile-apps":
             continue
@@ -226,7 +226,7 @@ def has_maintainer_non_bot_comment(pr: PullRequest, evidence: Evidence) -> bool:
 
 
 def is_author_withdrawn(pr: PullRequest, evidence: Evidence) -> bool:
-    author_login = pr.author.login
+    author_login = author_login_for_classification(pr, evidence)
     if not author_login:
         return False
     author_commented = False
@@ -245,7 +245,7 @@ def is_author_withdrawn(pr: PullRequest, evidence: Evidence) -> bool:
 
 
 def is_superseded_evidence(pr: PullRequest, evidence: Evidence) -> bool:
-    author_login = pr.author.login
+    author_login = author_login_for_classification(pr, evidence)
     for comment in evidence.comments:
         if author_login and comment.author.login == author_login:
             continue
@@ -258,7 +258,7 @@ def is_superseded_evidence(pr: PullRequest, evidence: Evidence) -> bool:
 
 
 def has_superseded_reference(pr: PullRequest, evidence: Evidence) -> bool:
-    author_login = pr.author.login
+    author_login = author_login_for_classification(pr, evidence)
     for comment in evidence.comments:
         if author_login and comment.author.login == author_login:
             continue
@@ -269,7 +269,7 @@ def has_superseded_reference(pr: PullRequest, evidence: Evidence) -> bool:
 
 
 def get_credited_ship_evidence(pr: PullRequest, evidence: Evidence) -> CreditedShipEvidence | None:
-    author_login = pr.author.login
+    author_login = author_login_for_classification(pr, evidence)
     for comment in evidence.comments:
         if author_login and comment.author.login == author_login:
             continue
@@ -334,7 +334,7 @@ def has_maintainer_credited_reference_to_pull_request(
     evidence: Evidence,
     merged_pr_number: int,
 ) -> bool:
-    author_login = original_pr.author.login
+    author_login = author_login_for_classification(original_pr, evidence)
     for comment in evidence.comments:
         if author_login and comment.author.login == author_login:
             continue
@@ -450,3 +450,7 @@ def _parse_datetime(value: str) -> datetime | None:
         return datetime.fromisoformat(candidate)
     except ValueError:
         return None
+
+
+def author_login_for_classification(pr: PullRequest, evidence: Evidence) -> str:
+    return pr.author.login or evidence.default_author_login

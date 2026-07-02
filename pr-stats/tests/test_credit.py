@@ -42,6 +42,12 @@ def test_merge_credit_maps_dedupes_pairs() -> None:
     assert credit_count_map(merged) == {"alice": 3, "bob": 1}
 
 
+def test_merge_credit_maps_collapses_login_case_like_powershell_hashtables() -> None:
+    merged = merge_credit_maps(({"FrankSong2702": [1]}, {"franksong2702": [2]}))
+
+    assert merged == {"FrankSong2702": {1, 2}}
+
+
 def test_github_login_from_coauthor_trailer() -> None:
     assert github_login_from_coauthor_trailer("Co-authored-by: Rod <106971+rodboev@users.noreply.github.com>") == "rodboev"
     assert github_login_from_coauthor_trailer("Co-authored-by: Bot <bot@users.noreply.github.com>") == "bot"
@@ -147,6 +153,24 @@ def test_confirm_release_credit_map_preserves_source_specific_rules() -> None:
     )
 
     assert verified == {"alice": {1, 2, 3, 4, 5, 6}}
+
+
+def test_confirm_release_credit_map_ownership_is_case_insensitive() -> None:
+    context = CreditVerificationContext(
+        pull_requests={
+            1: PullRequestCreditState(author_login="franksong2702", state="MERGED"),
+        },
+    )
+
+    verified = confirm_upstream_release_credit_map(
+        changelog_map={"FrankSong2702": {1}},
+        commit_map={},
+        merged_map={},
+        absorbed_map={},
+        context=context,
+    )
+
+    assert verified == {"FrankSong2702": {1}}
 
 
 def test_confirm_release_credit_map_rejects_wrong_author_and_unmerged_changelog() -> None:
