@@ -105,6 +105,15 @@ def write_report_if_sane(
     return []
 
 
+def normalize_generated_html(html: str) -> str:
+    normalized = re.sub(r"Generated [^.]+ from GitHub API", "Generated <DATE> from GitHub API", html)
+    normalized = re.sub(r"var TL_TODAY = '[^']+';", "var TL_TODAY = '<DATE>';", normalized)
+    normalized = re.sub(r"timeline\.js\?v=[0-9-]+", "timeline.js?v=<DATE>", normalized)
+    normalized = re.sub(r">\s+<", "><", normalized)
+    normalized = re.sub(r"\s+", " ", normalized)
+    return normalized.strip()
+
+
 def render_status_tag(
     result: ClassificationResult,
     display_by_classification: Mapping[str, ClassificationDisplay],

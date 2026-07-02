@@ -8,6 +8,7 @@ import re
 from pytest import CaptureFixture, MonkeyPatch
 
 import generate
+from core.html import normalize_generated_html
 
 def test_verify_webui_credits_only_uses_python_credit_pipeline(repo_root: Path) -> None:
     result = subprocess.run(
@@ -82,3 +83,17 @@ def test_inject_timeline_only_writes_requested_output(repo_root: Path, tmp_path:
     content = out_file.read_text(encoding="utf-8")
     assert content.count("<!-- timeline-chart -->") == 2
     assert "var TL_ALL = " in content
+
+
+def test_inject_timeline_only_is_normalized_html_parity(repo_root: Path, tmp_path: Path) -> None:
+    out_file = tmp_path / "python-index.html"
+    source = (repo_root / "index.html").read_text(encoding="utf-8")
+
+    result = generate.inject_timeline_only(
+        in_file=repo_root / "index.html",
+        out_file=out_file,
+        repos_file=repo_root / "generate.ps1",
+    )
+
+    assert result == 0
+    assert normalize_generated_html(out_file.read_text(encoding="utf-8")) == normalize_generated_html(source)

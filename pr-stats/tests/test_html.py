@@ -16,6 +16,7 @@ from core.html import (
     collapse_caret,
     compact_script_json,
     generated_report_sanity_issues,
+    normalize_generated_html,
     previous_report_total_prs,
     render_bar_segments,
     render_collapse_overlay,
@@ -118,6 +119,13 @@ def test_write_report_if_sane_force_write_overrides_guard(tmp_path: Path) -> Non
 
     assert issues == []
     assert out_file.read_text(encoding="utf-8") == "new"
+
+
+def test_normalize_generated_html_masks_dates_and_whitespace() -> None:
+    left = "<p>Generated July 2, 2026 from GitHub API</p>\n<script>var TL_TODAY = '2026-07-02';</script><script src=\"timeline.js?v=2026-07-02\"></script>"
+    right = "<p>Generated July 3, 2026 from GitHub API</p> <script>var TL_TODAY = '2026-07-03';</script><script src=\"timeline.js?v=2026-07-03\"></script>"
+
+    assert normalize_generated_html(left) == normalize_generated_html(right)
 
 
 def test_status_rendering_is_data_driven_by_classification_result() -> None:
