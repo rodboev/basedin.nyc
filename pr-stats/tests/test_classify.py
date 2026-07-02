@@ -197,10 +197,64 @@ def test_reference_context_extracts_line_and_radius_context() -> None:
         ("Release ships #10 with credit", True),
         ("Release mentions #10 in favor of #20", False),
         ("Release notes #10 by @rodboev", True),
+        # Constituent-list references without a shipping verb are still positive:
+        # a release does not have to link back to the PR to prove the work shipped.
+        ("Constituent PRs: #9, #10, #11", True),
+        ("#10 superseded by #12", False),
+        ("no reference to that pull request at all", False),
     ],
 )
 def test_positive_reference_context_boundary(text: str, expected: bool) -> None:
     assert has_positive_pull_request_reference_context(text, "owner/repo", 10, "rodboev") is expected
+
+
+def test_release_tag_survives_negative_release_reference_gate(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # The release cross-ref text is negative for #10 (superseded), so it cannot
+    # prove shipping — but the release tag itself is still reported.
+    pr = make_pr()
+    release_ref = make_ref(number=30, title="release: v1.2.3 batch", url="https://github.com/owner/repo/pull/30")
+    evidence = make_evidence(
+        comments=[make_comment(body="Closing in favor of the batch implementation")],
+        timeline_items=[
+            make_event(__typename="CrossReferencedEvent", source=release_ref),
+            make_event(__typename="ClosedEvent"),
+        ],
+        reference_text_by_pr={30: "#10 superseded by #12"},
+        pull_states_by_pr={30: release_ref},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "superseded"
+    assert result.release == "v1.2.3"
+
+
+def test_direct_merge_takes_release_tag_from_ungated_release_cross_ref(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # Merged directly; the changelog release PR lists it without a shipping verb
+    # and the tag still comes through.
+    pr = make_pr(state="MERGED", mergedAt="2026-06-01T00:00:00Z")
+    release_ref = make_ref(number=30, title="chore: release v9.9.9", url="https://github.com/owner/repo/pull/30")
+    evidence = make_evidence(
+        timeline_items=[make_event(__typename="CrossReferencedEvent", source=release_ref)],
+        reference_text_by_pr={30: ""},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "shipped"
+    assert result.evidence_kind == "direct-merge"
+    assert result.release == "v9.9.9"
 
 
 def test_author_comment_without_maintainer_interaction_is_withdrawn(

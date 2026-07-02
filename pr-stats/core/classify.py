@@ -62,10 +62,11 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
         and item.source.merged
         and is_release_title(item.source.title)
     ]
-    merged_release_cross_ref = select_best_cross_reference(
+    merged_release_cross_ref_candidate = select_best_cross_reference(
         release_cross_ref_candidates,
         closed_event.createdAt if closed_event is not None else "",
     )
+    merged_release_cross_ref = merged_release_cross_ref_candidate
     if merged_release_cross_ref is not None and not is_positive_release_reference_to_pull_request(
         pr.repo,
         pr,
@@ -82,11 +83,14 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
         ),
         None,
     )
+    # The release tag is informational and comes from the ungated candidates:
+    # a release PR that lists this PR in its changelog names the release even
+    # when its reference context is not positive enough to prove shipping.
     release = ""
     for candidate in (
         comments,
-        merged_release_closer.title if merged_release_closer is not None else "",
-        merged_release_cross_ref.title if merged_release_cross_ref is not None else "",
+        closed_event.closer.title if closed_event is not None and closed_event.closer is not None and closed_event.closer.merged and is_release_title(closed_event.closer.title) else "",
+        merged_release_cross_ref_candidate.title if merged_release_cross_ref_candidate is not None else "",
         release_ref_commit.messageHeadline if release_ref_commit is not None else "",
     ):
         release = get_release_tag(candidate)
@@ -305,14 +309,15 @@ def get_pull_request_reference_contexts(text: str, repo: str, number: int, radiu
 
 
 def has_positive_pull_request_reference_context(text: str, repo: str, number: int, author_login: str) -> bool:
-    author_pattern = re.compile(rf"(?:^|[^\w])@{re.escape(author_login)}(?:[^\w]|$)", re.IGNORECASE) if author_login else None
+    # A reference is positive unless its surrounding context carries explicitly
+    # negative vocabulary (superseded, instead of, ...). Release notes routinely
+    # list constituent PRs without a shipping verb, and per the methodology a
+    # release does not have to link back to the PR to prove the work shipped.
+    del author_login
     for context in get_pull_request_reference_contexts(text, repo, number):
         if NEGATIVE_REFERENCE_PATTERN.search(context):
             continue
-        if POSITIVE_REFERENCE_PATTERN.search(context):
-            return True
-        if author_pattern is not None and author_pattern.search(context):
-            return True
+        return True
     return False
 
 
