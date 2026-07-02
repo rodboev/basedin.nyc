@@ -4,7 +4,16 @@ from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
+from core.models import Cache
+
 LEADERBOARD_CACHE_KEY_VERSION = "community-shipped-v4"
+CHANGELOG_RELEASE_PROFILE = "changelog-release"
+GITHUB_EVIDENCE_PROFILE = "github-evidence"
+REPO_CREDIT_PROFILES = {
+    "nesquena/hermes-webui": CHANGELOG_RELEASE_PROFILE,
+    "kenn-io/agentsview": GITHUB_EVIDENCE_PROFILE,
+    "thedotmack/claude-mem": GITHUB_EVIDENCE_PROFILE,
+}
 
 
 @dataclass(frozen=True)
@@ -29,6 +38,14 @@ class LeaderboardStat:
     lastCreatedAt: str
     estimated: bool = False
     shippedClassified: bool = False
+
+@dataclass(frozen=True)
+class CachedLeaderboardRow:
+    rank: int
+    login: str
+    credited: int
+    open: int
+    rate: float
 
 
 def is_leaderboard_bot(login: str) -> bool:
@@ -64,6 +81,10 @@ def repo_leaderboard_exclusions(
 
 def leaderboard_cache_key(repo: str, start_date: datetime | None) -> str:
     return f"{repo}|{LEADERBOARD_CACHE_KEY_VERSION}|{start_date_cache_key(start_date)}"
+
+
+def repo_credit_profile(repo: str) -> str:
+    return REPO_CREDIT_PROFILES.get(repo, GITHUB_EVIDENCE_PROFILE)
 
 
 def start_date_cache_key(date: datetime | None) -> str:
@@ -140,6 +161,71 @@ def merge_community_contributor_logins(
     merged = _unique((*prior_logins, *seed_logins, *recent))
     return [login for login in merged if not is_leaderboard_excluded_login(login, exclusions)]
 
+def cached_leaderboard_rows(
+    *,
+    cache: Cache,
+    repo: str,
+    exclusions: LeaderboardExclusions,
+    now: datetime,
+    rate_window_days: float,
+    start_date: datetime | None = None,
+    max_entries: int = 50,
+    author_login: str = "",
+    author_credited: int = 0,
+    author_open: int = 0,
+    credit_profile: str | None = None,
+) -> list[CachedLeaderboardRow]:
+    entry = cache.leaderboards.get(leaderboard_cache_key(repo, start_date))
+    if entry is None:
+        return []
+    raw_stats = entry.get("stats")
+    if not isinstance(raw_stats, dict):
+        return []
+    profile = credit_profile if credit_profile is not None else repo_credit_profile(repo)
+    credited_counts = _credited_counts_for_cached_board(entry, credit_profile=profile)
+    rows: list[tuple[str, LeaderboardStat]] = []
+    for login, raw in raw_stats.items():
+        if not isinstance(login, str) or is_leaderboard_excluded_login(login, exclusions):
+            continue
+        if not isinstance(raw, dict):
+            continue
+        stat = new_leaderboard_stat(
+            total=_int_value(raw.get("total")),
+            open_count=_int_value(raw.get("open")),
+            recent_count=_int_value(raw.get("recentCount")),
+            last_created_at=_string_value(raw.get("lastCreatedAt")),
+            now=now,
+            rate_window_days=rate_window_days,
+        )
+        credited_key = _existing_case_key(credited_counts, login)
+        credited = credited_counts.get(
+            credited_key,
+            0 if profile == CHANGELOG_RELEASE_PROFILE else stat.credited,
+        )
+        open_count = stat.open
+        if author_login and login.lower() == author_login.lower() and author_credited > credited:
+            credited = author_credited
+            open_count = author_open
+        rows.append((
+            login,
+            LeaderboardStat(
+                credited=credited,
+                open=open_count,
+                total=credited + open_count,
+                recentCount=stat.recentCount,
+                rate=stat.rate,
+                idle=stat.idle,
+                lastCreatedAt=stat.lastCreatedAt,
+                estimated=False,
+                shippedClassified=True,
+            ),
+        ))
+    sorted_rows = sorted(rows, key=lambda item: (item[1].credited, item[1].open), reverse=True)
+    return [
+        CachedLeaderboardRow(rank=rank, login=login, credited=stat.credited, open=stat.open, rate=stat.rate)
+        for rank, (login, stat) in enumerate(sorted_rows[:max_entries], start=1)
+    ]
+
 
 def _unique(values: Iterable[str]) -> list[str]:
     seen: set[str] = set()
@@ -151,6 +237,37 @@ def _unique(values: Iterable[str]) -> list[str]:
         result.append(value)
     return result
 
+def _credited_counts_for_cached_board(entry: Mapping[str, object], *, credit_profile: str) -> dict[str, int]:
+    keys = ("releaseCreditCounts",) if credit_profile == CHANGELOG_RELEASE_PROFILE else ("shippedCounts",)
+    for key in keys:
+        raw = entry.get(key)
+        if isinstance(raw, dict) and raw:
+            return {str(login): _int_value(value) for login, value in raw.items()}
+    return {}
+
+def _existing_case_key(values: Mapping[str, object], login: str) -> str:
+    folded = login.lower()
+    for existing in values:
+        if existing.lower() == folded:
+            return existing
+    return login
+
+def _int_value(value: object) -> int:
+    if isinstance(value, bool):
+        return 0
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float):
+        return int(value)
+    if isinstance(value, str):
+        try:
+            return int(value)
+        except ValueError:
+            return 0
+    return 0
+
+def _string_value(value: object) -> str:
+    return value if isinstance(value, str) else ""
 
 def _parse_datetime(value: str) -> datetime | None:
     if not value:

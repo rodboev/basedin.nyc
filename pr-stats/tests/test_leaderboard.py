@@ -1,8 +1,13 @@
 from __future__ import annotations
 
+import re
+import json
 from datetime import datetime, timezone
+from pathlib import Path
 
+from core.cache import load_cache
 from core.leaderboard import (
+    cached_leaderboard_rows,
     community_contributor_logins,
     is_leaderboard_bot,
     is_leaderboard_excluded_login,
@@ -123,3 +128,90 @@ def test_merge_community_contributor_logins_combines_prior_seed_recent_then_filt
     )
 
     assert result == ["old", "seed", "rodboev", "recent"]
+
+def test_cached_webui_leaderboard_rows_match_rendered_ps1_output(repo_root: Path) -> None:
+    cache_path = repo_root / ".rewrite-scratch" / "baseline-cache-snapshot.json"
+    html_path = repo_root / ".rewrite-scratch" / "baseline.html"
+    if not cache_path.exists() or not html_path.exists():
+        cache_path = repo_root / ".pr-classification-cache.json"
+        html_path = repo_root / "index.html"
+    cache = load_cache(cache_path)
+    html = html_path.read_text(encoding="utf-8")
+    author_credited, author_open = _author_repo_counts_from_html(html, "nesquena/hermes-webui")
+    exclusions = repo_leaderboard_exclusions(
+        owner="nesquena",
+        maintainer_logins=("nesquena",),
+        integration_bots=("nesquena-hermes",),
+    )
+    rows = cached_leaderboard_rows(
+        cache=cache,
+        repo="nesquena/hermes-webui",
+        exclusions=exclusions,
+        now=datetime(2026, 7, 2, tzinfo=timezone.utc),
+        rate_window_days=7,
+        author_login="rodboev",
+        author_credited=author_credited,
+        author_open=author_open,
+        max_entries=51,
+    )
+    rendered_rows = _leaderboard_rows_from_html(html, "lb-hermes-webui")
+
+    expected_rows = [(row.login, row.credited, row.open) for row in rows[: len(rendered_rows)]]
+    actual_rows = [(login, credited, open_count) for _rank, login, credited, open_count in rendered_rows]
+    truncated_next = rows[len(rendered_rows)] if len(rows) > len(rendered_rows) else None
+    truncated_tie = (
+        truncated_next is not None
+        and len(expected_rows) > 0
+        and (truncated_next.credited, truncated_next.open) == expected_rows[-1][1:]
+    )
+
+    assert [(credited, open_count) for _login, credited, open_count in expected_rows] == [
+        (credited, open_count) for _login, credited, open_count in actual_rows
+    ]
+    assert _complete_tie_groups(expected_rows, truncated_tie=truncated_tie) == _complete_tie_groups(
+        actual_rows,
+        truncated_tie=truncated_tie,
+    )
+
+def _complete_tie_groups(
+    rows: list[tuple[str, int, int]],
+    *,
+    truncated_tie: bool,
+) -> list[tuple[int, int, frozenset[str]]]:
+    groups = _tie_groups(rows)
+    return groups[:-1] if truncated_tie else groups
+
+def _tie_groups(rows: list[tuple[str, int, int]]) -> list[tuple[int, int, frozenset[str]]]:
+    groups: list[tuple[int, int, frozenset[str]]] = []
+    index = 0
+    while index < len(rows):
+        _login, credited, open_count = rows[index]
+        logins: set[str] = set()
+        while index < len(rows) and rows[index][1:] == (credited, open_count):
+            logins.add(rows[index][0])
+            index += 1
+        groups.append((credited, open_count, frozenset(logins)))
+    return groups
+
+def _author_repo_counts_from_html(html: str, repo: str) -> tuple[int, int]:
+    match = re.search(r"var PR_DATA = (\[.*?\]);", html, re.S)
+    assert match is not None
+    items = json.loads(match.group(1))
+    credited = sum(1 for item in items if item.get("repo") == repo and item.get("statusKey") == "shipped")
+    open_count = sum(1 for item in items if item.get("repo") == repo and item.get("statusKey") == "open")
+    return credited, open_count
+
+def _leaderboard_rows_from_html(html: str, table_id: str) -> list[tuple[int, str, int, int]]:
+    table_match = re.search(
+        rf'<div class="collapsible-table leaderboard[^"]*" id="{re.escape(table_id)}".*?<tbody>\s*(.*?)\s*</tbody>',
+        html,
+        re.S,
+    )
+    assert table_match is not None
+    rows: list[tuple[int, str, int, int]] = []
+    for match in re.finditer(
+        r'<tr(?: class="[^"]*")? data-rank="(\d+)"><td>#\d+</td><td><a href="https://github.com/([^"]+)">[^<]+</a></td><td>(\d+)</td><td>(\d+)</td>',
+        table_match.group(1),
+    ):
+        rows.append((int(match.group(1)), match.group(2), int(match.group(3)), int(match.group(4))))
+    return rows
