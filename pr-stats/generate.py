@@ -10,7 +10,8 @@ from core.models import Cache
 from core.credit import cached_release_credit_counts
 from core.github import run_gh
 from core.html import ReportSanityInput, write_report_if_sane
-from core.report import report_counts, report_items_from_script_dicts
+from core.page import compose_report_html_from_snapshot
+from core.report import report_activity_summary, report_counts, report_items_from_script_dicts, sort_repos_by_accepted_count
 from core.timeline import build_chart_payload, build_daily_data, inject_timeline_chart, load_active_repos_from_text, load_pr_data_from_html, prepare_timeline_prs
 
 WEBUI_REPO = "nesquena/hermes-webui"
@@ -78,12 +79,20 @@ def generate_report(
         return 1
 
     cache = load_cache(cache_file)
+    typed_items = report_items_from_script_dicts(pr_items)
+    html = compose_report_html_from_snapshot(
+        html=html,
+        items=typed_items,
+        display_repos=sort_repos_by_accepted_count(repos, pr_items, accepted_classifications=("shipped", "accepted-indirect")),
+        activity=report_activity_summary(typed_items),
+        visible_pr_items=20,
+    )
     all_prs = prepare_timeline_prs(pr_items)
     chart_data, repo_data, repo_names = build_daily_data(all_prs, repos)
     chart_json, repo_json, names_json, avg_prs, avg_loc = build_chart_payload(chart_data, repo_data, repo_names)
     output_html = inject_timeline_chart(html, chart_json, repo_json, names_json, avg_prs, avg_loc)
     counts = report_counts(
-        report_items_from_script_dicts(pr_items),
+        typed_items,
         accepted_classifications=("shipped", "accepted-indirect"),
         open_status="open",
         superseded_status="superseded",

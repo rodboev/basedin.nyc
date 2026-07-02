@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable, Mapping
 
 from core.html import (
@@ -129,5 +130,52 @@ def render_pr_bootstrap(
     )
 
 
+def compose_report_html_from_snapshot(
+    *,
+    html: str,
+    items: Iterable[PrReportItem],
+    display_repos: Iterable[str],
+    activity: ReportActivitySummary,
+    visible_pr_items: int,
+) -> str:
+    item_list = list(items)
+    counts = report_counts(
+        item_list,
+        accepted_classifications=("shipped", "accepted-indirect"),
+        open_status="open",
+        superseded_status="superseded",
+        lost_status="lost",
+    )
+    html = _replace_required(
+        html,
+        r"<h2>Breakdown</h2>.*?<!-- timeline-chart -->",
+        render_breakdown_section(counts, activity) + "\n\n\n\n\n\n<!-- timeline-chart -->",
+        flags=re.DOTALL,
+        label="breakdown section",
+    )
+    html = _replace_required(
+        html,
+        r'<div class="landscape-row" id="pr-landscape-row">.*?(?=\n<h2>Methodology</h2>)',
+        render_pr_controls_and_table(items=item_list, display_repos=display_repos, visible_items=visible_pr_items) + "\n\n",
+        flags=re.DOTALL,
+        label="PR controls section",
+    )
+    html = _replace_required(
+        html,
+        r"var PR_FILTERS = .*?var CURRENT_PR_FILTER = \{\s*statusKey: '[^']+',\s*repoKey: '[^']+'\s*\};",
+        render_pr_bootstrap(items=item_list),
+        flags=re.DOTALL,
+        label="PR bootstrap script",
+    )
+    return html
+
+
 def _int_entry_value(value: object) -> int:
     return value if isinstance(value, int) and not isinstance(value, bool) else int(str(value))
+
+
+def _replace_required(text: str, pattern: str, replacement: str, *, flags: int = 0, label: str) -> str:
+    updated, count = re.subn(pattern, replacement, text, count=1, flags=flags)
+    if count != 1:
+        raise ValueError(f"could not replace {label}")
+    return updated
