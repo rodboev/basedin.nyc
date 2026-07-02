@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 from core.cache import load_cache
+from core.classification_rebuild import rebuild_classification_cache
 from core.models import Cache
 from core.credit import cached_release_credit_counts
 from core.github import run_gh
@@ -34,6 +35,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out-file", type=Path, default=None)
     parser.add_argument("--repos-file", type=Path, default=Path("generate.ps1"))
     parser.add_argument("--inject-timeline-only", action="store_true")
+    parser.add_argument("--classify-cache", action="store_true")
+    parser.add_argument("--out-cache-file", type=Path, default=None)
+    parser.add_argument("--divergence-file", type=Path, default=Path(".rewrite-scratch/classification-divergences.json"))
+    parser.add_argument("--active-repos-only", action="store_true")
+    parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--verify-webui-cached-credits-only", action="store_true")
     parser.add_argument("--verify-webui-credits-only", action="store_true", help="alias for --verify-webui-cached-credits-only during the rewrite")
     parser.add_argument("--changelog-file", type=Path, default=None)
@@ -53,6 +59,18 @@ def main(argv: list[str] | None = None) -> int:
             out_file=args.out_file or args.in_file,
             repos_file=args.repos_file,
         )
+    if args.classify_cache:
+        if args.out_cache_file is None:
+            print("ERROR: --classify-cache requires --out-cache-file", file=sys.stderr)
+            return 2
+        return classify_cache(
+            cache_file=args.cache_file,
+            out_cache_file=args.out_cache_file,
+            divergence_file=args.divergence_file,
+            repos_file=args.repos_file,
+            active_repos_only=args.active_repos_only,
+            limit=args.limit,
+        )
 
     return generate_report(
         cache_file=args.cache_file,
@@ -61,6 +79,36 @@ def main(argv: list[str] | None = None) -> int:
         repos_file=args.repos_file,
         force_write=args.force_write,
     )
+
+def classify_cache(
+    *,
+    cache_file: Path,
+    out_cache_file: Path,
+    divergence_file: Path,
+    repos_file: Path,
+    active_repos_only: bool,
+    limit: int | None,
+) -> int:
+    try:
+        result = rebuild_classification_cache(
+            cache_file=cache_file,
+            out_cache_file=out_cache_file,
+            divergence_file=divergence_file,
+            repos_file=repos_file,
+            active_repos_only=active_repos_only,
+            limit=limit,
+        )
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    print(
+        f"Classified {result.checked} PRs, skipped {result.skipped}, "
+        f"failed {result.failed}, divergences {result.divergences}",
+        file=sys.stderr,
+    )
+    print(f"Wrote cache: {out_cache_file}", file=sys.stderr)
+    print(f"Wrote divergences: {divergence_file}", file=sys.stderr)
+    return 0 if result.failed == 0 else 1
 
 def generate_report(
     *,

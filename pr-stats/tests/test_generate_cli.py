@@ -8,6 +8,7 @@ import re
 from pytest import CaptureFixture, MonkeyPatch
 
 import generate
+from core.classification_rebuild import CacheRebuildResult
 from core.html import normalize_generated_html
 
 def test_verify_webui_credits_only_uses_python_credit_pipeline(repo_root: Path) -> None:
@@ -143,3 +144,52 @@ def test_default_generate_sanity_gate_keeps_existing_output(repo_root: Path, tmp
 
     assert result == 1
     assert out_file.read_text(encoding="utf-8") == '<div class="number">30</div><div class="label">Total PRs</div>'
+
+def test_classify_cache_requires_output_cache(capsys: CaptureFixture[str]) -> None:
+    result = generate.main(["--classify-cache"])
+
+    captured = capsys.readouterr()
+    assert result == 2
+    assert "--classify-cache requires --out-cache-file" in captured.err
+
+def test_classify_cache_cli_routes_to_rebuild_worker(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    calls: list[dict[str, object]] = []
+
+    def fake_rebuild(**kwargs: object) -> CacheRebuildResult:
+        calls.append(kwargs)
+        return CacheRebuildResult(checked=3, skipped=2, failed=0, divergences=1)
+
+    monkeypatch.setattr(generate, "rebuild_classification_cache", fake_rebuild)
+    cache_file = tmp_path / "input.json"
+    out_cache = tmp_path / "out.json"
+    divergences = tmp_path / "divergences.json"
+    repos_file = tmp_path / "generate.ps1"
+
+    result = generate.main(
+        [
+            "--classify-cache",
+            "--cache-file",
+            str(cache_file),
+            "--out-cache-file",
+            str(out_cache),
+            "--divergence-file",
+            str(divergences),
+            "--repos-file",
+            str(repos_file),
+            "--active-repos-only",
+            "--limit",
+            "3",
+        ],
+    )
+
+    assert result == 0
+    assert calls == [
+        {
+            "cache_file": cache_file,
+            "out_cache_file": out_cache,
+            "divergence_file": divergences,
+            "repos_file": repos_file,
+            "active_repos_only": True,
+            "limit": 3,
+        },
+    ]
