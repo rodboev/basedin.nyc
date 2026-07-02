@@ -408,8 +408,8 @@ def get_timeline_credited_merged_pull_request(repo: str, original_pr: PullReques
         source = item.source
         if not source.merged and not source.mergedAt:
             continue
-        merged_pr = evidence.pull_states_by_pr.get(source.number, source)
-        if is_credited_merged_sibling(repo, original_pr, merged_pr, evidence):
+        merged_pr = evidence.pull_states_by_pr.get(source.number)
+        if merged_pr is not None and is_credited_merged_sibling(repo, original_pr, merged_pr, evidence):
             return merged_pr
     return None
 

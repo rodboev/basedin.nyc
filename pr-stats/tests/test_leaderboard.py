@@ -17,7 +17,9 @@ from core.leaderboard import (
 def test_leaderboard_bot_detection() -> None:
     assert is_leaderboard_bot("")
     assert is_leaderboard_bot("app/copilot")
+    assert is_leaderboard_bot("APP/copilot")
     assert is_leaderboard_bot("dependabot[bot]")
+    assert is_leaderboard_bot("Dependabot[bot]")
     assert not is_leaderboard_bot("rodboev")
 
 
@@ -30,6 +32,7 @@ def test_repo_exclusions_include_owner_maintainers_and_bots() -> None:
 
     assert exclusions.all == ("owner", "maintainer", "bot")
     assert is_leaderboard_excluded_login("owner", exclusions)
+    assert is_leaderboard_excluded_login("OWNER", exclusions)
     assert is_leaderboard_excluded_login("maintainer", exclusions)
     assert is_leaderboard_excluded_login("bot", exclusions)
     assert not is_leaderboard_excluded_login("contributor", exclusions)

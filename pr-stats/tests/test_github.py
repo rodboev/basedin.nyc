@@ -13,6 +13,7 @@ from core.github import (
     TIMEOUT_REASON,
     GhResult,
     _run_gh_with_runner,
+    _gh_environment,
     get_gh_retry_delay_seconds,
     get_gh_retry_reason,
     parse_graphql_search_page_json,
@@ -120,3 +121,12 @@ def test_run_gh_non_retryable_failure_returns_stdout_without_sleep() -> None:
 
     assert result == "partial"
     assert sleeps == []
+
+
+def test_gh_environment_disables_interactive_prompts() -> None:
+    env = _gh_environment()
+
+    assert env["GIT_TERMINAL_PROMPT"] == "0"
+    assert env["GH_PROMPT_DISABLED"] == "1"
+    assert env["GH_NO_UPDATE_NOTIFIER"] == "1"
+    assert env["GCM_INTERACTIVE"] == "never"

@@ -5,6 +5,7 @@ from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, field
 
 from core.classify import get_release_tag
+from core.leaderboard import is_leaderboard_bot
 
 CreditMap = dict[str, set[int]]
 CreditSourceName = str
@@ -228,7 +229,10 @@ def confirm_upstream_release_credit_map(
 def is_vehicle_pull_request(pr: PullRequestCreditState, context: CreditVerificationContext) -> bool:
     if not get_release_tag(pr.title):
         return False
-    if pr.author_login in context.excluded_logins:
+    folded = pr.author_login.lower()
+    if is_leaderboard_bot(pr.author_login):
+        return True
+    if any(login.lower() == folded for login in context.excluded_logins):
         return True
     return context.release_vehicle_author_pattern.search(pr.author_login) is not None
 
@@ -239,4 +243,3 @@ def _source_names_for_pair(source_maps: Mapping[CreditSourceName, CreditMap], lo
         for source_name, credit_map in source_maps.items()
         if login in credit_map and number in credit_map[login]
     }
-

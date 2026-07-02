@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 import time
@@ -162,13 +163,22 @@ def _subprocess_runner(args: Sequence[str], timeout: int) -> GhResult:
             capture_output=True,
             text=True,
             timeout=timeout,
-            env=None,
+            env=_gh_environment(),
         )
     except subprocess.TimeoutExpired as exc:
         stdout = exc.stdout if isinstance(exc.stdout, str) else ""
         stderr = exc.stderr if isinstance(exc.stderr, str) else ""
         return GhResult(stdout=stdout, stderr=stderr, returncode=124, timed_out=True)
     return GhResult(stdout=completed.stdout, stderr=completed.stderr, returncode=completed.returncode)
+
+
+def _gh_environment() -> dict[str, str]:
+    env = os.environ.copy()
+    env["GIT_TERMINAL_PROMPT"] = "0"
+    env["GH_PROMPT_DISABLED"] = "1"
+    env["GH_NO_UPDATE_NOTIFIER"] = "1"
+    env["GCM_INTERACTIVE"] = "never"
+    return env
 
 
 def _contains_http_5xx(message: str) -> bool:
@@ -183,4 +193,3 @@ def _contains_connection_failure(message: str) -> bool:
     if "connection" not in message:
         return False
     return any(word in message for word in ("reset", "closed", "refused", "aborted"))
-

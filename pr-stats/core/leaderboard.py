@@ -34,9 +34,10 @@ class LeaderboardStat:
 def is_leaderboard_bot(login: str) -> bool:
     if not login:
         return True
-    if login.startswith("app/"):
+    folded = login.lower()
+    if folded.startswith("app/"):
         return True
-    return login == "dependabot[bot]"
+    return folded == "dependabot[bot]"
 
 
 def is_leaderboard_excluded_login(login: str, exclusions: LeaderboardExclusions) -> bool:
@@ -44,7 +45,8 @@ def is_leaderboard_excluded_login(login: str, exclusions: LeaderboardExclusions)
         return True
     if is_leaderboard_bot(login):
         return True
-    return login in exclusions.all
+    folded = login.lower()
+    return any(candidate.lower() == folded for candidate in exclusions.all)
 
 
 def repo_leaderboard_exclusions(
@@ -161,4 +163,3 @@ def _parse_datetime(value: str) -> datetime | None:
     if parsed.tzinfo is None:
         return parsed.replace(tzinfo=timezone.utc)
     return parsed.astimezone(timezone.utc)
-

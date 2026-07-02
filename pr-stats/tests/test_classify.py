@@ -98,6 +98,25 @@ def test_accepted_sibling_branch(
     assert result.via_label == "#22"
 
 
+def test_timeline_accepted_sibling_requires_resolved_state(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr()
+    sibling = make_ref(number=22, url="https://github.com/owner/repo/pull/22")
+    evidence = make_evidence(
+        timeline_items=[make_event(__typename="CrossReferencedEvent", source=sibling)],
+        reference_text_by_pr={22: "Merged #22 carries forward #10 by @rodboev"},
+        pull_states_by_pr={},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "withdrawn"
+
+
 def test_credited_ship_branch(make_pr: Callable[..., PullRequest], make_comment: Callable[..., Comment], make_evidence: Callable[..., Evidence]) -> None:
     pr = make_pr()
     evidence = make_evidence(comments=[make_comment(body="Shipped in v1.2.3 via #25 with co-author credit")])

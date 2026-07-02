@@ -166,3 +166,23 @@ def test_confirm_release_credit_map_rejects_wrong_author_and_unmerged_changelog(
     )
 
     assert verified == {}
+
+
+def test_release_vehicle_exclusion_uses_bot_and_case_insensitive_exclusions() -> None:
+    context = CreditVerificationContext(
+        pull_requests={
+            1: PullRequestCreditState(author_login="Dependabot[bot]", state="MERGED", title="Release v1.2.3"),
+            2: PullRequestCreditState(author_login="Maintainer", state="MERGED", title="Release v1.2.4"),
+        },
+        excluded_logins=frozenset({"maintainer"}),
+    )
+
+    verified = confirm_upstream_release_credit_map(
+        changelog_map={"Dependabot[bot]": {1}, "Maintainer": {2}},
+        commit_map={},
+        merged_map={},
+        absorbed_map={},
+        context=context,
+    )
+
+    assert verified == {}
