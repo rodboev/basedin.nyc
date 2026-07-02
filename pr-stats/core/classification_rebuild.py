@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import json
 import re
-import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+
+from rich.console import Console
 
 from core.cache import classification_cache_key, load_cache, save_cache, set_cached_closed_classification
 from core.classify import ClassificationResult, classify_closed_pr, get_non_bot_comment_text, should_resolve_referenced_pull_request
@@ -13,6 +14,8 @@ from core.github import run_gh
 from core.leaderboard import REPO_LEADERBOARD_CONFIG
 from core.models import Cache, ClassificationEntry, Comment, Evidence, PullRequest, PullRequestRef, TimelineEvent, UserRef
 from core.timeline import load_active_repos_from_text
+
+CONSOLE = Console(stderr=True, highlight=False)
 
 
 @dataclass(frozen=True)
@@ -28,6 +31,12 @@ class CacheDivergence:
     key: str
     expected: ClassificationEntry
     actual: ClassificationResult
+
+
+class CacheRebuildInterrupted(Exception):
+    def __init__(self, result: CacheRebuildResult) -> None:
+        super().__init__("classification cache rebuild interrupted")
+        self.result = result
 
 
 def rebuild_classification_cache(
@@ -56,74 +65,63 @@ def rebuild_classification_cache(
         for key, expected in sorted(source_cache.entries.items())
         if not active_repos_only or split_classification_cache_key(key)[0] in active_repos
     ]
-    print(
-        f"Classifying {len(candidates)} cached PRs "
-        f"({'active repos only' if active_repos_only else 'all cached repos'})...",
-        file=sys.stderr,
-        flush=True,
-    )
-    print(f"Writing cache to {out_cache_file}", file=sys.stderr, flush=True)
-    print(f"Writing divergences to {divergence_file}", file=sys.stderr, flush=True)
-
-    for index, (key, expected) in enumerate(candidates, start=1):
-        repo, number = split_classification_cache_key(key)
-        if _entry_was_generated(output_cache, key, expected):
-            skipped += 1
-            print(f"  [{index}/{len(candidates)}] {key} -> cached", file=sys.stderr, flush=True)
-            continue
-        print(f"  [{index}/{len(candidates)}] {key} -> fetching evidence...", file=sys.stderr, flush=True)
-        pr = cached_or_live_pull_request(source_cache, repo, number)
-        if pr is None:
-            failed += 1
-            print(f"  [{index}/{len(candidates)}] {key} -> failed (could not load PR state)", file=sys.stderr, flush=True)
-            continue
-        evidence = live_evidence(repo, number, pr)
-        actual = classify_closed_pr(pr, evidence)
-        set_cached_closed_classification(
-            output_cache,
-            repo=repo,
-            number=number,
-            classification=actual.classification,
-            release=actual.release,
-            via_label=actual.via_label,
-            via_url=actual.via_url,
-            evidence_kind=actual.evidence_kind,
-            now=now,
+    _progress(f"Classifying {len(candidates)} closed PRs...", "dim")
+    try:
+        for key, expected in candidates:
+            repo, number = split_classification_cache_key(key)
+            if _entry_was_generated(output_cache, key, expected):
+                skipped += 1
+                _write_pr_prefix(repo, number)
+                CONSOLE.print(f" {expected.classification} (cache)", style=_classification_style(expected.classification))
+                continue
+            pr = cached_or_live_pull_request(source_cache, repo, number)
+            if pr is None:
+                failed += 1
+                _write_pr_prefix(repo, number)
+                CONSOLE.print(" failed (could not load PR state)", style="red")
+                continue
+            evidence = live_evidence(repo, number, pr)
+            actual = classify_closed_pr(pr, evidence)
+            set_cached_closed_classification(
+                output_cache,
+                repo=repo,
+                number=number,
+                classification=actual.classification,
+                release=actual.release,
+                via_label=actual.via_label,
+                via_url=actual.via_url,
+                evidence_kind=actual.evidence_kind,
+                now=now,
+            )
+            if not classification_entry_matches_result(expected, actual):
+                divergences.append(CacheDivergence(key=key, expected=expected, actual=actual))
+                _write_pr_prefix(repo, number)
+                CONSOLE.print(
+                    f" {actual.log_label} (DIVERGED from {expected.classification}/{expected.evidenceKind})",
+                    style="red",
+                )
+            else:
+                _write_pr_prefix(repo, number)
+                CONSOLE.print(
+                    f" {actual.log_label}",
+                    style=_classification_style(actual.classification),
+                )
+            checked += 1
+            if save_every > 0 and checked % save_every == 0:
+                _save_rebuild_progress(output_cache, out_cache_file, divergences, divergence_file)
+            if limit is not None and checked >= limit:
+                break
+    except KeyboardInterrupt:
+        _save_rebuild_progress(output_cache, out_cache_file, divergences, divergence_file)
+        _progress(
+            f"Interrupted after classifying {checked} PRs, skipped {skipped}, failed {failed}, divergences {len(divergences)}. Checkpoint saved.",
+            "yellow",
         )
-        if not classification_entry_matches_result(expected, actual):
-            divergences.append(CacheDivergence(key=key, expected=expected, actual=actual))
-            print(
-                f"  [{index}/{len(candidates)}] {key} -> {actual.classification}/{actual.evidence_kind} "
-                f"(DIVERGED from {expected.classification}/{expected.evidenceKind})",
-                file=sys.stderr,
-                flush=True,
-            )
-        else:
-            print(
-                f"  [{index}/{len(candidates)}] {key} -> {actual.classification}/{actual.evidence_kind}"
-                f"{_via_suffix(actual)}",
-                file=sys.stderr,
-                flush=True,
-            )
-        checked += 1
-        if save_every > 0 and checked % save_every == 0:
-            save_cache(output_cache, out_cache_file)
-            write_divergence_report(divergences, divergence_file)
-            print(
-                f"  checkpoint: classified {checked}, skipped {skipped}, failed {failed}, divergences {len(divergences)}",
-                file=sys.stderr,
-                flush=True,
-            )
-        if limit is not None and checked >= limit:
-            break
+        raise CacheRebuildInterrupted(
+            CacheRebuildResult(checked=checked, skipped=skipped, failed=failed, divergences=len(divergences))
+        ) from None
 
-    save_cache(output_cache, out_cache_file)
-    write_divergence_report(divergences, divergence_file)
-    print(
-        f"Done. Classified {checked}, skipped {skipped}, failed {failed}, divergences {len(divergences)}.",
-        file=sys.stderr,
-        flush=True,
-    )
+    _save_rebuild_progress(output_cache, out_cache_file, divergences, divergence_file)
     return CacheRebuildResult(checked=checked, skipped=skipped, failed=failed, divergences=len(divergences))
 
 
@@ -387,7 +385,33 @@ def _int_value(value: object, *, default: int = 0) -> int:
     return default
 
 
-def _via_suffix(result: ClassificationResult) -> str:
-    if result.via_label:
-        return f" via {result.via_label}"
-    return ""
+def _progress(message: str, style: str) -> None:
+    CONSOLE.print(message, style=style)
+
+
+def _write_pr_prefix(repo: str, number: int) -> None:
+    CONSOLE.print(f"  #{number} ({repo.rsplit('/', 1)[-1]})...", style="dim", end="")
+
+
+def _save_rebuild_progress(
+    output_cache: Cache,
+    out_cache_file: Path,
+    divergences: list[CacheDivergence],
+    divergence_file: Path,
+) -> None:
+    save_cache(output_cache, out_cache_file)
+    write_divergence_report(divergences, divergence_file)
+
+
+def _classification_style(classification: str) -> str:
+    if classification == "shipped":
+        return "green"
+    if classification == "accepted-indirect":
+        return "cyan"
+    if classification == "superseded":
+        return "yellow"
+    if classification == "lost":
+        return "red"
+    if classification == "withdrawn":
+        return "dim"
+    return "white"

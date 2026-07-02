@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 from core.cache import load_cache
-from core.classification_rebuild import rebuild_classification_cache
+from core.classification_rebuild import CacheRebuildInterrupted, rebuild_classification_cache
 from core.models import Cache
 from core.credit import cached_release_credit_counts
 from core.github import run_gh
@@ -98,16 +98,17 @@ def classify_cache(
             active_repos_only=active_repos_only,
             limit=limit,
         )
+    except CacheRebuildInterrupted as exc:
+        print(
+            f"Interrupted after classifying {exc.result.checked} PRs, skipped {exc.result.skipped}, "
+            f"failed {exc.result.failed}, divergences {exc.result.divergences}. "
+            f"Checkpoint saved to {out_cache_file}",
+            file=sys.stderr,
+        )
+        return 130
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
-    print(
-        f"Classified {result.checked} PRs, skipped {result.skipped}, "
-        f"failed {result.failed}, divergences {result.divergences}",
-        file=sys.stderr,
-    )
-    print(f"Wrote cache: {out_cache_file}", file=sys.stderr)
-    print(f"Wrote divergences: {divergence_file}", file=sys.stderr)
     return 0 if result.failed == 0 else 1
 
 def generate_report(

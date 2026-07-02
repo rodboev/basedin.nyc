@@ -8,7 +8,7 @@ import re
 from pytest import CaptureFixture, MonkeyPatch
 
 import generate
-from core.classification_rebuild import CacheRebuildResult
+from core.classification_rebuild import CacheRebuildInterrupted, CacheRebuildResult
 from core.html import normalize_generated_html
 
 def test_verify_webui_credits_only_uses_python_credit_pipeline(repo_root: Path) -> None:
@@ -193,3 +193,36 @@ def test_classify_cache_cli_routes_to_rebuild_worker(monkeypatch: MonkeyPatch, t
             "limit": 3,
         },
     ]
+
+
+def test_classify_cache_cli_handles_interrupt_without_traceback(
+    monkeypatch: MonkeyPatch,
+    tmp_path: Path,
+    capsys: CaptureFixture[str],
+) -> None:
+    def fake_rebuild(**_kwargs: object) -> CacheRebuildResult:
+        raise CacheRebuildInterrupted(CacheRebuildResult(checked=12, skipped=2, failed=0, divergences=3))
+
+    monkeypatch.setattr(generate, "rebuild_classification_cache", fake_rebuild)
+    cache_file = tmp_path / "input.json"
+    out_cache = tmp_path / "out.json"
+    divergences = tmp_path / "divergences.json"
+    repos_file = tmp_path / "generate.ps1"
+
+    result = generate.main(
+        [
+            "--classify-cache",
+            "--cache-file",
+            str(cache_file),
+            "--out-cache-file",
+            str(out_cache),
+            "--divergence-file",
+            str(divergences),
+            "--repos-file",
+            str(repos_file),
+        ],
+    )
+
+    captured = capsys.readouterr()
+    assert result == 130
+    assert "Interrupted after classifying 12 PRs, skipped 2, failed 0, divergences 3. Checkpoint saved to" in captured.err
