@@ -65,6 +65,22 @@ class ReportCounts:
     acceptance_rate: int | None
 
 
+@dataclass(frozen=True)
+class ReportActivitySummary:
+    time_span: str
+    time_range: str
+
+
+@dataclass(frozen=True)
+class ReportBarItem:
+    key: str
+    label: str
+    count: int
+    width: float
+    title: str
+    content: str
+
+
 def repo_label(repo: str) -> str:
     short = repo.rsplit("/", 1)[-1]
     if short == "hermes-webui":
@@ -207,6 +223,12 @@ def status_filter_dicts(
     ]
 
 
+def repo_filter_dicts(repos: Iterable[str]) -> list[dict[str, str]]:
+    filters = [{"key": "all", "label": "All"}]
+    filters.extend({"key": repo_label(repo), "label": repo_label(repo)} for repo in repos)
+    return filters
+
+
 def report_counts(
     items: Iterable[PrReportItem],
     *,
@@ -235,6 +257,57 @@ def report_counts(
     )
 
 
+def report_activity_summary(items: Iterable[PrReportItem]) -> ReportActivitySummary:
+    dates = sorted(
+        parsed
+        for parsed in (
+            _parse_datetime(
+                pull_request_effective_iso_date(
+                    status_key=item.classification or "open",
+                    created_at=item.createdAt,
+                    closed_at=item.closedAt,
+                ),
+            )
+            for item in items
+        )
+        if parsed is not None
+    )
+    if len(dates) < 2:
+        return ReportActivitySummary(time_span="N/A", time_range="")
+
+    active_days = len({date.date() for date in dates})
+    time_span = "1 day" if active_days == 1 else f"{active_days} days"
+    display_end = dates[0].date().toordinal() + (dates[-1] - dates[0]).days
+    end_date = datetime.fromordinal(display_end)
+    time_range = f"Active days from {_format_month_day(dates[0])} - {_format_month_day(end_date)}"
+    return ReportActivitySummary(time_span=time_span, time_range=time_range)
+
+
+def report_bar_items(counts: ReportCounts) -> list[ReportBarItem]:
+    specs = (
+        ("shipped", "Shipped", counts.accepted, "wide", "wide"),
+        ("superseded", "Superseded", counts.superseded, "never", "wide"),
+        ("lost", "Lost", counts.lost, "never", "wide"),
+        ("open", "Open", counts.open, "always", "always"),
+    )
+    items: list[ReportBarItem] = []
+    for key, label, count, title_mode, content_mode in specs:
+        pct = round((count / counts.total) * 100, 1) if counts.total > 0 else 0.0
+        wide = pct > 4
+        title = str(count) if title_mode == "always" or (title_mode == "wide" and wide) else ""
+        content = str(count) if content_mode == "always" or wide else ""
+        items.append(ReportBarItem(key=key, label=label, count=count, width=pct, title=title, content=content))
+    return items
+
+
+def default_status_filter_dicts(counts: ReportCounts) -> list[dict[str, object]]:
+    return [
+        {"key": "open", "label": "Open", "count": counts.open},
+        {"key": "shipped", "label": "Shipped", "count": counts.accepted},
+        {"key": "not-shipped", "label": "Not Shipped", "count": counts.not_shipped},
+    ]
+
+
 def _parse_datetime(value: str) -> datetime | None:
     if not value:
         return None
@@ -246,6 +319,10 @@ def _parse_datetime(value: str) -> datetime | None:
     if parsed.tzinfo is None:
         return parsed.replace(tzinfo=timezone.utc)
     return parsed.astimezone(timezone.utc)
+
+
+def _format_month_day(value: datetime) -> str:
+    return f"{value.strftime('%b')} {value.day}"
 
 
 def _report_item_sort_datetime(item: PrReportItem) -> datetime:

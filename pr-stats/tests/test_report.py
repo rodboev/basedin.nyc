@@ -1,15 +1,21 @@
 from __future__ import annotations
 
+import json
+import re
 from pathlib import Path
 
 from core.report import (
     PrReportItem,
+    default_status_filter_dicts,
     format_eastern_date,
     pr_filter_count,
     pr_repo_matches,
     pr_status_matches,
     pull_request_effective_iso_date,
+    repo_filter_dicts,
     repo_label,
+    report_activity_summary,
+    report_bar_items,
     report_counts,
     report_items_from_script_dicts,
     report_items_to_script_dicts,
@@ -131,6 +137,14 @@ def test_status_filter_dicts_matches_existing_script_shape() -> None:
     ]
 
 
+def test_repo_filter_dicts_match_existing_script_shape() -> None:
+    assert repo_filter_dicts(["nesquena/hermes-webui", "github/github-mcp-server"]) == [
+        {"key": "all", "label": "All"},
+        {"key": "webui", "label": "webui"},
+        {"key": "gh-mcp", "label": "gh-mcp"},
+    ]
+
+
 def test_report_counts_matches_ps1_summary_math() -> None:
     counts = report_counts(
         [
@@ -172,6 +186,88 @@ def test_report_counts_match_current_generated_pr_data(repo_root: Path) -> None:
     assert counts.not_shipped == counts.superseded + counts.lost
 
 
+def test_default_status_filters_match_ps1_order() -> None:
+    counts = report_counts(
+        [
+            _item(number=1, classification="shipped"),
+            _item(number=2, classification="open"),
+            _item(number=3, classification="lost"),
+            _item(number=4, classification="superseded"),
+        ],
+        accepted_classifications=("shipped", "accepted-indirect"),
+        open_status="open",
+        superseded_status="superseded",
+        lost_status="lost",
+    )
+
+    assert default_status_filter_dicts(counts) == [
+        {"key": "open", "label": "Open", "count": 1},
+        {"key": "shipped", "label": "Shipped", "count": 1},
+        {"key": "not-shipped", "label": "Not Shipped", "count": 2},
+    ]
+
+
+def test_report_activity_summary_matches_ps1_active_day_text() -> None:
+    summary = report_activity_summary(
+        [
+            _item(number=1, classification="shipped", createdAt="2026-07-01T00:00:00Z", closedAt="2026-07-02T00:00:00Z"),
+            _item(number=2, classification="open", createdAt="2026-07-04T00:00:00Z", closedAt=""),
+            _item(number=3, classification="lost", createdAt="2026-07-02T00:00:00Z", closedAt="2026-07-03T00:00:00Z"),
+        ],
+    )
+
+    assert summary.time_span == "3 days"
+    assert summary.time_range == "Active days from Jul 2 - Jul 4"
+    assert report_activity_summary([_item(number=1)]).time_span == "N/A"
+
+
+def test_report_bar_items_match_ps1_width_title_and_content_rules() -> None:
+    source = (
+        "shipped",
+        "shipped",
+        "open",
+        "lost",
+        "superseded",
+        "shipped",
+        "accepted-indirect",
+        "shipped",
+    )
+    counts = report_counts(
+        [_item(number=i, classification=classification) for i, classification in enumerate(source, start=1)],
+        accepted_classifications=("shipped", "accepted-indirect"),
+        open_status="open",
+        superseded_status="superseded",
+        lost_status="lost",
+    )
+
+    assert [(item.key, item.label, item.count, item.width, item.title, item.content) for item in report_bar_items(counts)] == [
+        ("shipped", "Shipped", 5, 62.5, "5", "5"),
+        ("superseded", "Superseded", 1, 12.5, "", "1"),
+        ("lost", "Lost", 1, 12.5, "", "1"),
+        ("open", "Open", 1, 12.5, "1", "1"),
+    ]
+
+
+def test_report_breakdown_helpers_match_current_generated_index(repo_root: Path) -> None:
+    content = (repo_root / "index.html").read_text(encoding="utf-8")
+    raw_items = load_pr_data_from_html(content)
+    counts = report_counts(
+        report_items_from_script_dicts(raw_items),
+        accepted_classifications=("shipped", "accepted-indirect"),
+        open_status="open",
+        superseded_status="superseded",
+        lost_status="lost",
+    )
+
+    assert default_status_filter_dicts(counts) == json.loads(_script_json(content, "PR_FILTERS"))
+    assert [(item.key, item.count) for item in report_bar_items(counts)] == [
+        ("shipped", counts.accepted),
+        ("superseded", counts.superseded),
+        ("lost", counts.lost),
+        ("open", counts.open),
+    ]
+
+
 def test_sort_repos_by_accepted_count_matches_generated_display_order(repo_root: Path) -> None:
     items = load_pr_data_from_html((repo_root / "index.html").read_text(encoding="utf-8"))
     repos = [
@@ -193,6 +289,12 @@ def test_sort_repos_by_accepted_count_matches_generated_display_order(repo_root:
             repo,
         ),
     )
+
+
+def _script_json(content: str, name: str) -> str:
+    match = re.search(rf"var {name} = (.*?);", content, re.S)
+    assert match is not None
+    return match.group(1)
 
 
 def _item(**overrides: object) -> PrReportItem:
