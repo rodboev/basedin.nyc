@@ -141,6 +141,61 @@ def report_items_to_script_dicts(items: Iterable[PrReportItem]) -> list[dict[str
     return [item.to_script_dict() for item in items]
 
 
+def report_item_from_script_dict(raw: Mapping[str, object]) -> PrReportItem:
+    return PrReportItem(
+        number=_int_value(raw.get("number")),
+        url=_string_value(raw.get("url")),
+        repo=_string_value(raw.get("repo")),
+        repoLabel=_string_value(raw.get("repoLabel")),
+        title=_string_value(raw.get("title")),
+        classification=_string_value(raw.get("classification")),
+        statusKey=_string_value(raw.get("statusKey")),
+        statusLabel=_string_value(raw.get("statusLabel")),
+        statusClass=_string_value(raw.get("statusClass")),
+        dateLabel=_string_value(raw.get("dateLabel")),
+        releaseLabel=_string_value(raw.get("releaseLabel")),
+        viaLabel=_string_value(raw.get("viaLabel")),
+        viaUrl=_string_value(raw.get("viaUrl")),
+        createdAt=_string_value(raw.get("createdAt")),
+        closedAt=_string_value(raw.get("closedAt")),
+        mergedAt=_string_value(raw.get("mergedAt")),
+        additions=_int_value(raw.get("additions")),
+        deletions=_int_value(raw.get("deletions")),
+        changedFiles=_int_value(raw.get("changedFiles")),
+    )
+
+
+def report_items_from_script_dicts(items: Iterable[Mapping[str, object]]) -> list[PrReportItem]:
+    return [report_item_from_script_dict(item) for item in items]
+
+
+def sort_report_items_by_effective_date(items: Iterable[PrReportItem]) -> list[PrReportItem]:
+    return sorted(items, key=_report_item_sort_datetime, reverse=True)
+
+
+def status_filter_dicts(
+    items: Iterable[PrReportItem],
+    filters: Iterable[tuple[str, str]],
+    *,
+    repo_key: str,
+    not_shipped_statuses: Iterable[str],
+) -> list[dict[str, object]]:
+    item_list = list(items)
+    return [
+        {
+            "key": key,
+            "label": label,
+            "count": pr_filter_count(
+                item_list,
+                status_key=key,
+                repo_key=repo_key,
+                not_shipped_statuses=not_shipped_statuses,
+            ),
+        }
+        for key, label in filters
+    ]
+
+
 def _parse_datetime(value: str) -> datetime | None:
     if not value:
         return None
@@ -152,3 +207,35 @@ def _parse_datetime(value: str) -> datetime | None:
     if parsed.tzinfo is None:
         return parsed.replace(tzinfo=timezone.utc)
     return parsed.astimezone(timezone.utc)
+
+
+def _report_item_sort_datetime(item: PrReportItem) -> datetime:
+    parsed = _parse_datetime(
+        pull_request_effective_iso_date(
+            status_key=item.statusKey,
+            created_at=item.createdAt,
+            closed_at=item.closedAt,
+        ),
+    )
+    return parsed if parsed is not None else datetime.min.replace(tzinfo=timezone.utc)
+
+
+def _string_value(value: object) -> str:
+    scalar = scalar_value(value)
+    return scalar if isinstance(scalar, str) else str(scalar)
+
+
+def _int_value(value: object) -> int:
+    scalar = scalar_value(value)
+    if isinstance(scalar, bool):
+        return 0
+    if isinstance(scalar, int):
+        return scalar
+    if isinstance(scalar, float):
+        return int(scalar)
+    if isinstance(scalar, str):
+        try:
+            return int(scalar)
+        except ValueError:
+            return 0
+    return 0

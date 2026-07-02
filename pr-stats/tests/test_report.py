@@ -10,9 +10,12 @@ from core.report import (
     pr_status_matches,
     pull_request_effective_iso_date,
     repo_label,
+    report_items_from_script_dicts,
     report_items_to_script_dicts,
     scalar_value,
+    sort_report_items_by_effective_date,
     sort_repos_by_accepted_count,
+    status_filter_dicts,
 )
 from core.timeline import load_pr_data_from_html
 
@@ -89,6 +92,41 @@ def test_report_items_serialize_to_existing_script_shape() -> None:
             "deletions": 2,
             "changedFiles": 3,
         },
+    ]
+
+
+def test_report_items_round_trip_existing_script_shape(repo_root: Path) -> None:
+    raw_items = load_pr_data_from_html((repo_root / "index.html").read_text(encoding="utf-8"))
+    typed_items = report_items_from_script_dicts(raw_items)
+
+    assert report_items_to_script_dicts(typed_items[:5]) == raw_items[:5]
+
+
+def test_sort_report_items_by_effective_date_uses_open_creation_and_closed_close() -> None:
+    items = [
+        _item(number=1, statusKey="done", createdAt="2026-07-03T00:00:00Z", closedAt="2026-07-04T00:00:00Z"),
+        _item(number=2, statusKey="open", createdAt="2026-07-05T00:00:00Z", closedAt=""),
+        _item(number=3, statusKey="done", createdAt="2026-07-06T00:00:00Z", closedAt="2026-07-01T00:00:00Z"),
+    ]
+
+    assert [item.number for item in sort_report_items_by_effective_date(items)] == [2, 1, 3]
+
+
+def test_status_filter_dicts_matches_existing_script_shape() -> None:
+    items = [
+        _item(number=1, statusKey="done", repoLabel="a"),
+        _item(number=2, statusKey="lost", repoLabel="a"),
+        _item(number=3, statusKey="lost", repoLabel="b"),
+    ]
+
+    assert status_filter_dicts(
+        items,
+        (("done", "Done"), ("not-shipped", "Not Done")),
+        repo_key="all",
+        not_shipped_statuses=("lost",),
+    ) == [
+        {"key": "done", "label": "Done", "count": 1},
+        {"key": "not-shipped", "label": "Not Done", "count": 2},
     ]
 
 
