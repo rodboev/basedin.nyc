@@ -55,3 +55,30 @@ def test_verify_webui_credits_only_rejects_stale_live_changelog(
     assert result == 1
     assert "release credit cache for nesquena/hermes-webui is stale" in captured.err
     assert "rebuild is not implemented in Python yet" in captured.err
+
+def test_inject_timeline_only_writes_requested_output(repo_root: Path, tmp_path: Path) -> None:
+    out_file = tmp_path / "python-index.html"
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            "generate.py",
+            "--inject-timeline-only",
+            "--in-file",
+            "index.html",
+            "--out-file",
+            str(out_file),
+            "--repos-file",
+            "generate.ps1",
+        ],
+        cwd=repo_root,
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    content = out_file.read_text(encoding="utf-8")
+    assert content.count("<!-- timeline-chart -->") == 2
+    assert "var TL_ALL = " in content

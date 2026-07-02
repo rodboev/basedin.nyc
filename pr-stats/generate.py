@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -8,6 +9,7 @@ from core.cache import load_cache
 from core.models import Cache
 from core.credit import cached_release_credit_counts
 from core.github import run_gh
+from core.timeline import build_chart_payload, build_daily_data, inject_timeline_chart, load_active_repos_from_text, load_pr_data_from_html, prepare_timeline_prs
 
 WEBUI_REPO = "nesquena/hermes-webui"
 WEBUI_EXCLUDED_LOGINS = ("nesquena", "nesquena-hermes")
@@ -25,6 +27,10 @@ WEBUI_CREDIT_RATIO_CHECKS = (
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Generate pr-stats output.")
     parser.add_argument("--cache-file", type=Path, default=Path(".pr-classification-cache.json"))
+    parser.add_argument("--in-file", type=Path, default=Path("index.html"))
+    parser.add_argument("--out-file", type=Path, default=None)
+    parser.add_argument("--repos-file", type=Path, default=Path("generate.ps1"))
+    parser.add_argument("--inject-timeline-only", action="store_true")
     parser.add_argument("--verify-webui-cached-credits-only", action="store_true")
     parser.add_argument("--verify-webui-credits-only", action="store_true", help="alias for --verify-webui-cached-credits-only during the rewrite")
     parser.add_argument("--changelog-file", type=Path, default=None)
@@ -37,9 +43,34 @@ def main(argv: list[str] | None = None) -> int:
             changelog_file=args.changelog_file,
             contributors_file=args.contributors_file,
         )
+    if args.inject_timeline_only:
+        return inject_timeline_only(
+            in_file=args.in_file,
+            out_file=args.out_file or args.in_file,
+            repos_file=args.repos_file,
+        )
 
-    parser.error("the Python entry point currently supports --verify-webui-cached-credits-only")
+    parser.error("the Python entry point currently supports --verify-webui-cached-credits-only and --inject-timeline-only")
     return 2
+
+def inject_timeline_only(*, in_file: Path, out_file: Path, repos_file: Path) -> int:
+    try:
+        html = in_file.read_text(encoding="utf-8")
+        repos = load_active_repos_from_text(repos_file.read_text(encoding="utf-8"))
+        pr_items = load_pr_data_from_html(html)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+
+    all_prs = prepare_timeline_prs(pr_items)
+    chart_data, repo_data, repo_names = build_daily_data(all_prs, repos)
+    chart_json, repo_json, names_json, avg_prs, avg_loc = build_chart_payload(chart_data, repo_data, repo_names)
+    out_file.write_text(
+        inject_timeline_chart(html, chart_json, repo_json, names_json, avg_prs, avg_loc),
+        encoding="utf-8",
+    )
+    print(f"Injected chart + stat cards into {out_file}", file=sys.stderr)
+    return 0
 
 def verify_webui_credits_only(
     *,
