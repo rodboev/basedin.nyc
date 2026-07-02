@@ -10,6 +10,7 @@ from core.report import (
     pr_status_matches,
     pull_request_effective_iso_date,
     repo_label,
+    report_counts,
     report_items_from_script_dicts,
     report_items_to_script_dicts,
     scalar_value,
@@ -128,6 +129,47 @@ def test_status_filter_dicts_matches_existing_script_shape() -> None:
         {"key": "done", "label": "Done", "count": 1},
         {"key": "not-shipped", "label": "Not Done", "count": 2},
     ]
+
+
+def test_report_counts_matches_ps1_summary_math() -> None:
+    counts = report_counts(
+        [
+            _item(number=1, classification="direct"),
+            _item(number=2, classification="indirect"),
+            _item(number=3, classification="open"),
+            _item(number=4, classification="superseded"),
+            _item(number=5, classification="lost"),
+        ],
+        accepted_classifications=("direct", "indirect"),
+        open_status="open",
+        superseded_status="superseded",
+        lost_status="lost",
+    )
+
+    assert counts.total == 5
+    assert counts.accepted == 2
+    assert counts.open == 1
+    assert counts.superseded == 1
+    assert counts.lost == 1
+    assert counts.not_shipped == 2
+    assert counts.acceptance_rate == 50
+
+
+def test_report_counts_match_current_generated_pr_data(repo_root: Path) -> None:
+    raw_items = load_pr_data_from_html((repo_root / "index.html").read_text(encoding="utf-8"))
+    items = report_items_from_script_dicts(raw_items)
+    counts = report_counts(
+        items,
+        accepted_classifications=("shipped", "accepted-indirect"),
+        open_status="open",
+        superseded_status="superseded",
+        lost_status="lost",
+    )
+
+    assert counts.total == len(raw_items)
+    assert counts.accepted == sum(1 for item in raw_items if item["classification"] in {"shipped", "accepted-indirect"})
+    assert counts.open == sum(1 for item in raw_items if item["classification"] == "open")
+    assert counts.not_shipped == counts.superseded + counts.lost
 
 
 def test_sort_repos_by_accepted_count_matches_generated_display_order(repo_root: Path) -> None:

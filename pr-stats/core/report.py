@@ -54,6 +54,17 @@ class PrReportItem:
         }
 
 
+@dataclass(frozen=True)
+class ReportCounts:
+    total: int
+    accepted: int
+    open: int
+    superseded: int
+    lost: int
+    not_shipped: int
+    acceptance_rate: int | None
+
+
 def repo_label(repo: str) -> str:
     short = repo.rsplit("/", 1)[-1]
     if short == "hermes-webui":
@@ -194,6 +205,34 @@ def status_filter_dicts(
         }
         for key, label in filters
     ]
+
+
+def report_counts(
+    items: Iterable[PrReportItem],
+    *,
+    accepted_classifications: Iterable[str],
+    open_status: str,
+    superseded_status: str,
+    lost_status: str,
+) -> ReportCounts:
+    item_list = list(items)
+    accepted = set(accepted_classifications)
+    accepted_count = sum(1 for item in item_list if item.classification in accepted)
+    open_count = sum(1 for item in item_list if item.classification == open_status)
+    superseded_count = sum(1 for item in item_list if item.classification == superseded_status)
+    lost_count = sum(1 for item in item_list if item.classification == lost_status)
+    not_shipped = superseded_count + lost_count
+    acceptance_closed = accepted_count + not_shipped
+    rate = round((accepted_count / acceptance_closed) * 100) if acceptance_closed > 0 else None
+    return ReportCounts(
+        total=len(item_list),
+        accepted=accepted_count,
+        open=open_count,
+        superseded=superseded_count,
+        lost=lost_count,
+        not_shipped=not_shipped,
+        acceptance_rate=rate,
+    )
 
 
 def _parse_datetime(value: str) -> datetime | None:
