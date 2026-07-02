@@ -6,6 +6,9 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
+from core.classify import ClassificationResult
+from core.github import GhPullRequestView
+
 EASTERN = ZoneInfo("America/New_York")
 CLASSIFICATION_STATUS_META: dict[str, tuple[str, str, str]] = {
     "shipped": (
@@ -217,6 +220,48 @@ def report_item_from_script_dict(raw: Mapping[str, object]) -> PrReportItem:
 
 def report_items_from_script_dicts(items: Iterable[Mapping[str, object]]) -> list[PrReportItem]:
     return [report_item_from_script_dict(item) for item in items]
+
+
+def report_item_from_pull_request_view(
+    *,
+    repo: str,
+    pr: GhPullRequestView,
+    classification: ClassificationResult,
+) -> PrReportItem:
+    classification_key = classification.classification or "open"
+    status_key = "shipped" if classification_key == "accepted-indirect" else classification_key
+    label, tag, _desc = CLASSIFICATION_STATUS_META.get(classification_key, CLASSIFICATION_STATUS_META["open"])
+    release_label = ""
+    if classification_key == "accepted-indirect":
+        release_label = "indirect"
+    elif classification_key == "shipped" and classification.release:
+        release_label = classification.release
+
+    created_at = pr.createdAt
+    closed_at = pr.closedAt or ""
+    effective_date = pull_request_effective_iso_date(status_key=status_key, created_at=created_at, closed_at=closed_at)
+    return PrReportItem(
+        number=pr.number,
+        url=pr.url or f"https://github.com/{repo}/pull/{pr.number}",
+        repo=repo,
+        repoLabel=repo_label(repo),
+        title=pr.title,
+        classification=classification_key,
+        statusKey=status_key,
+        statusLabel=label,
+        statusClass=tag,
+        dateLabel=format_eastern_date(effective_date),
+        releaseLabel=release_label,
+        viaLabel=classification.via_label,
+        viaUrl=classification.via_url,
+        createdAt=created_at,
+        closedAt=closed_at,
+        mergedAt=pr.mergedAt or "",
+        additions=pr.additions,
+        deletions=pr.deletions,
+        changedFiles=pr.changedFiles,
+        evidenceKind=classification.evidence_kind,
+    )
 
 
 def sort_report_items_by_effective_date(items: Iterable[PrReportItem]) -> list[PrReportItem]:

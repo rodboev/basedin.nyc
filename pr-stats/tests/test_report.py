@@ -4,6 +4,8 @@ import json
 import re
 from pathlib import Path
 
+from core.classify import ClassificationResult
+from core.github import GhPullRequestView
 from core.report import (
     PrReportItem,
     default_status_filter_dicts,
@@ -17,6 +19,7 @@ from core.report import (
     report_activity_summary,
     report_bar_items,
     report_counts,
+    report_item_from_pull_request_view,
     report_items_from_script_dicts,
     report_items_to_script_dicts,
     repo_status_rows,
@@ -108,6 +111,66 @@ def test_report_items_round_trip_existing_script_shape(repo_root: Path) -> None:
     typed_items = report_items_from_script_dicts(raw_items)
 
     assert report_items_to_script_dicts(typed_items[:5]) == raw_items[:5]
+
+
+def test_report_item_from_pull_request_view_maps_classification_to_pr_data_shape() -> None:
+    item = report_item_from_pull_request_view(
+        repo="nesquena/hermes-webui",
+        pr=_view(
+            number=42,
+            state="CLOSED",
+            title="Fix streaming",
+            createdAt="2026-07-01T00:00:00Z",
+            closedAt="2026-07-02T13:27:37Z",
+            additions=10,
+            deletions=2,
+            changedFiles=3,
+            url="",
+        ),
+        classification=ClassificationResult(
+            classification="shipped",
+            release="v1.2.3",
+            via_label="direct",
+            via_url="https://github.com/nesquena/hermes-webui/pull/42",
+            evidence_kind="direct-merge",
+        ),
+    )
+
+    assert item.to_script_dict() == {
+        "number": 42,
+        "url": "https://github.com/nesquena/hermes-webui/pull/42",
+        "repo": "nesquena/hermes-webui",
+        "repoLabel": "webui",
+        "title": "Fix streaming",
+        "classification": "shipped",
+        "statusKey": "shipped",
+        "statusLabel": "Shipped",
+        "statusClass": "tag-shipped",
+        "dateLabel": "7/2/26 9:27 AM",
+        "releaseLabel": "v1.2.3",
+        "viaLabel": "direct",
+        "viaUrl": "https://github.com/nesquena/hermes-webui/pull/42",
+        "createdAt": "2026-07-01T00:00:00Z",
+        "closedAt": "2026-07-02T13:27:37Z",
+        "mergedAt": "",
+        "additions": 10,
+        "deletions": 2,
+        "changedFiles": 3,
+    }
+    assert item.evidenceKind == "direct-merge"
+
+
+def test_report_item_from_pull_request_view_rolls_indirect_into_shipped_status() -> None:
+    item = report_item_from_pull_request_view(
+        repo="stablyai/orca",
+        pr=_view(number=6362, state="CLOSED", closedAt="2026-07-02T13:27:37Z"),
+        classification=ClassificationResult(classification="accepted-indirect", via_label="#6574", evidence_kind="accepted-indirect"),
+    )
+
+    assert item.classification == "accepted-indirect"
+    assert item.statusKey == "shipped"
+    assert item.statusLabel == "Shipped"
+    assert item.releaseLabel == "indirect"
 
 
 def test_sort_report_items_by_effective_date_uses_open_creation_and_closed_close() -> None:
@@ -318,6 +381,24 @@ def _script_json(content: str, name: str) -> str:
     match = re.search(rf"var {name} = (.*?);", content, re.S)
     assert match is not None
     return match.group(1)
+
+
+def _view(**overrides: object) -> GhPullRequestView:
+    data: dict[str, object] = {
+        "number": 1,
+        "state": "CLOSED",
+        "title": "Title",
+        "createdAt": "2026-07-01T00:00:00Z",
+        "closedAt": "",
+        "mergedAt": "",
+        "author": {"login": "rodboev"},
+        "additions": 1,
+        "deletions": 2,
+        "changedFiles": 3,
+        "url": "https://github.com/owner/repo/pull/1",
+    }
+    data.update(overrides)
+    return GhPullRequestView.model_validate(data)
 
 
 def _item(**overrides: object) -> PrReportItem:
