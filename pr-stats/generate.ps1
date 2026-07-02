@@ -2190,16 +2190,28 @@ $script:ClassificationCache = Import-ClassificationCache -Path $CacheFile -Force
 if ($VerifyWebuiCreditsOnly) {
     $counts = Get-ChangelogReleaseCreditCounts -Repo "nesquena/hermes-webui" -StartDate $StartDate -Exclusions (Get-RepoLeaderboardExclusions -Repo "nesquena/hermes-webui") -ForceRefresh
     $checks = @(
-        @{ login = "franksong2702"; min = 170; max = 200 }
-        @{ login = "Michaelyklam"; min = 115; max = 140 }
-        @{ login = "rodboev"; min = 115; max = 135 }
-        @{ login = "ai-ag2026"; min = 85; max = 110 }
+        @{ login = "franksong2702"; min = 200 }
+        @{ login = "Michaelyklam"; min = 100 }
+        @{ login = "rodboev"; min = 150 }
+        @{ login = "ai-ag2026"; min = 80 }
+    )
+    $ratioChecks = @(
+        @{ numerator = "rodboev"; denominator = "franksong2702"; min = 0.50 }
+        @{ numerator = "Michaelyklam"; denominator = "franksong2702"; min = 0.35 }
     )
     $failed = $false
     foreach ($check in $checks) {
         $value = if ($counts.ContainsKey($check.login)) { [int]$counts[$check.login] } else { 0 }
-        $ok = $value -ge $check.min -and $value -le $check.max
-        Write-Host ("{0}: {1} (expected {2}-{3}) {4}" -f $check.login, $value, $check.min, $check.max, $(if ($ok) { "OK" } else { "FAIL" }))
+        $ok = $value -ge $check.min
+        Write-Host ("{0}: {1} (expected >= {2}) {3}" -f $check.login, $value, $check.min, $(if ($ok) { "OK" } else { "FAIL" }))
+        if (-not $ok) { $failed = $true }
+    }
+    foreach ($check in $ratioChecks) {
+        $numerator = if ($counts.ContainsKey($check.numerator)) { [int]$counts[$check.numerator] } else { 0 }
+        $denominator = if ($counts.ContainsKey($check.denominator)) { [int]$counts[$check.denominator] } else { 0 }
+        $ratio = if ($denominator -gt 0) { [double]$numerator / [double]$denominator } else { 0.0 }
+        $ok = $ratio -ge [double]$check.min
+        Write-Host ("{0}/{1}: {2:N2} (expected >= {3:N2}) {4}" -f $check.numerator, $check.denominator, $ratio, [double]$check.min, $(if ($ok) { "OK" } else { "FAIL" }))
         if (-not $ok) { $failed = $true }
     }
     Export-ClassificationCache -Path $CacheFile

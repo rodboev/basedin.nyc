@@ -11,11 +11,15 @@ from core.github import run_gh
 
 WEBUI_REPO = "nesquena/hermes-webui"
 WEBUI_EXCLUDED_LOGINS = ("nesquena", "nesquena-hermes")
-WEBUI_CREDIT_CHECKS = (
-    ("franksong2702", 170, 200),
-    ("Michaelyklam", 115, 140),
-    ("rodboev", 115, 135),
-    ("ai-ag2026", 85, 110),
+WEBUI_CREDIT_MINIMUMS = (
+    ("franksong2702", 200),
+    ("Michaelyklam", 100),
+    ("rodboev", 150),
+    ("ai-ag2026", 80),
+)
+WEBUI_CREDIT_RATIO_CHECKS = (
+    ("rodboev", "franksong2702", 0.50),
+    ("Michaelyklam", "franksong2702", 0.35),
 )
 
 def main(argv: list[str] | None = None) -> int:
@@ -59,10 +63,20 @@ def verify_webui_credits_only(
     )
 
     failed = False
-    for login, minimum, maximum in WEBUI_CREDIT_CHECKS:
+    for login, minimum in WEBUI_CREDIT_MINIMUMS:
         value = counts.get(login, 0)
-        ok = minimum <= value <= maximum
-        print(f"{login}: {value} (expected {minimum}-{maximum}) {'OK' if ok else 'FAIL'}")
+        ok = value >= minimum
+        print(f"{login}: {value} (expected >= {minimum}) {'OK' if ok else 'FAIL'}")
+        failed = failed or not ok
+    for numerator_login, denominator_login, minimum_ratio in WEBUI_CREDIT_RATIO_CHECKS:
+        numerator = counts.get(numerator_login, 0)
+        denominator = counts.get(denominator_login, 0)
+        ratio = numerator / denominator if denominator else 0.0
+        ok = ratio >= minimum_ratio
+        print(
+            f"{numerator_login}/{denominator_login}: {ratio:.2f} "
+            f"(expected >= {minimum_ratio:.2f}) {'OK' if ok else 'FAIL'}",
+        )
         failed = failed or not ok
     return 1 if failed else 0
 

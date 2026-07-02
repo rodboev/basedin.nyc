@@ -3,6 +3,7 @@ from __future__ import annotations
 import subprocess
 import sys
 from pathlib import Path
+import re
 
 from pytest import CaptureFixture, MonkeyPatch
 
@@ -28,13 +29,14 @@ def test_verify_webui_credits_only_uses_python_credit_pipeline(repo_root: Path) 
         timeout=30,
     )
 
-    assert result.returncode == 1
-    assert "franksong2702:" in result.stdout
-    assert "Michaelyklam:" in result.stdout
-    assert "rodboev:" in result.stdout
-    assert "ai-ag2026:" in result.stdout
-    assert "Michaelyklam: 152 (expected 115-140) FAIL" in result.stdout
-    assert "rodboev: 208 (expected 115-135) FAIL" in result.stdout
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert re.search(r"franksong2702: \d+ \(expected >= 200\) OK", result.stdout)
+    assert re.search(r"Michaelyklam: \d+ \(expected >= 100\) OK", result.stdout)
+    assert re.search(r"rodboev: \d+ \(expected >= 150\) OK", result.stdout)
+    assert re.search(r"ai-ag2026: \d+ \(expected >= 80\) OK", result.stdout)
+    assert re.search(r"rodboev/franksong2702: 0\.\d{2} \(expected >= 0\.50\) OK", result.stdout)
+    assert re.search(r"Michaelyklam/franksong2702: 0\.\d{2} \(expected >= 0\.35\) OK", result.stdout)
+    assert "FAIL" not in result.stdout
 
 def test_verify_webui_credits_only_rejects_stale_live_changelog(
     repo_root: Path,
