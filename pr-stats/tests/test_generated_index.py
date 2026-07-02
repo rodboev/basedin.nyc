@@ -7,17 +7,21 @@ from typing import Any
 
 import pytest
 
+from core.timeline import build_daily_data, load_active_repos_from_text, load_pr_data_from_html, prepare_timeline_prs
+
 
 def _read_index(repo_root: Path) -> str:
     return (repo_root / "index.html").read_text(encoding="utf-8")
 
 
 def _pr_data(content: str) -> list[dict[str, Any]]:
-    match = re.search(r"var PR_DATA = (\[.*?\]);", content, re.S)
-    assert match is not None, "Could not find PR_DATA in index.html."
-    data = json.loads(match.group(1))
-    assert isinstance(data, list)
-    return data
+    return load_pr_data_from_html(content)
+
+
+def _script_array(content: str, name: str) -> Any:
+    match = re.search(rf"var {name} = (.*?);", content, re.S)
+    assert match is not None, f"Could not find {name} in index.html."
+    return json.loads(match.group(1))
 
 
 def _single_pr(items: list[dict[str, Any]], number: int) -> dict[str, Any]:
@@ -149,3 +153,13 @@ def test_pr_data_keeps_timeline_fields_and_timeline_is_injected(repo_root: Path)
     }
     assert missing_by_number == {}
     assert "var TL_ALL = " in content
+
+
+def test_timeline_aggregate_matches_injected_tl_all(repo_root: Path) -> None:
+    content = _read_index(repo_root)
+    repos = load_active_repos_from_text((repo_root / "generate.ps1").read_text(encoding="utf-8"))
+    aggregate, repo_data, repo_names = build_daily_data(prepare_timeline_prs(load_pr_data_from_html(content)), repos)
+
+    assert aggregate == _script_array(content, "TL_ALL")
+    assert repo_data == _script_array(content, "TL_REPOS")
+    assert repo_names == _script_array(content, "TL_NAMES")
