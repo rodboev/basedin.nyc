@@ -167,6 +167,24 @@ def render_repo_status_section(*, title: str, rows: list[StatusRow]) -> str:
     )
 
 
+def collapse_caret(*, up: bool) -> str:
+    return "&#9650;" if up else "&#9660;"
+
+
+def render_expand_row(*, block_id: str, label: str, colspan: int = 6) -> str:
+    return (
+        f'  <tr class="expand-row" onclick="toggleCollapsedTable(\'{escape(block_id, quote=True)}\', event)">'
+        f'<td colspan="{colspan}">{escape(label)} <span class="caret">{collapse_caret(up=False)}</span></td></tr>\n'
+    )
+
+
+def render_collapse_overlay(*, block_id: str, label: str = "Collapse") -> str:
+    return (
+        f'<div class="overlay-row" onclick="toggleCollapsedTable(\'{escape(block_id, quote=True)}\', event)">'
+        f'{escape(label)} <span class="caret">{collapse_caret(up=True)}</span></div>\n'
+    )
+
+
 def compact_script_json(value: object) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":")).replace("</script", r"<\/script")
 

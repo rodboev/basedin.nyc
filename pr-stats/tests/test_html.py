@@ -13,10 +13,13 @@ from core.html import (
     SortPill,
     StatCard,
     StatusRow,
+    collapse_caret,
     compact_script_json,
     generated_report_sanity_issues,
     previous_report_total_prs,
     render_bar_segments,
+    render_collapse_overlay,
+    render_expand_row,
     render_legend_items,
     render_pr_bootstrap_script,
     render_repo_status_section,
@@ -160,6 +163,19 @@ def test_repo_status_section_renders_existing_table_shape() -> None:
         "  <tr><th>Status</th><th>Count</th><th>Details</th></tr>\n"
         '  <tr><td><span class="tag tag-alpha">Alpha</span></td><td>2</td><td>Merged</td></tr>\n'
         "</table>\n"
+    )
+
+
+def test_collapse_helpers_match_existing_markup() -> None:
+    assert collapse_caret(up=False) == "&#9660;"
+    assert collapse_caret(up=True) == "&#9650;"
+    assert render_expand_row(block_id="pr-list", label="Show all 10") == (
+        '  <tr class="expand-row" onclick="toggleCollapsedTable(\'pr-list\', event)">'
+        '<td colspan="6">Show all 10 <span class="caret">&#9660;</span></td></tr>\n'
+    )
+    assert render_collapse_overlay(block_id="pr-list") == (
+        '<div class="overlay-row" onclick="toggleCollapsedTable(\'pr-list\', event)">'
+        'Collapse <span class="caret">&#9650;</span></div>\n'
     )
 
 
