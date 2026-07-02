@@ -162,6 +162,8 @@ def _subprocess_runner(args: Sequence[str], timeout: int) -> GhResult:
             check=False,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=timeout,
             env=_gh_environment(),
         )

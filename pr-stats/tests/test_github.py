@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -14,6 +16,7 @@ from core.github import (
     GhResult,
     _run_gh_with_runner,
     _gh_environment,
+    _subprocess_runner,
     get_gh_retry_delay_seconds,
     get_gh_retry_reason,
     parse_graphql_search_page_json,
@@ -130,3 +133,19 @@ def test_gh_environment_disables_interactive_prompts() -> None:
     assert env["GH_PROMPT_DISABLED"] == "1"
     assert env["GH_NO_UPDATE_NOTIFIER"] == "1"
     assert env["GCM_INTERACTIVE"] == "never"
+
+def test_subprocess_runner_decodes_gh_output_as_utf8(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, Any] = {}
+
+    def fake_run(*args: object, **kwargs: object) -> subprocess.CompletedProcess[str]:
+        captured["args"] = args
+        captured["kwargs"] = kwargs
+        return subprocess.CompletedProcess(args=["gh"], returncode=0, stdout="ok", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+
+    result = _subprocess_runner(("api", "repos/example/repo"), 120)
+
+    assert result.stdout == "ok"
+    assert captured["kwargs"]["encoding"] == "utf-8"
+    assert captured["kwargs"]["errors"] == "replace"
