@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -50,17 +51,31 @@ def rebuild_classification_cache(
     checked = 0
     skipped = 0
     failed = 0
+    candidates = [
+        (key, expected)
+        for key, expected in sorted(source_cache.entries.items())
+        if not active_repos_only or split_classification_cache_key(key)[0] in active_repos
+    ]
+    print(
+        f"Classifying {len(candidates)} cached PRs "
+        f"({'active repos only' if active_repos_only else 'all cached repos'})...",
+        file=sys.stderr,
+        flush=True,
+    )
+    print(f"Writing cache to {out_cache_file}", file=sys.stderr, flush=True)
+    print(f"Writing divergences to {divergence_file}", file=sys.stderr, flush=True)
 
-    for key, expected in sorted(source_cache.entries.items()):
+    for index, (key, expected) in enumerate(candidates, start=1):
         repo, number = split_classification_cache_key(key)
-        if active_repos_only and repo not in active_repos:
-            continue
         if _entry_was_generated(output_cache, key, expected):
             skipped += 1
+            print(f"  [{index}/{len(candidates)}] {key} -> cached", file=sys.stderr, flush=True)
             continue
+        print(f"  [{index}/{len(candidates)}] {key} -> fetching evidence...", file=sys.stderr, flush=True)
         pr = cached_or_live_pull_request(source_cache, repo, number)
         if pr is None:
             failed += 1
+            print(f"  [{index}/{len(candidates)}] {key} -> failed (could not load PR state)", file=sys.stderr, flush=True)
             continue
         evidence = live_evidence(repo, number, pr)
         actual = classify_closed_pr(pr, evidence)
@@ -77,15 +92,38 @@ def rebuild_classification_cache(
         )
         if not classification_entry_matches_result(expected, actual):
             divergences.append(CacheDivergence(key=key, expected=expected, actual=actual))
+            print(
+                f"  [{index}/{len(candidates)}] {key} -> {actual.classification}/{actual.evidence_kind} "
+                f"(DIVERGED from {expected.classification}/{expected.evidenceKind})",
+                file=sys.stderr,
+                flush=True,
+            )
+        else:
+            print(
+                f"  [{index}/{len(candidates)}] {key} -> {actual.classification}/{actual.evidence_kind}"
+                f"{_via_suffix(actual)}",
+                file=sys.stderr,
+                flush=True,
+            )
         checked += 1
         if save_every > 0 and checked % save_every == 0:
             save_cache(output_cache, out_cache_file)
             write_divergence_report(divergences, divergence_file)
+            print(
+                f"  checkpoint: classified {checked}, skipped {skipped}, failed {failed}, divergences {len(divergences)}",
+                file=sys.stderr,
+                flush=True,
+            )
         if limit is not None and checked >= limit:
             break
 
     save_cache(output_cache, out_cache_file)
     write_divergence_report(divergences, divergence_file)
+    print(
+        f"Done. Classified {checked}, skipped {skipped}, failed {failed}, divergences {len(divergences)}.",
+        file=sys.stderr,
+        flush=True,
+    )
     return CacheRebuildResult(checked=checked, skipped=skipped, failed=failed, divergences=len(divergences))
 
 
@@ -347,3 +385,9 @@ def _int_value(value: object, *, default: int = 0) -> int:
         except ValueError:
             return default
     return default
+
+
+def _via_suffix(result: ClassificationResult) -> str:
+    if result.via_label:
+        return f" via {result.via_label}"
+    return ""
