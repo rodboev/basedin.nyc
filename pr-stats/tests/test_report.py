@@ -19,6 +19,7 @@ from core.report import (
     report_counts,
     report_items_from_script_dicts,
     report_items_to_script_dicts,
+    repo_status_rows,
     scalar_value,
     sort_report_items_by_effective_date,
     sort_repos_by_accepted_count,
@@ -248,6 +249,28 @@ def test_report_bar_items_match_ps1_width_title_and_content_rules() -> None:
     ]
 
 
+def test_repo_status_rows_match_ps1_rollup_and_details() -> None:
+    rows = repo_status_rows(
+        [
+            _item(number=1, classification="shipped", evidenceKind="direct-merge"),
+            _item(number=2, classification="accepted-indirect", evidenceKind="accepted-indirect"),
+            _item(number=3, classification="shipped", evidenceKind="timeline"),
+            _item(number=4, classification="open"),
+            _item(number=5, classification="lost"),
+        ],
+    )
+
+    assert [(row.label, row.tag_class, row.count, row.details) for row in rows] == [
+        ("Shipped", "tag-shipped", 3, "Merged, cherry-picked, and release-credited"),
+        ("Open", "tag-open", 1, "Pending review"),
+        ("Lost", "tag-lost", 1, "Closed without acceptance"),
+    ]
+
+
+def test_repo_status_rows_keep_zero_shipped_and_open_rows() -> None:
+    assert [(row.label, row.count) for row in repo_status_rows([])] == [("Shipped", 0), ("Open", 0)]
+
+
 def test_report_breakdown_helpers_match_current_generated_index(repo_root: Path) -> None:
     content = (repo_root / "index.html").read_text(encoding="utf-8")
     raw_items = load_pr_data_from_html(content)
@@ -342,4 +365,5 @@ def _item(**overrides: object) -> PrReportItem:
         additions=int(data["additions"]),
         deletions=int(data["deletions"]),
         changedFiles=int(data["changedFiles"]),
+        evidenceKind=str(data.get("evidenceKind", "")),
     )

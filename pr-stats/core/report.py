@@ -1,11 +1,24 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
+from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
 EASTERN = ZoneInfo("America/New_York")
+CLASSIFICATION_STATUS_META: dict[str, tuple[str, str, str]] = {
+    "shipped": (
+        "Shipped",
+        "tag-shipped",
+        "Verified via merged release PR, maintainer release evidence, or indirect accepted sibling",
+    ),
+    "accepted-indirect": ("Shipped", "tag-shipped", ""),
+    "open": ("Open", "tag-open", "Pending review"),
+    "withdrawn": ("Withdrawn", "tag-withdrawn", "Closed without maintainer action"),
+    "superseded": ("Superseded", "tag-superseded", "Replaced by a newer PR"),
+    "lost": ("Lost", "tag-lost", "Closed without acceptance"),
+}
 
 
 @dataclass(frozen=True)
@@ -29,6 +42,7 @@ class PrReportItem:
     additions: int
     deletions: int
     changedFiles: int
+    evidenceKind: str = ""
 
     def to_script_dict(self) -> dict[str, object]:
         return {
@@ -79,6 +93,14 @@ class ReportBarItem:
     width: float
     title: str
     content: str
+
+
+@dataclass(frozen=True)
+class ReportStatusRow:
+    label: str
+    tag_class: str
+    count: int
+    details: str
 
 
 def repo_label(repo: str) -> str:
@@ -189,6 +211,7 @@ def report_item_from_script_dict(raw: Mapping[str, object]) -> PrReportItem:
         additions=_int_value(raw.get("additions")),
         deletions=_int_value(raw.get("deletions")),
         changedFiles=_int_value(raw.get("changedFiles")),
+        evidenceKind=_string_value(raw.get("evidenceKind")),
     )
 
 
@@ -308,6 +331,23 @@ def default_status_filter_dicts(counts: ReportCounts) -> list[dict[str, object]]
     ]
 
 
+def repo_status_rows(items: Iterable[PrReportItem]) -> list[ReportStatusRow]:
+    item_list = list(items)
+    counts = Counter(item.classification for item in item_list)
+    has_cherry_pick = any(item.evidenceKind == "timeline" for item in item_list)
+    has_indirect = any(item.evidenceKind == "accepted-indirect" or item.classification == "accepted-indirect" for item in item_list)
+    shipped_desc = _shipped_details(has_cherry_pick=has_cherry_pick, has_indirect=has_indirect)
+
+    rows: list[ReportStatusRow] = []
+    for status in ("shipped", "open", "superseded", "lost"):
+        count = counts["shipped"] + counts["accepted-indirect"] if status == "shipped" else counts[status]
+        if count == 0 and status not in {"shipped", "open"}:
+            continue
+        label, tag, desc = CLASSIFICATION_STATUS_META[status]
+        rows.append(ReportStatusRow(label=label, tag_class=tag, count=count, details=shipped_desc if status == "shipped" else desc))
+    return rows
+
+
 def _parse_datetime(value: str) -> datetime | None:
     if not value:
         return None
@@ -323,6 +363,16 @@ def _parse_datetime(value: str) -> datetime | None:
 
 def _format_month_day(value: datetime) -> str:
     return f"{value.strftime('%b')} {value.day}"
+
+
+def _shipped_details(*, has_cherry_pick: bool, has_indirect: bool) -> str:
+    if has_cherry_pick and has_indirect:
+        return "Merged, cherry-picked, and release-credited"
+    if has_cherry_pick:
+        return "Merged and cherry-picked"
+    if has_indirect:
+        return "Merged and release-credited"
+    return "Merged"
 
 
 def _report_item_sort_datetime(item: PrReportItem) -> datetime:
