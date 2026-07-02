@@ -1,0 +1,29 @@
+{
+  "command": "gh api graphql -f query='<query searching repo:nesquena/hermes-webui is:pr author:rodboev, first: 2>'",
+  "payload": {
+    "data": {
+      "search": {
+        "issueCount": 289,
+        "nodes": [
+          {
+            "number": 5408,
+            "state": "OPEN",
+            "title": "feat(#3260): self-hosted provider setup (Ollama / LM Studio) in Settings after onboarding",
+            "author": {
+              "login": "rodboev"
+            }
+          },
+          {
+            "number": 5407,
+            "state": "OPEN",
+            "title": "fix(#5291): pin the OpenAI TTS proxy's connect target to close a DNS-rebinding TOCTOU",
+            "author": {
+              "login": "rodboev"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
+

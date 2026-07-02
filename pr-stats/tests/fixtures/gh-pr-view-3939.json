@@ -1,0 +1,24 @@
+{
+  "command": "gh pr view 3939 --repo nesquena/hermes-webui --json number,state,title,createdAt,closedAt,mergedAt,author,additions,deletions,changedFiles,headRefName,url,body",
+  "payload": {
+    "additions": 430,
+    "author": {
+      "id": "MDQ6VXNlcjEwNjk3MQ==",
+      "is_bot": false,
+      "login": "rodboev",
+      "name": "Rod Boev"
+    },
+    "body": "## Thinking Path\n\n- Confirmed that `print_startup_config()` already prints `state dir : {STATE_DIR}` at line 590 of `api/config.py`, so the path is visible but there is no signal when it points to the wrong directory.\n- The maintainer's diagnosis in #3915 is correct: no data is lost; the server reads an empty sibling directory because `HERMES_WEBUI_STATE_DIR` was not preserved across restart methods.\n- Adding a `_warn_state_dir_divergence()` helper that checks for empty `SESSION_DIR` + populated sibling gives users a clear actionable message without changing any data-access paths.\n\n## What Changed\n\n- `api/config.py`: added `_warn_state_dir_divergence()` helper that scans siblings of `STATE_DIR` for session data when the active session store is empty; called from `print_startup_config()` wrapped in try/except so filesystem errors never block startup\n\n## Why It Matters\n\nUsers who accidentally start the server with a different `STATE_DIR` (common when switching between `bootstrap.py`, `./ctl.sh`, and systemd) now see an immediate, actionable startup warning that names the likely correct directory, eliminating the \"projects vanished\" confusion.\n\n## Verification\n\n```\n$env:PYTHONUTF8 = '1'; $env:BROWSER = 'echo'\n..\\hermes-agent\\venv\\Scripts\\python.exe -m pytest tests/test_config.py -v --timeout=60\n..\\hermes-agent\\venv\\Scripts\\python.exe -m pytest tests/ -v --timeout=60\n```\n\n## Risks / Follow-ups\n\n- The sibling-scan heuristic only finds the first match; if multiple sibling state dirs exist it could name the wrong one (uncommon scenario)\n- A follow-up could compare session counts across siblings and pick the most-populated one for a stronger hint\n\n## Model Used\n\nClaude Opus 4.6 via Claude Code CLI\r\n",
+    "changedFiles": 2,
+    "closedAt": "2026-06-10T20:03:38Z",
+    "createdAt": "2026-06-10T16:27:17Z",
+    "deletions": 0,
+    "headRefName": "pr/state-dir-startup-diag",
+    "mergedAt": null,
+    "number": 3939,
+    "state": "CLOSED",
+    "title": "fix(config): warn on STATE_DIR divergence at startup when session store is empty (#3915)",
+    "url": "https://github.com/nesquena/hermes-webui/pull/3939"
+  }
+}
+
