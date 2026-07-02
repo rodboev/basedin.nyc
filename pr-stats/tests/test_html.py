@@ -1,13 +1,19 @@
 from __future__ import annotations
 
+import json
+import re
 from pathlib import Path
 
 from core.classify import ClassificationResult
 from core.html import (
     ClassificationDisplay,
     ReportSanityInput,
+    SortPill,
+    compact_script_json,
     generated_report_sanity_issues,
     previous_report_total_prs,
+    render_pr_bootstrap_script,
+    render_sort_pills,
     render_status_tag,
     write_report_if_sane,
 )
@@ -111,6 +117,57 @@ def test_status_rendering_is_data_driven_by_classification_result() -> None:
     assert render_status_tag(ClassificationResult(classification="b"), display) == '<span class="tag-b">Beta</span>'
 
 
+def test_compact_script_json_matches_ps1_shape_and_escapes_script_end() -> None:
+    assert compact_script_json([{"key": "a", "body": "</script>"}]) == r'[{"key":"a","body":"<\/script>"}]'
+
+
+def test_sort_pills_render_existing_data_attribute_shape() -> None:
+    assert render_sort_pills(
+        [
+            SortPill(key="all", label="All"),
+            SortPill(key="repo", label="repo", count=3),
+        ],
+        active_key="all",
+        data_attribute="repo",
+    ) == (
+        '    <div class="sort-pill active" data-repo="all">All</div>\n'
+        '    <div class="sort-pill" data-repo="repo">repo (3)</div>\n'
+    )
+
+
+def test_pr_bootstrap_script_matches_ps1_variable_surface() -> None:
+    script = render_pr_bootstrap_script(
+        filters=[{"key": "a", "label": "A", "count": 1}],
+        items=[{"number": 1, "title": "Fix"}],
+        default_status_key="a",
+        default_repo_key="all",
+    )
+
+    assert script == (
+        'var PR_FILTERS = [{"key":"a","label":"A","count":1}];\n'
+        'var PR_DATA = [{"number":1,"title":"Fix"}];\n'
+        "var CURRENT_PR_FILTER = {\n"
+        "  statusKey: 'a',\n"
+        "  repoKey: 'all'\n"
+        "};"
+    )
+
+
+def test_pr_bootstrap_script_matches_generated_index_surface(repo_root: Path) -> None:
+    content = (repo_root / "index.html").read_text(encoding="utf-8")
+    filters = json.loads(_script_json(content, "PR_FILTERS"))
+    items = json.loads(_script_json(content, "PR_DATA"))
+    expected = re.search(r"var PR_FILTERS = .*?var CURRENT_PR_FILTER = \{\s*statusKey: '[^']+',\s*repoKey: '[^']+'\s*\};", content, re.S)
+    assert expected is not None
+
+    assert render_pr_bootstrap_script(
+        filters=filters,
+        items=items,
+        default_status_key="shipped",
+        default_repo_key="all",
+    ) == expected.group(0)
+
+
 def test_html_module_does_not_embed_classification_status_vocabulary(repo_root: Path) -> None:
     source = (repo_root / "core" / "html.py").read_text(encoding="utf-8").lower()
 
@@ -119,3 +176,9 @@ def test_html_module_does_not_embed_classification_status_vocabulary(repo_root: 
     assert "withdrawn" not in source
     assert "superseded" not in source
     assert "lost" not in source
+
+
+def _script_json(content: str, name: str) -> str:
+    match = re.search(rf"var {name} = (.*?);", content, re.S)
+    assert match is not None
+    return match.group(1)
