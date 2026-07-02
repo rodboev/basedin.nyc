@@ -164,8 +164,10 @@ def inject_into_index(html, chart_json, repo_json, names_json, avg_prs, avg_loc)
     today = datetime.now(EASTERN).strftime("%Y-%m-%d")
     # Remove prior injection if re-running
     html = re.sub(
-        rf'{re.escape(CHART_MARKER)}.*?{re.escape(CHART_MARKER)}',
-        '', html, flags=re.DOTALL
+        rf'\s*{re.escape(CHART_MARKER)}.*?{re.escape(CHART_MARKER)}\s*',
+        '\n',
+        html,
+        flags=re.DOTALL,
     )
 
     # 1. Add Chart.js CDN before </head>
@@ -231,9 +233,9 @@ var TL_TODAY = '{today}';
     m = re.search(r'(</div>\s*<div class="legend">.*?</div>\s*</div>)\s*\n', html, re.DOTALL)
     if m:
         insert_at = m.end()
-        html = html[:insert_at] + '\n' + chart_section + '\n' + html[insert_at:]
+        html = html[:insert_at].rstrip() + '\n' + chart_section.strip() + '\n' + html[insert_at:].lstrip()
     else:
-        html = html.replace("<h2>Methodology</h2>", chart_section + "\n<h2>Methodology</h2>")
+        html = html.replace("<h2>Methodology</h2>", chart_section.strip() + "\n<h2>Methodology</h2>")
     return html
 
 
