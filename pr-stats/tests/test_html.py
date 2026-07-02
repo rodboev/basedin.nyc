@@ -22,6 +22,7 @@ from core.html import (
     render_expand_row,
     render_legend_items,
     render_pr_bootstrap_script,
+    render_pr_table_shell,
     render_repo_status_section,
     render_sort_pills,
     render_stat_grid,
@@ -176,6 +177,27 @@ def test_collapse_helpers_match_existing_markup() -> None:
     assert render_collapse_overlay(block_id="pr-list") == (
         '<div class="overlay-row" onclick="toggleCollapsedTable(\'pr-list\', event)">'
         'Collapse <span class="caret">&#9650;</span></div>\n'
+    )
+
+
+def test_pr_table_shell_renders_existing_ids_and_columns() -> None:
+    assert render_pr_table_shell(visible_items=20) == (
+        '<div class="collapsible-table collapsed" id="pr-list-collapsible" data-collapse-mode="top" data-visible-items="20" data-rows-per-item="2">\n'
+        '<table class="targets-table pr-list-table" id="pr-list-table">\n'
+        "  <colgroup>\n"
+        '    <col class="pr-col-pr">\n'
+        '    <col class="pr-col-repo">\n'
+        '    <col class="pr-col-status">\n'
+        '    <col class="pr-col-date">\n'
+        '    <col class="pr-col-release">\n'
+        '    <col class="pr-col-via">\n'
+        "  </colgroup>\n"
+        "  <thead><tr><th>PR</th><th>Repo</th><th>Status</th><th>Date</th><th>Release</th><th>Via</th></tr></thead>\n"
+        '  <tbody id="pr-list-body"></tbody>\n'
+        "</table>\n"
+        '<div class="overlay-row" onclick="toggleCollapsedTable(\'pr-list-collapsible\', event)">'
+        'Collapse <span class="caret">&#9650;</span></div>\n'
+        "</div>"
     )
 
 

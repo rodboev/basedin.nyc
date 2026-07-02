@@ -185,6 +185,28 @@ def render_collapse_overlay(*, block_id: str, label: str = "Collapse") -> str:
     )
 
 
+def render_pr_table_shell(*, visible_items: int, block_id: str = "pr-list-collapsible") -> str:
+    escaped_block_id = escape(block_id, quote=True)
+    return (
+        f'<div class="collapsible-table collapsed" id="{escaped_block_id}" data-collapse-mode="top" '
+        f'data-visible-items="{visible_items}" data-rows-per-item="2">\n'
+        '<table class="targets-table pr-list-table" id="pr-list-table">\n'
+        "  <colgroup>\n"
+        '    <col class="pr-col-pr">\n'
+        '    <col class="pr-col-repo">\n'
+        '    <col class="pr-col-status">\n'
+        '    <col class="pr-col-date">\n'
+        '    <col class="pr-col-release">\n'
+        '    <col class="pr-col-via">\n'
+        "  </colgroup>\n"
+        "  <thead><tr><th>PR</th><th>Repo</th><th>Status</th><th>Date</th><th>Release</th><th>Via</th></tr></thead>\n"
+        '  <tbody id="pr-list-body"></tbody>\n'
+        "</table>\n"
+        f"{render_collapse_overlay(block_id=block_id)}"
+        "</div>"
+    )
+
+
 def compact_script_json(value: object) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":")).replace("</script", r"<\/script")
 
