@@ -56,7 +56,9 @@ def rebuild_classification_cache(
     out_cache_file.parent.mkdir(parents=True, exist_ok=True)
     active_repos = set(load_active_repos_from_text(repos_file.read_text(encoding="utf-8")))
     now = datetime.now(timezone.utc)
-    divergences: list[CacheDivergence] = []
+    # Seed from the existing report so a resumed run preserves divergences that
+    # were recorded for entries this run will skip as already generated.
+    divergences_by_key: dict[str, CacheDivergence] = load_divergence_report(divergence_file)
     checked = 0
     skipped = 0
     failed = 0
@@ -94,13 +96,14 @@ def rebuild_classification_cache(
                 now=now,
             )
             if not classification_entry_matches_result(expected, actual):
-                divergences.append(CacheDivergence(key=key, expected=expected, actual=actual))
+                divergences_by_key[key] = CacheDivergence(key=key, expected=expected, actual=actual)
                 _write_pr_prefix(repo, number)
                 CONSOLE.print(
                     f" {actual.log_label} (DIVERGED from {expected.classification}/{expected.evidenceKind})",
                     style="red",
                 )
             else:
+                divergences_by_key.pop(key, None)
                 _write_pr_prefix(repo, number)
                 CONSOLE.print(
                     f" {actual.log_label}",
@@ -108,21 +111,21 @@ def rebuild_classification_cache(
                 )
             checked += 1
             if save_every > 0 and checked % save_every == 0:
-                _save_rebuild_progress(output_cache, out_cache_file, divergences, divergence_file)
+                _save_rebuild_progress(output_cache, out_cache_file, divergences_by_key, divergence_file)
             if limit is not None and checked >= limit:
                 break
     except KeyboardInterrupt:
-        _save_rebuild_progress(output_cache, out_cache_file, divergences, divergence_file)
+        _save_rebuild_progress(output_cache, out_cache_file, divergences_by_key, divergence_file)
         _progress(
-            f"Interrupted after classifying {checked} PRs, skipped {skipped}, failed {failed}, divergences {len(divergences)}. Checkpoint saved.",
+            f"Interrupted after classifying {checked} PRs, skipped {skipped}, failed {failed}, divergences {len(divergences_by_key)}. Checkpoint saved.",
             "yellow",
         )
         raise CacheRebuildInterrupted(
-            CacheRebuildResult(checked=checked, skipped=skipped, failed=failed, divergences=len(divergences))
+            CacheRebuildResult(checked=checked, skipped=skipped, failed=failed, divergences=len(divergences_by_key))
         ) from None
 
-    _save_rebuild_progress(output_cache, out_cache_file, divergences, divergence_file)
-    return CacheRebuildResult(checked=checked, skipped=skipped, failed=failed, divergences=len(divergences))
+    _save_rebuild_progress(output_cache, out_cache_file, divergences_by_key, divergence_file)
+    return CacheRebuildResult(checked=checked, skipped=skipped, failed=failed, divergences=len(divergences_by_key))
 
 
 def classification_entry_matches_result(expected: ClassificationEntry, actual: ClassificationResult) -> bool:
@@ -133,6 +136,44 @@ def classification_entry_matches_result(expected: ClassificationEntry, actual: C
         and expected.viaUrl == actual.via_url
         and expected.release == actual.release
     )
+
+
+def load_divergence_report(path: Path) -> dict[str, CacheDivergence]:
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    if not isinstance(payload, list):
+        return {}
+    loaded: dict[str, CacheDivergence] = {}
+    for item in payload:
+        if not isinstance(item, dict):
+            continue
+        key = item.get("key")
+        expected = item.get("expected")
+        actual = item.get("actual")
+        if not isinstance(key, str) or not isinstance(expected, dict) or not isinstance(actual, dict):
+            continue
+        loaded[key] = CacheDivergence(
+            key=key,
+            expected=ClassificationEntry(
+                classification=str(expected.get("classification") or ""),
+                evidenceKind=str(expected.get("evidenceKind") or ""),
+                viaLabel=str(expected.get("viaLabel") or ""),
+                viaUrl=str(expected.get("viaUrl") or ""),
+                release=str(expected.get("release") or ""),
+            ),
+            actual=ClassificationResult(
+                classification=str(actual.get("classification") or ""),
+                evidence_kind=str(actual.get("evidenceKind") or ""),
+                via_label=str(actual.get("viaLabel") or ""),
+                via_url=str(actual.get("viaUrl") or ""),
+                release=str(actual.get("release") or ""),
+            ),
+        )
+    return loaded
 
 
 def write_divergence_report(divergences: list[CacheDivergence], path: Path) -> None:
@@ -396,11 +437,11 @@ def _write_pr_prefix(repo: str, number: int) -> None:
 def _save_rebuild_progress(
     output_cache: Cache,
     out_cache_file: Path,
-    divergences: list[CacheDivergence],
+    divergences_by_key: dict[str, CacheDivergence],
     divergence_file: Path,
 ) -> None:
     save_cache(output_cache, out_cache_file)
-    write_divergence_report(divergences, divergence_file)
+    write_divergence_report([divergences_by_key[key] for key in sorted(divergences_by_key)], divergence_file)
 
 
 def _classification_style(classification: str) -> str:
