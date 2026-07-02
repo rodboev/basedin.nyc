@@ -247,6 +247,22 @@ def test_maintainer_carry_forward_requires_commit_author_match(
     assert is_credited_merged_sibling_by_maintainer_carry_forward("owner/repo", pr, evidence, merged)
 
 
+def test_maintainer_carry_forward_matches_commit_author_case_insensitively(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr(author={"login": "Michaelyklam"})
+    merged = make_ref(number=22)
+    evidence = make_evidence(
+        comments=[make_comment(body="Closing as superseded by #22 with co-author credit merged to main")],
+        commit_author_logins_by_pr={22: {"michaelyklam"}},
+    )
+
+    assert is_credited_merged_sibling_by_maintainer_carry_forward("owner/repo", pr, evidence, merged)
+
+
 def test_maintainer_carry_forward_rejects_missing_commit_author(
     make_pr: Callable[..., PullRequest],
     make_ref: Callable[..., PullRequestRef],

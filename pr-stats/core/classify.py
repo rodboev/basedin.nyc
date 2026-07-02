@@ -367,7 +367,7 @@ def is_credited_merged_sibling_by_maintainer_carry_forward(
     original_login = original_pr.author.login
     if not original_login:
         return False
-    return original_login in evidence.commit_author_logins_by_pr.get(merged_pr.number, set())
+    return original_login.casefold() in {login.casefold() for login in evidence.commit_author_logins_by_pr.get(merged_pr.number, set())}
 
 
 def is_credited_merged_sibling(repo: str, original_pr: PullRequest, merged_pr: PullRequestRef, evidence: Evidence) -> bool:

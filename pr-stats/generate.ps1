@@ -3166,7 +3166,7 @@ Write-Host "  Elapsed: $([int]$generateElapsed.TotalSeconds)s ($([math]::Round($
 $timelinePy = Join-Path $PSScriptRoot "generate-timeline.py"
 if (Test-Path $timelinePy) {
     Write-Host "`nInjecting timeline chart..." -ForegroundColor Cyan
-    python $timelinePy
+    python $timelinePy --in-file $OutFile --out-file $OutFile --repos-file $PSCommandPath
 }
 
 if ([Environment]::UserInteractive -and -not [Console]::IsInputRedirected) {

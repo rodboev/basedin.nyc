@@ -4,6 +4,7 @@ import json
 import os
 import re
 from collections.abc import Iterable
+from pathlib import Path
 
 import pytest
 
@@ -11,6 +12,7 @@ from core.cache import load_cache
 from core.classify import ClassificationResult, classify_closed_pr, get_non_bot_comment_text, should_resolve_referenced_pull_request
 from core.github import run_gh
 from core.models import Cache, Comment, Evidence, PullRequest, PullRequestRef, TimelineEvent
+from core.timeline import load_active_repos_from_text
 
 REPO_MAINTAINERS: dict[str, tuple[str, ...]] = {
     "nesquena/hermes-webui": ("nesquena",),
@@ -33,14 +35,6 @@ REPO_INTEGRATION_BOTS: dict[str, tuple[str, ...]] = {
     "mastra-ai/mastra": ("devin-ai-integration",),
     "stablyai/orca": ("buf0-bot[bot]",),
 }
-ACTIVE_REPORT_REPOS = {
-    "nesquena/hermes-webui",
-    "kenn-io/agentsview",
-    "thedotmack/claude-mem",
-    "headroomlabs-ai/headroom",
-    "mem0ai/mem0",
-    "stablyai/orca",
-}
 ACCEPTED_CLASSIFICATION_DIVERGENCES: dict[str, str] = {
     "headroomlabs-ai/headroom#102": "cached before positive-context sibling credit tightened; current #107 text says continuation without credit vocabulary",
     "kenn-io/agentsview#15": "cached accepted via #18, but current evidence only has author superseded text and no positive sibling credit context",
@@ -55,18 +49,19 @@ ACCEPTED_CLASSIFICATION_DIVERGENCES: dict[str, str] = {
 }
 
 @pytest.mark.live
-def test_live_classification_replay_matches_cached_powershell_results(live_cache_path: object) -> None:
+def test_live_classification_replay_matches_cached_powershell_results(live_cache_path: object, repo_root: Path) -> None:
     cache = load_cache(live_cache_path)
     mismatches: list[str] = []
     checked = 0
     limit = _optional_int(os.environ.get("PR_STATS_CLASSIFICATION_PARITY_LIMIT"))
     selected_keys = _optional_key_filter(os.environ.get("PR_STATS_CLASSIFICATION_PARITY_KEYS"))
+    active_repos = set(load_active_repos_from_text((repo_root / "generate.ps1").read_text(encoding="utf-8")))
 
     for key, expected in sorted(cache.entries.items()):
         if selected_keys is not None and key not in selected_keys:
             continue
         repo, number = _split_cache_key(key)
-        if selected_keys is None and not _should_replay_repo(repo):
+        if selected_keys is None and not _should_replay_repo(repo, active_repos):
             continue
         pr = _cached_or_live_pr(cache, repo, number)
         if pr is None:
@@ -328,5 +323,5 @@ def _optional_key_filter(value: str | None) -> set[str] | None:
     keys = {item.strip() for item in value.split(",") if item.strip()}
     return keys if keys else None
 
-def _should_replay_repo(repo: str) -> bool:
-    return os.environ.get("PR_STATS_CLASSIFICATION_PARITY_ALL_REPOS") == "1" or repo in ACTIVE_REPORT_REPOS
+def _should_replay_repo(repo: str, active_repos: set[str]) -> bool:
+    return os.environ.get("PR_STATS_CLASSIFICATION_PARITY_ALL_REPOS") == "1" or repo in active_repos

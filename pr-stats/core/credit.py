@@ -162,13 +162,15 @@ def invoke_ship_comment_classifier(
     }
 
     if has_deflection and referenced_prs:
+        folded_author = pr_author_login.casefold()
         if OWN_SHIP_PATTERN.search(comment_body):
             return "own-ship"
 
         for superseding_pr in referenced_prs:
-            if pull_request_author(superseding_pr) == pr_author_login:
+            superseding_author = pull_request_author(superseding_pr)
+            if superseding_author is not None and superseding_author.casefold() == folded_author:
                 return "own-ship"
-            if coauthor_index and pr_author_login in coauthor_index.get(superseding_pr, set()):
+            if coauthor_index and folded_author in {login.casefold() for login in coauthor_index.get(superseding_pr, set())}:
                 return "co-author-ship"
             if commit_messages_for_pr is None:
                 continue

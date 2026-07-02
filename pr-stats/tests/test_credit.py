@@ -92,6 +92,17 @@ def test_ship_comment_deflection_resolves_own_superseding_pr() -> None:
     assert result == "own-ship"
 
 
+def test_ship_comment_deflection_resolves_own_superseding_pr_case_insensitively() -> None:
+    result = invoke_ship_comment_classifier(
+        pr_number=10,
+        comment_body="Closing as superseded by #20",
+        pr_author_login="alice",
+        pull_request_author=lambda number: "Alice" if number == 20 else None,
+    )
+
+    assert result == "own-ship"
+
+
 def test_ship_comment_deflection_resolves_coauthor_index() -> None:
     result = invoke_ship_comment_classifier(
         pr_number=10,
@@ -99,6 +110,18 @@ def test_ship_comment_deflection_resolves_coauthor_index() -> None:
         pr_author_login="alice",
         pull_request_author=lambda number: "maintainer",
         coauthor_index={20: {"alice"}},
+    )
+
+    assert result == "co-author-ship"
+
+
+def test_ship_comment_deflection_resolves_coauthor_index_case_insensitively() -> None:
+    result = invoke_ship_comment_classifier(
+        pr_number=10,
+        comment_body="Closing as superseded by #20",
+        pr_author_login="alice",
+        pull_request_author=lambda number: "maintainer",
+        coauthor_index={20: {"Alice"}},
     )
 
     assert result == "co-author-ship"

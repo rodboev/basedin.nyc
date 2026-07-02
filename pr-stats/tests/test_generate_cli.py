@@ -14,7 +14,7 @@ def test_verify_webui_credits_only_uses_python_credit_pipeline(repo_root: Path) 
         [
             sys.executable,
             "generate.py",
-            "--verify-webui-credits-only",
+            "--verify-webui-cached-credits-only",
             "--cache-file",
             ".pr-classification-cache.json",
             "--changelog-file",

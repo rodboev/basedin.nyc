@@ -25,19 +25,20 @@ WEBUI_CREDIT_RATIO_CHECKS = (
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Generate pr-stats output.")
     parser.add_argument("--cache-file", type=Path, default=Path(".pr-classification-cache.json"))
-    parser.add_argument("--verify-webui-credits-only", action="store_true")
+    parser.add_argument("--verify-webui-cached-credits-only", action="store_true")
+    parser.add_argument("--verify-webui-credits-only", action="store_true", help="alias for --verify-webui-cached-credits-only during the rewrite")
     parser.add_argument("--changelog-file", type=Path, default=None)
     parser.add_argument("--contributors-file", type=Path, default=None)
     args = parser.parse_args(argv)
 
-    if args.verify_webui_credits_only:
+    if args.verify_webui_cached_credits_only or args.verify_webui_credits_only:
         return verify_webui_credits_only(
             cache_file=args.cache_file,
             changelog_file=args.changelog_file,
             contributors_file=args.contributors_file,
         )
 
-    parser.error("the Python entry point currently supports --verify-webui-credits-only")
+    parser.error("the Python entry point currently supports --verify-webui-cached-credits-only")
     return 2
 
 def verify_webui_credits_only(

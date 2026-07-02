@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from core.timeline import CHART_MARKER, inject_timeline_chart
 
 
@@ -19,3 +21,9 @@ def test_timeline_injection_is_idempotent() -> None:
     assert twice == once
     assert "\n\n\n<!-- timeline-chart -->" not in twice
     assert twice.count(CHART_MARKER) == 2
+
+
+def test_ps1_outfile_is_passed_to_timeline_injector(repo_root: Path) -> None:
+    script = (repo_root / "generate.ps1").read_text(encoding="utf-8")
+
+    assert "python $timelinePy --in-file $OutFile --out-file $OutFile --repos-file $PSCommandPath" in script
