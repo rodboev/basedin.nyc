@@ -6,15 +6,24 @@ from pathlib import Path
 
 from core.classify import ClassificationResult
 from core.html import (
+    BarSegment,
     ClassificationDisplay,
+    LegendItem,
     ReportSanityInput,
     SortPill,
+    StatCard,
+    StatusRow,
     compact_script_json,
     generated_report_sanity_issues,
     previous_report_total_prs,
+    render_bar_segments,
+    render_legend_items,
     render_pr_bootstrap_script,
+    render_repo_status_section,
     render_sort_pills,
+    render_stat_grid,
     render_status_tag,
+    render_tag,
     write_report_if_sane,
 )
 
@@ -115,6 +124,43 @@ def test_status_rendering_is_data_driven_by_classification_result() -> None:
 
     assert render_status_tag(ClassificationResult(classification="a"), display) == '<span class="tag-a">Alpha</span>'
     assert render_status_tag(ClassificationResult(classification="b"), display) == '<span class="tag-b">Beta</span>'
+
+
+def test_generic_tag_and_stat_grid_render_existing_structure() -> None:
+    assert render_tag(label="Alpha", tag_class="tag-alpha") == '<span class="tag tag-alpha">Alpha</span>'
+    assert render_stat_grid(
+        [
+            StatCard(value="12", label="Total PRs", value_id="bd-total"),
+            StatCard(value="98%", label="Rate", value_class="green", value_id="bd-rate", label_id="bd-rate-label"),
+        ],
+    ) == (
+        '<div class="grid grid-summary">\n'
+        '  <div class="stat-card"><div class="number" id="bd-total">12</div><div class="label">Total PRs</div></div>\n'
+        '  <div class="stat-card"><div class="number green" id="bd-rate">98%</div><div class="label" id="bd-rate-label">Rate</div></div>\n'
+        "</div>"
+    )
+
+
+def test_bar_and_legend_render_existing_ids_and_data_attributes() -> None:
+    assert render_bar_segments([BarSegment(key="alpha", width=12.5, title="3", content="3")]) == (
+        '  <div class="bar-segment bar-alpha" id="bd-bar-alpha" data-width="12.5" title="3">3</div>\n'
+    )
+    assert render_legend_items([LegendItem(key="alpha", label="Alpha", count=3)]) == (
+        '  <div class="legend-item" id="bd-leg-alpha"><div class="legend-dot legend-dot-alpha"></div> Alpha (3)</div>\n'
+    )
+
+
+def test_repo_status_section_renders_existing_table_shape() -> None:
+    assert render_repo_status_section(
+        title="repo (2 PRs)",
+        rows=[StatusRow(label="Alpha", tag_class="tag-alpha", count=2, details="Merged")],
+    ) == (
+        "<h2>repo (2 PRs)</h2>\n"
+        '<table class="repo-status">\n'
+        "  <tr><th>Status</th><th>Count</th><th>Details</th></tr>\n"
+        '  <tr><td><span class="tag tag-alpha">Alpha</span></td><td>2</td><td>Merged</td></tr>\n'
+        "</table>\n"
+    )
 
 
 def test_compact_script_json_matches_ps1_shape_and_escapes_script_end() -> None:

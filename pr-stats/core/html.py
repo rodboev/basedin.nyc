@@ -34,6 +34,38 @@ class SortPill:
     count: int | None = None
 
 
+@dataclass(frozen=True)
+class StatCard:
+    value: str
+    label: str
+    value_class: str = ""
+    value_id: str = ""
+    label_id: str = ""
+
+
+@dataclass(frozen=True)
+class BarSegment:
+    key: str
+    width: float
+    title: str = ""
+    content: str = ""
+
+
+@dataclass(frozen=True)
+class LegendItem:
+    key: str
+    label: str
+    count: int
+
+
+@dataclass(frozen=True)
+class StatusRow:
+    label: str
+    tag_class: str
+    count: int
+    details: str
+
+
 def generated_report_sanity_issues(report: ReportSanityInput, *, existing_output: str = "") -> list[str]:
     issues: list[str] = []
     if report.fetched_count == 0:
@@ -79,6 +111,60 @@ def render_status_tag(
 ) -> str:
     display = display_by_classification[result.classification]
     return f'<span class="{escape(display.tag_class, quote=True)}">{escape(display.label)}</span>'
+
+
+def render_tag(*, label: str, tag_class: str) -> str:
+    return f'<span class="tag {escape(tag_class, quote=True)}">{escape(label)}</span>'
+
+
+def render_stat_card(card: StatCard) -> str:
+    value_class = f' class="number {escape(card.value_class, quote=True)}"' if card.value_class else ' class="number"'
+    value_id = f' id="{escape(card.value_id, quote=True)}"' if card.value_id else ""
+    label_id = f' id="{escape(card.label_id, quote=True)}"' if card.label_id else ""
+    return (
+        f'<div class="stat-card"><div{value_class}{value_id}>{escape(card.value)}</div>'
+        f'<div class="label"{label_id}>{escape(card.label)}</div></div>'
+    )
+
+
+def render_stat_grid(cards: list[StatCard]) -> str:
+    return '<div class="grid grid-summary">\n  ' + "\n  ".join(render_stat_card(card) for card in cards) + "\n</div>"
+
+
+def render_bar_segments(segments: list[BarSegment]) -> str:
+    lines: list[str] = []
+    for segment in segments:
+        title = f' title="{escape(segment.title, quote=True)}"' if segment.title else ""
+        lines.append(
+            f'  <div class="bar-segment bar-{escape(segment.key, quote=True)}" '
+            f'id="bd-bar-{escape(segment.key, quote=True)}" data-width="{segment.width:g}"{title}>'
+            f"{escape(segment.content)}</div>",
+        )
+    return "\n".join(lines) + ("\n" if lines else "")
+
+
+def render_legend_items(items: list[LegendItem]) -> str:
+    lines = [
+        f'  <div class="legend-item" id="bd-leg-{escape(item.key, quote=True)}">'
+        f'<div class="legend-dot legend-dot-{escape(item.key, quote=True)}"></div> '
+        f"{escape(item.label)} ({item.count})</div>"
+        for item in items
+    ]
+    return "\n".join(lines) + ("\n" if lines else "")
+
+
+def render_repo_status_section(*, title: str, rows: list[StatusRow]) -> str:
+    row_html = "".join(
+        f"  <tr><td>{render_tag(label=row.label, tag_class=row.tag_class)}</td>"
+        f"<td>{row.count}</td><td>{escape(row.details)}</td></tr>\n"
+        for row in rows
+    )
+    return (
+        f"<h2>{escape(title)}</h2>\n"
+        '<table class="repo-status">\n'
+        "  <tr><th>Status</th><th>Count</th><th>Details</th></tr>\n"
+        f"{row_html}</table>\n"
+    )
 
 
 def compact_script_json(value: object) -> str:
