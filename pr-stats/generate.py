@@ -9,6 +9,8 @@ from core.cache import load_cache
 from core.models import Cache
 from core.credit import cached_release_credit_counts
 from core.github import run_gh
+from core.html import ReportSanityInput, write_report_if_sane
+from core.report import report_counts, report_items_from_script_dicts
 from core.timeline import build_chart_payload, build_daily_data, inject_timeline_chart, load_active_repos_from_text, load_pr_data_from_html, prepare_timeline_prs
 
 WEBUI_REPO = "nesquena/hermes-webui"
@@ -35,6 +37,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--verify-webui-credits-only", action="store_true", help="alias for --verify-webui-cached-credits-only during the rewrite")
     parser.add_argument("--changelog-file", type=Path, default=None)
     parser.add_argument("--contributors-file", type=Path, default=None)
+    parser.add_argument("--force-write", action="store_true")
     args = parser.parse_args(argv)
 
     if args.verify_webui_cached_credits_only or args.verify_webui_credits_only:
@@ -50,8 +53,66 @@ def main(argv: list[str] | None = None) -> int:
             repos_file=args.repos_file,
         )
 
-    parser.error("the Python entry point currently supports --verify-webui-cached-credits-only and --inject-timeline-only")
-    return 2
+    return generate_report(
+        cache_file=args.cache_file,
+        in_file=args.in_file,
+        out_file=args.out_file or args.in_file,
+        repos_file=args.repos_file,
+        force_write=args.force_write,
+    )
+
+def generate_report(
+    *,
+    cache_file: Path,
+    in_file: Path,
+    out_file: Path,
+    repos_file: Path,
+    force_write: bool = False,
+) -> int:
+    try:
+        html = in_file.read_text(encoding="utf-8")
+        repos = load_active_repos_from_text(repos_file.read_text(encoding="utf-8"))
+        pr_items = load_pr_data_from_html(html)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+
+    cache = load_cache(cache_file)
+    all_prs = prepare_timeline_prs(pr_items)
+    chart_data, repo_data, repo_names = build_daily_data(all_prs, repos)
+    chart_json, repo_json, names_json, avg_prs, avg_loc = build_chart_payload(chart_data, repo_data, repo_names)
+    output_html = inject_timeline_chart(html, chart_json, repo_json, names_json, avg_prs, avg_loc)
+    counts = report_counts(
+        report_items_from_script_dicts(pr_items),
+        accepted_classifications=("shipped", "accepted-indirect"),
+        open_status="open",
+        superseded_status="superseded",
+        lost_status="lost",
+    )
+    report_cache_keys = {
+        f"{str(item.get('repo', ''))}#{int(item.get('number', 0) or 0)}"
+        for item in pr_items
+    }
+    issues = write_report_if_sane(
+        out_file=out_file,
+        html=output_html,
+        report=ReportSanityInput(
+            reported_count=counts.total,
+            fetched_count=len(pr_items),
+            acceptance_closed=counts.accepted + counts.not_shipped,
+            open_count=counts.open,
+            failed_repos=(),
+            repo_count=len(repos),
+            cached_classification_count=sum(1 for key in report_cache_keys if key in cache.entries),
+        ),
+        force_write=force_write,
+    )
+    if issues:
+        for issue in issues:
+            print(f"ERROR: {issue}", file=sys.stderr)
+        return 1
+    print(f"Generated report at {out_file}", file=sys.stderr)
+    return 0
 
 def inject_timeline_only(*, in_file: Path, out_file: Path, repos_file: Path) -> int:
     try:
