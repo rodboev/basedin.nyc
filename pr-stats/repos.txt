@@ -4,8 +4,9 @@ nesquena/hermes-webui
 kenn-io/agentsview
 thedotmack/claude-mem
 headroomlabs-ai/headroom
-mem0ai/mem0
+# mem0ai/mem0
 stablyai/orca
+# unslothai/unsloth
 # NVIDIA/SkillSpector
 # NousResearch/hermes-agent
 # cline/cline

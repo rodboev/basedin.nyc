@@ -10,7 +10,9 @@ import re
 from pytest import CaptureFixture, MonkeyPatch
 
 import generate
+import core.leaderboard as leaderboard_mod
 from core.classification_rebuild import CacheRebuildInterrupted, CacheRebuildResult
+from core.github import GhRetryExhausted
 from core.classify import ClassificationResult
 from core.models import Evidence
 from core.report import EASTERN
@@ -73,21 +75,21 @@ def test_default_generate_fetches_live_prs_instead_of_reusing_stale_html(
     cache_file.write_text('{"version":3,"entries":{}}\n', encoding="utf-8")
     repos_file.write_text(_repos_file_text(["owner/repo"]), encoding="utf-8")
 
-    monkeypatch.setattr(
-        generate,
-        "run_gh",
-        lambda *_args, **_kwargs: json.dumps(
-            [
-                _gh_pr_list_item(
-                    number=101,
-                    state="MERGED",
-                    title="Fresh merge absent from stale HTML",
-                    closedAt="2026-07-02T17:00:00Z",
-                    mergedAt="2026-07-02T17:00:00Z",
-                ),
-            ],
-        ),
+    mock_gh = lambda *_args, **_kwargs: json.dumps(
+        [
+            _gh_pr_list_item(
+                number=101,
+                state="MERGED",
+                title="Fresh merge absent from stale HTML",
+                closedAt="2026-07-02T17:00:00Z",
+                mergedAt="2026-07-02T17:00:00Z",
+            ),
+        ],
     )
+    monkeypatch.setattr(generate, "run_gh", mock_gh)
+    monkeypatch.setattr(leaderboard_mod, "run_gh", mock_gh)
+    monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
+    monkeypatch.setattr(leaderboard_mod, "_overlay_cache", {})
 
     readme_file = tmp_path / "README.md"
     readme_file.write_text(
@@ -115,6 +117,41 @@ def test_default_generate_fetches_live_prs_instead_of_reusing_stale_html(
     assert '<td class="rep-desc-cell">lands a fresh merge</td>' in content
     assert re.search(r"\{\{ \w+ \}\}", content) is None
 
+def test_default_generate_survives_leaderboard_retry_exhaustion(
+    repo_root: Path,
+    tmp_path: Path,
+    monkeypatch: MonkeyPatch,
+    capsys: CaptureFixture[str],
+) -> None:
+    out_file = tmp_path / "index.html"
+    cache_file = tmp_path / "cache.json"
+    repos_file = tmp_path / "repos.txt"
+    cache_file.write_text('{"version":3,"entries":{}}\n', encoding="utf-8")
+    repos_file.write_text(_repos_file_text(["owner/repo"]), encoding="utf-8")
+    monkeypatch.setattr(
+        generate,
+        "run_gh",
+        lambda *_args, **_kwargs: json.dumps([_gh_pr_list_item(number=101, state="MERGED", mergedAt="2026-07-02T17:00:00Z")]),
+    )
+
+    def _exhausted(*_args: str, **_kwargs: object) -> str:
+        raise GhRetryExhausted("gh api graphql failed after 5 attempts: GitHub rate limit")
+
+    monkeypatch.setattr(leaderboard_mod, "run_gh", _exhausted)
+    monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
+    monkeypatch.setattr(leaderboard_mod, "_overlay_cache", {})
+
+    result = generate.generate_report(
+        cache_file=cache_file,
+        template_file=repo_root / "template.html",
+        out_file=out_file,
+        repos_file=repos_file,
+    )
+
+    assert result == 0
+    assert "leaderboard refresh failed for owner/repo" in capsys.readouterr().err
+
+
 def test_default_generate_sanity_gate_keeps_existing_output(
     repo_root: Path,
     tmp_path: Path,
@@ -128,11 +165,11 @@ def test_default_generate_sanity_gate_keeps_existing_output(
     out_file.write_text('<div class="number">30</div><div class="label">Total PRs</div>', encoding="utf-8")
     repos_file.write_text(_repos_file_text(["owner/repo"]), encoding="utf-8")
     cache_file.write_text('{"version":3,"entries":{}}\n', encoding="utf-8")
-    monkeypatch.setattr(
-        generate,
-        "run_gh",
-        lambda *_args, **_kwargs: json.dumps([_gh_pr_list_item(number=101, state="MERGED", mergedAt="2026-07-02T17:00:00Z")]),
-    )
+    mock_gh = lambda *_args, **_kwargs: json.dumps([_gh_pr_list_item(number=101, state="MERGED", mergedAt="2026-07-02T17:00:00Z")])
+    monkeypatch.setattr(generate, "run_gh", mock_gh)
+    monkeypatch.setattr(leaderboard_mod, "run_gh", mock_gh)
+    monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
+    monkeypatch.setattr(leaderboard_mod, "_overlay_cache", {})
 
     result = generate.generate_report(
         cache_file=cache_file,
@@ -148,17 +185,18 @@ def test_default_generate_classifies_and_caches_closed_unmerged_live_pr(
     repo_root: Path,
     tmp_path: Path,
     monkeypatch: MonkeyPatch,
+    capsys: CaptureFixture[str],
 ) -> None:
     out_file = tmp_path / "index.html"
     repos_file = tmp_path / "repos.txt"
     cache_file = tmp_path / "cache.json"
     repos_file.write_text(_repos_file_text(["owner/repo"]), encoding="utf-8")
     cache_file.write_text('{"version":3,"entries":{}}\n', encoding="utf-8")
-    monkeypatch.setattr(
-        generate,
-        "run_gh",
-        lambda *_args, **_kwargs: json.dumps([_gh_pr_list_item(number=7, state="CLOSED", closedAt="2026-07-02T17:00:00Z")]),
-    )
+    mock_gh = lambda *_args, **_kwargs: json.dumps([_gh_pr_list_item(number=7, state="CLOSED", closedAt="2026-07-02T17:00:00Z")])
+    monkeypatch.setattr(generate, "run_gh", mock_gh)
+    monkeypatch.setattr(leaderboard_mod, "run_gh", mock_gh)
+    monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
+    monkeypatch.setattr(leaderboard_mod, "_overlay_cache", {})
     monkeypatch.setattr(generate, "live_evidence", lambda *_args, **_kwargs: Evidence())
     monkeypatch.setattr(
         generate,
@@ -168,6 +206,7 @@ def test_default_generate_classifies_and_caches_closed_unmerged_live_pr(
             evidence_kind="accepted-indirect",
             via_label="#9",
             via_url="https://github.com/owner/repo/pull/9",
+            log_label="accepted-indirect",
         ),
     )
 
@@ -179,15 +218,18 @@ def test_default_generate_classifies_and_caches_closed_unmerged_live_pr(
     )
 
     assert result == 0
+    captured = capsys.readouterr()
     content = out_file.read_text(encoding="utf-8")
     cache_content = json.loads(cache_file.read_text(encoding="utf-8"))
     assert '"classification":"accepted-indirect"' in content
     assert cache_content["entries"]["owner/repo#7"]["classification"] == "accepted-indirect"
+    assert "  [1/1] #7 (repo, @rodboev)... accepted-indirect" in captured.err
 
 def test_default_generate_uses_cache_for_closed_unmerged_live_pr(
     repo_root: Path,
     tmp_path: Path,
     monkeypatch: MonkeyPatch,
+    capsys: CaptureFixture[str],
 ) -> None:
     out_file = tmp_path / "index.html"
     repos_file = tmp_path / "repos.txt"
@@ -210,11 +252,11 @@ def test_default_generate_uses_cache_for_closed_unmerged_live_pr(
         ),
         encoding="utf-8",
     )
-    monkeypatch.setattr(
-        generate,
-        "run_gh",
-        lambda *_args, **_kwargs: json.dumps([_gh_pr_list_item(number=7, state="CLOSED", closedAt="2026-07-02T17:00:00Z")]),
-    )
+    mock_gh = lambda *_args, **_kwargs: json.dumps([_gh_pr_list_item(number=7, state="CLOSED", closedAt="2026-07-02T17:00:00Z")])
+    monkeypatch.setattr(generate, "run_gh", mock_gh)
+    monkeypatch.setattr(leaderboard_mod, "run_gh", mock_gh)
+    monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
+    monkeypatch.setattr(leaderboard_mod, "_overlay_cache", {})
 
     result = generate.generate_report(
         cache_file=cache_file,
@@ -224,9 +266,12 @@ def test_default_generate_uses_cache_for_closed_unmerged_live_pr(
     )
 
     assert result == 0
+    captured = capsys.readouterr()
     content = out_file.read_text(encoding="utf-8")
     assert '"classification":"accepted-indirect"' in content
     assert '"viaLabel":"#9"' in content
+    assert "#7" not in captured.err
+
 
 def test_classify_cache_cli_routes_to_rebuild_worker(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     calls: list[dict[str, object]] = []

@@ -85,7 +85,7 @@ def test_repo_filter_pills_and_client_filtering_are_present(repo_root: Path) -> 
     assert 'data-repo="all">All</div>' in content
     assert 'data-repo="webui">webui</div>' in content
     assert 'data-repo="agentsview">agentsview</div>' in content
-    assert 'data-repo="claude-mem">claude-mem</div>' in content
+    assert 'data-repo="cmem">cmem</div>' in content
     assert re.search(r'data-repo="[^"]+">[^<]*\(\d+\)</div>', content) is None
     assert re.search(r"var CURRENT_PR_FILTER = \{\s*statusKey: 'shipped',\s*repoKey: 'all'\s*\};", content) is not None
     assert re.search(r'data-status="open">Open \(\d+\)</div>', content) is not None
@@ -96,6 +96,12 @@ def test_repo_filter_pills_and_client_filtering_are_present(repo_root: Path) -> 
     assert "renderPrTable(CURRENT_PR_FILTER.statusKey, CURRENT_PR_FILTER.repoKey);" in content
     assert "bindPillGroup('pr-repo-pills', 'data-repo', 'repoKey');" in content
     assert "statusKey === 'not-shipped'" in content
+
+
+def test_timeline_repo_label_aliases_include_claude_mem(repo_root: Path) -> None:
+    content = (repo_root / "timeline.js").read_text(encoding="utf-8")
+
+    assert '"claude-mem": "cmem"' in content
 
 
 def test_representative_prs_are_inlined_and_curated(repo_root: Path) -> None:

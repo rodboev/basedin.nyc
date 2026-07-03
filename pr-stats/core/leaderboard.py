@@ -1,12 +1,18 @@
 from __future__ import annotations
 
+import json
+import re
+import sys
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from pathlib import Path
 
-from core.models import Cache
+from core.github import run_gh
+from core.models import Cache, int_value
 
 LEADERBOARD_CACHE_KEY_VERSION = "community-shipped-v4"
+LEADERBOARD_TTL_SECONDS = 24 * 3600
 CHANGELOG_RELEASE_PROFILE = "changelog-release"
 GITHUB_EVIDENCE_PROFILE = "github-evidence"
 REPO_CREDIT_PROFILES = {
@@ -14,16 +20,70 @@ REPO_CREDIT_PROFILES = {
     "kenn-io/agentsview": GITHUB_EVIDENCE_PROFILE,
     "thedotmack/claude-mem": GITHUB_EVIDENCE_PROFILE,
 }
-REPO_LEADERBOARD_CONFIG: dict[str, tuple[tuple[str, ...], tuple[str, ...]]] = {
-    "nesquena/hermes-webui": (("nesquena",), ("nesquena-hermes",)),
-    "kenn-io/agentsview": (("wesm", "mariusvniekerk", "cpcloud"), ()),
-    "thedotmack/claude-mem": (("thedotmack",), ()),
-    "headroomlabs-ai/headroom": (("chopratejas", "DevanshiVyas", "JerrettDavis"), ()),
-    "mem0ai/mem0": (("taranjeet", "deshraj", "kartik-mem0", "chaithanyak42", "prathameshagrawal", "agumpandey"), ()),
-    "stablyai/orca": (("nwparker", "AmethystLiang", "Jinwoo-H", "brennanb2025", "tmchow"), ("buf0-bot[bot]",)),
-    "NVIDIA/SkillSpector": ((), ()),
-    "NousResearch/hermes-agent": ((), ()),
+LEADERBOARD_PAGE_SIZE = 100
+LEADERBOARD_MAX_PAGES = 200
+COMMUNITY_PR_QUERY = """\
+query($owner: String!, $name: String!, $pageSize: Int!, $cursor: String) {
+  repository(owner: $owner, name: $name) {
+    pullRequests(first: $pageSize, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}) {
+      pageInfo { hasNextPage endCursor }
+      nodes { state createdAt author { login __typename } }
+    }
+  }
 }
+"""
+DEFAULT_OVERLAY_CONFIG_DIR = Path(r"D:\Repos\.claude\pr-sweep\repos")
+_MEMBER_LINE = re.compile(r"^\s{2,}-\s+(\S+?)(?::|\s|$)")
+_overlay_dir: Path = DEFAULT_OVERLAY_CONFIG_DIR
+_overlay_cache: dict[str, tuple[str, ...]] = {}
+
+
+def set_overlay_config_dir(path: Path) -> None:
+    global _overlay_dir
+    _overlay_dir = path
+    _overlay_cache.clear()
+
+
+def _load_overlay_members(repo_short: str) -> tuple[str, ...]:
+    if repo_short in _overlay_cache:
+        return _overlay_cache[repo_short]
+    config_path = _overlay_dir / repo_short / "config.md"
+    members: list[str] = []
+    try:
+        text = config_path.read_text(encoding="utf-8")
+    except OSError:
+        print(
+            f"WARNING: missing pr-sweep overlay config {config_path}; maintainer exclusions and gating for {repo_short} disabled",
+            file=sys.stderr,
+        )
+        _overlay_cache[repo_short] = ()
+        return ()
+    in_members = False
+    for line in text.splitlines():
+        if line.strip().lower() == "- members:":
+            in_members = True
+            continue
+        if in_members:
+            m = _MEMBER_LINE.match(line)
+            if m:
+                members.append(m.group(1))
+            else:
+                break
+    result = tuple(members)
+    _overlay_cache[repo_short] = result
+    return result
+
+
+# Integration bots are privileged commenters for classification (Evidence.integration_bots),
+# not humans, so they never appear in overlay Members blocks and stay hardcoded here.
+REPO_INTEGRATION_BOTS: dict[str, tuple[str, ...]] = {
+    "stablyai/orca": ("buf0-bot[bot]",),
+}
+
+
+def repo_leaderboard_config(repo: str) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    repo_short = repo.rsplit("/", 1)[-1].lower()
+    return _load_overlay_members(repo_short), REPO_INTEGRATION_BOTS.get(repo, ())
 
 
 @dataclass(frozen=True)
@@ -65,7 +125,7 @@ def is_leaderboard_bot(login: str) -> bool:
     folded = login.lower()
     if folded.startswith("app/"):
         return True
-    return folded == "dependabot[bot]"
+    return folded.endswith("[bot]")
 
 
 def is_leaderboard_excluded_login(login: str, exclusions: LeaderboardExclusions) -> bool:
@@ -91,7 +151,7 @@ def repo_leaderboard_exclusions(
 
 
 def configured_repo_leaderboard_exclusions(repo: str) -> LeaderboardExclusions:
-    maintainers, integration_bots = REPO_LEADERBOARD_CONFIG.get(repo, ((), ()))
+    maintainers, integration_bots = repo_leaderboard_config(repo)
     return repo_leaderboard_exclusions(
         owner=repo.split("/", 1)[0],
         maintainer_logins=maintainers,
@@ -135,52 +195,6 @@ def new_leaderboard_stat(
     )
 
 
-def top_credited_logins(stats: Mapping[str, LeaderboardStat], *, author: str, top: int) -> list[str]:
-    refresh_logins = [
-        login
-        for login, _stat in sorted(
-            stats.items(),
-            key=lambda item: (item[1].credited, item[1].open),
-            reverse=True,
-        )[:top]
-    ]
-    if author in stats and author not in refresh_logins:
-        refresh_logins.append(author)
-    return refresh_logins
-
-
-def community_contributor_logins(
-    *,
-    recent_author_logins: Iterable[str],
-    exclusions: LeaderboardExclusions,
-    author: str,
-) -> list[str]:
-    unique_logins = [
-        login
-        for login in _unique(recent_author_logins)
-        if login and not is_leaderboard_excluded_login(login, exclusions)
-    ]
-    if author not in unique_logins and not is_leaderboard_excluded_login(author, exclusions):
-        return [author, *unique_logins]
-    return unique_logins
-
-
-def merge_community_contributor_logins(
-    *,
-    prior_logins: Iterable[str],
-    seed_logins: Iterable[str],
-    recent_author_logins: Iterable[str],
-    exclusions: LeaderboardExclusions,
-    author: str,
-) -> list[str]:
-    recent = community_contributor_logins(
-        recent_author_logins=recent_author_logins,
-        exclusions=exclusions,
-        author=author,
-    )
-    merged = _unique((*prior_logins, *seed_logins, *recent))
-    return [login for login in merged if not is_leaderboard_excluded_login(login, exclusions)]
-
 def cached_leaderboard_rows(
     *,
     cache: Cache,
@@ -210,9 +224,9 @@ def cached_leaderboard_rows(
         if not isinstance(raw, dict):
             continue
         stat = new_leaderboard_stat(
-            total=_int_value(raw.get("total")),
-            open_count=_int_value(raw.get("open")),
-            recent_count=_int_value(raw.get("recentCount")),
+            total=int_value(raw.get("total")),
+            open_count=int_value(raw.get("open")),
+            recent_count=int_value(raw.get("recentCount")),
             last_created_at=_string_value(raw.get("lastCreatedAt")),
             now=now,
             rate_window_days=rate_window_days,
@@ -249,6 +263,153 @@ def cached_leaderboard_rows(
     ]
 
 
+def fetch_community_leaderboard(repo: str, cache: Cache, *, now: datetime) -> bool:
+    cache_key = leaderboard_cache_key(repo, None)
+    existing = cache.leaderboards.get(cache_key)
+    if existing is not None and not _leaderboard_entry_expired(existing, now=now):
+        return False
+    nodes = _fetch_community_pr_nodes(repo)
+    if nodes is None:
+        return False
+
+    exclusions = configured_repo_leaderboard_exclusions(repo)
+    recent_cutoff = now.timestamp() - 7 * 86_400
+    totals: dict[str, int] = {}
+    opens: dict[str, int] = {}
+    merged: dict[str, int] = {}
+    recents: dict[str, int] = {}
+    last_dates: dict[str, str] = {}
+
+    for node in nodes:
+        author_raw = node.get("author")
+        if not isinstance(author_raw, dict):
+            continue
+        # GraphQL Bot actors carry plain logins without the [bot] suffix.
+        if author_raw.get("__typename") == "Bot":
+            continue
+        login = str(author_raw.get("login") or "")
+        if not login or is_leaderboard_excluded_login(login, exclusions):
+            continue
+        state = node.get("state", "")
+        created_at = str(node.get("createdAt", ""))
+        totals[login] = totals.get(login, 0) + 1
+        if state == "OPEN":
+            opens[login] = opens.get(login, 0) + 1
+        if state == "MERGED":
+            merged[login] = merged.get(login, 0) + 1
+        if created_at:
+            if created_at > last_dates.get(login, ""):
+                last_dates[login] = created_at
+            try:
+                if datetime.fromisoformat(created_at.replace("Z", "+00:00")).timestamp() >= recent_cutoff:
+                    recents[login] = recents.get(login, 0) + 1
+            except ValueError:
+                pass
+
+    # An empty community is still a complete scan; stamp the entry so the TTL
+    # prevents re-paging the whole repo on every run.
+    logins = sorted(totals, key=lambda login: totals[login], reverse=True)
+    now_str = now.isoformat().replace("+00:00", "Z")
+    # Merge into the existing entry: PS1-era boards carry releaseCreditCounts and
+    # other credit keys that Python has no writer for and must not destroy.
+    entry: dict[str, object] = dict(existing) if existing is not None else {}
+    entry.update({
+        "cachedAt": now_str,
+        "refreshedAt": now_str,
+        "logins": logins,
+        "stats": {
+            login: {"total": totals[login], "open": opens.get(login, 0),
+                    "recentCount": recents.get(login, 0), "lastCreatedAt": last_dates.get(login, "")}
+            for login in logins
+        },
+        "shippedCounts": _merged_shipped_counts(existing, logins=logins, merged=merged),
+    })
+    cache.leaderboards[cache_key] = entry
+    print(f"  Built leaderboard for {repo}: {len(nodes)} PRs, {len(logins)} contributors", file=sys.stderr)
+    return True
+
+
+def _leaderboard_entry_expired(entry: Mapping[str, object], *, now: datetime) -> bool:
+    cached_at = entry.get("cachedAt")
+    if not isinstance(cached_at, str) or not cached_at:
+        return True
+    cached_time = _parse_datetime(cached_at)
+    if cached_time is None:
+        return True
+    return (now - cached_time).total_seconds() >= LEADERBOARD_TTL_SECONDS
+
+
+def _fetch_community_pr_nodes(repo: str) -> list[dict[str, object]] | None:
+    owner, _, name = repo.partition("/")
+    nodes: list[dict[str, object]] = []
+    cursor = ""
+    for _page in range(LEADERBOARD_MAX_PAGES):
+        args = [
+            "api", "graphql",
+            "-f", f"query={COMMUNITY_PR_QUERY}",
+            "-F", f"owner={owner}",
+            "-F", f"name={name}",
+            "-F", f"pageSize={LEADERBOARD_PAGE_SIZE}",
+        ]
+        if cursor:
+            args.extend(["-F", f"cursor={cursor}"])
+        raw = run_gh(*args, suppress_errors=True)
+        if not raw:
+            # A failed page would truncate the board; keep the existing entry instead.
+            return None
+        try:
+            payload = json.loads(raw)
+        except json.JSONDecodeError:
+            return None
+        connection = _pull_request_connection(payload)
+        if connection is None:
+            return None
+        page_nodes = connection.get("nodes")
+        if isinstance(page_nodes, list):
+            nodes.extend(node for node in page_nodes if isinstance(node, dict))
+        page_info = connection.get("pageInfo")
+        if not isinstance(page_info, dict) or not page_info.get("hasNextPage"):
+            return nodes
+        cursor = str(page_info.get("endCursor") or "")
+        if not cursor:
+            return nodes
+    # Cap exhausted with pages remaining: abort rather than store a truncated board.
+    return None
+
+
+def _pull_request_connection(payload: object) -> dict[str, object] | None:
+    if not isinstance(payload, dict):
+        return None
+    data = payload.get("data")
+    if not isinstance(data, dict):
+        return None
+    repository = data.get("repository")
+    if not isinstance(repository, dict):
+        return None
+    connection = repository.get("pullRequests")
+    return connection if isinstance(connection, dict) else None
+
+
+def _merged_shipped_counts(
+    existing: Mapping[str, object] | None,
+    *,
+    logins: Iterable[str],
+    merged: Mapping[str, int],
+) -> dict[str, int]:
+    prior_raw = existing.get("shippedCounts") if existing is not None else None
+    prior = {str(login): int_value(value) for login, value in prior_raw.items()} if isinstance(prior_raw, dict) else {}
+    # Start from the prior map so logins absent from the fresh scan (deleted
+    # accounts return a null author) keep their credit instead of vanishing.
+    counts: dict[str, int] = dict(prior)
+    # Prior counts may be evidence-based (cherry-picks, release credit) and exceed
+    # the merged-PR proxy; keep whichever is higher per login.
+    for login in logins:
+        prior_key = _existing_case_key(counts, login)
+        prior_count = counts.pop(prior_key, 0)
+        counts[login] = max(prior_count, merged.get(login, 0))
+    return counts
+
+
 def _unique(values: Iterable[str]) -> list[str]:
     seen: set[str] = set()
     result: list[str] = []
@@ -264,7 +425,7 @@ def _credited_counts_for_cached_board(entry: Mapping[str, object], *, credit_pro
     for key in keys:
         raw = entry.get(key)
         if isinstance(raw, dict) and raw:
-            return {str(login): _int_value(value) for login, value in raw.items()}
+            return {str(login): int_value(value) for login, value in raw.items()}
     return {}
 
 def _existing_case_key(values: Mapping[str, object], login: str) -> str:
@@ -273,20 +434,6 @@ def _existing_case_key(values: Mapping[str, object], login: str) -> str:
         if existing.lower() == folded:
             return existing
     return login
-
-def _int_value(value: object) -> int:
-    if isinstance(value, bool):
-        return 0
-    if isinstance(value, int):
-        return value
-    if isinstance(value, float):
-        return int(value)
-    if isinstance(value, str):
-        try:
-            return int(value)
-        except ValueError:
-            return 0
-    return 0
 
 def _string_value(value: object) -> str:
     return value if isinstance(value, str) else ""

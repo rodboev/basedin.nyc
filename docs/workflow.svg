@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 945 446">
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 951 548">
   <!-- Generator: Adobe Illustrator 30.6.0, SVG Export Plug-In . SVG Version: 2.1.4 Build 109)  -->
   <defs>
     <style>
@@ -7,338 +7,1045 @@
         stroke: #52b788;
       }
 
-      .st0, .st1, .st2, .st3 {
-        stroke-width: 1.5px;
-      }
-
-      .st0, .st3 {
+      .st0, .st1, .st2 {
         fill: none;
       }
 
-      .st4 {
-        stroke-dasharray: 4 3;
+      .st0, .st3, .st4, .st2 {
+        stroke-width: 1.5px;
       }
 
-      .st4, .st2 {
-        fill: #14291e;
+      .st1, .st5, .st6, .st4 {
         stroke: #d4a040;
       }
 
-      .st5, .st6 {
+      .st5 {
+        stroke-dasharray: 4 3;
+      }
+
+      .st5, .st6, .st4 {
+        fill: #14291e;
+      }
+
+      .st7, .st8 {
         fill: #c06060;
       }
 
-      .st1 {
+      .st3 {
         fill: #1b4332;
         stroke: #40916c;
       }
 
-      .st7 {
+      .st9 {
         fill: #081c15;
         stroke: #1b4332;
       }
 
-      .st8, .st9, .st10, .st11, .st12, .st13, .st14, .st15, .st16, .st6, .st17, .st18, .st19 {
+      .st10, .st11, .st12, .st13, .st14, .st15, .st16, .st17, .st8, .st18, .st19, .st20 {
         isolation: isolate;
       }
 
-      .st8, .st9, .st14 {
+      .st10, .st11, .st21 {
         fill: #d4a040;
       }
 
-      .st8, .st11, .st14, .st15, .st16, .st17, .st18, .st19 {
+      .st10, .st13, .st16, .st17, .st18, .st19, .st20 {
         font-family: Arial-BoldMT, Arial;
         font-weight: 700;
       }
 
-      .st8, .st16 {
+      .st10, .st17 {
         font-size: 9px;
       }
 
-      .st9, .st10, .st13, .st6 {
+      .st11, .st12, .st15, .st8 {
         font-family: HelveticaNeueLTPro-Roman, 'Helvetica Neue LT Pro';
       }
 
-      .st9, .st13, .st6, .st19 {
+      .st11, .st15, .st8, .st20 {
         font-size: 10px;
       }
 
-      .st3 {
+      .st2 {
         stroke: #c06060;
         stroke-dasharray: 6 4;
       }
 
-      .st10 {
+      .st12 {
         font-size: 11px;
       }
 
-      .st10, .st13 {
+      .st12, .st15 {
         fill: #95d5b2;
       }
 
-      .st11 {
+      .st13 {
         font-size: 12px;
       }
 
-      .st11, .st15, .st17, .st18 {
+      .st13, .st16, .st18, .st19 {
         fill: #e8e8e8;
       }
 
-      .st14 {
-        font-size: 9.53px;
-      }
-
-      .st15 {
+      .st16 {
         font-size: 15px;
       }
 
-      .st16, .st20 {
+      .st17, .st22 {
         fill: #52b788;
       }
 
-      .st17 {
+      .st18 {
         font-size: 13px;
       }
 
-      .st18 {
+      .st19 {
         font-size: 14px;
       }
 
-      .st19 {
+      .st20 {
         fill: #3a7a5a;
         letter-spacing: .15em;
       }
     </style>
   </defs>
-  <rect class="st7" x=".5" y=".5" width="944" height="214" rx="10" ry="10"/>
-  <g class="st12">
-    <text class="st19" transform="translate(14.5 26.5)"><tspan x="0" y="0">PIPELINE</tspan></text>
+  <rect class="st9" x=".5" y=".5" width="950" height="207" rx="10" ry="10"/>
+  <rect class="st9" x=".5" y="349.5" width="950" height="198" rx="10" ry="10"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st20" transform="translate(14.5 20.5)"><tspan x="0" y="0">PIPELINE</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <rect class="st3" x="11.5" y="33.5" width="148" height="138" rx="8" ry="8"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st16" transform="translate(51.73 58.5)"><tspan x="0" y="0">Research</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(43.02 79.5)"><tspan x="0" y="0">architecture scan</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(57.08 95.5)"><tspan x="0" y="0">style norms</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(39.35 111.5)"><tspan x="0" y="0">search dimensions</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(48.43 127.5)"><tspan x="0" y="0">overlay configs</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(46.38 143.5)"><tspan x="0" y="0">bot ecosystems</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(29.5 157.5)"><tspan x="0" y="0">layers · state domains</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <path class="st0" d="M159.5,102.5h18"/>
+  <polygon class="st22" points="177.5 99.5 185.5 102.5 177.5 105.5 177.5 99.5"/>
+  <rect class="st3" x="185.5" y="33.5" width="168" height="138" rx="8" ry="8"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st16" transform="translate(253.67 58.5)"><tspan x="0" y="0">Find</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(204.03 79.5)"><tspan x="0" y="0">parallel scouts per dimension</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(233.44 95.5)"><tspan x="0" y="0">freshness gate</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(217.65 111.5)"><tspan x="0" y="0">issue-thread analysis</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(215.82 127.5)"><tspan x="0" y="0">competing-PR search</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(223.98 143.5)"><tspan x="0" y="0">claimed-work filter</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(220 157.5)"><tspan x="0" y="0">layer-boundary gate</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <path class="st0" d="M353.5,102.5h18"/>
+  <polygon class="st22" points="371.5 99.5 379.5 102.5 371.5 105.5 371.5 99.5"/>
+  <rect class="st3" x="379.5" y="33.5" width="300" height="158" rx="8" ry="8"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st16" transform="translate(446.5 56.5)"><tspan x="0" y="0">Architecture Decision</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <rect class="st5" x="393.5" y="70.5" width="122" height="112.93" rx="4" ry="4"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st10" transform="translate(436.5 85.5)"><tspan x="0" y="0">FIELDS</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(416 98.5)"><tspan x="0" y="0">semantic surface</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(413.5 111.5)"><tspan x="0" y="0">application count</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(423 136)"><tspan x="0" y="0">amplification</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st11" transform="translate(411 123.5)"><tspan x="0" y="0">ownership decision</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(419.5 149)"><tspan x="0" y="0">consumer map</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(429.5 161.5)"><tspan x="0" y="0">invariants</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(421.5 174)"><tspan x="0" y="0">bypass risks</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <path class="st1" d="M515.5,121h10"/>
+  <polygon class="st21" points="525.5 118 533.5 121 525.5 124 525.5 118"/>
+  <path class="st0" d="M679.5,102.5h18"/>
+  <polygon class="st22" points="697.5 99.5 705.5 102.5 697.5 105.5 697.5 99.5"/>
+  <rect class="st3" x="705.5" y="33.5" width="232" height="138" rx="8" ry="8"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st19" transform="translate(762 58.5)"><tspan x="0" y="0">Spec Competition</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(774 79.5)"><tspan x="0" y="0">A + B -&gt; C synthesis</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(759 95.5)"><tspan x="0" y="0">approach comparison table</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(791 111.5)"><tspan x="0" y="0">proof matrix</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(789 127.5)"><tspan x="0" y="0">test surfaces</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(761 143.5)"><tspan x="0" y="0">structural + hazard gates</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(781 157.5)"><tspan x="0" y="0">layer fit scoring</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <path class="st0" d="M821.5,171.5v45.5h-489.5v10"/>
+  <polygon class="st22" points="329 227 332 235 335 227 329 227"/>
+  <polygon class="st4" points="331.67 236 381.67 281 331.67 326 281.67 281 331.67 236"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st13" transform="translate(312 276.5)"><tspan x="0" y="0">Reality</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st13" transform="translate(317.33 291.5)"><tspan x="0" y="0">Gate</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <rect class="st5" x="390.37" y="226.5" width="278.14" height="107.21" rx="4" ry="4"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st10" transform="translate(479.13 244.5)"><tspan x="0" y="0">TRUTH-OWNER SURFACES</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(437 262.5)"><tspan x="0" y="0">browser chrome</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(442 275.5)"><tspan x="0" y="0">provider APIs</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(443 288.5)"><tspan x="0" y="0">live registries</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(551 268.5)"><tspan x="0" y="0">hardware/runtime</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(427 302.5)"><tspan x="0" y="0">product owner intent</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(550 281.5)"><tspan x="0" y="0">security protocols</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(553 294.5)"><tspan x="0" y="0">live concurrency</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st11" transform="translate(420 323.5)"><tspan x="0" y="0">unknown or unreachable</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <path class="st0" d="M332,326v12.5H120.5v38"/>
+  <polygon class="st22" points="117.5 376.5 120.5 384.5 123.5 376.5 117.5 376.5"/>
+  <path class="st2" d="M460.5,410.5v-44H135.5v8"/>
+  <polygon class="st7" points="132.5 374.5 135.5 382.5 138.5 374.5 132.5 374.5"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st8" transform="translate(296.12 361.5)"><tspan x="0" y="0">fail</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st20" transform="translate(17.5 370.5)"><tspan x="0" y="0">QUALITY LOOP</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <rect class="st3" x="15.5" y="384.5" width="150" height="140" rx="8" ry="8"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st16" transform="translate(71.75 411.5)"><tspan x="0" y="0">Code</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(45.49 431)"><tspan x="0" y="0">isolated worktrees</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(29.18 444)"><tspan x="0" y="0">mandatory test coverage</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(35.19 457)"><tspan x="0" y="0">proof matrix execution</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(35.5 470)"><tspan x="0" y="0">verbatim proof reports</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(40.19 483)"><tspan x="0" y="0">regression contracts</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(35.9 496)"><tspan x="0" y="0">workers never commit</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(37.73 509)"><tspan x="0" y="0">layer placement audit</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <path class="st0" d="M165.5,454.5h20"/>
+  <polygon class="st22" points="185.5 451.5 193.5 454.5 185.5 457.5 185.5 451.5"/>
+  <rect class="st3" x="195.5" y="384.5" width="185" height="140" rx="8" ry="8"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st19" transform="translate(223.3 411.5)"><tspan x="0" y="0">Adversarial Review</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(238.41 431)"><tspan x="0" y="0">cross-provider pass</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(244.3 444)"><tspan x="0" y="0">same-family pass</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(249.92 457)"><tspan x="0" y="0">call-site tracing</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(243.4 470)"><tspan x="0" y="0">import verification</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(227.4 483)"><tspan x="0" y="0">stale assertion detection</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(230.5 496)"><tspan x="0" y="0">proof spot-check reruns</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(218 509)"><tspan x="0" y="0">layer + discriminator audits</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <path class="st0" d="M380.5,454.5h22"/>
+  <polygon class="st22" points="402.5 451.5 410.5 454.5 402.5 457.5 402.5 451.5"/>
+  <polygon class="st4" points="460.5 410.5 508.5 454.5 460.5 498.5 412.5 454.5 460.5 410.5"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st18" transform="translate(446.05 450.5)"><tspan x="0" y="0">Gate</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st11" transform="translate(429.5 466.5)"><tspan x="0" y="0">deterministic</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <path class="st0" d="M508.5,454.5h24"/>
+  <polygon class="st22" points="532.5 451.5 540.5 454.5 532.5 457.5 532.5 451.5"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st17" transform="translate(508.5 445.5)"><tspan x="0" y="0">publish</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <rect class="st3" x="542.5" y="384.5" width="175" height="140" rx="8" ry="8"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st16" transform="translate(594.91 416.5)"><tspan x="0" y="0">Converge</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(589.77 437.5)"><tspan x="0" y="0">CI status polling</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(605.97 453.5)"><tspan x="0" y="0">bot triage</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(579.48 469.5)"><tspan x="0" y="0">maintainer feedback</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(591.5 485.5)"><tspan x="0" y="0">per-repo timing</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(579.8 501.5)"><tspan x="0" y="0">quiet-window check</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <path class="st0" d="M717.5,454.5h37"/>
+  <polygon class="st22" points="754.5 451.5 762.5 454.5 754.5 457.5 754.5 451.5"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st17" transform="translate(720.99 445.5)"><tspan x="0" y="0">feedback</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <rect class="st3" x="764.5" y="399.5" width="145" height="110" rx="8" ry="8"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st16" transform="translate(809.41 429.5)"><tspan x="0" y="0">Rework</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(797.59 448)"><tspan x="0" y="0">diagnose failure</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(799.01 463)"><tspan x="0" y="0">plan · fix · push</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(795.04 478)"><tspan x="0" y="0">thread resolution</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st12" transform="translate(776.5 493)"><tspan x="0" y="0">invariant site enumeration</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <path class="st0" d="M836.5,509.5c-91,30-391,30-456,0"/>
+  <polygon class="st22" points="389.5 510.5 380.5 509.5 386.5 515.5 389.5 510.5"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <text class="st11" transform="translate(563.98 323.62)"><tspan x="0" y="0">drop / ask / hold</tspan></text>
+      </g>
+    </g>
+  </g>
+  <path class="st1" d="M538.82,321.07h10"/>
+  <polygon class="st21" points="548.82 318.07 556.82 321.07 548.82 324.07 548.82 318.07"/>
+  <rect class="st6" x="536" y="72.21" width="132" height="97.57" rx="4" ry="4"/>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st10" transform="translate(556 88.21)"><tspan x="0" y="0">SHARED / EXISTING</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st11" transform="translate(556.5 104.21)"><tspan x="0" y="0">owner write surface</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(556 116.21)"><tspan x="0" y="0">grep-derived writers</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st11" transform="translate(553 134.21)"><tspan x="0" y="0">state representability</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(544 147.21)"><tspan x="0" y="0">absent/defaulted/user-set</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="st14">
+    <g class="st14">
+      <g class="st14">
+        <g class="st14">
+          <g class="st14">
+            <text class="st15" transform="translate(549 160.21)"><tspan x="0" y="0">contract-isolation rows</tspan></text>
+          </g>
+        </g>
+      </g>
+    </g>
   </g>
-  <rect class="st1" x="11.5" y="40.5" width="148" height="138" rx="8" ry="8"/>
-  <g class="st12">
-    <text class="st15" transform="translate(51.73 65.5)"><tspan x="0" y="0">Research</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(43.02 86.5)"><tspan x="0" y="0">architecture scan</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(57.08 102.5)"><tspan x="0" y="0">style norms</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(39.35 118.5)"><tspan x="0" y="0">search dimensions</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(48.43 134.5)"><tspan x="0" y="0">overlay configs</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(46.38 150.5)"><tspan x="0" y="0">bot ecosystems</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(44.76 164.5)"><tspan x="0" y="0">layer boundaries</tspan></text>
-  </g>
-  <path class="st0" d="M159.5,109.5h20"/>
-  <polygon class="st20" points="175.5 106.5 183.5 109.5 175.5 112.5 175.5 106.5"/>
-  <rect class="st1" x="185.5" y="40.5" width="168" height="138" rx="8" ry="8"/>
-  <g class="st12">
-    <text class="st15" transform="translate(253.67 65.5)"><tspan x="0" y="0">Find</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st13" transform="translate(204.03 86.5)"><tspan x="0" y="0">parallel scouts per dimension</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(233.44 102.5)"><tspan x="0" y="0">freshness gate</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(217.65 118.5)"><tspan x="0" y="0">issue-thread analysis</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(215.82 134.5)"><tspan x="0" y="0">competing-PR search</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(223.98 150.5)"><tspan x="0" y="0">claimed-work filter</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(220 164.5)"><tspan x="0" y="0">layer-boundary gate</tspan></text>
-  </g>
-  <path class="st0" d="M353.5,59.5h128"/>
-  <polygon class="st20" points="477.5 56.5 485.5 59.5 477.5 62.5 477.5 56.5"/>
-  <polygon class="st2" points="535.5 14.5 585.5 59.5 535.5 104.5 485.5 59.5 535.5 14.5"/>
-  <g class="st12">
-    <text class="st11" transform="translate(500.16 54.5)"><tspan x="0" y="0">Architecture</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st11" transform="translate(510.49 68.5)"><tspan x="0" y="0">Decision</tspan></text>
-  </g>
-  <rect class="st4" x="388.5" y="116.67" width="130" height="72.69" rx="4" ry="4"/>
-  <g class="st12">
-    <text class="st14" transform="translate(430 132.96) scale(1.03 1)"><tspan x="0" y="0">TRIGGERS</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st13" transform="translate(411.33 149.5)"><tspan x="0" y="0">3+ concern spread</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st13" transform="translate(398.58 163.5)"><tspan x="0" y="0">shared-authority change</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st13" transform="translate(399.8 177.5)"><tspan x="0" y="0">cross-layer owner move</tspan></text>
-  </g>
-  <rect class="st4" x="559.7" y="97.81" width="107.59" height="107.37" rx="4" ry="4"/>
-  <g class="st12">
-    <text class="st8" transform="translate(597.5 115.5)"><tspan x="0" y="0">FIELDS</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st13" transform="translate(575.35 128.5)"><tspan x="0" y="0">semantic surface</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st13" transform="translate(574.88 139.5)"><tspan x="0" y="0">application count</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st13" transform="translate(585.07 150.5)"><tspan x="0" y="0">amplification</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st13" transform="translate(570.26 161.5)"><tspan x="0" y="0">ownership decision</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st13" transform="translate(579.97 172.5)"><tspan x="0" y="0">consumer map</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st13" transform="translate(592.11 183.5)"><tspan x="0" y="0">invariants</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st13" transform="translate(585.63 194.5)"><tspan x="0" y="0">bypass risks</tspan></text>
-  </g>
-  <path class="st0" d="M585.5,59.5h108"/>
-  <polygon class="st20" points="689.5 56.5 697.5 59.5 689.5 62.5 689.5 56.5"/>
-  <rect class="st1" x="699.5" y="40.5" width="232" height="138" rx="8" ry="8"/>
-  <g class="st12">
-    <text class="st18" transform="translate(756 65.5)"><tspan x="0" y="0">Spec Competition</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(764.79 86.5)"><tspan x="0" y="0">A + B -&gt; C synthesis</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(747.86 102.5)"><tspan x="0" y="0">approach comparison table</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(785.66 118.5)"><tspan x="0" y="0">proof matrix</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(783.93 134.5)"><tspan x="0" y="0">test surfaces</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(769.77 150.5)"><tspan x="0" y="0">structural validator</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(778.02 164.5)"><tspan x="0" y="0">layer fit scoring</tspan></text>
-  </g>
-  <path class="st0" d="M814.5,178.5v53H89.5v36"/>
-  <polygon class="st20" points="87.5 272.5 90.5 280.5 93.5 272.5 87.5 272.5"/>
-  <path class="st3" d="M460.5,308.5v-44H135.5v8"/>
-  <polygon class="st5" points="132.5 272.5 135.5 280.5 138.5 272.5 132.5 272.5"/>
-  <g class="st12">
-    <text class="st6" transform="translate(296.12 259.5)"><tspan x="0" y="0">fail</tspan></text>
-  </g>
-  <rect class="st7" x=".5" y="245.5" width="944" height="200" rx="10" ry="10"/>
-  <g class="st12">
-    <text class="st19" transform="translate(17.5 268.5)"><tspan x="0" y="0">QUALITY LOOP</tspan></text>
-  </g>
-  <rect class="st1" x="15.5" y="282.5" width="150" height="140" rx="8" ry="8"/>
-  <g class="st12">
-    <text class="st15" transform="translate(71.75 309.5)"><tspan x="0" y="0">Code</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(45.49 330.5)"><tspan x="0" y="0">isolated worktrees</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(29.18 346.5)"><tspan x="0" y="0">mandatory test coverage</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(35.19 362.5)"><tspan x="0" y="0">proof matrix execution</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(40.19 378.5)"><tspan x="0" y="0">regression contracts</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(35.9 394.5)"><tspan x="0" y="0">workers never commit</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(37.73 408.5)"><tspan x="0" y="0">layer placement audit</tspan></text>
-  </g>
-  <path class="st0" d="M165.5,352.5h20"/>
-  <polygon class="st20" points="185.5 349.5 193.5 352.5 185.5 355.5 185.5 349.5"/>
-  <rect class="st1" x="195.5" y="282.5" width="185" height="140" rx="8" ry="8"/>
-  <g class="st12">
-    <text class="st18" transform="translate(223.3 309.5)"><tspan x="0" y="0">Adversarial Review</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(238.41 330.5)"><tspan x="0" y="0">cross-provider pass</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(244.3 346.5)"><tspan x="0" y="0">same-family pass</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(249.92 362.5)"><tspan x="0" y="0">call-site tracing</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(243.4 378.5)"><tspan x="0" y="0">import verification</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(227.4 394.5)"><tspan x="0" y="0">stale assertion detection</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(236.57 408.5)"><tspan x="0" y="0">layer-boundary audit</tspan></text>
-  </g>
-  <path class="st0" d="M380.5,352.5h22"/>
-  <polygon class="st20" points="402.5 349.5 410.5 352.5 402.5 355.5 402.5 349.5"/>
-  <polygon class="st2" points="460.5 308.5 508.5 352.5 460.5 396.5 412.5 352.5 460.5 308.5"/>
-  <g class="st12">
-    <text class="st17" transform="translate(446.05 348.5)"><tspan x="0" y="0">Gate</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st9" transform="translate(445.59 364.5)"><tspan x="0" y="0">7 rules</tspan></text>
-  </g>
-  <path class="st0" d="M508.5,352.5h24"/>
-  <polygon class="st20" points="532.5 349.5 540.5 352.5 532.5 355.5 532.5 349.5"/>
-  <g class="st12">
-    <text class="st16" transform="translate(508.5 343.5)"><tspan x="0" y="0">publish</tspan></text>
-  </g>
-  <rect class="st1" x="542.5" y="282.5" width="175" height="140" rx="8" ry="8"/>
-  <g class="st12">
-    <text class="st15" transform="translate(594.91 314.5)"><tspan x="0" y="0">Converge</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(589.77 335.5)"><tspan x="0" y="0">CI status polling</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(605.97 351.5)"><tspan x="0" y="0">bot triage</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(579.48 367.5)"><tspan x="0" y="0">maintainer feedback</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(591.5 383.5)"><tspan x="0" y="0">per-repo timing</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(579.8 399.5)"><tspan x="0" y="0">quiet-window check</tspan></text>
-  </g>
-  <path class="st0" d="M717.5,352.5h37"/>
-  <polygon class="st20" points="754.5 349.5 762.5 352.5 754.5 355.5 754.5 349.5"/>
-  <g class="st12">
-    <text class="st16" transform="translate(720.99 343.5)"><tspan x="0" y="0">feedback</tspan></text>
-  </g>
-  <rect class="st1" x="764.5" y="297.5" width="145" height="110" rx="8" ry="8"/>
-  <g class="st12">
-    <text class="st15" transform="translate(809.41 327.5)"><tspan x="0" y="0">Rework</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(797.59 348.5)"><tspan x="0" y="0">diagnose failure</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(799.01 364.5)"><tspan x="0" y="0">plan · fix · push</tspan></text>
-  </g>
-  <g class="st12">
-    <text class="st10" transform="translate(795.04 380.5)"><tspan x="0" y="0">thread resolution</tspan></text>
-  </g>
-  <path class="st0" d="M836.5,407.5c-91,30-391,30-456,0"/>
-  <polygon class="st20" points="389.5 408.5 380.5 407.5 386.5 413.5 389.5 408.5"/>
 </svg>

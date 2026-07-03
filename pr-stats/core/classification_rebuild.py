@@ -12,8 +12,8 @@ from rich.console import Console
 from core.cache import classification_cache_key, load_cache, save_cache, set_cached_closed_classification
 from core.classify import ClassificationResult, classify_closed_pr, get_non_bot_comment_text, should_resolve_referenced_pull_request
 from core.github import GhCancelled, GhRetryExhausted, cancel_running_gh, reset_gh_cancellation, run_gh
-from core.leaderboard import REPO_LEADERBOARD_CONFIG, configured_repo_leaderboard_exclusions, is_leaderboard_excluded_login
-from core.models import Cache, ClassificationEntry, Comment, Evidence, PullRequest, PullRequestRef, TimelineEvent, UserRef
+from core.leaderboard import configured_repo_leaderboard_exclusions, is_leaderboard_excluded_login, repo_leaderboard_config
+from core.models import Cache, ClassificationEntry, Comment, Evidence, PullRequest, PullRequestRef, TimelineEvent, UserRef, int_value
 from core.timeline import load_active_repos_from_text
 
 CONSOLE = Console(stderr=True, highlight=False)
@@ -336,8 +336,7 @@ def _record_work_result(
         )
     else:
         divergences_by_key.pop(item.key, None)
-        _write_pr_prefix(item.index, item.total, item.repo, item.number, author_login)
-        CONSOLE.print(f" {actual.log_label}{save_suffix}", style=_classification_style(actual.classification))
+        write_pr_classification_progress(item.index, item.total, item.repo, item.number, author_login, f"{actual.log_label}{save_suffix}", actual.classification)
     checked += 1
     if should_save:
         _save_rebuild_progress(output_cache, out_cache_file, divergences_by_key, divergence_file)
@@ -363,7 +362,7 @@ def live_evidence(repo: str, number: int, pr: PullRequest) -> Evidence:
         if ref.state == "MERGED" or ref.mergedAt:
             commit_author_logins_by_pr[referenced_number] = commit_author_logins(repo, referenced_number)
 
-    maintainers, integration_bots = REPO_LEADERBOARD_CONFIG.get(repo, ((), ()))
+    maintainers, integration_bots = repo_leaderboard_config(repo)
     return Evidence(
         comments=comments,
         timeline_items=timeline_items,
@@ -450,7 +449,7 @@ def live_pull_request_ref(repo: str, number: int) -> PullRequestRef | None:
     payload = json.loads(raw)
     author = payload.get("author")
     return PullRequestRef(
-        number=_int_value(payload.get("number"), default=number),
+        number=int_value(payload.get("number"), default=number),
         title=str(payload.get("title") or ""),
         url=str(payload.get("url") or f"https://github.com/{repo}/pull/{number}"),
         state=str(payload.get("state") or ""),
@@ -512,7 +511,7 @@ def _timeline_event(event: dict[str, object]) -> TimelineEvent | None:
         pull_request = issue["pull_request"]
         merged_at = str(pull_request.get("merged_at") or "") if isinstance(pull_request, dict) else ""
         source = PullRequestRef(
-            number=_int_value(issue.get("number")),
+            number=int_value(issue.get("number")),
             title=str(issue.get("title") or ""),
             url=str(issue.get("html_url") or ""),
             state="MERGED" if merged_at else "CLOSED",
@@ -562,21 +561,6 @@ def _referenced_numbers(text: str) -> set[int]:
     return seen
 
 
-def _int_value(value: object, *, default: int = 0) -> int:
-    if isinstance(value, bool):
-        return default
-    if isinstance(value, int):
-        return value
-    if isinstance(value, float):
-        return int(value)
-    if isinstance(value, str):
-        try:
-            return int(value)
-        except ValueError:
-            return default
-    return default
-
-
 def _cached_author_login(cache: Cache, key: str) -> str:
     author = cache.prAuthorsByNumber.get(key, "")
     if author:
@@ -600,6 +584,11 @@ def _progress(message: str, style: str) -> None:
 def _write_pr_prefix(index: int, total: int, repo: str, number: int, author_login: str) -> None:
     author = f", @{author_login}" if author_login else ""
     CONSOLE.print(f"  [{index}/{total}] #{number} ({repo.rsplit('/', 1)[-1]}{author})...", style="dim", end="")
+
+
+def write_pr_classification_progress(index: int, total: int, repo: str, number: int, author_login: str, log_label: str, classification: str) -> None:
+    _write_pr_prefix(index, total, repo, number, author_login)
+    CONSOLE.print(f" {log_label}", style=_classification_style(classification))
 
 
 def _save_rebuild_progress(

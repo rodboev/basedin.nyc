@@ -5,19 +5,21 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+from pytest import MonkeyPatch
+
+import core.leaderboard as leaderboard_mod
 from core.cache import load_cache
 from core.leaderboard import (
     cached_leaderboard_rows,
-    community_contributor_logins,
     configured_repo_leaderboard_exclusions,
+    fetch_community_leaderboard,
     is_leaderboard_bot,
     is_leaderboard_excluded_login,
     leaderboard_cache_key,
-    merge_community_contributor_logins,
     new_leaderboard_stat,
     repo_leaderboard_exclusions,
-    top_credited_logins,
 )
+from core.models import Cache
 from core.report import repo_label
 from core.timeline import load_active_repos_from_text
 
@@ -96,41 +98,212 @@ def test_new_leaderboard_stat_parses_legacy_cache_datetime() -> None:
     assert stat.idle == 1.0
 
 
-def test_top_credited_logins_sorts_by_credited_then_open_and_keeps_author() -> None:
-    now = datetime(2026, 7, 2, tzinfo=timezone.utc)
-    stats = {
-        "alice": new_leaderboard_stat(total=10, open_count=1, recent_count=0, last_created_at="", now=now, rate_window_days=7),
-        "bob": new_leaderboard_stat(total=10, open_count=3, recent_count=0, last_created_at="", now=now, rate_window_days=7),
-        "rodboev": new_leaderboard_stat(total=1, open_count=0, recent_count=0, last_created_at="", now=now, rate_window_days=7),
+def _pr_node(login: str, *, state: str = "MERGED", created_at: str = "2026-07-01T00:00:00Z", typename: str = "User") -> dict[str, object]:
+    return {"state": state, "createdAt": created_at, "author": {"login": login, "__typename": typename}}
+
+
+def _graphql_page(nodes: list[dict[str, object]], *, has_next: bool = False, cursor: str = "") -> str:
+    return json.dumps(
+        {
+            "data": {
+                "repository": {
+                    "pullRequests": {
+                        "pageInfo": {"hasNextPage": has_next, "endCursor": cursor},
+                        "nodes": nodes,
+                    },
+                },
+            },
+        },
+    )
+
+
+def _use_overlay_dir(monkeypatch: MonkeyPatch, path: Path) -> None:
+    monkeypatch.setattr(leaderboard_mod, "_overlay_dir", path)
+    monkeypatch.setattr(leaderboard_mod, "_overlay_cache", {})
+
+
+def test_fetch_community_leaderboard_skips_fresh_entry_within_ttl(monkeypatch: MonkeyPatch) -> None:
+    now = datetime(2026, 7, 3, 12, 0, tzinfo=timezone.utc)
+    cache = Cache()
+    key = leaderboard_cache_key("owner/repo", None)
+    cache.leaderboards[key] = {"cachedAt": "2026-07-03T00:00:00Z", "stats": {}}
+
+    def _fail(*_args: str, **_kwargs: object) -> str:
+        raise AssertionError("gh must not run while the entry is inside its TTL")
+
+    monkeypatch.setattr(leaderboard_mod, "run_gh", _fail)
+
+    assert fetch_community_leaderboard("owner/repo", cache, now=now) is False
+
+
+def test_fetch_community_leaderboard_preserves_credit_keys_and_evidence_counts(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    _use_overlay_dir(monkeypatch, tmp_path)
+    now = datetime(2026, 7, 3, tzinfo=timezone.utc)
+    cache = Cache()
+    key = leaderboard_cache_key("owner/repo", None)
+    cache.leaderboards[key] = {
+        "cachedAt": "2026-06-01T00:00:00Z",
+        "releaseCreditCounts": {"alice": 7},
+        "commentShippedCounts": {"alice": 2},
+        "releaseCreditMeta": {"verified": True},
+        "shippedCounts": {"Alice": 5, "bob": 1},
+        "stats": {"alice": {"total": 5}},
     }
-
-    assert top_credited_logins(stats, author="rodboev", top=1) == ["alice", "rodboev"]
-
-
-def test_community_contributor_logins_preserve_order_filter_exclusions_and_prepend_author() -> None:
-    exclusions = repo_leaderboard_exclusions(owner="owner", maintainer_logins=("maintainer",), integration_bots=())
-
-    result = community_contributor_logins(
-        recent_author_logins=("maintainer", "alice", "alice", "bob"),
-        exclusions=exclusions,
-        author="rodboev",
+    page = _graphql_page(
+        [
+            _pr_node("alice"),
+            _pr_node("alice"),
+            _pr_node("bob"),
+            _pr_node("bob"),
+            _pr_node("bob", state="OPEN", created_at="2026-07-02T00:00:00Z"),
+        ],
     )
+    monkeypatch.setattr(leaderboard_mod, "run_gh", lambda *_args, **_kwargs: page)
 
-    assert result == ["rodboev", "alice", "bob"]
+    assert fetch_community_leaderboard("owner/repo", cache, now=now) is True
+
+    entry = cache.leaderboards[key]
+    assert entry["releaseCreditCounts"] == {"alice": 7}
+    assert entry["commentShippedCounts"] == {"alice": 2}
+    assert entry["releaseCreditMeta"] == {"verified": True}
+    assert entry["shippedCounts"] == {"alice": 5, "bob": 2}
+    stats = entry["stats"]
+    assert isinstance(stats, dict)
+    assert stats["bob"] == {"total": 3, "open": 1, "recentCount": 3, "lastCreatedAt": "2026-07-02T00:00:00Z"}
+    assert entry["cachedAt"] == "2026-07-03T00:00:00Z"
 
 
-def test_merge_community_contributor_logins_combines_prior_seed_recent_then_filters() -> None:
-    exclusions = repo_leaderboard_exclusions(owner="owner", maintainer_logins=("maintainer",), integration_bots=())
+def test_fetch_community_leaderboard_paginates_past_first_page(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    _use_overlay_dir(monkeypatch, tmp_path)
+    now = datetime(2026, 7, 3, tzinfo=timezone.utc)
+    pages = [
+        _graphql_page([_pr_node("alice")], has_next=True, cursor="CUR1"),
+        _graphql_page([_pr_node("alice"), _pr_node("bob")]),
+    ]
+    calls: list[tuple[str, ...]] = []
 
-    result = merge_community_contributor_logins(
-        prior_logins=("old", "maintainer"),
-        seed_logins=("seed", "old"),
-        recent_author_logins=("recent", "seed"),
-        exclusions=exclusions,
-        author="rodboev",
+    def _fake_run_gh(*args: str, **_kwargs: object) -> str:
+        calls.append(args)
+        return pages[len(calls) - 1]
+
+    monkeypatch.setattr(leaderboard_mod, "run_gh", _fake_run_gh)
+    cache = Cache()
+
+    assert fetch_community_leaderboard("owner/repo", cache, now=now) is True
+
+    assert len(calls) == 2
+    assert "cursor=CUR1" in calls[1]
+    entry = cache.leaderboards[leaderboard_cache_key("owner/repo", None)]
+    stats = entry["stats"]
+    assert isinstance(stats, dict)
+    assert stats["alice"]["total"] == 2
+    assert stats["bob"]["total"] == 1
+
+
+def test_fetch_community_leaderboard_keeps_existing_entry_on_partial_fetch(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    _use_overlay_dir(monkeypatch, tmp_path)
+    now = datetime(2026, 7, 3, tzinfo=timezone.utc)
+    pages = [_graphql_page([_pr_node("alice")], has_next=True, cursor="CUR1"), ""]
+    calls: list[tuple[str, ...]] = []
+
+    def _fake_run_gh(*args: str, **_kwargs: object) -> str:
+        calls.append(args)
+        return pages[len(calls) - 1]
+
+    monkeypatch.setattr(leaderboard_mod, "run_gh", _fake_run_gh)
+    cache = Cache()
+    key = leaderboard_cache_key("owner/repo", None)
+    stale_entry = {"cachedAt": "2026-06-01T00:00:00Z", "stats": {"alice": {"total": 9}}}
+    cache.leaderboards[key] = dict(stale_entry)
+
+    assert fetch_community_leaderboard("owner/repo", cache, now=now) is False
+    assert cache.leaderboards[key] == stale_entry
+
+
+def test_fetch_community_leaderboard_excludes_bots_owner_and_members(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    _use_overlay_dir(monkeypatch, tmp_path)
+    (tmp_path / "repo").mkdir()
+    (tmp_path / "repo" / "config.md").write_text(
+        "- Members:\n  - maintainer: collaborator, https://github.com/maintainer\n",
+        encoding="utf-8",
     )
+    now = datetime(2026, 7, 3, tzinfo=timezone.utc)
+    page = _graphql_page(
+        [
+            _pr_node("owner"),
+            _pr_node("maintainer"),
+            _pr_node("copilot", typename="Bot"),
+            _pr_node("legit[bot]"),
+            _pr_node("carol"),
+        ],
+    )
+    monkeypatch.setattr(leaderboard_mod, "run_gh", lambda *_args, **_kwargs: page)
+    cache = Cache()
 
-    assert result == ["old", "seed", "rodboev", "recent"]
+    assert fetch_community_leaderboard("owner/repo", cache, now=now) is True
+
+    entry = cache.leaderboards[leaderboard_cache_key("owner/repo", None)]
+    assert entry["logins"] == ["carol"]
+
+
+def test_fetch_community_leaderboard_caches_empty_community_scan(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    _use_overlay_dir(monkeypatch, tmp_path)
+    now = datetime(2026, 7, 3, tzinfo=timezone.utc)
+    page = _graphql_page([_pr_node("owner"), _pr_node("copilot", typename="Bot")])
+    calls: list[tuple[str, ...]] = []
+
+    def _fake_run_gh(*args: str, **_kwargs: object) -> str:
+        calls.append(args)
+        return page
+
+    monkeypatch.setattr(leaderboard_mod, "run_gh", _fake_run_gh)
+    cache = Cache()
+
+    assert fetch_community_leaderboard("owner/repo", cache, now=now) is True
+
+    entry = cache.leaderboards[leaderboard_cache_key("owner/repo", None)]
+    assert entry["logins"] == []
+    assert entry["cachedAt"] == "2026-07-03T00:00:00Z"
+    assert fetch_community_leaderboard("owner/repo", cache, now=now) is False
+    assert len(calls) == 1
+
+
+def test_fetch_community_leaderboard_aborts_at_page_cap_instead_of_truncating(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    _use_overlay_dir(monkeypatch, tmp_path)
+    monkeypatch.setattr(leaderboard_mod, "LEADERBOARD_MAX_PAGES", 2)
+    now = datetime(2026, 7, 3, tzinfo=timezone.utc)
+    page = _graphql_page([_pr_node("alice")], has_next=True, cursor="CUR")
+    monkeypatch.setattr(leaderboard_mod, "run_gh", lambda *_args, **_kwargs: page)
+    cache = Cache()
+
+    assert fetch_community_leaderboard("owner/repo", cache, now=now) is False
+    assert cache.leaderboards == {}
+
+
+def test_fetch_community_leaderboard_keeps_shipped_counts_for_deleted_accounts(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    _use_overlay_dir(monkeypatch, tmp_path)
+    now = datetime(2026, 7, 3, tzinfo=timezone.utc)
+    cache = Cache()
+    key = leaderboard_cache_key("owner/repo", None)
+    cache.leaderboards[key] = {
+        "cachedAt": "2026-06-01T00:00:00Z",
+        "shippedCounts": {"ghost": 3},
+        "stats": {},
+    }
+    page = _graphql_page([_pr_node("alice")])
+    monkeypatch.setattr(leaderboard_mod, "run_gh", lambda *_args, **_kwargs: page)
+
+    assert fetch_community_leaderboard("owner/repo", cache, now=now) is True
+    assert cache.leaderboards[key]["shippedCounts"] == {"ghost": 3, "alice": 1}
+
+
+def test_repo_leaderboard_config_keeps_orca_integration_bot(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    _use_overlay_dir(monkeypatch, tmp_path)
+
+    _members, integration_bots = leaderboard_mod.repo_leaderboard_config("stablyai/orca")
+
+    assert integration_bots == ("buf0-bot[bot]",)
+
 
 def test_cached_webui_leaderboard_rows_match_rendered_ps1_output(repo_root: Path) -> None:
     cache_path = repo_root / ".pr-classification-cache.json"

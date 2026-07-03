@@ -107,7 +107,7 @@ def test_repo_label_matches_ps1_short_names() -> None:
     assert repo_label("nesquena/hermes-webui") == "webui"
     assert repo_label("github/github-mcp-server") == "gh-mcp"
     assert repo_label("lsdefine/GenericAgent") == "generic-agent"
-    assert repo_label("thedotmack/claude-mem") == "claude-mem"
+    assert repo_label("thedotmack/claude-mem") == "cmem"
 
 
 def test_pull_request_effective_iso_date_matches_status_rules() -> None:
@@ -274,9 +274,10 @@ def test_status_filter_dicts_matches_existing_script_shape() -> None:
 
 
 def test_repo_filter_dicts_match_existing_script_shape() -> None:
-    assert repo_filter_dicts(["nesquena/hermes-webui", "github/github-mcp-server"]) == [
+    assert repo_filter_dicts(["nesquena/hermes-webui", "thedotmack/claude-mem", "github/github-mcp-server"]) == [
         {"key": "all", "label": "All"},
         {"key": "webui", "label": "webui"},
+        {"key": "cmem", "label": "cmem"},
         {"key": "gh-mcp", "label": "gh-mcp"},
     ]
 

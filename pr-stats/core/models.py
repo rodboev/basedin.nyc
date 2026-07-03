@@ -89,3 +89,18 @@ class PullRequest(PullRequestRef):
     repo: str = ""
     repoShort: str = ""
     closedAt: str = ""
+
+
+def int_value(value: object, *, default: int = 0) -> int:
+    if isinstance(value, bool):
+        return default
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float):
+        return int(value)
+    if isinstance(value, str):
+        try:
+            return int(value)
+        except ValueError:
+            return default
+    return default

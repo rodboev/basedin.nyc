@@ -205,6 +205,8 @@ def repo_label(repo: str) -> str:
     short = repo.rsplit("/", 1)[-1]
     if short == "hermes-webui":
         return "webui"
+    if short == "claude-mem":
+        return "cmem"
     if short == "github-mcp-server":
         return "gh-mcp"
     if short == "GenericAgent":

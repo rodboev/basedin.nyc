@@ -9,11 +9,12 @@ from pathlib import Path
 from jinja2 import TemplateError
 
 from core.cache import classification_cache_key, load_cache, save_cache, set_cached_closed_classification
+from core.leaderboard import DEFAULT_OVERLAY_CONFIG_DIR, fetch_community_leaderboard, set_overlay_config_dir
 from core.classify import ClassificationResult, classify_closed_pr
-from core.classification_rebuild import CacheRebuildInterrupted, live_evidence, rebuild_classification_cache
-from core.models import Cache, PullRequest, UserRef
+from core.classification_rebuild import CacheRebuildInterrupted, live_evidence, rebuild_classification_cache, write_pr_classification_progress
+from core.models import Cache, PullRequest, UserRef, int_value
 from core.credit import cached_release_credit_counts
-from core.github import GhError, GhPullRequestView, run_gh
+from core.github import GhError, GhPullRequestView, GhRetryExhausted, run_gh
 from core.html import ReportSanityInput, write_report_if_sane
 from core.page import (
     render_breakdown_section,
@@ -78,7 +79,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--changelog-file", type=Path, default=None)
     parser.add_argument("--contributors-file", type=Path, default=None)
     parser.add_argument("--force-write", action="store_true")
+    parser.add_argument("--overlay-config-dir", type=Path, default=DEFAULT_OVERLAY_CONFIG_DIR)
     args = parser.parse_args(argv)
+
+    set_overlay_config_dir(args.overlay_config_dir)
 
     if args.verify_webui_cached_credits_only or args.verify_webui_credits_only:
         return verify_webui_credits_only(
@@ -164,12 +168,19 @@ def generate_report(
 
     cache = load_cache(cache_file)
     now = datetime.now(timezone.utc)
+    cache_updated_early = False
+    for repo in repos:
+        try:
+            if fetch_community_leaderboard(repo, cache, now=now):
+                cache_updated_early = True
+        except GhRetryExhausted as exc:
+            print(f"WARNING: leaderboard refresh failed for {repo}: {exc}", file=sys.stderr)
     try:
         typed_items, cache_updated = report_items_from_live_pull_requests(live_prs, cache, now=now)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
-    if cache_updated:
+    if cache_updated or cache_updated_early:
         try:
             save_cache(cache, cache_file)
         except OSError as exc:
@@ -186,7 +197,7 @@ def generate_report(
         lost_status="lost",
     )
     report_cache_keys = {
-        classification_cache_key(str(item.get("repo", "")), _int_value(item.get("number")))
+        classification_cache_key(str(item.get("repo", "")), int_value(item.get("number")))
         for item in pr_items
     }
     try:
@@ -305,11 +316,23 @@ def report_items_from_live_pull_requests(
 ) -> tuple[list[PrReportItem], bool]:
     items: list[PrReportItem] = []
     cache_updated = False
+    classification_total = sum(1 for repo, pr in pulls if _needs_live_classification(repo, pr, cache))
+    classified_count = 0
     for repo, pr in pulls:
+        should_log_classification = _needs_live_classification(repo, pr, cache)
         classification, did_update_cache = live_pull_request_classification(repo, pr, cache, now=now)
+        if should_log_classification and did_update_cache:
+            classified_count += 1
+            write_pr_classification_progress(classified_count, classification_total, repo, pr.number, pr.author.login, classification.log_label, classification.classification)
         cache_updated = cache_updated or did_update_cache
         items.append(report_item_from_pull_request_view(repo=repo, pr=pr, classification=classification))
     return items, cache_updated
+
+
+def _needs_live_classification(repo: str, pr: GhPullRequestView, cache: Cache) -> bool:
+    key = classification_cache_key(repo, pr.number)
+    entry = cache.entries.get(key)
+    return not (entry is not None and entry.classification) and pr.state != "OPEN"
 
 
 def live_pull_request_classification(
@@ -375,20 +398,6 @@ def _pull_request_from_view(repo: str, pr: GhPullRequestView) -> PullRequest:
         author=UserRef(login=pr.author.login),
         body=pr.body,
     )
-
-def _int_value(value: object) -> int:
-    if isinstance(value, bool):
-        return 0
-    if isinstance(value, int):
-        return value
-    if isinstance(value, float):
-        return int(value)
-    if isinstance(value, str):
-        try:
-            return int(value)
-        except ValueError:
-            return 0
-    return 0
 
 def verify_webui_credits_only(
     *,
