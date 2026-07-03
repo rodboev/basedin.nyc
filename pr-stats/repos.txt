@@ -1,0 +1,17 @@
+# Active repos for the PR stats report, one owner/repo per line.
+# Comment a line out to deactivate it.
+nesquena/hermes-webui
+kenn-io/agentsview
+thedotmack/claude-mem
+headroomlabs-ai/headroom
+mem0ai/mem0
+stablyai/orca
+# NVIDIA/SkillSpector
+# NousResearch/hermes-agent
+# cline/cline
+# continuedev/continue
+# CopilotKit/CopilotKit
+# MemPalace/mempalace
+# mastra-ai/mastra
+# github/github-mcp-server
+# lsdefine/GenericAgent

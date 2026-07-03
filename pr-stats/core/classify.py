@@ -6,16 +6,19 @@ from datetime import datetime
 
 from core.models import Comment, Evidence, PullRequest, PullRequestRef, TimelineEvent
 
-SHIPPED_PATTERNS: tuple[str, ...] = ("shipped", "cherry-picked", "merged-via", "salvaged into")
+MAINTAINER_SHIP_PATTERN = re.compile(
+    r"\b(?:shipped|cherry[- ]?pick(?:ed|ing)?|salvaged\s+into|merged[- ]via|merged\s+(?:onto|into|to)\s+(?:main|master)|merged\s+manually|manually\s+merged)\b",
+    re.IGNORECASE,
+)
 DUPLICATE_PATTERNS: tuple[str, ...] = ("duplicate",)
-SUPERSEDED_PATTERNS: tuple[str, ...] = ("supersede", "consolidat", "closing in favor", "closed in favor")
+SUPERSEDED_PATTERNS: tuple[str, ...] = ("supersed", "consolidat", "closing in favor", "closed in favor")
 CREDIT_PATTERNS: tuple[str, ...] = ("co-author", "coauthor", "co-authored", "authorship", "attribution", "credited")
 CONTINUATION_PATTERNS: tuple[str, ...] = ("same credit", "same commit", "same change", "reopen")
 WITHDRAWN_PATTERN = re.compile(r"\bwithdraw(?:ing|n)?\b", re.IGNORECASE)
 AUTHOR_CLOSE_PATTERN = re.compile(r"\bclos(?:ing|ed|e)\b", re.IGNORECASE)
 MERGED_CARRY_FORWARD_PATTERN = re.compile(r"\bmerge(?:d|s|ing)?(?:\s+to\s+main)?\b", re.IGNORECASE)
 NEGATIVE_REFERENCE_PATTERN = re.compile(
-    r"\b(?:supersed(?:e|ed|es|ing)|alternative|chosen\s+over|rather\s+than|instead\s+of|in\s+favor\s+of|browser-reserved|moot)\b",
+    r"\b(?:supersed(?:e|ed|es|ing)|duplicate|dedup-winner\s+over|alternative|chosen\s+over|rather\s+than|instead\s+of|in\s+favor\s+of|builds?\s+on|groundwork\s+from|does\s+not\s+revive|not\s+reviv(?:e|ed|ing)|not\s+included|exclu(?:d(?:e|ed|es|ing)|sion)|sent\s+back|diff\s+didn['’]?t\s+match|needs?\s+(?:rebase|migration\s+plan|[\w-]+\s+validation)|browser-reserved|moot)\b",
     re.IGNORECASE,
 )
 POSITIVE_REFERENCE_PATTERN = re.compile(
@@ -39,6 +42,12 @@ class ClassificationResult:
 @dataclass(frozen=True)
 class CreditedShipEvidence:
     via_number: int = 0
+
+
+@dataclass(frozen=True)
+class SupersededEvidence:
+    replacement: PullRequestRef | None = None
+    third_party: bool = False
 
 
 def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationResult:
@@ -99,13 +108,13 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
 
     is_direct_merged = pr.state == "MERGED" or bool(pr.mergedAt)
     is_timeline_shipped = bool(merged_release_closer or merged_release_cross_ref or release_ref_commit)
-    is_shipped = matches_any_pattern(comments, SHIPPED_PATTERNS)
+    is_shipped = has_maintainer_ship_comment(pr, evidence)
     is_duplicate = matches_any_pattern(comments, DUPLICATE_PATTERNS)
-    is_superseded = is_superseded_evidence(pr, evidence)
+    superseded_evidence = get_superseded_evidence(pr, evidence)
     has_superseded_ref = has_superseded_reference(pr, evidence)
     is_author_withdrawn_value = is_author_withdrawn(pr, evidence)
     accepted_sibling = get_timeline_credited_merged_pull_request(pr.repo, pr, evidence)
-    if accepted_sibling is None and (is_duplicate or is_superseded or bool(comments)):
+    if accepted_sibling is None and (is_duplicate or superseded_evidence is not None or bool(comments)):
         accepted_sibling = get_referenced_merged_pull_request(pr.repo, pr, evidence, comments)
     credited_ship = get_credited_ship_evidence(pr, evidence)
 
@@ -171,14 +180,33 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
             evidence_kind="accepted-indirect",
             log_label=f"accepted indirectly{label_suffix} (credited ship)",
         )
-    if is_superseded:
-        return ClassificationResult(classification="superseded", release=release, evidence_kind="superseded", log_label="superseded")
+    if superseded_evidence is not None:
+        replacement = superseded_evidence.replacement
+        via_label = f"#{replacement.number}" if replacement is not None else ""
+        via_url = replacement.url if replacement is not None else ""
+        if superseded_evidence.third_party and replacement is not None:
+            return ClassificationResult(
+                classification="lost",
+                release=release,
+                via_label=via_label,
+                via_url=via_url,
+                evidence_kind="lost",
+                log_label=f"lost (competing #{replacement.number} accepted instead)",
+            )
+        return ClassificationResult(
+            classification="superseded",
+            release=release,
+            via_label=via_label,
+            via_url=via_url,
+            evidence_kind="superseded",
+            log_label="superseded",
+        )
+    if is_shipped:
+        return ClassificationResult(classification="shipped", release=release, evidence_kind="comment", log_label="shipped")
     if is_duplicate:
         return ClassificationResult(classification="lost", release=release, evidence_kind="lost", log_label="lost (competing PR won)")
     if has_superseded_ref:
         return ClassificationResult(classification="lost", release=release, evidence_kind="lost", log_label="lost (superseded without maintainer credit)")
-    if is_shipped:
-        return ClassificationResult(classification="shipped", release=release, evidence_kind="comment", log_label="shipped")
     if not comments or not comments.strip():
         return ClassificationResult(classification="withdrawn", release=release, evidence_kind="withdrawn", log_label="withdrawn (no maintainer interaction)")
     return ClassificationResult(classification="lost", release=release, evidence_kind="lost", log_label="lost")
@@ -199,7 +227,13 @@ def matches_any_pattern(text: str, patterns: tuple[str, ...]) -> bool:
 
 
 def get_non_bot_comment_text(evidence: Evidence) -> str:
-    return "\n---\n".join(comment.body for comment in evidence.comments if comment.author.login != "greptile-apps")
+    return "\n---\n".join(comment.body for comment in evidence.comments if not is_review_bot_login(comment.author.login))
+
+
+def is_review_bot_login(login: str) -> bool:
+    # REST comment payloads report GitHub Apps as "greptile-apps[bot]";
+    # GraphQL reports the bare "greptile-apps". Match both.
+    return login.removesuffix("[bot]") == "greptile-apps"
 
 
 def is_maintainer_comment(repo: str, comment: Comment, evidence: Evidence) -> bool:
@@ -213,18 +247,43 @@ def is_maintainer_comment(repo: str, comment: Comment, evidence: Evidence) -> bo
 def has_maintainer_non_bot_comment(pr: PullRequest, evidence: Evidence) -> bool:
     author_login = author_login_for_classification(pr, evidence)
     for comment in evidence.comments:
-        if comment.author.login == "greptile-apps":
+        if is_review_bot_login(comment.author.login):
             continue
         if author_login and comment.author.login == author_login:
             continue
         body = comment.body
         if is_maintainer_comment(pr.repo, comment, evidence):
             return True
-        if matches_any_pattern(body, SHIPPED_PATTERNS):
+        if MAINTAINER_SHIP_PATTERN.search(body):
             return True
         if get_release_tag(body):
             return True
         if matches_any_pattern(body, CREDIT_PATTERNS):
+            return True
+    return False
+
+
+def has_maintainer_ship_comment(pr: PullRequest, evidence: Evidence) -> bool:
+    author_login = author_login_for_classification(pr, evidence)
+    for comment in evidence.comments:
+        if is_review_bot_login(comment.author.login):
+            continue
+        if author_login and comment.author.login == author_login:
+            continue
+        if not is_maintainer_comment(pr.repo, comment, evidence):
+            continue
+        if has_standalone_ship_statement(comment.body):
+            return True
+    return False
+
+
+def has_standalone_ship_statement(text: str, radius: int = 80) -> bool:
+    # The negative gate is scoped to the statement's own context: a long ship
+    # comment may carry incidental negative vocabulary in unrelated sentences.
+    for match in MAINTAINER_SHIP_PATTERN.finditer(text or ""):
+        start = max(0, match.start() - radius)
+        window = text[start : match.end() + radius]
+        if not NEGATIVE_REFERENCE_PATTERN.search(window):
             return True
     return False
 
@@ -248,7 +307,7 @@ def is_author_withdrawn(pr: PullRequest, evidence: Evidence) -> bool:
     return author_commented and not has_maintainer_non_bot_comment(pr, evidence)
 
 
-def is_superseded_evidence(pr: PullRequest, evidence: Evidence) -> bool:
+def get_superseded_evidence(pr: PullRequest, evidence: Evidence) -> SupersededEvidence | None:
     author_login = author_login_for_classification(pr, evidence)
     for comment in evidence.comments:
         if author_login and comment.author.login == author_login:
@@ -256,9 +315,34 @@ def is_superseded_evidence(pr: PullRequest, evidence: Evidence) -> bool:
         if not is_maintainer_comment(pr.repo, comment, evidence):
             continue
         body = comment.body
-        if matches_any_pattern(body, SUPERSEDED_PATTERNS) and not matches_any_pattern(body, CONTINUATION_PATTERNS):
-            return True
-    return False
+        if not (matches_any_pattern(body, SUPERSEDED_PATTERNS) and not matches_any_pattern(body, CONTINUATION_PATTERNS)):
+            continue
+        replacement = get_replacement_pull_request(pr, evidence, body)
+        third_party = replacement is not None and is_third_party_login(replacement.author.login, author_login, evidence)
+        return SupersededEvidence(replacement=replacement, third_party=third_party)
+    return None
+
+
+def get_replacement_pull_request(pr: PullRequest, evidence: Evidence, body: str) -> PullRequestRef | None:
+    for match in re.finditer(r"#(\d+)", body):
+        number = int(match.group(1))
+        if number == pr.number or not should_resolve_referenced_pull_request(body, number):
+            continue
+        referenced = evidence.pull_states_by_pr.get(number)
+        if referenced is not None:
+            return referenced
+    return None
+
+
+def is_third_party_login(login: str, original_author: str, evidence: Evidence) -> bool:
+    # Methodology: a replacement authored by a competing contributor is a loss;
+    # a maintainer's own replacement (or the author's resubmit) is a supersession.
+    if not login:
+        return False
+    if login.casefold() == (original_author or "").casefold():
+        return False
+    privileged = {name.casefold() for name in (*evidence.maintainer_logins, *evidence.integration_bots)}
+    return login.casefold() not in privileged
 
 
 def has_superseded_reference(pr: PullRequest, evidence: Evidence) -> bool:
@@ -282,7 +366,7 @@ def get_credited_ship_evidence(pr: PullRequest, evidence: Evidence) -> CreditedS
         body = comment.body
         if not body:
             continue
-        shipped = bool(get_release_tag(body)) or matches_any_pattern(body, SHIPPED_PATTERNS)
+        shipped = bool(get_release_tag(body)) or bool(MAINTAINER_SHIP_PATTERN.search(body))
         if not shipped:
             continue
         if not matches_any_pattern(body, CREDIT_PATTERNS):

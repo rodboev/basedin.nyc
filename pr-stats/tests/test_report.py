@@ -8,7 +8,10 @@ from core.classify import ClassificationResult
 from core.github import GhPullRequestView
 from core.report import (
     PrReportItem,
+    RepresentativeItem,
     default_status_filter_dicts,
+    enrich_representative_items,
+    parse_representative_readme,
     format_eastern_date,
     pr_filter_count,
     pr_repo_matches,
@@ -29,6 +32,75 @@ from core.report import (
     status_filter_dicts,
 )
 from core.timeline import load_pr_data_from_html
+
+
+def test_parse_representative_readme_matches_ps1_block_parsing() -> None:
+    readme = (
+        "# Title\n"
+        "\n"
+        "Representative merged PRs:\n"
+        "- [#3571](https://github.com/nesquena/hermes-webui/pull/3571) — adds a "
+        "[saved prompts](https://example.com/docs) library ([v0.51.338](https://github.com/nesquena/hermes-webui/releases/tag/v0.51.338))\n"
+        "- [#734](https://github.com/kenn-io/agentsview/pull/734) — surfaces Copilot AI-credit estimates\n"
+        "\n"
+        "## Project Structure\n"
+        "- [#999](https://github.com/other/repo/pull/999) — must not be picked up\n"
+    )
+
+    items = parse_representative_readme(readme)
+
+    assert [item.number for item in items] == [3571, 734]
+    first = items[0]
+    assert first.repo == "nesquena/hermes-webui"
+    assert first.repoLabel == "webui"
+    assert first.desc == 'adds a <a href="https://example.com/docs">saved prompts</a> library'
+    assert first.release == "v0.51.338"
+    assert first.releaseUrl == "https://github.com/nesquena/hermes-webui/releases/tag/v0.51.338"
+    assert items[1].desc == "surfaces Copilot AI-credit estimates"
+    assert items[1].release == ""
+
+
+def test_enrich_representative_items_pulls_classification_release_and_via() -> None:
+    parsed = [
+        RepresentativeItem(
+            number=7,
+            url="https://github.com/owner/repo/pull/7",
+            repo="owner/repo",
+            repoLabel="repo",
+            desc="shipped work",
+        ),
+        RepresentativeItem(
+            number=8,
+            url="https://github.com/owner/repo/pull/8",
+            repo="owner/repo",
+            repoLabel="repo",
+            desc="indirect work",
+        ),
+        RepresentativeItem(
+            number=9,
+            url="https://github.com/other/repo/pull/9",
+            repo="other/repo",
+            repoLabel="repo",
+            desc="unmatched work",
+            release="v9",
+            releaseUrl="https://example.com/v9",
+        ),
+    ]
+    report_items = [
+        _item(number=7, classification="shipped", releaseLabel="v1.2.3", viaLabel="#70", viaUrl="https://github.com/owner/repo/pull/70"),
+        _item(number=8, classification="accepted-indirect", releaseLabel="indirect", viaLabel="#80", viaUrl="https://github.com/owner/repo/pull/80"),
+    ]
+
+    enriched = enrich_representative_items(parsed, report_items)
+
+    assert enriched[0].release == "v1.2.3"
+    assert enriched[0].releaseUrl == "https://github.com/owner/repo/releases/tag/v1.2.3"
+    assert enriched[0].viaLabel == "#70"
+    assert enriched[1].release == "indirect"
+    assert enriched[1].releaseUrl == ""
+    assert enriched[1].viaLabel == "#80"
+    assert enriched[1].classification == "accepted-indirect"
+    assert enriched[2] == parsed[2]
 
 
 def test_repo_label_matches_ps1_short_names() -> None:
@@ -244,7 +316,7 @@ def test_report_counts_match_current_generated_pr_data(repo_root: Path) -> None:
         lost_status="lost",
     )
 
-    assert counts.total == len(raw_items)
+    assert counts.total == sum(1 for item in raw_items if item["classification"] != "withdrawn")
     assert counts.accepted == sum(1 for item in raw_items if item["classification"] in {"shipped", "accepted-indirect"})
     assert counts.open == sum(1 for item in raw_items if item["classification"] == "open")
     assert counts.not_shipped == counts.superseded + counts.lost

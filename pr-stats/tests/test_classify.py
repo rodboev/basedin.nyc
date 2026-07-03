@@ -147,6 +147,25 @@ def test_duplicate_branch(make_pr: Callable[..., PullRequest], make_comment: Cal
     assert result.log_label == "lost (competing PR won)"
 
 
+def test_shipped_comment_beats_incidental_duplicate_wording(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr()
+    evidence = make_evidence(
+        comments=[
+            make_comment(body="This test looks duplicate-adjacent", authorAssociation="CONTRIBUTOR"),
+            make_comment(body="Shipped in v1.2.3, thank you @rodboev", authorAssociation="COLLABORATOR"),
+        ],
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "shipped"
+    assert result.evidence_kind == "comment"
+
+
 def test_uncredited_superseded_reference_branch(make_pr: Callable[..., PullRequest], make_comment: Callable[..., Comment], make_evidence: Callable[..., Evidence]) -> None:
     pr = make_pr()
     evidence = make_evidence(comments=[make_comment(body="superseded by #20", author={"login": "outsider"}, authorAssociation="CONTRIBUTOR")])
@@ -165,6 +184,208 @@ def test_comment_shipped_branch(make_pr: Callable[..., PullRequest], make_commen
 
     assert result.classification == "shipped"
     assert result.evidence_kind == "comment"
+
+
+def test_maintainer_merged_via_rebase_comment_ships(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # thedotmack/claude-mem#964: ship notice phrased "Merged via rebase onto main"
+    pr = make_pr()
+    evidence = make_evidence(
+        comments=[
+            make_comment(body="@greptileai review", author={"login": "rodboev"}, authorAssociation="CONTRIBUTOR"),
+            make_comment(body="Merged via rebase onto main. Build clean, no regressions.", author={"login": "owner"}, authorAssociation="OWNER"),
+        ],
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "shipped"
+    assert result.evidence_kind == "comment"
+
+
+def test_non_maintainer_ship_claim_does_not_ship(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr()
+    evidence = make_evidence(comments=[make_comment(body="Looks like this was cherry-picked to main", author={"login": "outsider"}, authorAssociation="NONE")])
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "lost"
+
+
+def test_author_ship_claim_does_not_ship(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr()
+    evidence = make_evidence(comments=[make_comment(body="This shipped in the latest release", author={"login": "rodboev"}, authorAssociation="CONTRIBUTOR")])
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "withdrawn"
+
+
+def test_maintainer_ship_statement_attributing_other_pr_does_not_ship(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr()
+    evidence = make_evidence(comments=[make_comment(body="Merged #22 into main instead.")])
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "lost"
+
+
+def test_maintainer_negative_context_merge_comment_does_not_ship(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr()
+    evidence = make_evidence(comments=[make_comment(body="Merged the alternative implementation into main rather than this.")])
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "lost"
+
+
+def test_maintainer_superseding_present_tense_is_superseded(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # hermes-webui#1821: "superseding" lacks the final 'e' of the "supersede" substring.
+    # The replacement PR is unresolvable here, so no via and no third-party call.
+    pr = make_pr()
+    evidence = make_evidence(comments=[make_comment(body="Thanks — superseding this PR with #22 by @other, which covers more of the editor surface.")])
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "superseded"
+    assert result.evidence_kind == "superseded"
+    assert result.via_label == ""
+
+
+def test_supersession_by_competing_contributor_is_lost(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # hermes-webui#4280: maintainer says "superseded by", but the replacement is a
+    # competing contributor's PR — the methodology calls that a loss.
+    pr = make_pr()
+    replacement = make_ref(number=4285, state="CLOSED", merged=False, mergedAt="", author={"login": "b3nw"}, url="https://github.com/owner/repo/pull/4285")
+    evidence = make_evidence(
+        comments=[make_comment(body="Superseded by #4285 (b3nw), which fixes the same root cause (#478) and shipped in v0.51.450.")],
+        pull_states_by_pr={4285: replacement},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "lost"
+    assert result.via_label == "#4285"
+    assert result.via_url == "https://github.com/owner/repo/pull/4285"
+
+
+def test_supersession_by_maintainer_replacement_stays_superseded(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr()
+    replacement = make_ref(number=4330, state="CLOSED", merged=False, mergedAt="", author={"login": "maintainer"}, url="https://github.com/owner/repo/pull/4330")
+    evidence = make_evidence(
+        comments=[make_comment(body="Superseded by my #4330 which lands the same fix from the maintainer branch.")],
+        pull_states_by_pr={4330: replacement},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "superseded"
+    assert result.via_label == "#4330"
+
+
+def test_supersession_by_author_resubmit_stays_superseded(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr()
+    replacement = make_ref(number=4400, state="CLOSED", merged=False, mergedAt="", author={"login": "rodboev"}, url="https://github.com/owner/repo/pull/4400")
+    evidence = make_evidence(
+        comments=[make_comment(body="Superseded by your split #4400, closing this one.")],
+        pull_states_by_pr={4400: replacement},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "superseded"
+    assert result.via_label == "#4400"
+
+
+def test_ship_statement_survives_distant_negative_wording(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # hermes-webui#3444: "instead of" in an unrelated sentence must not veto the ship
+    body = (
+        "Shipped in **v0.51.223** ✅ — cherry-picked onto release stage-p5 (the reworked first-class-provider version). "
+        "I also added the env-detection fix a review caught: OPENAI_API_KEY detection now surfaces "
+        "openai-api instead of a bare openai the agent registry can't resolve, so env-only setups work end to end. "
+        "Thanks @rodboev! Closing as merged-via-release. (Closes #3443.)"
+    )
+    pr = make_pr()
+    evidence = make_evidence(comments=[make_comment(body=body)])
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "shipped"
+    assert result.release == "v0.51.223"
+
+
+def test_ship_statement_with_companion_pr_reference_ships(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # hermes-webui#4056: a companion PR in the ship sentence is not attribution elsewhere
+    pr = make_pr()
+    evidence = make_evidence(comments=[make_comment(body="Shipped in **v0.51.410 (Release NW)** ✅ — deployed and live (combined with #4075). Thanks @rodboev.")])
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "shipped"
+    assert result.release == "v0.51.410"
+
+
+def test_review_bot_app_login_comments_are_ignored(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # REST reports the review bot as "greptile-apps[bot]"; its summaries say
+    # "duplicate" freely and must not drive lost classifications.
+    pr = make_pr()
+    bot_comment = make_comment(body="This PR is a possible duplicate of existing rendering logic.", author={"login": "greptile-apps[bot]"}, authorAssociation="CONTRIBUTOR")
+
+    only_bot = classify_closed_pr(pr, make_evidence(comments=[bot_comment]))
+    assert only_bot.classification == "withdrawn"
+
+    with_ship = classify_closed_pr(pr, make_evidence(comments=[bot_comment, make_comment(body="Shipped in v1.0.0, thanks @rodboev")]))
+    assert with_ship.classification == "shipped"
 
 
 def test_no_comments_withdrawn_branch(make_pr: Callable[..., PullRequest], make_evidence: Callable[..., Evidence]) -> None:
@@ -201,6 +422,18 @@ def test_reference_context_extracts_line_and_radius_context() -> None:
         # a release does not have to link back to the PR to prove the work shipped.
         ("Constituent PRs: #9, #10, #11", True),
         ("#10 superseded by #12", False),
+        ("Ships #12, dedup-winner over #10", False),
+        ("Closes the #10 duplicate", False),
+        ("Builds on the groundwork from #10 / #12", False),
+        ("Ships #22, does NOT revive the held #10 parallel-bubble mode", False),
+        ("Not included - #10 (PowerShell path spaces) - diff didn't match description, sent back to author", False),
+        ("Not included - #10 (worktree unification) - data orphaning risk, needs migration plan", False),
+        ("#10 fully subsumed by #1491, needs rebase for remaining value", False),
+        ("#10 exclusion confirmed correct; the work was intentionally excluded due to data risk", False),
+        # "exclusion" alone must read negative: window contexts can truncate
+        # before any "excluded" that would otherwise carry the match.
+        ("2. **#10 exclusion** - confirmed correct. The worktree-to-paren", False),
+        ("#10 (custom embedding) - needs invalid-model validation", False),
         ("no reference to that pull request at all", False),
     ],
 )

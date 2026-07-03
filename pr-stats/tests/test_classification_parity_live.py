@@ -55,7 +55,7 @@ def test_live_classification_replay_matches_cached_powershell_results(live_cache
     checked = 0
     limit = _optional_int(os.environ.get("PR_STATS_CLASSIFICATION_PARITY_LIMIT"))
     selected_keys = _optional_key_filter(os.environ.get("PR_STATS_CLASSIFICATION_PARITY_KEYS"))
-    active_repos = set(load_active_repos_from_text((repo_root / "generate.ps1").read_text(encoding="utf-8")))
+    active_repos = set(load_active_repos_from_text((repo_root / "repos.txt").read_text(encoding="utf-8")))
 
     for key, expected in sorted(cache.entries.items()):
         if selected_keys is not None and key not in selected_keys:

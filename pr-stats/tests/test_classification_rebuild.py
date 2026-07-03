@@ -35,6 +35,37 @@ def test_classification_entry_matches_result_checks_parity_fields() -> None:
     assert not classification_entry_matches_result(entry, ClassificationResult(classification="lost", evidence_kind="lost"))
 
 
+def test_classification_entry_matches_result_ignores_legacy_direct_merge_via_fields() -> None:
+    entry = ClassificationEntry(
+        classification="shipped",
+        evidenceKind="direct-merge",
+        viaLabel="",
+        viaUrl="",
+        release="v1.2.3",
+    )
+
+    assert classification_entry_matches_result(
+        entry,
+        ClassificationResult(
+            classification="shipped",
+            evidence_kind="direct-merge",
+            via_label="direct",
+            via_url="https://github.com/owner/repo/pull/1",
+            release="v1.2.3",
+        ),
+    )
+    assert not classification_entry_matches_result(
+        entry,
+        ClassificationResult(
+            classification="shipped",
+            evidence_kind="direct-merge",
+            via_label="direct",
+            via_url="https://github.com/owner/repo/pull/1",
+            release="v9.9.9",
+        ),
+    )
+
+
 def test_split_classification_cache_key_handles_repo_with_slash() -> None:
     assert split_classification_cache_key("owner/repo#123") == ("owner/repo", 123)
 
@@ -85,7 +116,7 @@ def test_rebuild_classification_cache_uses_ps1_progress_shape(tmp_path: Path, mo
             )
         }
     )
-    repos_file = tmp_path / "generate.ps1"
+    repos_file = tmp_path / "repos.txt"
     repos_file.write_text("owner/repo", encoding="utf-8")
 
     monkeypatch.setattr("core.classification_rebuild.CONSOLE", Console(file=buffer, color_system=None, force_terminal=False, highlight=False))
@@ -114,13 +145,225 @@ def test_rebuild_classification_cache_uses_ps1_progress_shape(tmp_path: Path, mo
         active_repos_only=False,
         limit=1,
         save_every=0,
+        workers=1,
     )
 
     assert result.checked == 1
     assert result.skipped == 0
     assert result.failed == 0
     assert result.divergences == 0
-    assert buffer.getvalue() == "Classifying 1 closed PRs...\n  #7 (repo)... shipped (merged directly)\n"
+    assert buffer.getvalue() == "Classifying 1 closed PRs...\n  [1/1] #7 (repo, @rodboev)... shipped (merged directly)\n"
+
+
+def test_rebuild_classification_cache_marks_checkpointed_progress_line(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+    buffer = StringIO()
+    source_cache = Cache(
+        entries={
+            "owner/repo#7": ClassificationEntry(
+                classification="shipped",
+                evidenceKind="direct-merge",
+                cachedAt="2026-07-02T00:00:00Z",
+            )
+        }
+    )
+    repos_file = tmp_path / "repos.txt"
+    repos_file.write_text("owner/repo", encoding="utf-8")
+
+    monkeypatch.setattr("core.classification_rebuild.CONSOLE", Console(file=buffer, color_system=None, force_terminal=False, highlight=False))
+    monkeypatch.setattr("core.classification_rebuild.load_cache", lambda _path: source_cache)
+    monkeypatch.setattr("core.classification_rebuild.save_cache", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr("core.classification_rebuild.load_active_repos_from_text", lambda _text: ["owner/repo"])
+    monkeypatch.setattr(
+        "core.classification_rebuild.cached_or_live_pull_request",
+        lambda _cache, repo, number: PullRequest(repo=repo, number=number, author=UserRef(login="rodboev")),
+    )
+    monkeypatch.setattr("core.classification_rebuild.live_evidence", lambda _repo, _number, _pr: Evidence())
+    monkeypatch.setattr(
+        "core.classification_rebuild.classify_closed_pr",
+        lambda _pr, _evidence: ClassificationResult(
+            classification="shipped",
+            evidence_kind="direct-merge",
+            log_label="shipped (merged directly)",
+        ),
+    )
+
+    rebuild_classification_cache(
+        cache_file=tmp_path / "input.json",
+        out_cache_file=tmp_path / "output.json",
+        divergence_file=tmp_path / "divergences.json",
+        repos_file=repos_file,
+        active_repos_only=False,
+        limit=1,
+        save_every=1,
+        workers=1,
+    )
+
+    assert buffer.getvalue() == "Classifying 1 closed PRs...\n  [1/1] #7 (repo, @rodboev)... shipped (merged directly) [saved]\n"
+
+
+def test_rebuild_classification_cache_runs_pending_entries_with_workers(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+    buffer = StringIO()
+    source_cache = Cache(
+        entries={
+            "owner/repo#7": ClassificationEntry(classification="shipped", evidenceKind="direct-merge", cachedAt="2026-07-02T00:00:00Z"),
+            "owner/repo#8": ClassificationEntry(classification="shipped", evidenceKind="direct-merge", cachedAt="2026-07-02T00:00:00Z"),
+        }
+    )
+    repos_file = tmp_path / "repos.txt"
+    repos_file.write_text("owner/repo", encoding="utf-8")
+
+    monkeypatch.setattr("core.classification_rebuild.CONSOLE", Console(file=buffer, color_system=None, force_terminal=False, highlight=False))
+    monkeypatch.setattr("core.classification_rebuild.load_cache", lambda _path: source_cache)
+    monkeypatch.setattr("core.classification_rebuild.save_cache", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr("core.classification_rebuild.load_active_repos_from_text", lambda _text: ["owner/repo"])
+    monkeypatch.setattr(
+        "core.classification_rebuild.cached_or_live_pull_request",
+        lambda _cache, repo, number: PullRequest(repo=repo, number=number, author=UserRef(login="rodboev")),
+    )
+    monkeypatch.setattr("core.classification_rebuild.live_evidence", lambda _repo, _number, _pr: Evidence())
+    monkeypatch.setattr(
+        "core.classification_rebuild.classify_closed_pr",
+        lambda _pr, _evidence: ClassificationResult(
+            classification="shipped",
+            evidence_kind="direct-merge",
+            log_label="shipped (merged directly)",
+        ),
+    )
+
+    result = rebuild_classification_cache(
+        cache_file=tmp_path / "input.json",
+        out_cache_file=tmp_path / "output.json",
+        divergence_file=tmp_path / "divergences.json",
+        repos_file=repos_file,
+        active_repos_only=False,
+        save_every=0,
+        workers=2,
+    )
+
+    output = buffer.getvalue()
+    assert result.checked == 2
+    assert result.failed == 0
+    assert "[1/2] #7 (repo, @rodboev)..." in output
+    assert "[2/2] #8 (repo, @rodboev)..." in output
+
+
+def test_rebuild_classification_cache_skips_excluded_authors_before_live_fetch(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+    buffer = StringIO()
+    source_cache = Cache(
+        entries={
+            "owner/repo#7": ClassificationEntry(classification="shipped", evidenceKind="direct-merge", cachedAt="2026-07-02T00:00:00Z"),
+            "owner/repo#8": ClassificationEntry(classification="shipped", evidenceKind="direct-merge", cachedAt="2026-07-02T00:00:00Z"),
+        },
+        prAuthorsByNumber={
+            "owner/repo#7": "owner",
+            "owner/repo#8": "rodboev",
+        },
+    )
+    repos_file = tmp_path / "repos.txt"
+    repos_file.write_text("owner/repo", encoding="utf-8")
+    divergence_file = tmp_path / "divergences.json"
+    write_divergence_report(
+        [
+            CacheDivergence(
+                key="owner/repo#7",
+                expected=ClassificationEntry(classification="lost", evidenceKind="lost"),
+                actual=ClassificationResult(classification="superseded", evidence_kind="superseded"),
+            ),
+        ],
+        divergence_file,
+    )
+    fetched: list[int] = []
+
+    def fake_cached_or_live_pull_request(_cache: Cache, repo: str, number: int) -> PullRequest:
+        fetched.append(number)
+        return PullRequest(repo=repo, number=number, author=UserRef(login="rodboev"))
+
+    monkeypatch.setattr("core.classification_rebuild.CONSOLE", Console(file=buffer, color_system=None, force_terminal=False, highlight=False))
+    monkeypatch.setattr("core.classification_rebuild.load_cache", lambda _path: source_cache)
+    monkeypatch.setattr("core.classification_rebuild.save_cache", lambda *_args, **_kwargs: None)
+    monkeypatch.setattr("core.classification_rebuild.load_active_repos_from_text", lambda _text: ["owner/repo"])
+    monkeypatch.setattr("core.classification_rebuild.cached_or_live_pull_request", fake_cached_or_live_pull_request)
+    monkeypatch.setattr("core.classification_rebuild.live_evidence", lambda _repo, _number, _pr: Evidence())
+    monkeypatch.setattr(
+        "core.classification_rebuild.classify_closed_pr",
+        lambda _pr, _evidence: ClassificationResult(
+            classification="shipped",
+            evidence_kind="direct-merge",
+            log_label="shipped (merged directly)",
+        ),
+    )
+
+    result = rebuild_classification_cache(
+        cache_file=tmp_path / "input.json",
+        out_cache_file=tmp_path / "output.json",
+        divergence_file=divergence_file,
+        repos_file=repos_file,
+        active_repos_only=False,
+        save_every=0,
+        workers=1,
+    )
+
+    assert fetched == [8]
+    assert result.checked == 1
+    assert result.skipped == 1
+    assert result.divergences == 0
+    assert "Classifying 1 closed PRs; skipped 1 excluded author PRs..." in buffer.getvalue()
+    assert json.loads(divergence_file.read_text(encoding="utf-8")) == []
+
+
+def test_rebuild_classification_cache_skips_live_discovered_excluded_author_before_evidence_fetch(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
+    buffer = StringIO()
+    source_cache = Cache(
+        entries={
+            "owner/repo#7": ClassificationEntry(classification="shipped", evidenceKind="direct-merge", cachedAt="2026-07-02T00:00:00Z"),
+        },
+    )
+    repos_file = tmp_path / "repos.txt"
+    repos_file.write_text("owner/repo", encoding="utf-8")
+    out_cache_file = tmp_path / "output.json"
+    divergence_file = tmp_path / "divergences.json"
+    write_divergence_report(
+        [
+            CacheDivergence(
+                key="owner/repo#7",
+                expected=ClassificationEntry(classification="lost", evidenceKind="lost"),
+                actual=ClassificationResult(classification="superseded", evidence_kind="superseded"),
+            ),
+        ],
+        divergence_file,
+    )
+
+    def fail_live_evidence(_repo: str, _number: int, _pr: PullRequest) -> Evidence:
+        raise AssertionError("excluded authors should not fetch comments or timeline")
+
+    monkeypatch.setattr("core.classification_rebuild.CONSOLE", Console(file=buffer, color_system=None, force_terminal=False, highlight=False))
+    monkeypatch.setattr("core.classification_rebuild.load_cache", lambda _path: source_cache)
+    monkeypatch.setattr("core.classification_rebuild.load_active_repos_from_text", lambda _text: ["owner/repo"])
+    monkeypatch.setattr(
+        "core.classification_rebuild.cached_or_live_pull_request",
+        lambda _cache, repo, number: PullRequest(repo=repo, number=number, state="CLOSED", author=UserRef(login="owner")),
+    )
+    monkeypatch.setattr("core.classification_rebuild.live_evidence", fail_live_evidence)
+
+    result = rebuild_classification_cache(
+        cache_file=tmp_path / "input.json",
+        out_cache_file=out_cache_file,
+        divergence_file=divergence_file,
+        repos_file=repos_file,
+        active_repos_only=False,
+        save_every=0,
+        workers=1,
+    )
+
+    assert result.checked == 0
+    assert result.skipped == 1
+    assert result.failed == 0
+    assert result.divergences == 0
+    assert "skipped (excluded author)" in buffer.getvalue()
+    assert json.loads(divergence_file.read_text(encoding="utf-8")) == []
+    saved_cache = Cache.model_validate_json(out_cache_file.read_text(encoding="utf-8"))
+    assert saved_cache.prAuthorsByNumber["owner/repo#7"] == "owner"
+    assert saved_cache.prPullStates["owner/repo#7"]["author"] == "owner"
 
 
 def test_rebuild_classification_cache_preserves_prior_divergences_on_resume(tmp_path: Path, monkeypatch: MonkeyPatch) -> None:
@@ -135,7 +378,7 @@ def test_rebuild_classification_cache_preserves_prior_divergences_on_resume(tmp_
     output_cache.entries["owner/repo#7"] = ClassificationEntry(
         classification="superseded", evidenceKind="superseded", cachedAt="2026-07-02T01:00:00Z"
     )
-    repos_file = tmp_path / "generate.ps1"
+    repos_file = tmp_path / "repos.txt"
     repos_file.write_text("owner/repo", encoding="utf-8")
     divergence_file = tmp_path / "divergences.json"
     write_divergence_report(
@@ -173,6 +416,7 @@ def test_rebuild_classification_cache_preserves_prior_divergences_on_resume(tmp_
         repos_file=repos_file,
         active_repos_only=False,
         save_every=0,
+        workers=1,
     )
 
     assert result.skipped == 1
@@ -190,7 +434,7 @@ def test_rebuild_classification_cache_drops_divergence_when_recheck_matches(tmp_
             "owner/repo#7": ClassificationEntry(classification="shipped", evidenceKind="direct-merge", cachedAt="2026-07-02T00:00:00Z"),
         }
     )
-    repos_file = tmp_path / "generate.ps1"
+    repos_file = tmp_path / "repos.txt"
     repos_file.write_text("owner/repo", encoding="utf-8")
     divergence_file = tmp_path / "divergences.json"
     write_divergence_report(
@@ -225,6 +469,7 @@ def test_rebuild_classification_cache_drops_divergence_when_recheck_matches(tmp_
         repos_file=repos_file,
         active_repos_only=False,
         save_every=0,
+        workers=1,
     )
 
     assert result.divergences == 0
@@ -239,7 +484,7 @@ def test_rebuild_classification_cache_saves_checkpoint_on_interrupt(tmp_path: Pa
             "owner/repo#8": ClassificationEntry(classification="lost", evidenceKind="lost", cachedAt="2026-07-02T00:00:00Z"),
         }
     )
-    repos_file = tmp_path / "generate.ps1"
+    repos_file = tmp_path / "repos.txt"
     out_cache_file = tmp_path / "output.json"
     divergence_file = tmp_path / "divergences.json"
     repos_file.write_text("owner/repo", encoding="utf-8")
@@ -271,6 +516,7 @@ def test_rebuild_classification_cache_saves_checkpoint_on_interrupt(tmp_path: Pa
             repos_file=repos_file,
             active_repos_only=False,
             save_every=25,
+            workers=1,
         )
 
     assert excinfo.value.result.checked == 1

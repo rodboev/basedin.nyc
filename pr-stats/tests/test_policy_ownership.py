@@ -7,7 +7,7 @@ from core import classify
 
 def test_classification_patterns_are_owned_by_classify(repo_root: Path) -> None:
     forbidden = {
-        "SHIPPED_PATTERNS",
+        "MAINTAINER_SHIP_PATTERN",
         "DUPLICATE_PATTERNS",
         "SUPERSEDED_PATTERNS",
         "CREDIT_PATTERNS",
@@ -15,6 +15,7 @@ def test_classification_patterns_are_owned_by_classify(repo_root: Path) -> None:
     }
     forbidden.update(
         (
+            classify.MAINTAINER_SHIP_PATTERN.pattern,
             classify.WITHDRAWN_PATTERN.pattern,
             classify.AUTHOR_CLOSE_PATTERN.pattern,
             classify.MERGED_CARRY_FORWARD_PATTERN.pattern,

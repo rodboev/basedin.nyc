@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable, Mapping
 from collections import Counter
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
@@ -104,6 +105,100 @@ class ReportStatusRow:
     tag_class: str
     count: int
     details: str
+
+
+@dataclass(frozen=True)
+class RepresentativeItem:
+    number: int
+    url: str
+    repo: str
+    repoLabel: str
+    desc: str
+    release: str = ""
+    releaseUrl: str = ""
+    viaLabel: str = ""
+    viaUrl: str = ""
+    classification: str = ""
+
+
+REPRESENTATIVE_BLOCK_HEADING = "Representative merged PRs:"
+_REPRESENTATIVE_LINE = re.compile(r"^-\s*\[#(\d+)\]\(([^)]+)\)")
+_REPRESENTATIVE_RELEASE_SUFFIX = re.compile(r"\s*\(\[([^\]]+)\]\(([^)]+)\)\)\s*$")
+_MARKDOWN_LINK = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
+_PULL_URL_REPO = re.compile(r"github\.com/([^/]+/[^/]+)/pull/")
+
+
+def parse_representative_readme(readme_text: str) -> list[RepresentativeItem]:
+    items: list[RepresentativeItem] = []
+    in_block = False
+    for line in readme_text.split("\n"):
+        if line.startswith(REPRESENTATIVE_BLOCK_HEADING):
+            in_block = True
+            continue
+        if not in_block:
+            continue
+        if line.startswith("##") or (not line.startswith("-") and items and not re.match(r"^\s", line)):
+            break
+        match = _REPRESENTATIVE_LINE.match(line)
+        if match is None:
+            continue
+        number = int(match.group(1))
+        url = match.group(2)
+        desc = _REPRESENTATIVE_LINE.sub("", line, count=1)
+        desc = re.sub(r"^\W+\s*", "", desc)
+        release = ""
+        release_url = ""
+        release_match = _REPRESENTATIVE_RELEASE_SUFFIX.search(desc)
+        if release_match:
+            release = release_match.group(1)
+            release_url = release_match.group(2)
+            desc = _REPRESENTATIVE_RELEASE_SUFFIX.sub("", desc)
+        desc = _MARKDOWN_LINK.sub(r'<a href="\2">\1</a>', desc).rstrip()
+        repo_match = _PULL_URL_REPO.search(url)
+        repo = repo_match.group(1) if repo_match else ""
+        items.append(
+            RepresentativeItem(
+                number=number,
+                url=url,
+                repo=repo,
+                repoLabel=repo_label(repo) if repo else "",
+                desc=desc,
+                release=release,
+                releaseUrl=release_url,
+            ),
+        )
+    return items
+
+
+def enrich_representative_items(
+    items: Iterable[RepresentativeItem],
+    report_items: Iterable[PrReportItem],
+) -> list[RepresentativeItem]:
+    by_key = {(item.repo, item.number): item for item in report_items}
+    enriched: list[RepresentativeItem] = []
+    for item in items:
+        matched = by_key.get((item.repo, item.number))
+        if matched is None:
+            enriched.append(item)
+            continue
+        release = item.release
+        release_url = item.releaseUrl
+        if not release and matched.releaseLabel and matched.releaseLabel != "indirect":
+            release = matched.releaseLabel
+            release_url = f"https://github.com/{item.repo}/releases/tag/{release}"
+        elif not release and matched.classification == "accepted-indirect":
+            release = "indirect"
+        enriched.append(
+            replace(
+                item,
+                release=release,
+                releaseUrl=release_url,
+                viaLabel=matched.viaLabel,
+                viaUrl=matched.viaUrl,
+                classification=matched.classification,
+            ),
+        )
+    return enriched
 
 
 def repo_label(repo: str) -> str:
@@ -315,7 +410,7 @@ def report_counts(
     acceptance_closed = accepted_count + not_shipped
     rate = round((accepted_count / acceptance_closed) * 100) if acceptance_closed > 0 else None
     return ReportCounts(
-        total=len(item_list),
+        total=accepted_count + open_count + not_shipped,
         accepted=accepted_count,
         open=open_count,
         superseded=superseded_count,

@@ -157,7 +157,7 @@ def test_pr_data_keeps_timeline_fields_and_timeline_is_injected(repo_root: Path)
 
 def test_timeline_aggregate_matches_injected_tl_all(repo_root: Path) -> None:
     content = _read_index(repo_root)
-    repos = load_active_repos_from_text((repo_root / "generate.ps1").read_text(encoding="utf-8"))
+    repos = load_active_repos_from_text((repo_root / "repos.txt").read_text(encoding="utf-8"))
     aggregate, repo_data, repo_names = build_daily_data(prepare_timeline_prs(load_pr_data_from_html(content)), repos)
 
     assert aggregate == _script_array(content, "TL_ALL")

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -10,8 +11,8 @@ from rich.console import Console
 
 from core.cache import classification_cache_key, load_cache, save_cache, set_cached_closed_classification
 from core.classify import ClassificationResult, classify_closed_pr, get_non_bot_comment_text, should_resolve_referenced_pull_request
-from core.github import run_gh
-from core.leaderboard import REPO_LEADERBOARD_CONFIG
+from core.github import GhCancelled, GhRetryExhausted, cancel_running_gh, reset_gh_cancellation, run_gh
+from core.leaderboard import REPO_LEADERBOARD_CONFIG, configured_repo_leaderboard_exclusions, is_leaderboard_excluded_login
 from core.models import Cache, ClassificationEntry, Comment, Evidence, PullRequest, PullRequestRef, TimelineEvent, UserRef
 from core.timeline import load_active_repos_from_text
 
@@ -33,6 +34,26 @@ class CacheDivergence:
     actual: ClassificationResult
 
 
+@dataclass(frozen=True)
+class CacheRebuildWorkItem:
+    index: int
+    total: int
+    key: str
+    repo: str
+    number: int
+    expected: ClassificationEntry
+    author_login: str
+
+
+@dataclass(frozen=True)
+class CacheRebuildWorkResult:
+    item: CacheRebuildWorkItem
+    pr: PullRequest | None
+    actual: ClassificationResult | None = None
+    error: str = ""
+    skipped_excluded: bool = False
+
+
 class CacheRebuildInterrupted(Exception):
     def __init__(self, result: CacheRebuildResult) -> None:
         super().__init__("classification cache rebuild interrupted")
@@ -48,9 +69,13 @@ def rebuild_classification_cache(
     active_repos_only: bool,
     limit: int | None = None,
     save_every: int = 25,
+    workers: int = 4,
 ) -> CacheRebuildResult:
     if cache_file.resolve() == out_cache_file.resolve():
         raise ValueError("--out-cache-file must differ from --cache-file")
+    if workers < 1:
+        raise ValueError("--workers must be at least 1")
+    reset_gh_cancellation()
     source_cache = load_cache(cache_file)
     output_cache = load_cache(out_cache_file) if out_cache_file.exists() else source_cache.model_copy(deep=True)
     out_cache_file.parent.mkdir(parents=True, exist_ok=True)
@@ -62,59 +87,89 @@ def rebuild_classification_cache(
     checked = 0
     skipped = 0
     failed = 0
-    candidates = [
-        (key, expected)
-        for key, expected in sorted(source_cache.entries.items())
-        if not active_repos_only or split_classification_cache_key(key)[0] in active_repos
-    ]
-    _progress(f"Classifying {len(candidates)} closed PRs...", "dim")
+    candidates: list[tuple[str, ClassificationEntry]] = []
+    ignored_excluded = 0
+    for key, expected in sorted(source_cache.entries.items()):
+        repo, _number = split_classification_cache_key(key)
+        if active_repos_only and repo not in active_repos:
+            continue
+        author_login = _cached_author_login(output_cache, key) or _cached_author_login(source_cache, key)
+        if _is_excluded_rebuild_author(repo, author_login):
+            ignored_excluded += 1
+            divergences_by_key.pop(key, None)
+            continue
+        candidates.append((key, expected))
+    skipped += ignored_excluded
+    ignored_note = f"; skipped {ignored_excluded} excluded author PRs" if ignored_excluded else ""
+    _progress(f"Classifying {len(candidates)} closed PRs{ignored_note}...", "dim")
     try:
-        for key, expected in candidates:
+        work_items: list[CacheRebuildWorkItem] = []
+        total = len(candidates)
+        for index, (key, expected) in enumerate(candidates, start=1):
             repo, number = split_classification_cache_key(key)
+            author_login = _cached_author_login(output_cache, key) or _cached_author_login(source_cache, key)
             if _entry_was_generated(output_cache, key, expected):
                 skipped += 1
-                _write_pr_prefix(repo, number)
+                _write_pr_prefix(index, total, repo, number, author_login)
                 CONSOLE.print(f" {expected.classification} (cache)", style=_classification_style(expected.classification))
                 continue
-            pr = cached_or_live_pull_request(source_cache, repo, number)
-            if pr is None:
-                failed += 1
-                _write_pr_prefix(repo, number)
-                CONSOLE.print(" failed (could not load PR state)", style="red")
-                continue
-            evidence = live_evidence(repo, number, pr)
-            actual = classify_closed_pr(pr, evidence)
-            set_cached_closed_classification(
-                output_cache,
-                repo=repo,
-                number=number,
-                classification=actual.classification,
-                release=actual.release,
-                via_label=actual.via_label,
-                via_url=actual.via_url,
-                evidence_kind=actual.evidence_kind,
-                now=now,
+            work_items.append(
+                CacheRebuildWorkItem(
+                    index=index,
+                    total=total,
+                    key=key,
+                    repo=repo,
+                    number=number,
+                    expected=expected,
+                    author_login=author_login,
+                )
             )
-            if not classification_entry_matches_result(expected, actual):
-                divergences_by_key[key] = CacheDivergence(key=key, expected=expected, actual=actual)
-                _write_pr_prefix(repo, number)
-                CONSOLE.print(
-                    f" {actual.log_label} (DIVERGED from {expected.classification}/{expected.evidenceKind})",
-                    style="red",
-                )
-            else:
-                divergences_by_key.pop(key, None)
-                _write_pr_prefix(repo, number)
-                CONSOLE.print(
-                    f" {actual.log_label}",
-                    style=_classification_style(actual.classification),
-                )
-            checked += 1
-            if save_every > 0 and checked % save_every == 0:
-                _save_rebuild_progress(output_cache, out_cache_file, divergences_by_key, divergence_file)
-            if limit is not None and checked >= limit:
+            if limit is not None and len(work_items) >= limit:
                 break
-    except KeyboardInterrupt:
+
+        if workers == 1:
+            for item in work_items:
+                result = _classify_work_item(source_cache, item)
+                checked, skipped, failed = _record_work_result(
+                    result,
+                    output_cache=output_cache,
+                    divergences_by_key=divergences_by_key,
+                    out_cache_file=out_cache_file,
+                    divergence_file=divergence_file,
+                    now=now,
+                    checked=checked,
+                    skipped=skipped,
+                    failed=failed,
+                    save_every=save_every,
+                )
+        else:
+            executor = ThreadPoolExecutor(max_workers=workers)
+            futures: dict[Future[CacheRebuildWorkResult], CacheRebuildWorkItem] = {
+                executor.submit(_classify_work_item, source_cache, item): item for item in work_items
+            }
+            try:
+                for future in as_completed(futures):
+                    result = future.result()
+                    checked, skipped, failed = _record_work_result(
+                        result,
+                        output_cache=output_cache,
+                        divergences_by_key=divergences_by_key,
+                        out_cache_file=out_cache_file,
+                        divergence_file=divergence_file,
+                        now=now,
+                        checked=checked,
+                        skipped=skipped,
+                        failed=failed,
+                        save_every=save_every,
+                    )
+            except BaseException:
+                cancel_running_gh()
+                executor.shutdown(wait=False, cancel_futures=True)
+                raise
+            else:
+                executor.shutdown(wait=True)
+    except (KeyboardInterrupt, GhCancelled):
+        cancel_running_gh()
         _save_rebuild_progress(output_cache, out_cache_file, divergences_by_key, divergence_file)
         _progress(
             f"Interrupted after classifying {checked} PRs, skipped {skipped}, failed {failed}, divergences {len(divergences_by_key)}. Checkpoint saved.",
@@ -129,6 +184,15 @@ def rebuild_classification_cache(
 
 
 def classification_entry_matches_result(expected: ClassificationEntry, actual: ClassificationResult) -> bool:
+    if (
+        expected.classification == actual.classification == "shipped"
+        and expected.evidenceKind == actual.evidence_kind == "direct-merge"
+        and expected.release == actual.release
+        and expected.viaLabel in {"", "direct"}
+        and actual.via_label == "direct"
+        and expected.viaUrl in {"", actual.via_url}
+    ):
+        return True
     return (
         expected.classification == actual.classification
         and expected.evidenceKind == actual.evidence_kind
@@ -204,6 +268,80 @@ def write_divergence_report(divergences: list[CacheDivergence], path: Path) -> N
 def split_classification_cache_key(key: str) -> tuple[str, int]:
     repo, raw_number = key.rsplit("#", 1)
     return repo, int(raw_number)
+
+
+def _classify_work_item(source_cache: Cache, item: CacheRebuildWorkItem) -> CacheRebuildWorkResult:
+    try:
+        pr = cached_or_live_pull_request(source_cache, item.repo, item.number)
+        if pr is None:
+            return CacheRebuildWorkResult(item=item, pr=None, error="could not load PR state")
+        if _is_excluded_rebuild_author(item.repo, pr.author.login):
+            return CacheRebuildWorkResult(item=item, pr=pr, skipped_excluded=True)
+        evidence = live_evidence(item.repo, item.number, pr)
+    except GhRetryExhausted as exc:
+        return CacheRebuildWorkResult(item=item, pr=None, error=str(exc))
+    return CacheRebuildWorkResult(item=item, pr=pr, actual=classify_closed_pr(pr, evidence))
+
+
+def _record_work_result(
+    result: CacheRebuildWorkResult,
+    *,
+    output_cache: Cache,
+    divergences_by_key: dict[str, CacheDivergence],
+    out_cache_file: Path,
+    divergence_file: Path,
+    now: datetime,
+    checked: int,
+    skipped: int,
+    failed: int,
+    save_every: int,
+) -> tuple[int, int, int]:
+    item = result.item
+    author_login = result.pr.author.login if result.pr is not None and result.pr.author.login else item.author_login
+    if result.pr is not None:
+        _cache_rebuild_pull_request(output_cache, item.repo, item.number, result.pr)
+    if result.skipped_excluded:
+        skipped += 1
+        divergences_by_key.pop(item.key, None)
+        _write_pr_prefix(item.index, item.total, item.repo, item.number, author_login)
+        CONSOLE.print(" skipped (excluded author)", style="dim")
+        return checked, skipped, failed
+    if result.actual is None:
+        failed += 1
+        _write_pr_prefix(item.index, item.total, item.repo, item.number, author_login)
+        reason = result.error or "could not load PR state"
+        CONSOLE.print(f" failed ({reason})", style="red")
+        return checked, skipped, failed
+
+    actual = result.actual
+    set_cached_closed_classification(
+        output_cache,
+        repo=item.repo,
+        number=item.number,
+        classification=actual.classification,
+        release=actual.release,
+        via_label=actual.via_label,
+        via_url=actual.via_url,
+        evidence_kind=actual.evidence_kind,
+        now=now,
+    )
+    should_save = save_every > 0 and (checked + 1) % save_every == 0
+    save_suffix = " \\[saved]" if should_save else ""
+    if not classification_entry_matches_result(item.expected, actual):
+        divergences_by_key[item.key] = CacheDivergence(key=item.key, expected=item.expected, actual=actual)
+        _write_pr_prefix(item.index, item.total, item.repo, item.number, author_login)
+        CONSOLE.print(
+            f" {actual.log_label} (DIVERGED from {item.expected.classification}/{item.expected.evidenceKind}){save_suffix}",
+            style="red",
+        )
+    else:
+        divergences_by_key.pop(item.key, None)
+        _write_pr_prefix(item.index, item.total, item.repo, item.number, author_login)
+        CONSOLE.print(f" {actual.log_label}{save_suffix}", style=_classification_style(actual.classification))
+    checked += 1
+    if should_save:
+        _save_rebuild_progress(output_cache, out_cache_file, divergences_by_key, divergence_file)
+    return checked, skipped, failed
 
 
 def live_evidence(repo: str, number: int, pr: PullRequest) -> Evidence:
@@ -347,6 +485,19 @@ def commit_author_logins(repo: str, number: int) -> set[str]:
     return logins
 
 
+def _cache_rebuild_pull_request(cache: Cache, repo: str, number: int, pr: PullRequest) -> None:
+    key = classification_cache_key(repo, number)
+    if pr.author.login:
+        cache.prAuthorsByNumber[key] = pr.author.login
+    cache.prPullStates[key] = {
+        "state": pr.state,
+        "mergedAt": pr.mergedAt,
+        "title": pr.title,
+        "author": pr.author.login,
+        "body": pr.body,
+    }
+
+
 def _entry_was_generated(output_cache: Cache, key: str, input_entry: ClassificationEntry) -> bool:
     output_entry = output_cache.entries.get(key)
     return output_entry is not None and output_entry.cachedAt != input_entry.cachedAt
@@ -426,12 +577,29 @@ def _int_value(value: object, *, default: int = 0) -> int:
     return default
 
 
+def _cached_author_login(cache: Cache, key: str) -> str:
+    author = cache.prAuthorsByNumber.get(key, "")
+    if author:
+        return author
+    raw_state = cache.prPullStates.get(key)
+    if raw_state is None:
+        return ""
+    return str(raw_state.get("author") or "")
+
+
+def _is_excluded_rebuild_author(repo: str, author_login: str) -> bool:
+    if not author_login:
+        return False
+    return is_leaderboard_excluded_login(author_login, configured_repo_leaderboard_exclusions(repo))
+
+
 def _progress(message: str, style: str) -> None:
     CONSOLE.print(message, style=style)
 
 
-def _write_pr_prefix(repo: str, number: int) -> None:
-    CONSOLE.print(f"  #{number} ({repo.rsplit('/', 1)[-1]})...", style="dim", end="")
+def _write_pr_prefix(index: int, total: int, repo: str, number: int, author_login: str) -> None:
+    author = f", @{author_login}" if author_login else ""
+    CONSOLE.print(f"  [{index}/{total}] #{number} ({repo.rsplit('/', 1)[-1]}{author})...", style="dim", end="")
 
 
 def _save_rebuild_progress(

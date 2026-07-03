@@ -3,18 +3,49 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
-from core.cache import load_cache
-from core.classification_rebuild import CacheRebuildInterrupted, rebuild_classification_cache
-from core.models import Cache
-from core.credit import cached_release_credit_counts
-from core.github import run_gh
-from core.html import ReportSanityInput, write_report_if_sane
-from core.page import compose_report_html_from_snapshot
-from core.report import report_activity_summary, report_counts, report_items_from_script_dicts, sort_repos_by_accepted_count
-from core.timeline import build_chart_payload, build_daily_data, inject_timeline_chart, load_active_repos_from_text, load_pr_data_from_html, prepare_timeline_prs
+from jinja2 import TemplateError
 
+from core.cache import classification_cache_key, load_cache, save_cache, set_cached_closed_classification
+from core.classify import ClassificationResult, classify_closed_pr
+from core.classification_rebuild import CacheRebuildInterrupted, live_evidence, rebuild_classification_cache
+from core.models import Cache, PullRequest, UserRef
+from core.credit import cached_release_credit_counts
+from core.github import GhError, GhPullRequestView, run_gh
+from core.html import ReportSanityInput, write_report_if_sane
+from core.page import (
+    render_breakdown_section,
+    render_leaderboard_sections,
+    render_pr_bootstrap,
+    render_pr_controls_and_table,
+    render_report_page,
+    render_repo_status_sections,
+    render_representative_section,
+    render_timeline_bootstrap,
+)
+from core.report import (
+    EASTERN,
+    PrReportItem,
+    enrich_representative_items,
+    parse_representative_readme,
+    report_activity_summary,
+    report_counts,
+    report_item_from_pull_request_view,
+    report_items_to_script_dicts,
+    sort_report_items_by_effective_date,
+    sort_repos_by_accepted_count,
+)
+from core.timeline import build_chart_payload, build_daily_data, load_active_repos_from_text, prepare_timeline_prs
+
+DEFAULT_AUTHOR = "rodboev"
+DEFAULT_CACHE_FILE = Path(".pr-classification-cache.json")
+DEFAULT_REBUILD_CACHE_FILE = Path(".pr-classification-cache.rebuild.json")
+DEFAULT_DIVERGENCE_FILE = Path("classification-divergences.json")
+DEFAULT_README_FILE = Path(r"C:\Users\Rod\.claude\skills\pr\README.md")
+README_REPO = "rodboev/pr-sweep"
+PR_LIST_JSON_FIELDS = "number,state,title,createdAt,closedAt,mergedAt,headRefName,author,additions,deletions,changedFiles,url"
 WEBUI_REPO = "nesquena/hermes-webui"
 WEBUI_EXCLUDED_LOGINS = ("nesquena", "nesquena-hermes")
 WEBUI_CREDIT_MINIMUMS = (
@@ -30,16 +61,18 @@ WEBUI_CREDIT_RATIO_CHECKS = (
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Generate pr-stats output.")
-    parser.add_argument("--cache-file", type=Path, default=Path(".pr-classification-cache.json"))
-    parser.add_argument("--in-file", type=Path, default=Path("index.html"))
+    parser.add_argument("--cache-file", type=Path, default=DEFAULT_CACHE_FILE)
+    parser.add_argument("--template-file", type=Path, default=Path("template.html"))
     parser.add_argument("--out-file", type=Path, default=None)
-    parser.add_argument("--repos-file", type=Path, default=Path("generate.ps1"))
-    parser.add_argument("--inject-timeline-only", action="store_true")
+    parser.add_argument("--repos-file", type=Path, default=Path("repos.txt"))
+    parser.add_argument("--readme-file", type=Path, default=None)
+    parser.add_argument("--author", default=DEFAULT_AUTHOR)
     parser.add_argument("--classify-cache", action="store_true")
     parser.add_argument("--out-cache-file", type=Path, default=None)
-    parser.add_argument("--divergence-file", type=Path, default=Path(".rewrite-scratch/classification-divergences.json"))
+    parser.add_argument("--divergence-file", type=Path, default=DEFAULT_DIVERGENCE_FILE)
     parser.add_argument("--active-repos-only", action="store_true")
     parser.add_argument("--limit", type=int, default=None)
+    parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--verify-webui-cached-credits-only", action="store_true")
     parser.add_argument("--verify-webui-credits-only", action="store_true", help="alias for --verify-webui-cached-credits-only during the rewrite")
     parser.add_argument("--changelog-file", type=Path, default=None)
@@ -53,30 +86,25 @@ def main(argv: list[str] | None = None) -> int:
             changelog_file=args.changelog_file,
             contributors_file=args.contributors_file,
         )
-    if args.inject_timeline_only:
-        return inject_timeline_only(
-            in_file=args.in_file,
-            out_file=args.out_file or args.in_file,
-            repos_file=args.repos_file,
-        )
     if args.classify_cache:
-        if args.out_cache_file is None:
-            print("ERROR: --classify-cache requires --out-cache-file", file=sys.stderr)
-            return 2
         return classify_cache(
             cache_file=args.cache_file,
-            out_cache_file=args.out_cache_file,
+            out_cache_file=args.out_cache_file or DEFAULT_REBUILD_CACHE_FILE,
             divergence_file=args.divergence_file,
             repos_file=args.repos_file,
             active_repos_only=args.active_repos_only,
             limit=args.limit,
+            workers=args.workers,
+            promote_output=args.out_cache_file is None,
         )
 
     return generate_report(
         cache_file=args.cache_file,
-        in_file=args.in_file,
-        out_file=args.out_file or args.in_file,
+        template_file=args.template_file,
+        out_file=args.out_file or Path("index.html"),
         repos_file=args.repos_file,
+        readme_file=args.readme_file,
+        author=args.author,
         force_write=args.force_write,
     )
 
@@ -88,6 +116,8 @@ def classify_cache(
     repos_file: Path,
     active_repos_only: bool,
     limit: int | None,
+    workers: int,
+    promote_output: bool = False,
 ) -> int:
     try:
         result = rebuild_classification_cache(
@@ -97,7 +127,10 @@ def classify_cache(
             repos_file=repos_file,
             active_repos_only=active_repos_only,
             limit=limit,
+            workers=workers,
         )
+        if promote_output and out_cache_file != cache_file:
+            out_cache_file.replace(cache_file)
     except CacheRebuildInterrupted as exc:
         print(
             f"Interrupted after classifying {exc.result.checked} PRs, skipped {exc.result.skipped}, "
@@ -114,32 +147,37 @@ def classify_cache(
 def generate_report(
     *,
     cache_file: Path,
-    in_file: Path,
+    template_file: Path,
     out_file: Path,
     repos_file: Path,
+    readme_file: Path | None = None,
+    author: str = DEFAULT_AUTHOR,
     force_write: bool = False,
 ) -> int:
     try:
-        html = in_file.read_text(encoding="utf-8")
+        template_text = template_file.read_text(encoding="utf-8")
         repos = load_active_repos_from_text(repos_file.read_text(encoding="utf-8"))
-        pr_items = load_pr_data_from_html(html)
+        live_prs, failed_repos = fetch_author_pull_requests(repos, author=author)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 
     cache = load_cache(cache_file)
-    typed_items = report_items_from_script_dicts(pr_items)
-    html = compose_report_html_from_snapshot(
-        html=html,
-        items=typed_items,
-        display_repos=sort_repos_by_accepted_count(repos, pr_items, accepted_classifications=("shipped", "accepted-indirect")),
-        activity=report_activity_summary(typed_items),
-        visible_pr_items=20,
-    )
-    all_prs = prepare_timeline_prs(pr_items)
-    chart_data, repo_data, repo_names = build_daily_data(all_prs, repos)
-    chart_json, repo_json, names_json, avg_prs, avg_loc = build_chart_payload(chart_data, repo_data, repo_names)
-    output_html = inject_timeline_chart(html, chart_json, repo_json, names_json, avg_prs, avg_loc)
+    now = datetime.now(timezone.utc)
+    try:
+        typed_items, cache_updated = report_items_from_live_pull_requests(live_prs, cache, now=now)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
+    if cache_updated:
+        try:
+            save_cache(cache, cache_file)
+        except OSError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            return 1
+    typed_items = sort_report_items_by_effective_date(typed_items)
+    pr_items = report_items_to_script_dicts(typed_items)
+    display_repos = sort_repos_by_accepted_count(repos, pr_items, accepted_classifications=("shipped", "accepted-indirect"))
     counts = report_counts(
         typed_items,
         accepted_classifications=("shipped", "accepted-indirect"),
@@ -148,23 +186,59 @@ def generate_report(
         lost_status="lost",
     )
     report_cache_keys = {
-        f"{str(item.get('repo', ''))}#{int(item.get('number', 0) or 0)}"
+        classification_cache_key(str(item.get("repo", "")), _int_value(item.get("number")))
         for item in pr_items
     }
-    issues = write_report_if_sane(
-        out_file=out_file,
-        html=output_html,
-        report=ReportSanityInput(
-            reported_count=counts.total,
-            fetched_count=len(pr_items),
-            acceptance_closed=counts.accepted + counts.not_shipped,
-            open_count=counts.open,
-            failed_repos=(),
-            repo_count=len(repos),
-            cached_classification_count=sum(1 for key in report_cache_keys if key in cache.entries),
-        ),
-        force_write=force_write,
-    )
+    try:
+        all_prs = prepare_timeline_prs(pr_items)
+        chart_data, repo_data, repo_names = build_daily_data(all_prs, repos)
+        chart_json, repo_json, names_json, avg_prs, avg_loc = build_chart_payload(chart_data, repo_data, repo_names)
+        representative_items = enrich_representative_items(
+            parse_representative_readme(load_representative_readme_text(readme_file)),
+            typed_items,
+        )
+        now_eastern = now.astimezone(EASTERN)
+        today_label = now_eastern.strftime("%Y-%m-%d")
+        context = {
+            "breakdown": render_breakdown_section(
+                counts,
+                report_activity_summary(typed_items),
+                avg_prs=avg_prs,
+                avg_loc=avg_loc,
+            ),
+            "timeline_bootstrap": render_timeline_bootstrap(chart_json, repo_json, names_json, today_label),
+            "today": today_label,
+            "repo_status_sections": render_repo_status_sections(repos=display_repos, items=typed_items),
+            "leaderboard_sections": render_leaderboard_sections(
+                repos=display_repos,
+                items=typed_items,
+                cache=cache,
+                now=now,
+                author=author,
+            ),
+            "representative_section": render_representative_section(representative_items),
+            "pr_controls": render_pr_controls_and_table(items=typed_items, display_repos=display_repos, visible_items=20),
+            "pr_bootstrap": render_pr_bootstrap(items=typed_items),
+            "generated_date": f"{now_eastern.strftime('%B')} {now_eastern.day}, {now_eastern.year}",
+        }
+        output_html = render_report_page(template_text, context)
+        issues = write_report_if_sane(
+            out_file=out_file,
+            html=output_html,
+            report=ReportSanityInput(
+                reported_count=counts.total,
+                fetched_count=len(pr_items),
+                acceptance_closed=counts.accepted + counts.not_shipped,
+                open_count=counts.open,
+                failed_repos=failed_repos,
+                repo_count=len(repos),
+                cached_classification_count=sum(1 for key in report_cache_keys if key in cache.entries),
+            ),
+            force_write=force_write,
+        )
+    except (OSError, ValueError, json.JSONDecodeError, TemplateError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 1
     if issues:
         for issue in issues:
             print(f"ERROR: {issue}", file=sys.stderr)
@@ -172,23 +246,148 @@ def generate_report(
     print(f"Generated report at {out_file}", file=sys.stderr)
     return 0
 
-def inject_timeline_only(*, in_file: Path, out_file: Path, repos_file: Path) -> int:
+def load_representative_readme_text(readme_file: Path | None) -> str:
+    path = readme_file if readme_file is not None else DEFAULT_README_FILE
+    if path.exists():
+        return path.read_text(encoding="utf-8")
     try:
-        html = in_file.read_text(encoding="utf-8")
-        repos = load_active_repos_from_text(repos_file.read_text(encoding="utf-8"))
-        pr_items = load_pr_data_from_html(html)
-    except (OSError, ValueError, json.JSONDecodeError) as exc:
-        print(f"ERROR: {exc}", file=sys.stderr)
-        return 1
+        return run_gh(
+            "api",
+            f"repos/{README_REPO}/contents/README.md",
+            "-H",
+            "Accept: application/vnd.github.raw",
+            suppress_errors=True,
+        )
+    except GhError:
+        return ""
 
-    all_prs = prepare_timeline_prs(pr_items)
-    chart_data, repo_data, repo_names = build_daily_data(all_prs, repos)
-    chart_json, repo_json, names_json, avg_prs, avg_loc = build_chart_payload(chart_data, repo_data, repo_names)
-    out_file.write_text(
-        inject_timeline_chart(html, chart_json, repo_json, names_json, avg_prs, avg_loc),
-        encoding="utf-8",
+def fetch_author_pull_requests(repos: list[str], *, author: str) -> tuple[list[tuple[str, GhPullRequestView]], tuple[str, ...]]:
+    pulls: list[tuple[str, GhPullRequestView]] = []
+    failed_repos: list[str] = []
+    for repo in repos:
+        raw = run_gh(
+            "pr",
+            "list",
+            "--repo",
+            repo,
+            "--author",
+            author,
+            "--state",
+            "all",
+            "--limit",
+            "500",
+            "--json",
+            PR_LIST_JSON_FIELDS,
+            suppress_errors=True,
+        )
+        if not raw:
+            failed_repos.append(repo)
+            continue
+        try:
+            payload = json.loads(raw)
+        except json.JSONDecodeError:
+            failed_repos.append(repo)
+            continue
+        if not isinstance(payload, list):
+            failed_repos.append(repo)
+            continue
+        for item in payload:
+            if isinstance(item, dict):
+                pulls.append((repo, GhPullRequestView.model_validate(item)))
+    return pulls, tuple(failed_repos)
+
+
+def report_items_from_live_pull_requests(
+    pulls: list[tuple[str, GhPullRequestView]],
+    cache: Cache,
+    *,
+    now: datetime,
+) -> tuple[list[PrReportItem], bool]:
+    items: list[PrReportItem] = []
+    cache_updated = False
+    for repo, pr in pulls:
+        classification, did_update_cache = live_pull_request_classification(repo, pr, cache, now=now)
+        cache_updated = cache_updated or did_update_cache
+        items.append(report_item_from_pull_request_view(repo=repo, pr=pr, classification=classification))
+    return items, cache_updated
+
+
+def live_pull_request_classification(
+    repo: str,
+    pr: GhPullRequestView,
+    cache: Cache,
+    *,
+    now: datetime,
+) -> tuple[ClassificationResult, bool]:
+    key = classification_cache_key(repo, pr.number)
+    entry = cache.entries.get(key)
+    if entry is not None and entry.classification:
+        return (
+            ClassificationResult(
+                classification=entry.classification,
+                release=entry.release,
+                via_label=entry.viaLabel,
+                via_url=entry.viaUrl,
+                evidence_kind=entry.evidenceKind,
+                from_cache=True,
+                log_label=entry.classification,
+            ),
+            False,
+        )
+    if pr.state == "OPEN":
+        return ClassificationResult(classification="open", evidence_kind="open", log_label="open"), False
+    if pr.state == "MERGED" or pr.mergedAt:
+        result = ClassificationResult(
+            classification="shipped",
+            via_label="direct",
+            via_url=pr.url or f"https://github.com/{repo}/pull/{pr.number}",
+            evidence_kind="direct-merge",
+            log_label="shipped (merged directly)",
+        )
+    else:
+        pull_request = _pull_request_from_view(repo, pr)
+        result = classify_closed_pr(pull_request, live_evidence(repo, pr.number, pull_request))
+    set_cached_closed_classification(
+        cache,
+        repo=repo,
+        number=pr.number,
+        classification=result.classification,
+        release=result.release,
+        via_label=result.via_label,
+        via_url=result.via_url,
+        evidence_kind=result.evidence_kind,
+        now=now,
     )
-    print(f"Injected chart + stat cards into {out_file}", file=sys.stderr)
+    return result, True
+
+
+def _pull_request_from_view(repo: str, pr: GhPullRequestView) -> PullRequest:
+    return PullRequest(
+        repo=repo,
+        repoShort=repo.rsplit("/", 1)[-1],
+        number=pr.number,
+        title=pr.title,
+        url=pr.url or f"https://github.com/{repo}/pull/{pr.number}",
+        state=pr.state,
+        merged=pr.state == "MERGED" or bool(pr.mergedAt),
+        mergedAt=pr.mergedAt or "",
+        closedAt=pr.closedAt or "",
+        author=UserRef(login=pr.author.login),
+        body=pr.body,
+    )
+
+def _int_value(value: object) -> int:
+    if isinstance(value, bool):
+        return 0
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float):
+        return int(value)
+    if isinstance(value, str):
+        try:
+            return int(value)
+        except ValueError:
+            return 0
     return 0
 
 def verify_webui_credits_only(

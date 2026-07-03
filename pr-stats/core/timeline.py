@@ -9,7 +9,6 @@ from zoneinfo import ZoneInfo
 
 SHIPPED_CLASSIFICATIONS = {"shipped", "accepted-indirect"}
 EASTERN = ZoneInfo("America/New_York")
-CHART_MARKER = "<!-- timeline-chart -->"
 
 TimelinePr = dict[str, str | int | bool]
 TimelineDay = dict[str, str | int | float]
@@ -24,13 +23,8 @@ def repo_short_name(full_name: str) -> str:
     return full_name.split("/")[-1]
 
 
-def load_active_repos_from_text(ps1_text: str) -> list[str]:
-    match = re.search(r"\[string\[\]\]\$Repos\s*=\s*@\((.*?)\)\s*,", ps1_text, re.DOTALL)
-    if not match:
-        raise ValueError("could not find $Repos default list")
-
-    active_block = "\n".join(line.split("#", 1)[0] for line in match.group(1).splitlines())
-    repos = re.findall(r'"([^"]+)"', active_block)
+def load_active_repos_from_text(text: str) -> list[str]:
+    repos = [entry for line in text.splitlines() if (entry := line.split("#", 1)[0].strip())]
     if not repos:
         raise ValueError("no active repos found")
     return repos
@@ -176,96 +170,6 @@ def build_chart_payload(
     avg_loc = f"{raw_avg_loc / 1000:.1f}k" if raw_avg_loc >= 1000 else str(raw_avg_loc)
     avg_prs = str(round(total_opened / active_days, 1)) if active_days else "0"
     return chart_json, repo_json, names_json, avg_prs, avg_loc
-
-
-def inject_timeline_chart(
-    html: str,
-    chart_json: str,
-    repo_json: str,
-    names_json: str,
-    avg_prs: str,
-    avg_loc: str,
-    *,
-    today: str | None = None,
-) -> str:
-    today_label = today if today is not None else datetime.now(EASTERN).strftime("%Y-%m-%d")
-    html = re.sub(
-        rf"\s*{re.escape(CHART_MARKER)}.*?{re.escape(CHART_MARKER)}\s*",
-        "\n",
-        html,
-        flags=re.DOTALL,
-    )
-
-    chartjs_tags = (
-        '<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>\n'
-        '    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>\n'
-    )
-    if "chart.js@4" not in html:
-        html = html.replace("</head>", f"    {chartjs_tags}  </head>")
-
-    avg_cards = (
-        f'  <div class="stat-card"><div class="number" id="bd-avg-prs">{avg_prs}</div>'
-        f'<div class="label">Avg PRs/day</div></div>\n'
-        f'  <div class="stat-card"><div class="number" id="bd-avg-loc">{avg_loc}</div>'
-        f'<div class="label">Avg LOC/day</div></div>\n'
-    )
-    active_days_pattern = r'(<div class="stat-card"><div class="number blue"[^>]*>\d+ days?)'
-    html = re.sub(
-        r'\s*<div class="stat-card"><div class="number"[^>]*>[^<]*</div><div class="label">Avg PRs/day</div></div>\n?',
-        "",
-        html,
-    )
-    html = re.sub(
-        r'\s*<div class="stat-card"><div class="number"[^>]*>[^<]*</div><div class="label">Avg LOC/day</div></div>\n?',
-        "",
-        html,
-    )
-    html = re.sub(active_days_pattern, avg_cards + r"\1", html)
-
-    html = re.sub(
-        r'<div class="landscape-row"[^>]*>\s*\n<h2>Breakdown</h2>\n'
-        r'<div class="sort-pills" id="bd-range-pills">.*?</div>\s*\n</div>\s*\n</div>',
-        "<h2>Breakdown</h2>",
-        html,
-        flags=re.DOTALL,
-    )
-
-    chart_section = f"""{CHART_MARKER}
-<div class="landscape-row" style="margin-top:2rem;position:static">
-  <div class="pr-filter-group pr-filter-group-left">
-    <h2>Progress</h2>
-    <div class="sort-pills" id="tl-view-pills">
-    <div class="sort-pill active" data-view="daily">Daily</div>
-    <div class="sort-pill" data-view="cumulative"><span class="cumul-full">Cumulative</span><span class="cumul-short">Cum.</span></div>
-    </div>
-  </div>
-  <div class="pr-filter-group pr-filter-group-right">
-    <div class="sort-pills" id="bd-range-pills">
-      <div class="sort-pill" data-range="7">7d</div>
-      <div class="sort-pill" data-range="14">14d</div>
-      <div class="sort-pill" data-range="30">30d</div>
-      <div class="sort-pill active" data-range="0">All</div>
-    </div>
-  </div>
-</div>
-<div id="tl-daily-wrap"><canvas id="tlDailyChart"></canvas></div>
-<div id="tl-cumulative-wrap" style="display:none"><canvas id="tlCumulativeChart"></canvas></div>
-<div class="sort-pills tl-repo-pills" id="tl-repo-pills"></div>
-
-<script>
-var TL_ALL = {chart_json};
-var TL_REPOS = {repo_json};
-var TL_NAMES = {names_json};
-var TL_TODAY = '{today_label}';
-</script>
-<script src="timeline.js?v={today_label}"></script>
-{CHART_MARKER}
-"""
-    match = re.search(r'(</div>\s*<div class="legend">.*?</div>\s*</div>)\s*\n', html, re.DOTALL)
-    if match:
-        insert_at = match.end()
-        return html[:insert_at].rstrip() + "\n" + chart_section.strip() + "\n" + html[insert_at:].lstrip()
-    return html.replace("<h2>Methodology</h2>", chart_section.strip() + "\n<h2>Methodology</h2>")
 
 
 def _empty_opened() -> dict[str, int]:

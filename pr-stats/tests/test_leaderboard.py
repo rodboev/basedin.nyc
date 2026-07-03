@@ -133,11 +133,8 @@ def test_merge_community_contributor_logins_combines_prior_seed_recent_then_filt
     assert result == ["old", "seed", "rodboev", "recent"]
 
 def test_cached_webui_leaderboard_rows_match_rendered_ps1_output(repo_root: Path) -> None:
-    cache_path = repo_root / ".rewrite-scratch" / "baseline-cache-snapshot.json"
-    html_path = repo_root / ".rewrite-scratch" / "baseline.html"
-    if not cache_path.exists() or not html_path.exists():
-        cache_path = repo_root / ".pr-classification-cache.json"
-        html_path = repo_root / "index.html"
+    cache_path = repo_root / ".pr-classification-cache.json"
+    html_path = repo_root / "index.html"
     cache = load_cache(cache_path)
     html = html_path.read_text(encoding="utf-8")
     author_credited, author_open = _author_repo_counts_from_html(html, "nesquena/hermes-webui")
@@ -211,14 +208,11 @@ def test_cached_leaderboard_rows_override_author_with_report_counts(tmp_path: Pa
     assert (rod.credited, rod.open) == (39, 3)
 
 def test_cached_leaderboard_rows_match_all_rendered_ps1_boards(repo_root: Path) -> None:
-    cache_path = repo_root / ".rewrite-scratch" / "baseline-cache-snapshot.json"
-    html_path = repo_root / ".rewrite-scratch" / "baseline.html"
-    if not cache_path.exists() or not html_path.exists():
-        cache_path = repo_root / ".pr-classification-cache.json"
-        html_path = repo_root / "index.html"
+    cache_path = repo_root / ".pr-classification-cache.json"
+    html_path = repo_root / "index.html"
     cache = load_cache(cache_path)
     html = html_path.read_text(encoding="utf-8")
-    repos = load_active_repos_from_text((repo_root / "generate.ps1").read_text(encoding="utf-8"))
+    repos = load_active_repos_from_text((repo_root / "repos.txt").read_text(encoding="utf-8"))
     repo_by_label = {repo_label(repo): repo for repo in repos}
     repo_by_label.update({repo.rsplit("/", 1)[-1]: repo for repo in repos})
 

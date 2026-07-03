@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>GitHub Contributions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="darkreader-lock" />
+    <meta name="description" content="150+ PRs across OSS AI projects: provider infrastructure, agent UX, reliability, streaming, and release-linked production work." />
+    <meta property="og:title" content="GitHub Contributions">
+    <meta property="og:description" content="150+ PRs across OSS AI projects: provider infrastructure, agent UX, reliability, streaming, and release-linked production work.">
+    <meta property="og:image" content="https://basedin.nyc/pr-stats/thumb.jpg">
+    <meta property="og:url" content="https://basedin.nyc/pr-stats">
+    <meta property="og:type" content="website">
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="../style.css?v=20260616b">
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+  </head>
+<body class="pr">
+
+<div class="top-row">
+  <h1><a class="back-link" href="../"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>GitHub Contributions</h1>
+  <nav class="nav-links">
+    <a href="../resume/">Resume</a>
+    <span class="nav-sep">/</span>
+    <a href="../projects/">Projects</a>
+    <span class="nav-sep">/</span>
+    <span class="current">Stats</span>
+    <span class="nav-sep">/</span>
+    <a href="https://github.com/rodboev">GitHub</a>
+    <span class="nav-sep">/</span>
+    <a href="https://linkedin.com/in/rodboev">LinkedIn</a>
+  </nav>
+</div>
+
+
+{{ breakdown }}
+
+<!-- timeline-chart -->
+<div class="landscape-row" style="margin-top:2rem;position:static">
+  <div class="pr-filter-group pr-filter-group-left">
+    <h2>Progress</h2>
+    <div class="sort-pills" id="tl-view-pills">
+    <div class="sort-pill active" data-view="daily">Daily</div>
+    <div class="sort-pill" data-view="cumulative"><span class="cumul-full">Cumulative</span><span class="cumul-short">Cum.</span></div>
+    </div>
+  </div>
+  <div class="pr-filter-group pr-filter-group-right">
+    <div class="sort-pills" id="bd-range-pills">
+      <div class="sort-pill" data-range="7">7d</div>
+      <div class="sort-pill" data-range="14">14d</div>
+      <div class="sort-pill" data-range="30">30d</div>
+      <div class="sort-pill active" data-range="0">All</div>
+    </div>
+  </div>
+</div>
+<div id="tl-daily-wrap"><canvas id="tlDailyChart"></canvas></div>
+<div id="tl-cumulative-wrap" style="display:none"><canvas id="tlCumulativeChart"></canvas></div>
+<div class="sort-pills tl-repo-pills" id="tl-repo-pills"></div>
+
+<script>
+{{ timeline_bootstrap }}
+</script>
+<script src="timeline.js?v={{ today }}"></script>
+<!-- timeline-chart -->
+
+{{ repo_status_sections }}
+
+{{ leaderboard_sections }}
+
+{{ representative_section }}
+
+{{ pr_controls }}
+
+<h2>Methodology</h2>
+<div class="section methodology-section">
+  <p><strong>Shipped</strong> means maintainer-accepted work: a direct merge, timeline evidence such as a release PR or cherry-pick reference, or an indirect landing credited back to the original PR. GitHub's <code>mergedAt</code> flag alone is not sufficient because some repos land contributor work outside the merge button.</p>
+  <p><strong>Withdrawn</strong>, <strong>superseded</strong>, and <strong>lost</strong> separate author pullbacks, maintainer replacements, and competing outcomes. The PR table is sorted newest-first using close time for closed PRs and creation time for open PRs.</p>
+  <p><strong>Community leaderboards</strong> rank third-party contributors only. Repo owners, org employees, collaborators with write access, integration bots, and other automated accounts are excluded. Each board shows the top 50 contributors. Contributor discovery unions recent repo activity, prior cache entries, and (for hermes-webui) names from upstream <code>CONTRIBUTORS.md</code>. <strong>hermes-webui Credited</strong> counts distinct release-attributed PRs from <code>CHANGELOG.md</code> (including <code>(#123, @user)</code> lines), filtered contributor merges, and release-commit <code>Co-authored-by</code> trailers (rebuilt when the changelog changes). Other repos use evidence-based shipped classification for the top 10 contributors and merged-PR totals as a proxy below that. <strong>Rate (7d)</strong> is PRs opened in the rolling last 7 days divided by 7 (a recent per-day opening rate, not merge velocity).</p>
+</div>
+
+<p class="footer">Generated {{ generated_date }} from GitHub API. Source: <a href="https://github.com/rodboev/pr-sweep">rodboev/pr-sweep</a></p>
+
+<script src="../assets/script.js"></script>
+<script>
+{{ pr_bootstrap }}
+
+function setBarWidths() {
+  document.querySelectorAll('.bar-segment[data-width]').forEach(function(segment) {
+    segment.style.width = segment.getAttribute('data-width') + '%';
+  });
+}
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+function prDateCell(dateLabel) {
+  if (!dateLabel) return '';
+  var shortDate = dateLabel.replace(/\s+\d{1,2}:\d{2}\s*[AP]M$/i, '');
+  return '<span class="pr-date-full">' + escapeHtml(dateLabel) + '</span>' +
+    '<span class="pr-date-short">' + escapeHtml(shortDate) + '</span>';
+}
+function syncLandscapeStickyOffset() {
+  var row = document.getElementById('pr-landscape-row');
+  if (!row) return;
+  document.body.style.setProperty('--landscape-row-offset', row.getBoundingClientRect().height + 'px');
+}
+function setCollapsibleCollapsed(block, shouldCollapse) {
+  if (!block) return;
+  block.classList.toggle('collapsed', shouldCollapse);
+  syncTopCollapsedRows(block);
+  syncBottomCollapsedRows(block);
+}
+function updateCollapsedOverlays() {
+  document.querySelectorAll('.collapsible-table').forEach(function(block) {
+    syncTopCollapsedRows(block);
+    syncBottomCollapsedRows(block);
+  });
+}
+function prMatchesStatus(item, statusKey) {
+  if (statusKey === 'not-shipped') {
+    return item.statusKey === 'lost' || item.statusKey === 'superseded';
+  }
+  return item.statusKey === statusKey;
+}
+function prMatchesRepo(item, repoKey) {
+  return repoKey === 'all' || item.repoLabel === repoKey;
+}
+function countPrItems(statusKey, repoKey) {
+  return PR_DATA.filter(function(item) {
+    return prMatchesStatus(item, statusKey) && prMatchesRepo(item, repoKey);
+  }).length;
+}
+function updatePrFilterPills() {
+  PR_FILTERS.forEach(function(filter) {
+    var pill = document.querySelector('#pr-filter-pills .sort-pill[data-status="' + filter.key + '"]');
+    if (!pill) return;
+    var count = countPrItems(filter.key, CURRENT_PR_FILTER.repoKey);
+    pill.textContent = filter.label + ' (' + count + ')';
+  });
+}
+function renderPrTable(statusKey, repoKey) {
+  var tbody = document.getElementById('pr-list-body');
+  var wrapper = document.getElementById('pr-list-collapsible');
+  if (!tbody) return;
+  var filtered = PR_DATA.filter(function(item) {
+    return prMatchesStatus(item, statusKey) && prMatchesRepo(item, repoKey);
+  });
+  var visibleItems = collapsibleVisibleItems(wrapper);
+  var html = '';
+  filtered.forEach(function(item, index) {
+    var via = '';
+    if (item.viaLabel) {
+      via = item.viaUrl ? '<a href="' + item.viaUrl + '">' + item.viaLabel + '</a>' : item.viaLabel;
+    }
+    html += '<tr class="pr-main-row">' +
+      '<td><a href="' + item.url + '">#' + item.number + '</a></td>' +
+      '<td>' + item.repoLabel + '</td>' +
+      '<td><span class="tag ' + item.statusClass + '">' + item.statusLabel + '</span></td>' +
+      '<td>' + prDateCell(item.dateLabel) + '</td>' +
+      '<td>' + (item.releaseLabel || '') + '</td>' +
+      '<td>' + via + '</td>' +
+    '</tr>' +
+    '<tr class="pr-title-row">' +
+      '<td class="pr-title-gap"></td>' +
+      '<td colspan="5"><div class="pr-title-text" title="' + escapeHtml(item.title || '') + '">' + escapeHtml(item.title || '') + '</div></td>' +
+    '</tr>';
+    if (wrapper && index + 1 === visibleItems && filtered.length > visibleItems) {
+      html += expandRowHtml(wrapper.id, 'Show all ' + filtered.length, 6);
+    }
+  });
+  if (!html) {
+    html = '<tr><td colspan="6" class="empty-state">No PRs in this status.</td></tr>';
+  }
+  tbody.innerHTML = html;
+  setCollapsibleCollapsed(wrapper, filtered.length > visibleItems);
+  updateCollapsedOverlays();
+}
+function bindPillGroup(containerId, attr, filterKey) {
+  document.getElementById(containerId).addEventListener('click', function(e) {
+    var pill = e.target.closest('.sort-pill');
+    if (!pill) return;
+    CURRENT_PR_FILTER[filterKey] = pill.getAttribute(attr);
+    document.querySelectorAll('#' + containerId + ' .sort-pill').forEach(function(p) {
+      p.classList.remove('active');
+    });
+    pill.classList.add('active');
+    updatePrFilterPills();
+    renderPrTable(CURRENT_PR_FILTER.statusKey, CURRENT_PR_FILTER.repoKey);
+  });
+}
+bindPillGroup('pr-filter-pills', 'data-status', 'statusKey');
+bindPillGroup('pr-repo-pills', 'data-repo', 'repoKey');
+setBarWidths();
+syncLandscapeStickyOffset();
+if (typeof ResizeObserver !== 'undefined') {
+  var landscapeRow = document.getElementById('pr-landscape-row');
+  if (landscapeRow) {
+    new ResizeObserver(syncLandscapeStickyOffset).observe(landscapeRow);
+  }
+}
+window.addEventListener('resize', syncLandscapeStickyOffset);
+updatePrFilterPills();
+renderPrTable(CURRENT_PR_FILTER.statusKey, CURRENT_PR_FILTER.repoKey);
+
+document.querySelectorAll('details.projections').forEach(function(details) {
+  var lb = details.previousElementSibling;
+  while (lb && !lb.classList.contains('leaderboard')) lb = lb.previousElementSibling;
+  if (!lb) return;
+  var selfRow = lb.querySelector('tr.is-self');
+  if (!selfRow) return;
+  var cells = selfRow.querySelectorAll('td');
+  var myOpen = parseInt(cells[3].textContent) || 0;
+  if (!myOpen) return;
+  var summaryEl = details.querySelector('summary');
+  var myRate = parseFloat((summaryEl.textContent.match(/([\d.]+)\/day/) || [])[1]) || 0;
+  if (!myRate) return;
+  var myCredited = parseInt(cells[2].textContent) || 0;
+  details.querySelectorAll('table tr').forEach(function(row) {
+    var td = row.querySelectorAll('td');
+    if (td.length < 4) return;
+    var name = td[0].textContent.trim();
+    var lbRow = null;
+    lb.querySelectorAll('tbody tr').forEach(function(r) {
+      var a = r.querySelector('a');
+      if (a && a.textContent.trim() === name) lbRow = r;
+    });
+    var theirOpen = lbRow ? (parseInt(lbRow.querySelectorAll('td')[3].textContent) || 0) : 0;
+    var theirRate = parseFloat(td[2].textContent) || 0;
+    var rawGap = parseInt((td[1].textContent.match(/\+(\d+)/) || [])[1]) || 0;
+    var effectiveGap = rawGap - myOpen + theirOpen;
+    var netRate = myRate - theirRate;
+    var catchupTd = td[3];
+    if (effectiveGap <= 0 && myRate > 0) {
+      var days = Math.round(rawGap / myRate * 10) / 10;
+      var when = new Date(Date.now() + days * 86400000);
+      var dateStr = when.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      var pending = myOpen - rawGap + theirOpen;
+      catchupTd.className = '';
+      catchupTd.innerHTML = days + 'd (' + dateStr + ') <span class="note">(' + pending + ' surplus)</span>';
+    } else if (effectiveGap > 0 && netRate > 0) {
+      var days = Math.round(effectiveGap / netRate * 10) / 10;
+      var when = new Date(Date.now() + days * 86400000);
+      var dateStr = when.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      catchupTd.innerHTML = days + 'd (' + dateStr + ') <span class="note">(' + myOpen + ' pending)</span>';
+    }
+  });
+  summaryEl.textContent = summaryEl.textContent.replace(/rank #/, myOpen + ' open, rank #');
+});
+</script>
+
+</body>
+</html>

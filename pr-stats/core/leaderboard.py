@@ -56,6 +56,7 @@ class CachedLeaderboardRow:
     credited: int
     open: int
     rate: float
+    idle: float = 999.0
 
 
 def is_leaderboard_bot(login: str) -> bool:
@@ -188,7 +189,7 @@ def cached_leaderboard_rows(
     now: datetime,
     rate_window_days: float,
     start_date: datetime | None = None,
-    max_entries: int = 50,
+    max_entries: int | None = 50,
     author_login: str = "",
     author_credited: int = 0,
     author_open: int = 0,
@@ -240,9 +241,11 @@ def cached_leaderboard_rows(
             ),
         ))
     sorted_rows = sorted(rows, key=lambda item: (item[1].credited, item[1].open), reverse=True)
+    if max_entries is not None:
+        sorted_rows = sorted_rows[:max_entries]
     return [
-        CachedLeaderboardRow(rank=rank, login=login, credited=stat.credited, open=stat.open, rate=stat.rate)
-        for rank, (login, stat) in enumerate(sorted_rows[:max_entries], start=1)
+        CachedLeaderboardRow(rank=rank, login=login, credited=stat.credited, open=stat.open, rate=stat.rate, idle=stat.idle)
+        for rank, (login, stat) in enumerate(sorted_rows, start=1)
     ]
 
 

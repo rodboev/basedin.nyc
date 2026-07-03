@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 from collections.abc import Sequence
 from pathlib import Path
@@ -13,14 +14,17 @@ from core.github import (
     RATE_LIMIT_REASON,
     SERVER_ERROR_REASON,
     TIMEOUT_REASON,
+    GhRetryExhausted,
     GhResult,
     _run_gh_with_runner,
     _gh_environment,
     _subprocess_runner,
+    _windows_hidden_process_flags,
     get_gh_retry_delay_seconds,
     get_gh_retry_reason,
     parse_graphql_search_page_json,
     parse_pr_view_json,
+    reset_gh_cancellation,
 )
 
 
@@ -28,6 +32,11 @@ def _payload_text(path: Path) -> str:
     fixture = json.loads(path.read_text(encoding="utf-8"))
     assert fixture["command"]
     return json.dumps(fixture["payload"])
+
+
+@pytest.fixture(autouse=True)
+def reset_cancelled_gh_state() -> None:
+    reset_gh_cancellation()
 
 
 def test_pr_view_fixture_parses_real_gh_shape(repo_root: Path) -> None:
@@ -107,6 +116,30 @@ def test_run_gh_retries_retryable_failure_then_returns_trimmed_stdout() -> None:
     assert sleeps == [5]
 
 
+def test_run_gh_stops_after_retry_cap() -> None:
+    calls = 0
+    sleeps: list[int] = []
+
+    def runner(args: Sequence[str], timeout: int) -> GhResult:
+        nonlocal calls
+        del args, timeout
+        calls += 1
+        return GhResult(stdout="", stderr="HTTP 502", returncode=1)
+
+    with pytest.raises(GhRetryExhausted, match="failed after 2 attempts"):
+        _run_gh_with_runner(
+            ("api", "repos/example/repo"),
+            timeout=120,
+            suppress_errors=True,
+            runner=runner,
+            sleeper=sleeps.append,
+            max_attempts=2,
+        )
+
+    assert calls == 2
+    assert sleeps == [5]
+
+
 def test_run_gh_non_retryable_failure_returns_stdout_without_sleep() -> None:
     sleeps: list[int] = []
 
@@ -133,19 +166,48 @@ def test_gh_environment_disables_interactive_prompts() -> None:
     assert env["GH_PROMPT_DISABLED"] == "1"
     assert env["GH_NO_UPDATE_NOTIFIER"] == "1"
     assert env["GCM_INTERACTIVE"] == "never"
+    assert env["GIT_ASKPASS"] == "echo"
+    assert env["SSH_ASKPASS"] == "echo"
+    assert env["GH_BROWSER"] == "echo"
 
 def test_subprocess_runner_decodes_gh_output_as_utf8(monkeypatch: pytest.MonkeyPatch) -> None:
     captured: dict[str, Any] = {}
 
-    def fake_run(*args: object, **kwargs: object) -> subprocess.CompletedProcess[str]:
+    class FakeProcess:
+        pid = 123
+        returncode = 0
+
+        def communicate(self, timeout: int) -> tuple[str, str]:
+            captured["timeout"] = timeout
+            return ("ok", "")
+
+        def poll(self) -> int:
+            return 0
+
+    def fake_popen(*args: object, **kwargs: object) -> FakeProcess:
         captured["args"] = args
         captured["kwargs"] = kwargs
-        return subprocess.CompletedProcess(args=["gh"], returncode=0, stdout="ok", stderr="")
+        return FakeProcess()
 
-    monkeypatch.setattr(subprocess, "run", fake_run)
+    monkeypatch.setattr("core.github._resolve_gh_executable", lambda: "C:\\Apps\\Tools\\gh.exe")
+    monkeypatch.setattr(subprocess, "Popen", fake_popen)
 
     result = _subprocess_runner(("api", "repos/example/repo"), 120)
 
     assert result.stdout == "ok"
+    assert captured["args"] == (["C:\\Apps\\Tools\\gh.exe", "api", "repos/example/repo"],)
     assert captured["kwargs"]["encoding"] == "utf-8"
     assert captured["kwargs"]["errors"] == "replace"
+    assert captured["kwargs"]["stdin"] == subprocess.DEVNULL
+    if os.name == "nt":
+        assert captured["kwargs"]["creationflags"] == _windows_hidden_process_flags()
+        startupinfo = captured["kwargs"]["startupinfo"]
+        assert startupinfo.dwFlags & subprocess.STARTF_USESHOWWINDOW
+        assert startupinfo.wShowWindow == subprocess.SW_HIDE
+
+
+def test_windows_hidden_process_flags_match_ps1_create_no_window() -> None:
+    if os.name != "nt":
+        pytest.skip("Windows-only process flags")
+
+    assert _windows_hidden_process_flags() == subprocess.CREATE_NO_WINDOW
