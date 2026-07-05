@@ -242,7 +242,7 @@ def test_render_pr_controls_and_table_matches_ps1_owned_markup() -> None:
         "    <h2>PRs</h2>\n"
         '    <div class="sort-pills" id="pr-repo-pills">\n'
         '    <div class="sort-pill active" data-repo="all">All</div>\n'
-        '    <div class="sort-pill" data-repo="webui">webui</div>\n'
+        '    <div class="sort-pill" data-repo="hermes-webui">hermes-webui</div>\n'
         "    </div>\n"
         "  </div>\n"
         '  <div class="pr-filter-group pr-filter-group-right">\n'

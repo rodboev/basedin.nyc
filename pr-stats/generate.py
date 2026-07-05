@@ -228,7 +228,7 @@ def generate_report(
                 author=author,
             ),
             "representative_section": render_representative_section(representative_items),
-            "pr_controls": render_pr_controls_and_table(items=typed_items, display_repos=display_repos, visible_items=20),
+            "pr_controls": render_pr_controls_and_table(items=typed_items, display_repos=display_repos, visible_items=40),
             "pr_bootstrap": render_pr_bootstrap(items=typed_items),
             "generated_date": f"{now_eastern.strftime('%B')} {now_eastern.day}, {now_eastern.year}",
         }

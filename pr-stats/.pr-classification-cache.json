@@ -80128,6 +80128,318 @@
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
       "cachedAt": "2026-07-05T18:10:35.378614Z"
+    },
+    "nesquena/hermes-webui#4068": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-07-05T19:09:29.436098Z"
+    },
+    "nesquena/hermes-webui#5548": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5548",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-05T23:22:28.300140Z"
+    },
+    "kenn-io/agentsview#997": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/997",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-05T23:22:28.300140Z"
+    },
+    "headroomlabs-ai/headroom#1804": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/1804",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-05T23:22:28.300140Z"
+    },
+    "headroomlabs-ai/headroom#1803": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/1803",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-05T23:22:28.300140Z"
+    },
+    "headroomlabs-ai/headroom#1802": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/1802",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-05T23:22:28.300140Z"
+    },
+    "headroomlabs-ai/headroom#1801": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/1801",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-05T23:22:28.300140Z"
+    },
+    "nesquena/hermes-webui#5502": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5502",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-05T23:34:12.480277Z"
+    },
+    "thedotmack/claude-mem#3018": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "comment",
+      "cachedAt": "2026-07-05T23:34:12.480277Z"
+    },
+    "thedotmack/claude-mem#2998": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "comment",
+      "cachedAt": "2026-07-05T23:34:12.480277Z"
+    },
+    "thedotmack/claude-mem#2945": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "comment",
+      "cachedAt": "2026-07-05T23:34:12.480277Z"
+    },
+    "thedotmack/claude-mem#2890": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "comment",
+      "cachedAt": "2026-07-05T23:34:12.480277Z"
+    },
+    "thedotmack/claude-mem#2889": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "comment",
+      "cachedAt": "2026-07-05T23:34:12.480277Z"
+    },
+    "thedotmack/claude-mem#2887": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "comment",
+      "cachedAt": "2026-07-05T23:34:12.480277Z"
+    },
+    "thedotmack/claude-mem#2886": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "comment",
+      "cachedAt": "2026-07-05T23:34:12.480277Z"
+    },
+    "thedotmack/claude-mem#2884": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "comment",
+      "cachedAt": "2026-07-05T23:34:12.480277Z"
+    },
+    "thedotmack/claude-mem#2856": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "comment",
+      "cachedAt": "2026-07-05T23:34:12.480277Z"
+    },
+    "nesquena/hermes-webui#5506": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5506",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T00:37:19.264082Z"
+    },
+    "nesquena/hermes-webui#5645": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5645",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T03:39:53.695067Z"
+    },
+    "nesquena/hermes-webui#5555": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5555",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T03:39:53.695067Z"
+    },
+    "nesquena/hermes-webui#5554": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5554",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T03:39:53.695067Z"
+    },
+    "nesquena/hermes-webui#5661": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5661",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T04:33:58.680713Z"
+    },
+    "nesquena/hermes-webui#5644": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5644",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T04:33:58.680713Z"
+    },
+    "stablyai/orca#7389": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/stablyai/orca/pull/7389",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T04:33:58.680713Z"
+    },
+    "nesquena/hermes-webui#5605": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5605",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T06:12:01.469174Z"
+    },
+    "nesquena/hermes-webui#5594": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5594",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T06:12:01.469174Z"
+    },
+    "nesquena/hermes-webui#5668": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5668",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T07:20:50.984941Z"
+    },
+    "headroomlabs-ai/headroom#1836": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/1836",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T15:11:43.528961Z"
+    },
+    "headroomlabs-ai/headroom#1834": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/1834",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T15:11:43.528961Z"
+    },
+    "nesquena/hermes-webui#5673": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5673",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T17:59:14.945100Z"
+    },
+    "stablyai/orca#7391": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/stablyai/orca/pull/7391",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T17:59:14.945100Z"
+    },
+    "mem0ai/mem0#5862": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/mem0ai/mem0/pull/5862",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T18:12:56.374087Z"
+    },
+    "mem0ai/mem0#5827": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/mem0ai/mem0/pull/5827",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T18:12:56.374087Z"
+    },
+    "mem0ai/mem0#5823": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/mem0ai/mem0/pull/5823",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T18:12:56.374087Z"
+    },
+    "mem0ai/mem0#5822": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/mem0ai/mem0/pull/5822",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T18:12:56.374087Z"
+    },
+    "mem0ai/mem0#5802": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/mem0ai/mem0/pull/5802",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T18:12:56.374087Z"
+    },
+    "mem0ai/mem0#5801": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/mem0ai/mem0/pull/5801",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T18:12:56.374087Z"
+    },
+    "nesquena/hermes-webui#5674": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5674",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-06T19:21:02.555903Z"
+    },
+    "NousResearch/hermes-agent#58567": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-07-06T20:06:10.534165Z"
     }
   },
   "leaderboards": {
@@ -83128,20 +83440,20 @@
       "releaseCreditMeta": null
     },
     "headroomlabs-ai/headroom|community-shipped-v4|all": {
-      "cachedAt": "2026-07-04T23:03:30.962622Z",
-      "refreshedAt": "2026-07-04T23:03:30.962622Z",
+      "cachedAt": "2026-07-06T23:29:35.014304Z",
+      "refreshedAt": "2026-07-06T23:29:35.014304Z",
       "logins": [
         "oxura",
+        "rodboev",
         "gglucass",
         "MrAshRhodes",
-        "rodboev",
         "Parideboy",
         "agaonker",
         "neogenix",
         "peterlodri-sec",
+        "aivinay",
         "inix-x",
         "tenderdeve",
-        "aivinay",
         "abhay-codes07",
         "ketpatil77",
         "lifeodyssey",
@@ -83158,15 +83470,16 @@
         "rocker-zhang",
         "khaosdoctor",
         "Kayzo",
+        "Epicism",
         "Lakshya77089",
         "RubenAAA",
         "smartwatermelon",
         "chris-yyau",
         "rudironsoni",
         "SuperMarioYL",
-        "Epicism",
         "falkoro",
         "pacifio",
+        "mvanhorn",
         "adryanev",
         "Krishnachaitanyakc",
         "Tanmay9223",
@@ -83188,6 +83501,7 @@
         "withsivram",
         "longtngo",
         "prakersh",
+        "amcfague",
         "iiroak",
         "machine3at",
         "syf2211",
@@ -83216,7 +83530,6 @@
         "LuisValdesZero",
         "LexusKing53",
         "realvigneshmurugan1",
-        "mvanhorn",
         "Tridu33",
         "mkhalid-s",
         "praneetware",
@@ -83232,6 +83545,13 @@
         "mbluecoder2",
         "nicolabeghin",
         "pythoninthegrass",
+        "dspv",
+        "burkestar",
+        "ninosat00",
+        "roman-t3a",
+        "iotron",
+        "x1051445024",
+        "LunarECL",
         "warnes",
         "goldjg",
         "Ship-Wright",
@@ -83269,7 +83589,6 @@
         "ThiagoMafra-Integrare",
         "daveeed1",
         "dex0shubham",
-        "amcfague",
         "0xkaz",
         "2001Y",
         "vladgrish",
@@ -83425,11 +83744,17 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-06T17:40:33Z"
         },
+        "rodboev": {
+          "total": 42,
+          "open": 15,
+          "recentCount": 21,
+          "lastCreatedAt": "2026-07-06T10:18:40Z"
+        },
         "gglucass": {
-          "total": 39,
-          "open": 1,
-          "recentCount": 5,
-          "lastCreatedAt": "2026-07-02T07:08:01Z"
+          "total": 41,
+          "open": 3,
+          "recentCount": 7,
+          "lastCreatedAt": "2026-07-06T09:01:28Z"
         },
         "MrAshRhodes": {
           "total": 33,
@@ -83437,17 +83762,11 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-18T07:55:09Z"
         },
-        "rodboev": {
-          "total": 32,
-          "open": 11,
-          "recentCount": 14,
-          "lastCreatedAt": "2026-07-04T06:55:58Z"
-        },
         "Parideboy": {
-          "total": 26,
-          "open": 6,
-          "recentCount": 11,
-          "lastCreatedAt": "2026-07-03T15:14:04Z"
+          "total": 29,
+          "open": 8,
+          "recentCount": 12,
+          "lastCreatedAt": "2026-07-06T15:58:09Z"
         },
         "agaonker": {
           "total": 24,
@@ -83467,23 +83786,23 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-26T16:27:42Z"
         },
+        "aivinay": {
+          "total": 16,
+          "open": 2,
+          "recentCount": 7,
+          "lastCreatedAt": "2026-07-06T13:09:05Z"
+        },
         "inix-x": {
-          "total": 14,
+          "total": 15,
           "open": 4,
-          "recentCount": 6,
-          "lastCreatedAt": "2026-07-04T05:35:59Z"
+          "recentCount": 7,
+          "lastCreatedAt": "2026-07-05T17:10:22Z"
         },
         "tenderdeve": {
           "total": 13,
           "open": 7,
-          "recentCount": 13,
+          "recentCount": 10,
           "lastCreatedAt": "2026-07-02T12:20:17Z"
-        },
-        "aivinay": {
-          "total": 13,
-          "open": 2,
-          "recentCount": 4,
-          "lastCreatedAt": "2026-07-02T10:15:03Z"
         },
         "abhay-codes07": {
           "total": 13,
@@ -83500,7 +83819,7 @@
         "lifeodyssey": {
           "total": 11,
           "open": 5,
-          "recentCount": 5,
+          "recentCount": 3,
           "lastCreatedAt": "2026-07-03T13:51:37Z"
         },
         "ousamabenyounes": {
@@ -83566,7 +83885,7 @@
         "rocker-zhang": {
           "total": 6,
           "open": 4,
-          "recentCount": 4,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-01T03:37:49Z"
         },
         "khaosdoctor": {
@@ -83580,6 +83899,12 @@
           "open": 1,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-05T23:03:35Z"
+        },
+        "Epicism": {
+          "total": 5,
+          "open": 2,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T15:23:31Z"
         },
         "Lakshya77089": {
           "total": 5,
@@ -83607,7 +83932,7 @@
         },
         "rudironsoni": {
           "total": 4,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-25T14:50:06Z"
         },
@@ -83616,12 +83941,6 @@
           "open": 1,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-23T05:47:48Z"
-        },
-        "Epicism": {
-          "total": 4,
-          "open": 1,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-16T20:54:53Z"
         },
         "falkoro": {
           "total": 4,
@@ -83635,6 +83954,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-06T04:11:12Z"
         },
+        "mvanhorn": {
+          "total": 3,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T07:01:09Z"
+        },
         "adryanev": {
           "total": 3,
           "open": 1,
@@ -83644,7 +83969,7 @@
         "Krishnachaitanyakc": {
           "total": 3,
           "open": 2,
-          "recentCount": 3,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-02T01:40:07Z"
         },
         "Tanmay9223": {
@@ -83760,6 +84085,12 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-02-02T17:12:57Z"
+        },
+        "amcfague": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T05:56:11Z"
         },
         "iiroak": {
           "total": 2,
@@ -83929,12 +84260,6 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-14T09:40:13Z"
         },
-        "mvanhorn": {
-          "total": 2,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-13T09:24:19Z"
-        },
         "Tridu33": {
           "total": 2,
           "open": 0,
@@ -84024,6 +84349,48 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-01-15T02:31:42Z"
+        },
+        "dspv": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T16:42:28Z"
+        },
+        "burkestar": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T08:41:05Z"
+        },
+        "ninosat00": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T05:47:05Z"
+        },
+        "roman-t3a": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T04:39:06Z"
+        },
+        "iotron": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T23:42:10Z"
+        },
+        "x1051445024": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T16:08:06Z"
+        },
+        "LunarECL": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T13:12:35Z"
         },
         "warnes": {
           "total": 1,
@@ -84142,37 +84509,37 @@
         "BuildOnX": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T15:03:10Z"
         },
         "guyoron1": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T09:59:32Z"
         },
         "Thefurypig": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T02:32:49Z"
         },
         "2rob": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-28T19:22:10Z"
         },
         "vscunha": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-28T13:03:54Z"
         },
         "gaurav0107": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-27T23:10:30Z"
         },
         "mstattma": {
@@ -84243,15 +84610,9 @@
         },
         "dex0shubham": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-25T19:58:15Z"
-        },
-        "amcfague": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-25T17:23:29Z"
         },
         "0xkaz": {
           "total": 1,
@@ -85138,16 +85499,16 @@
       },
       "shippedCounts": {
         "oxura": 3,
+        "rodboev": 27,
         "gglucass": 36,
         "MrAshRhodes": 30,
-        "rodboev": 21,
-        "Parideboy": 20,
+        "Parideboy": 21,
         "agaonker": 19,
         "neogenix": 12,
         "peterlodri-sec": 1,
-        "inix-x": 9,
+        "aivinay": 10,
+        "inix-x": 10,
         "tenderdeve": 5,
-        "aivinay": 8,
         "abhay-codes07": 3,
         "ketpatil77": 0,
         "lifeodyssey": 6,
@@ -85164,15 +85525,16 @@
         "rocker-zhang": 2,
         "khaosdoctor": 5,
         "Kayzo": 5,
+        "Epicism": 0,
         "Lakshya77089": 5,
         "RubenAAA": 0,
         "smartwatermelon": 5,
         "chris-yyau": 2,
-        "rudironsoni": 3,
+        "rudironsoni": 4,
         "SuperMarioYL": 3,
-        "Epicism": 0,
         "falkoro": 0,
         "pacifio": 2,
+        "mvanhorn": 2,
         "adryanev": 2,
         "Krishnachaitanyakc": 1,
         "Tanmay9223": 0,
@@ -85194,6 +85556,7 @@
         "withsivram": 0,
         "longtngo": 3,
         "prakersh": 3,
+        "amcfague": 2,
         "iiroak": 0,
         "machine3at": 0,
         "syf2211": 0,
@@ -85222,7 +85585,6 @@
         "LuisValdesZero": 0,
         "LexusKing53": 1,
         "realvigneshmurugan1": 0,
-        "mvanhorn": 2,
         "Tridu33": 0,
         "mkhalid-s": 2,
         "praneetware": 2,
@@ -85238,6 +85600,13 @@
         "mbluecoder2": 0,
         "nicolabeghin": 2,
         "pythoninthegrass": 2,
+        "dspv": 0,
+        "burkestar": 0,
+        "ninosat00": 0,
+        "roman-t3a": 0,
+        "iotron": 0,
+        "x1051445024": 0,
+        "LunarECL": 0,
         "warnes": 0,
         "goldjg": 0,
         "Ship-Wright": 0,
@@ -85275,7 +85644,6 @@
         "ThiagoMafra-Integrare": 0,
         "daveeed1": 0,
         "dex0shubham": 0,
-        "amcfague": 0,
         "0xkaz": 0,
         "2001Y": 0,
         "vladgrish": 1,
@@ -85429,8 +85797,8 @@
       "releaseCreditMeta": null
     },
     "kenn-io/agentsview|community-shipped-v4|all": {
-      "cachedAt": "2026-07-04T23:03:30.962622Z",
-      "refreshedAt": "2026-07-04T23:03:30.962622Z",
+      "cachedAt": "2026-07-06T23:29:35.014304Z",
+      "refreshedAt": "2026-07-06T23:29:35.014304Z",
       "logins": [
         "rodboev",
         "mjacobs",
@@ -85462,6 +85830,9 @@
         "sinnet3000",
         "cdeil",
         "thellert",
+        "Mr-Koala",
+        "RobSchilderr",
+        "Leuconoe",
         "leejuhanKr",
         "Playgrand-by-linus",
         "LeonidasLux",
@@ -85525,15 +85896,15 @@
       ],
       "stats": {
         "rodboev": {
-          "total": 51,
-          "open": 4,
-          "recentCount": 20,
-          "lastCreatedAt": "2026-07-04T17:52:01Z"
+          "total": 53,
+          "open": 5,
+          "recentCount": 15,
+          "lastCreatedAt": "2026-07-05T07:02:56Z"
         },
         "mjacobs": {
           "total": 45,
           "open": 0,
-          "recentCount": 13,
+          "recentCount": 12,
           "lastCreatedAt": "2026-07-04T18:29:24Z"
         },
         "userFRM": {
@@ -85563,7 +85934,7 @@
         "prateek": {
           "total": 8,
           "open": 4,
-          "recentCount": 8,
+          "recentCount": 6,
           "lastCreatedAt": "2026-07-03T07:31:23Z"
         },
         "icatw": {
@@ -85703,6 +86074,24 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-02-28T19:42:26Z"
+        },
+        "Mr-Koala": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T14:48:26Z"
+        },
+        "RobSchilderr": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T14:21:33Z"
+        },
+        "Leuconoe": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T09:16:30Z"
         },
         "leejuhanKr": {
           "total": 1,
@@ -86066,7 +86455,7 @@
         }
       },
       "shippedCounts": {
-        "rodboev": 46,
+        "rodboev": 47,
         "mjacobs": 45,
         "userFRM": 12,
         "tpn": 12,
@@ -86096,6 +86485,9 @@
         "sinnet3000": 2,
         "cdeil": 2,
         "thellert": 2,
+        "Mr-Koala": 0,
+        "RobSchilderr": 0,
+        "Leuconoe": 1,
         "leejuhanKr": 1,
         "Playgrand-by-linus": 1,
         "LeonidasLux": 1,
@@ -88209,8 +88601,8 @@
       "releaseCreditMeta": null
     },
     "mem0ai/mem0|community-shipped-v4|all": {
-      "cachedAt": "2026-07-03T22:23:38.316447Z",
-      "refreshedAt": "2026-07-03T22:23:38.316447Z",
+      "cachedAt": "2026-07-06T18:12:56.374087Z",
+      "refreshedAt": "2026-07-06T18:12:56.374087Z",
       "logins": [
         "Dev-Khant",
         "whysosaket",
@@ -88229,11 +88621,11 @@
         "rodboev",
         "PHclaw",
         "tao-to-python",
+        "harshgupta-mem0",
         "yashs33244",
         "MgeeeeK",
         "PranavPuranik",
         "aaishikdutta",
-        "harshgupta-mem0",
         "akshat1423",
         "themavik",
         "haosenwang1018",
@@ -88258,13 +88650,14 @@
         "ron-42",
         "NavyaAlapati13",
         "subhajit20",
+        "Krishnachaitanyakc",
         "abhay-codes07",
         "rakheesingh",
         "thecaptain789",
         "Prikshit7766",
         "rupeshbansal",
+        "KushagraB424",
         "sjsjsjjs534",
-        "Krishnachaitanyakc",
         "soumil-rathi",
         "fengjikui",
         "jfeng18",
@@ -88275,6 +88668,7 @@
         "omercnet",
         "Mrinank-Bhowmick",
         "techcontributor",
+        "ShauryaaSharma",
         "Oxygen56",
         "shraderdm",
         "octo-patch",
@@ -88294,9 +88688,7 @@
         "GingerMoon",
         "aryankhanna475",
         "jaythehardcoder",
-        "KushagraB424",
         "barry166",
-        "ShauryaaSharma",
         "adarshprabhu03",
         "rafid001",
         "ac12644",
@@ -88315,6 +88707,7 @@
         "shlokkhemani",
         "vatsalrathod16",
         "krescent",
+        "aloktripathi1",
         "rudrajmehta-mem0",
         "immuhammadfurqan",
         "axelray-dev",
@@ -88344,8 +88737,10 @@
         "ianupamsingh",
         "ahnedeee",
         "gasolin",
+        "huveewomg",
+        "VectorPeak",
+        "bharadwaj-13",
         "csmdelinea",
-        "aloktripathi1",
         "Malhis",
         "shivamtyagi18",
         "Hexecu",
@@ -88406,7 +88801,6 @@
         "aalmuarik",
         "kmishra1204",
         "laicoffee",
-        "VectorPeak",
         "AnnaSuSu",
         "psyche314",
         "Maxwell-Guo",
@@ -88453,7 +88847,6 @@
         "kfpandahyy",
         "jjjojoj",
         "mendral-agent",
-        "huveewomg",
         "qiangzhang-alibaba",
         "jarediaz",
         "IgnazioDS",
@@ -88562,6 +88955,9 @@
         "jonasiwnl",
         "amjadraza",
         "Rayhanpatel",
+        "abhi-0203",
+        "letainc",
+        "TheRealAlexV",
         "vabs95",
         "adogfm",
         "YinkaMetrics",
@@ -89329,14 +89725,14 @@
         "HrushiYadav": {
           "total": 52,
           "open": 4,
-          "recentCount": 6,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T14:42:30Z"
         },
         "Bartok9": {
-          "total": 46,
-          "open": 27,
-          "recentCount": 11,
-          "lastCreatedAt": "2026-07-03T07:23:18Z"
+          "total": 51,
+          "open": 31,
+          "recentCount": 14,
+          "lastCreatedAt": "2026-07-06T07:15:36Z"
         },
         "parthshr370": {
           "total": 39,
@@ -89353,7 +89749,7 @@
         "ly-wang19": {
           "total": 25,
           "open": 11,
-          "recentCount": 14,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-28T09:59:51Z"
         },
         "Itz-Antaripa": {
@@ -89370,7 +89766,7 @@
         },
         "rodboev": {
           "total": 20,
-          "open": 14,
+          "open": 8,
           "recentCount": 1,
           "lastCreatedAt": "2026-06-30T11:31:20Z"
         },
@@ -89385,6 +89781,12 @@
           "open": 2,
           "recentCount": 0,
           "lastCreatedAt": "2026-03-23T13:04:20Z"
+        },
+        "harshgupta-mem0": {
+          "total": 19,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T08:59:51Z"
         },
         "yashs33244": {
           "total": 19,
@@ -89409,12 +89811,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2023-07-28T07:39:46Z"
-        },
-        "harshgupta-mem0": {
-          "total": 18,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-25T11:21:36Z"
         },
         "akshat1423": {
           "total": 17,
@@ -89472,7 +89868,7 @@
         },
         "DivyamTalwar": {
           "total": 11,
-          "open": 10,
+          "open": 9,
           "recentCount": 11,
           "lastCreatedAt": "2026-07-02T19:24:37Z"
         },
@@ -89521,7 +89917,7 @@
         "ChiragArora31": {
           "total": 9,
           "open": 4,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-27T12:15:06Z"
         },
         "harshitanand": {
@@ -89560,10 +89956,16 @@
           "recentCount": 0,
           "lastCreatedAt": "2023-09-28T03:50:09Z"
         },
+        "Krishnachaitanyakc": {
+          "total": 8,
+          "open": 4,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-06T15:48:57Z"
+        },
         "abhay-codes07": {
           "total": 8,
           "open": 3,
-          "recentCount": 8,
+          "recentCount": 2,
           "lastCreatedAt": "2026-07-02T18:17:30Z"
         },
         "rakheesingh": {
@@ -89590,17 +89992,17 @@
           "recentCount": 0,
           "lastCreatedAt": "2023-10-24T11:32:12Z"
         },
+        "KushagraB424": {
+          "total": 7,
+          "open": 6,
+          "recentCount": 5,
+          "lastCreatedAt": "2026-07-05T21:45:31Z"
+        },
         "sjsjsjjs534": {
           "total": 7,
           "open": 6,
           "recentCount": 7,
           "lastCreatedAt": "2026-07-03T03:31:18Z"
-        },
-        "Krishnachaitanyakc": {
-          "total": 7,
-          "open": 3,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-02T18:50:00Z"
         },
         "soumil-rathi": {
           "total": 7,
@@ -89661,6 +90063,12 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2025-04-01T19:44:55Z"
+        },
+        "ShauryaaSharma": {
+          "total": 6,
+          "open": 5,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T10:07:58Z"
         },
         "Oxygen56": {
           "total": 6,
@@ -89776,28 +90184,16 @@
           "recentCount": 5,
           "lastCreatedAt": "2026-07-01T22:01:17Z"
         },
-        "KushagraB424": {
-          "total": 5,
-          "open": 4,
-          "recentCount": 4,
-          "lastCreatedAt": "2026-07-01T21:16:25Z"
-        },
         "barry166": {
           "total": 5,
-          "open": 1,
-          "recentCount": 3,
+          "open": 0,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T04:05:33Z"
-        },
-        "ShauryaaSharma": {
-          "total": 5,
-          "open": 4,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-06-27T20:00:05Z"
         },
         "adarshprabhu03": {
           "total": 5,
           "open": 3,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-27T11:53:09Z"
         },
         "rafid001": {
@@ -89902,6 +90298,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2024-08-08T14:42:30Z"
         },
+        "aloktripathi1": {
+          "total": 4,
+          "open": 2,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-04T08:16:40Z"
+        },
         "rudrajmehta-mem0": {
           "total": 4,
           "open": 0,
@@ -89911,12 +90313,12 @@
         "immuhammadfurqan": {
           "total": 4,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-28T15:27:35Z"
         },
         "axelray-dev": {
           "total": 4,
-          "open": 3,
+          "open": 2,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-24T07:56:43Z"
         },
@@ -90076,17 +90478,29 @@
           "recentCount": 0,
           "lastCreatedAt": "2023-07-07T00:29:55Z"
         },
+        "huveewomg": {
+          "total": 3,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T12:34:15Z"
+        },
+        "VectorPeak": {
+          "total": 3,
+          "open": 2,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-04T17:16:09Z"
+        },
+        "bharadwaj-13": {
+          "total": 3,
+          "open": 2,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-04T06:20:48Z"
+        },
         "csmdelinea": {
           "total": 3,
           "open": 3,
           "recentCount": 3,
           "lastCreatedAt": "2026-07-03T12:23:31Z"
-        },
-        "aloktripathi1": {
-          "total": 3,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-06-28T17:52:59Z"
         },
         "Malhis": {
           "total": 3,
@@ -90445,14 +90859,8 @@
         "laicoffee": {
           "total": 2,
           "open": 2,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T05:42:03Z"
-        },
-        "VectorPeak": {
-          "total": 2,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-06-29T02:22:11Z"
         },
         "AnnaSuSu": {
           "total": 2,
@@ -90486,7 +90894,7 @@
         },
         "hackice20": {
           "total": 2,
-          "open": 2,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-24T15:08:17Z"
         },
@@ -90729,12 +91137,6 @@
           "open": 2,
           "recentCount": 0,
           "lastCreatedAt": "2026-04-06T23:15:19Z"
-        },
-        "huveewomg": {
-          "total": 2,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-04-05T07:19:14Z"
         },
         "qiangzhang-alibaba": {
           "total": 2,
@@ -91384,6 +91786,24 @@
           "recentCount": 0,
           "lastCreatedAt": "2023-07-15T06:25:23Z"
         },
+        "abhi-0203": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T04:44:15Z"
+        },
+        "letainc": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T16:38:34Z"
+        },
+        "TheRealAlexV": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-04T16:14:55Z"
+        },
         "vabs95": {
           "total": 1,
           "open": 0,
@@ -91452,38 +91872,38 @@
         },
         "Jaco-Ren": {
           "total": 1,
-          "open": 1,
-          "recentCount": 1,
+          "open": 0,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T14:56:05Z"
         },
         "Jerry-Terrasse": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T12:06:10Z"
         },
         "Saqoosha": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T08:58:59Z"
         },
         "roian6": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T01:16:30Z"
         },
         "wuyuwenj": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-27T23:09:51Z"
         },
         "CodingFeng101": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-27T14:52:05Z"
         },
         "aditya-786": {
@@ -91602,7 +92022,7 @@
         },
         "divyansh-1009": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-23T18:45:37Z"
         },
@@ -95720,14 +96140,14 @@
         "ly-wang19": 6,
         "Itz-Antaripa": 25,
         "spike-spiegel-21": 15,
-        "rodboev": 5,
+        "rodboev": 11,
         "PHclaw": 4,
         "tao-to-python": 0,
+        "harshgupta-mem0": 14,
         "yashs33244": 15,
         "MgeeeeK": 11,
         "PranavPuranik": 16,
         "aaishikdutta": 16,
-        "harshgupta-mem0": 13,
         "akshat1423": 12,
         "themavik": 0,
         "haosenwang1018": 2,
@@ -95752,13 +96172,14 @@
         "ron-42": 2,
         "NavyaAlapati13": 8,
         "subhajit20": 7,
+        "Krishnachaitanyakc": 2,
         "abhay-codes07": 2,
         "rakheesingh": 4,
         "thecaptain789": 0,
         "Prikshit7766": 6,
         "rupeshbansal": 7,
+        "KushagraB424": 1,
         "sjsjsjjs534": 0,
-        "Krishnachaitanyakc": 2,
         "soumil-rathi": 6,
         "fengjikui": 2,
         "jfeng18": 1,
@@ -95769,6 +96190,7 @@
         "omercnet": 0,
         "Mrinank-Bhowmick": 5,
         "techcontributor": 7,
+        "ShauryaaSharma": 0,
         "Oxygen56": 0,
         "shraderdm": 2,
         "octo-patch": 0,
@@ -95788,9 +96210,7 @@
         "GingerMoon": 3,
         "aryankhanna475": 5,
         "jaythehardcoder": 0,
-        "KushagraB424": 1,
-        "barry166": 3,
-        "ShauryaaSharma": 0,
+        "barry166": 4,
         "adarshprabhu03": 0,
         "rafid001": 1,
         "ac12644": 4,
@@ -95809,9 +96229,10 @@
         "shlokkhemani": 2,
         "vatsalrathod16": 3,
         "krescent": 3,
+        "aloktripathi1": 2,
         "rudrajmehta-mem0": 4,
         "immuhammadfurqan": 3,
-        "axelray-dev": 0,
+        "axelray-dev": 1,
         "devYRPauli": 4,
         "ak7991": 0,
         "Parteeksachdeva": 1,
@@ -95838,8 +96259,10 @@
         "ianupamsingh": 3,
         "ahnedeee": 2,
         "gasolin": 2,
+        "huveewomg": 1,
+        "VectorPeak": 0,
+        "bharadwaj-13": 0,
         "csmdelinea": 0,
-        "aloktripathi1": 2,
         "Malhis": 1,
         "shivamtyagi18": 0,
         "Hexecu": 2,
@@ -95900,13 +96323,12 @@
         "aalmuarik": 0,
         "kmishra1204": 0,
         "laicoffee": 0,
-        "VectorPeak": 0,
         "AnnaSuSu": 0,
         "psyche314": 0,
         "Maxwell-Guo": 0,
         "Fahmid-Arman": 0,
         "matthewchen94": 0,
-        "hackice20": 0,
+        "hackice20": 1,
         "krishna231122-del": 0,
         "Jerry2003826": 0,
         "kimnamu": 2,
@@ -95947,7 +96369,6 @@
         "kfpandahyy": 0,
         "jjjojoj": 1,
         "mendral-agent": 0,
-        "huveewomg": 1,
         "qiangzhang-alibaba": 0,
         "jarediaz": 1,
         "IgnazioDS": 1,
@@ -96056,6 +96477,9 @@
         "jonasiwnl": 2,
         "amjadraza": 1,
         "Rayhanpatel": 2,
+        "abhi-0203": 0,
+        "letainc": 0,
+        "TheRealAlexV": 0,
         "vabs95": 0,
         "adogfm": 0,
         "YinkaMetrics": 0,
@@ -96067,7 +96491,7 @@
         "mukktinaadh": 0,
         "chaochaoweb3": 0,
         "ritsth": 0,
-        "Jaco-Ren": 0,
+        "Jaco-Ren": 1,
         "Jerry-Terrasse": 1,
         "Saqoosha": 0,
         "roian6": 0,
@@ -96092,7 +96516,7 @@
         "sheCodesAI": 0,
         "takefy-dev": 0,
         "Diveyam-Mishra": 0,
-        "divyansh-1009": 0,
+        "divyansh-1009": 1,
         "Aditya-Tripuraneni": 0,
         "jaketribe417": 0,
         "cerebrixos": 0,
@@ -101397,40 +101821,40 @@
       "releaseCreditMeta": null
     },
     "nesquena/hermes-webui|community-shipped-v4|all": {
-      "cachedAt": "2026-07-04T23:03:30.962622Z",
-      "refreshedAt": "2026-07-04T23:03:30.962622Z",
+      "cachedAt": "2026-07-06T23:29:35.014304Z",
+      "refreshedAt": "2026-07-06T23:29:35.014304Z",
       "logins": [
-        "franksong2702",
         "rodboev",
+        "franksong2702",
         "Michaelyklam",
         "ai-ag2026",
         "bergeouss",
         "AJV20",
         "dso2ng",
         "starship-s",
+        "allenliang2022",
         "jasonjcwu",
         "Sanjays2402",
         "Hinotoi-agent",
-        "allenliang2022",
         "santastabber",
         "b3nw",
         "dobby-d-elf",
+        "luandnh",
         "pamnard",
         "JKJameson",
+        "nankingjing",
         "LumenYoung",
         "Jordan-SkyLF",
         "aronprins",
+        "ruizanthony",
         "zapabob",
         "mysoul12138",
         "bsgdigital",
         "TomBanksAU",
-        "ruizanthony",
         "AlexeyDsov",
         "Koraji95-coder",
         "ccqqlo",
-        "luandnh",
         "mccxj",
-        "nankingjing",
         "Stacey2911",
         "claw-io",
         "akrhin",
@@ -101438,6 +101862,7 @@
         "v2psv",
         "mibrohimsulaeman-a11y",
         "george-andraws",
+        "luperrypf",
         "Isla-Liu",
         "24601",
         "NocGeek",
@@ -101447,7 +101872,8 @@
         "Charanis",
         "espokaos-ops",
         "armorbreak001",
-        "luperrypf",
+        "bschmidy10",
+        "webtecnica",
         "kaishi00",
         "mvanhorn",
         "wirtsi",
@@ -101479,7 +101905,6 @@
         "frap129",
         "pavolbiely",
         "TaraTheStar",
-        "webtecnica",
         "Pythonming2020",
         "jkobject",
         "jcarvine",
@@ -101506,6 +101931,7 @@
         "renatomott",
         "Bobby9228",
         "deboste",
+        "sbe27",
         "rumotoshino",
         "sheldon-im",
         "Loukky",
@@ -101566,6 +101992,9 @@
         "gabogabucho",
         "DavidSchuchert",
         "thadreber-web",
+        "Kopamed",
+        "jin89ho",
+        "ugrank",
         "ostravajih",
         "akay64",
         "djsavvy",
@@ -101744,7 +102173,6 @@
         "eov128",
         "29n",
         "kiosvantra",
-        "sbe27",
         "hermes-gimmethebeans",
         "lucky-yonug",
         "amlyczz",
@@ -101779,7 +102207,6 @@
         "Voicle99",
         "JinYue-GitHub",
         "sixianli",
-        "bschmidy10",
         "gmoigneu",
         "linchengzhi",
         "vincez-hms-coder",
@@ -101833,17 +102260,17 @@
         "kingfish65"
       ],
       "stats": {
-        "franksong2702": {
-          "total": 331,
-          "open": 1,
-          "recentCount": 12,
-          "lastCreatedAt": "2026-07-04T13:37:57Z"
-        },
         "rodboev": {
-          "total": 321,
-          "open": 20,
-          "recentCount": 70,
-          "lastCreatedAt": "2026-07-04T22:53:44Z"
+          "total": 334,
+          "open": 10,
+          "recentCount": 58,
+          "lastCreatedAt": "2026-07-06T09:56:46Z"
+        },
+        "franksong2702": {
+          "total": 334,
+          "open": 1,
+          "recentCount": 9,
+          "lastCreatedAt": "2026-07-06T05:17:39Z"
         },
         "Michaelyklam": {
           "total": 200,
@@ -101852,10 +102279,10 @@
           "lastCreatedAt": "2026-06-01T11:07:51Z"
         },
         "ai-ag2026": {
-          "total": 156,
-          "open": 2,
-          "recentCount": 6,
-          "lastCreatedAt": "2026-07-03T17:11:43Z"
+          "total": 158,
+          "open": 3,
+          "recentCount": 8,
+          "lastCreatedAt": "2026-07-05T11:41:36Z"
         },
         "bergeouss": {
           "total": 99,
@@ -101878,8 +102305,14 @@
         "starship-s": {
           "total": 44,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T08:26:02Z"
+        },
+        "allenliang2022": {
+          "total": 29,
+          "open": 0,
+          "recentCount": 14,
+          "lastCreatedAt": "2026-07-06T14:12:41Z"
         },
         "jasonjcwu": {
           "total": 27,
@@ -101896,32 +102329,32 @@
         "Hinotoi-agent": {
           "total": 24,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T02:04:53Z"
-        },
-        "allenliang2022": {
-          "total": 23,
-          "open": 0,
-          "recentCount": 12,
-          "lastCreatedAt": "2026-07-04T07:40:38Z"
         },
         "santastabber": {
           "total": 23,
           "open": 1,
-          "recentCount": 8,
+          "recentCount": 3,
           "lastCreatedAt": "2026-06-30T19:41:23Z"
         },
         "b3nw": {
-          "total": 20,
-          "open": 1,
-          "recentCount": 3,
-          "lastCreatedAt": "2026-07-04T19:10:17Z"
+          "total": 21,
+          "open": 0,
+          "recentCount": 4,
+          "lastCreatedAt": "2026-07-06T15:56:55Z"
         },
         "dobby-d-elf": {
           "total": 17,
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-25T22:26:09Z"
+        },
+        "luandnh": {
+          "total": 16,
+          "open": 3,
+          "recentCount": 6,
+          "lastCreatedAt": "2026-07-06T13:49:33Z"
         },
         "pamnard": {
           "total": 16,
@@ -101934,6 +102367,12 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-11T10:27:22Z"
+        },
+        "nankingjing": {
+          "total": 15,
+          "open": 1,
+          "recentCount": 13,
+          "lastCreatedAt": "2026-07-05T16:05:05Z"
         },
         "LumenYoung": {
           "total": 15,
@@ -101952,6 +102391,12 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-04-27T09:27:29Z"
+        },
+        "ruizanthony": {
+          "total": 13,
+          "open": 1,
+          "recentCount": 11,
+          "lastCreatedAt": "2026-07-06T18:38:06Z"
         },
         "zapabob": {
           "total": 13,
@@ -101977,12 +102422,6 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-22T06:46:28Z"
         },
-        "ruizanthony": {
-          "total": 11,
-          "open": 3,
-          "recentCount": 11,
-          "lastCreatedAt": "2026-07-03T19:22:15Z"
-        },
         "AlexeyDsov": {
           "total": 11,
           "open": 0,
@@ -102001,34 +102440,22 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-30T08:06:28Z"
         },
-        "luandnh": {
-          "total": 10,
-          "open": 2,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-26T08:48:22Z"
-        },
         "mccxj": {
           "total": 10,
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-27T06:47:15Z"
         },
-        "nankingjing": {
-          "total": 9,
-          "open": 3,
-          "recentCount": 9,
-          "lastCreatedAt": "2026-07-04T18:58:43Z"
-        },
         "Stacey2911": {
           "total": 9,
           "open": 0,
-          "recentCount": 7,
+          "recentCount": 5,
           "lastCreatedAt": "2026-07-03T09:04:37Z"
         },
         "claw-io": {
           "total": 9,
           "open": 0,
-          "recentCount": 6,
+          "recentCount": 1,
           "lastCreatedAt": "2026-06-30T00:59:51Z"
         },
         "akrhin": {
@@ -102061,6 +102488,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-28T18:10:45Z"
         },
+        "luperrypf": {
+          "total": 8,
+          "open": 0,
+          "recentCount": 7,
+          "lastCreatedAt": "2026-07-05T04:18:46Z"
+        },
         "Isla-Liu": {
           "total": 8,
           "open": 0,
@@ -102081,7 +102514,7 @@
         },
         "mo7al876any": {
           "total": 7,
-          "open": 5,
+          "open": 1,
           "recentCount": 7,
           "lastCreatedAt": "2026-07-04T13:06:57Z"
         },
@@ -102115,11 +102548,17 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-15T08:51:10Z"
         },
-        "luperrypf": {
+        "bschmidy10": {
+          "total": 6,
+          "open": 5,
+          "recentCount": 5,
+          "lastCreatedAt": "2026-07-06T23:11:57Z"
+        },
+        "webtecnica": {
           "total": 6,
           "open": 1,
-          "recentCount": 5,
-          "lastCreatedAt": "2026-07-04T16:00:10Z"
+          "recentCount": 6,
+          "lastCreatedAt": "2026-07-05T22:53:41Z"
         },
         "kaishi00": {
           "total": 6,
@@ -102166,7 +102605,7 @@
         "Paladin173": {
           "total": 5,
           "open": 0,
-          "recentCount": 3,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-28T02:44:34Z"
         },
         "PINKIIILQWQ": {
@@ -102220,24 +102659,24 @@
         "ChonSong": {
           "total": 4,
           "open": 1,
-          "recentCount": 3,
+          "recentCount": 2,
           "lastCreatedAt": "2026-07-04T03:47:22Z"
         },
         "silent-reader-cn": {
           "total": 4,
-          "open": 2,
-          "recentCount": 4,
+          "open": 0,
+          "recentCount": 2,
           "lastCreatedAt": "2026-07-04T02:08:20Z"
         },
         "leszek3737": {
           "total": 4,
           "open": 0,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T16:32:02Z"
         },
         "b-yelverton": {
           "total": 4,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-24T16:36:52Z"
         },
@@ -102306,12 +102745,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-04-08T16:52:09Z"
-        },
-        "webtecnica": {
-          "total": 3,
-          "open": 0,
-          "recentCount": 3,
-          "lastCreatedAt": "2026-07-04T02:09:08Z"
         },
         "Pythonming2020": {
           "total": 3,
@@ -102469,16 +102902,22 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-03-31T15:06:53Z"
         },
-        "rumotoshino": {
+        "sbe27": {
           "total": 2,
           "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T23:32:00Z"
+        },
+        "rumotoshino": {
+          "total": 2,
+          "open": 0,
           "recentCount": 2,
           "lastCreatedAt": "2026-07-04T20:07:40Z"
         },
         "sheldon-im": {
           "total": 2,
           "open": 0,
-          "recentCount": 2,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-02T05:34:54Z"
         },
         "Loukky": {
@@ -102490,13 +102929,13 @@
         "promptclickrun": {
           "total": 2,
           "open": 1,
-          "recentCount": 2,
+          "recentCount": 1,
           "lastCreatedAt": "2026-06-30T23:53:25Z"
         },
         "ahmedhabibo": {
           "total": 2,
           "open": 1,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T12:37:31Z"
         },
         "neaucode-bot": {
@@ -102829,9 +103268,27 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-04T03:26:35Z"
         },
-        "ostravajih": {
+        "Kopamed": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T18:19:11Z"
+        },
+        "jin89ho": {
           "total": 1,
           "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T17:33:36Z"
+        },
+        "ugrank": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T01:12:54Z"
+        },
+        "ostravajih": {
+          "total": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-04T17:29:44Z"
         },
@@ -102934,13 +103391,13 @@
         "lincoln-mackay": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T12:47:42Z"
         },
         "ducnhung70": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T12:46:54Z"
         },
         "Gerkinfeltser": {
@@ -103897,12 +104354,6 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-09T20:07:55Z"
         },
-        "sbe27": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-05-09T17:40:20Z"
-        },
         "hermes-gimmethebeans": {
           "total": 1,
           "open": 0,
@@ -104106,12 +104557,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-04-28T07:56:01Z"
-        },
-        "bschmidy10": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-04-28T02:43:48Z"
         },
         "gmoigneu": {
           "total": 1,
@@ -104421,37 +104866,37 @@
         }
       },
       "shippedCounts": {
-        "franksong2702": 239,
         "rodboev": 267,
+        "franksong2702": 239,
         "Michaelyklam": 152,
         "ai-ag2026": 109,
         "bergeouss": 63,
         "AJV20": 56,
         "dso2ng": 30,
         "starship-s": 27,
+        "allenliang2022": 14,
         "jasonjcwu": 18,
         "Sanjays2402": 13,
         "Hinotoi-agent": 23,
-        "allenliang2022": 14,
         "santastabber": 9,
         "b3nw": 9,
         "dobby-d-elf": 17,
+        "luandnh": 2,
         "pamnard": 12,
         "JKJameson": 4,
+        "nankingjing": 4,
         "LumenYoung": 8,
         "Jordan-SkyLF": 11,
         "aronprins": 4,
+        "ruizanthony": 2,
         "zapabob": 3,
         "mysoul12138": 10,
         "bsgdigital": 3,
         "TomBanksAU": 1,
-        "ruizanthony": 1,
         "AlexeyDsov": 6,
         "Koraji95-coder": 1,
         "ccqqlo": 2,
-        "luandnh": 2,
         "mccxj": 6,
-        "nankingjing": 1,
         "Stacey2911": 4,
         "claw-io": 5,
         "akrhin": 4,
@@ -104459,16 +104904,18 @@
         "v2psv": 3,
         "mibrohimsulaeman-a11y": 0,
         "george-andraws": 7,
+        "luperrypf": 0,
         "Isla-Liu": 4,
         "24601": 6,
         "NocGeek": 6,
-        "mo7al876any": 0,
+        "mo7al876any": 3,
         "Carry00": 5,
         "lucasrc": 4,
         "Charanis": 1,
         "espokaos-ops": 3,
         "armorbreak001": 7,
-        "luperrypf": 0,
+        "bschmidy10": 0,
+        "webtecnica": 1,
         "kaishi00": 3,
         "mvanhorn": 3,
         "wirtsi": 3,
@@ -104500,7 +104947,6 @@
         "frap129": 3,
         "pavolbiely": 2,
         "TaraTheStar": 0,
-        "webtecnica": 1,
         "Pythonming2020": 2,
         "jkobject": 1,
         "jcarvine": 2,
@@ -104527,6 +104973,7 @@
         "renatomott": 0,
         "Bobby9228": 0,
         "deboste": 3,
+        "sbe27": 1,
         "rumotoshino": 0,
         "sheldon-im": 1,
         "Loukky": 2,
@@ -104587,7 +105034,10 @@
         "gabogabucho": 0,
         "DavidSchuchert": 1,
         "thadreber-web": 1,
-        "ostravajih": 0,
+        "Kopamed": 0,
+        "jin89ho": 0,
+        "ugrank": 0,
+        "ostravajih": 1,
         "akay64": 1,
         "djsavvy": 0,
         "ildunari": 0,
@@ -104765,7 +105215,6 @@
         "eov128": 1,
         "29n": 1,
         "kiosvantra": 0,
-        "sbe27": 1,
         "hermes-gimmethebeans": 1,
         "lucky-yonug": 1,
         "amlyczz": 1,
@@ -104800,7 +105249,6 @@
         "Voicle99": 0,
         "JinYue-GitHub": 0,
         "sixianli": 0,
-        "bschmidy10": 0,
         "gmoigneu": 0,
         "linchengzhi": 0,
         "vincez-hms-coder": 0,
@@ -122257,22 +122705,22 @@
       "releaseCreditMeta": null
     },
     "stablyai/orca|community-shipped-v4|all": {
-      "cachedAt": "2026-07-04T23:03:30.962622Z",
-      "refreshedAt": "2026-07-04T23:03:30.962622Z",
+      "cachedAt": "2026-07-06T23:29:35.014304Z",
+      "refreshedAt": "2026-07-06T23:29:35.014304Z",
       "logins": [
         "wolfiesch",
         "gatsby74",
         "gsxdsm",
         "heyramzi",
+        "rodboev",
         "slashdevcorpse",
         "leynier",
         "sudoeren",
         "BorjaLL",
-        "rodboev",
+        "siddqamar",
         "Nikolatesla-lj",
         "LesleyMurfin",
         "OrcaWin",
-        "siddqamar",
         "mvanhorn",
         "huhuhulululu",
         "mathnogueira",
@@ -122294,6 +122742,7 @@
         "AmoabaKelvin",
         "nexusjuniorai",
         "jtalborough",
+        "s546126",
         "CleonSuo",
         "lvfen",
         "ppw-stack",
@@ -122312,6 +122761,8 @@
         "jonavila",
         "SSwser",
         "drakontia",
+        "hmrserver",
+        "kenfdev",
         "AvichalDwivedi2205",
         "tofunori",
         "Kesta-bos",
@@ -122319,7 +122770,6 @@
         "salkhwlani",
         "vladmesh",
         "MrErikCodes",
-        "s546126",
         "smk508",
         "jweingardt12",
         "andrewroxby",
@@ -122343,8 +122793,17 @@
         "shamounY",
         "mralexsaavedra",
         "xiaolai",
+        "dbachko",
+        "ruttybob",
+        "Daily-AC",
+        "suiramdev",
+        "fsdwen",
+        "zenos876",
+        "vincent-lxc",
+        "tomdebres",
+        "mattemusacchio",
+        "LuisUrrutia",
         "soichisumi",
-        "kenfdev",
         "hirorocky",
         "ryushione",
         "Pomy1",
@@ -122380,24 +122839,33 @@
         "crilofer",
         "zerone0x",
         "aparusel",
-        "hmrserver",
+        "lotgood",
+        "3499623985",
+        "YehonaOnyx",
+        "Syfyivan",
+        "KrE80r",
+        "ivankqw",
+        "MichaelHoughtonDeBox",
+        "xsacdw",
+        "Daption-ciray",
+        "Fartown",
+        "mikaelschad",
+        "daniphant",
+        "guihirsch",
+        "palbrecht1",
         "tebayoso",
         "kaynansc",
-        "LuisUrrutia",
         "jborkowski",
-        "fsdwen",
         "haozhenfei",
         "handsomeXZ",
         "Naxon",
         "yuqi1991",
-        "Daily-AC",
         "minhoryang",
         "ZaynJarvis",
         "shiva24082",
         "loong95",
         "e-yc",
         "lardissone",
-        "mattemusacchio",
         "luongnv89",
         "jb0xyz",
         "m11y",
@@ -122525,15 +122993,15 @@
       "stats": {
         "wolfiesch": {
           "total": 37,
-          "open": 16,
-          "recentCount": 3,
+          "open": 15,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T09:44:00Z"
         },
         "gatsby74": {
-          "total": 29,
+          "total": 30,
           "open": 20,
-          "recentCount": 14,
-          "lastCreatedAt": "2026-07-04T17:27:28Z"
+          "recentCount": 12,
+          "lastCreatedAt": "2026-07-06T17:36:47Z"
         },
         "gsxdsm": {
           "total": 26,
@@ -122546,6 +123014,12 @@
           "open": 3,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-21T11:39:27Z"
+        },
+        "rodboev": {
+          "total": 22,
+          "open": 9,
+          "recentCount": 15,
+          "lastCreatedAt": "2026-07-05T02:31:57Z"
         },
         "slashdevcorpse": {
           "total": 20,
@@ -122571,16 +123045,16 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-16T15:59:06Z"
         },
-        "rodboev": {
-          "total": 15,
+        "siddqamar": {
+          "total": 14,
           "open": 5,
-          "recentCount": 8,
-          "lastCreatedAt": "2026-07-04T02:44:44Z"
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-06T20:09:51Z"
         },
         "Nikolatesla-lj": {
           "total": 13,
           "open": 6,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T17:02:13Z"
         },
         "LesleyMurfin": {
@@ -122595,12 +123069,6 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-22T04:47:03Z"
         },
-        "siddqamar": {
-          "total": 12,
-          "open": 3,
-          "recentCount": 3,
-          "lastCreatedAt": "2026-07-02T17:04:04Z"
-        },
         "mvanhorn": {
           "total": 12,
           "open": 4,
@@ -122609,7 +123077,7 @@
         },
         "huhuhulululu": {
           "total": 11,
-          "open": 6,
+          "open": 5,
           "recentCount": 11,
           "lastCreatedAt": "2026-07-04T03:12:42Z"
         },
@@ -122628,7 +123096,7 @@
         "mturac": {
           "total": 10,
           "open": 1,
-          "recentCount": 10,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T15:21:54Z"
         },
         "prateek": {
@@ -122658,7 +123126,7 @@
         "Jingyue-Wu": {
           "total": 8,
           "open": 0,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T04:54:48Z"
         },
         "zaridan": {
@@ -122670,13 +123138,13 @@
         "RubinCarter": {
           "total": 7,
           "open": 3,
-          "recentCount": 5,
+          "recentCount": 4,
           "lastCreatedAt": "2026-07-03T10:32:57Z"
         },
         "KayleeWilliams": {
           "total": 7,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T19:59:09Z"
         },
         "Prethish-Kumar": {
@@ -122727,6 +123195,12 @@
           "recentCount": 6,
           "lastCreatedAt": "2026-07-01T13:45:58Z"
         },
+        "s546126": {
+          "total": 5,
+          "open": 4,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-06T05:51:44Z"
+        },
         "CleonSuo": {
           "total": 5,
           "open": 1,
@@ -122735,14 +123209,14 @@
         },
         "lvfen": {
           "total": 5,
-          "open": 1,
+          "open": 0,
           "recentCount": 3,
           "lastCreatedAt": "2026-07-02T09:51:10Z"
         },
         "ppw-stack": {
           "total": 5,
           "open": 3,
-          "recentCount": 4,
+          "recentCount": 2,
           "lastCreatedAt": "2026-06-30T12:36:39Z"
         },
         "mantaroh": {
@@ -122754,7 +123228,7 @@
         "janderson-fagner": {
           "total": 5,
           "open": 3,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-28T00:10:17Z"
         },
         "sawirricardo": {
@@ -122796,13 +123270,13 @@
         "sdhilip200": {
           "total": 4,
           "open": 2,
-          "recentCount": 4,
+          "recentCount": 1,
           "lastCreatedAt": "2026-06-29T23:51:14Z"
         },
         "amondnet": {
           "total": 4,
           "open": 2,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-28T08:44:20Z"
         },
         "ParkerRex": {
@@ -122835,9 +123309,21 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-20T18:51:30Z"
         },
-        "AvichalDwivedi2205": {
+        "hmrserver": {
           "total": 3,
           "open": 2,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-05T20:35:14Z"
+        },
+        "kenfdev": {
+          "total": 3,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-05T08:59:58Z"
+        },
+        "AvichalDwivedi2205": {
+          "total": 3,
+          "open": 1,
           "recentCount": 3,
           "lastCreatedAt": "2026-07-04T20:44:16Z"
         },
@@ -122874,25 +123360,19 @@
         "MrErikCodes": {
           "total": 3,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T16:40:41Z"
-        },
-        "s546126": {
-          "total": 3,
-          "open": 2,
-          "recentCount": 3,
-          "lastCreatedAt": "2026-06-28T19:22:54Z"
         },
         "smk508": {
           "total": 3,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-28T16:44:16Z"
         },
         "jweingardt12": {
           "total": 3,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-28T15:04:55Z"
         },
         "andrewroxby": {
@@ -123021,17 +123501,71 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-23T06:44:27Z"
         },
+        "dbachko": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-06T22:44:53Z"
+        },
+        "ruttybob": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-06T15:52:53Z"
+        },
+        "Daily-AC": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-06T15:33:31Z"
+        },
+        "suiramdev": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-06T15:05:25Z"
+        },
+        "fsdwen": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-06T08:15:16Z"
+        },
+        "zenos876": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-06T08:14:07Z"
+        },
+        "vincent-lxc": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-06T06:02:44Z"
+        },
+        "tomdebres": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-05T22:59:59Z"
+        },
+        "mattemusacchio": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-05T15:11:09Z"
+        },
+        "LuisUrrutia": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-05T10:51:34Z"
+        },
         "soichisumi": {
           "total": 2,
           "open": 1,
           "recentCount": 2,
           "lastCreatedAt": "2026-07-04T15:16:44Z"
-        },
-        "kenfdev": {
-          "total": 2,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-04T09:38:09Z"
         },
         "hirorocky": {
           "total": 2,
@@ -123048,7 +123582,7 @@
         "Pomy1": {
           "total": 2,
           "open": 1,
-          "recentCount": 2,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-02T11:15:27Z"
         },
         "nightlaro": {
@@ -123060,13 +123594,13 @@
         "srs-adamr": {
           "total": 2,
           "open": 1,
-          "recentCount": 2,
+          "recentCount": 1,
           "lastCreatedAt": "2026-06-30T23:45:25Z"
         },
         "Dvitash": {
           "total": 2,
           "open": 0,
-          "recentCount": 2,
+          "recentCount": 1,
           "lastCreatedAt": "2026-06-30T22:35:44Z"
         },
         "ProjectBarks": {
@@ -123078,13 +123612,13 @@
         "NicholasZolton": {
           "total": 2,
           "open": 1,
-          "recentCount": 2,
+          "recentCount": 1,
           "lastCreatedAt": "2026-06-30T15:18:44Z"
         },
         "branben": {
           "total": 2,
           "open": 2,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T14:30:07Z"
         },
         "matheuscoelhomalta": {
@@ -123243,11 +123777,89 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-19T11:43:25Z"
         },
-        "hmrserver": {
+        "lotgood": {
           "total": 1,
           "open": 1,
           "recentCount": 1,
-          "lastCreatedAt": "2026-07-04T21:34:36Z"
+          "lastCreatedAt": "2026-07-06T16:02:36Z"
+        },
+        "3499623985": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T13:45:30Z"
+        },
+        "YehonaOnyx": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T12:35:39Z"
+        },
+        "Syfyivan": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T09:34:40Z"
+        },
+        "KrE80r": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T09:28:00Z"
+        },
+        "ivankqw": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T04:37:36Z"
+        },
+        "MichaelHoughtonDeBox": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T17:25:09Z"
+        },
+        "xsacdw": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T15:14:39Z"
+        },
+        "Daption-ciray": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T12:41:38Z"
+        },
+        "Fartown": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T05:44:24Z"
+        },
+        "mikaelschad": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T02:12:04Z"
+        },
+        "daniphant": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T01:26:31Z"
+        },
+        "guihirsch": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T00:53:01Z"
+        },
+        "palbrecht1": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T00:41:43Z"
         },
         "tebayoso": {
           "total": 1,
@@ -123257,27 +123869,15 @@
         },
         "kaynansc": {
           "total": 1,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-04T20:28:27Z"
-        },
-        "LuisUrrutia": {
-          "total": 1,
           "open": 0,
           "recentCount": 1,
-          "lastCreatedAt": "2026-07-04T17:31:40Z"
+          "lastCreatedAt": "2026-07-04T20:28:27Z"
         },
         "jborkowski": {
           "total": 1,
           "open": 1,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-04T14:47:40Z"
-        },
-        "fsdwen": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-04T07:53:06Z"
         },
         "haozhenfei": {
           "total": 1,
@@ -123302,12 +123902,6 @@
           "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-03T11:21:53Z"
-        },
-        "Daily-AC": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-03T08:50:36Z"
         },
         "minhoryang": {
           "total": 1,
@@ -123344,12 +123938,6 @@
           "open": 1,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-02T15:02:12Z"
-        },
-        "mattemusacchio": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-02T14:41:45Z"
         },
         "luongnv89": {
           "total": 1,
@@ -123455,7 +124043,7 @@
         },
         "leter": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-06-30T09:25:36Z"
         },
@@ -123486,37 +124074,37 @@
         "qinsehm1128": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T08:40:05Z"
         },
         "amszuidas": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T06:23:35Z"
         },
         "Nadav011": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-28T15:08:19Z"
         },
         "skyhit": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-28T14:16:42Z"
         },
         "buddhistrhythm": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-28T11:16:12Z"
         },
         "MeCKodo": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-28T03:28:57Z"
         },
         "utkarshparekh": {
@@ -123569,7 +124157,7 @@
         },
         "jeganxthan": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-24T15:55:14Z"
         },
@@ -124091,21 +124679,21 @@
         }
       },
       "shippedCounts": {
-        "wolfiesch": 14,
-        "gatsby74": 8,
+        "wolfiesch": 15,
+        "gatsby74": 9,
         "gsxdsm": 16,
         "heyramzi": 11,
+        "rodboev": 12,
         "slashdevcorpse": 6,
         "leynier": 15,
         "sudoeren": 5,
         "BorjaLL": 9,
-        "rodboev": 9,
+        "siddqamar": 6,
         "Nikolatesla-lj": 4,
         "LesleyMurfin": 11,
         "OrcaWin": 10,
-        "siddqamar": 6,
         "mvanhorn": 7,
-        "huhuhulululu": 5,
+        "huhuhulululu": 6,
         "mathnogueira": 11,
         "devajmeireles": 8,
         "mturac": 7,
@@ -124125,8 +124713,9 @@
         "AmoabaKelvin": 6,
         "nexusjuniorai": 2,
         "jtalborough": 0,
+        "s546126": 1,
         "CleonSuo": 0,
-        "lvfen": 3,
+        "lvfen": 4,
         "ppw-stack": 1,
         "mantaroh": 3,
         "janderson-fagner": 2,
@@ -124143,14 +124732,15 @@
         "jonavila": 4,
         "SSwser": 2,
         "drakontia": 4,
-        "AvichalDwivedi2205": 1,
+        "hmrserver": 1,
+        "kenfdev": 0,
+        "AvichalDwivedi2205": 2,
         "tofunori": 0,
         "Kesta-bos": 2,
         "realitsyourman": 1,
         "salkhwlani": 1,
         "vladmesh": 2,
         "MrErikCodes": 3,
-        "s546126": 1,
         "smk508": 1,
         "jweingardt12": 3,
         "andrewroxby": 1,
@@ -124174,8 +124764,17 @@
         "shamounY": 2,
         "mralexsaavedra": 3,
         "xiaolai": 1,
+        "dbachko": 1,
+        "ruttybob": 0,
+        "Daily-AC": 1,
+        "suiramdev": 0,
+        "fsdwen": 0,
+        "zenos876": 0,
+        "vincent-lxc": 0,
+        "tomdebres": 0,
+        "mattemusacchio": 0,
+        "LuisUrrutia": 1,
         "soichisumi": 1,
-        "kenfdev": 0,
         "hirorocky": 0,
         "ryushione": 0,
         "Pomy1": 1,
@@ -124211,24 +124810,33 @@
         "crilofer": 2,
         "zerone0x": 2,
         "aparusel": 1,
-        "hmrserver": 0,
+        "lotgood": 0,
+        "3499623985": 0,
+        "YehonaOnyx": 0,
+        "Syfyivan": 0,
+        "KrE80r": 0,
+        "ivankqw": 0,
+        "MichaelHoughtonDeBox": 0,
+        "xsacdw": 0,
+        "Daption-ciray": 0,
+        "Fartown": 0,
+        "mikaelschad": 0,
+        "daniphant": 0,
+        "guihirsch": 1,
+        "palbrecht1": 0,
         "tebayoso": 0,
-        "kaynansc": 0,
-        "LuisUrrutia": 1,
+        "kaynansc": 1,
         "jborkowski": 0,
-        "fsdwen": 0,
         "haozhenfei": 1,
         "handsomeXZ": 0,
         "Naxon": 1,
         "yuqi1991": 1,
-        "Daily-AC": 1,
         "minhoryang": 0,
         "ZaynJarvis": 0,
         "shiva24082": 0,
         "loong95": 1,
         "e-yc": 0,
         "lardissone": 0,
-        "mattemusacchio": 0,
         "luongnv89": 0,
         "jb0xyz": 0,
         "m11y": 1,
@@ -124246,7 +124854,7 @@
         "dracpet": 1,
         "SrAlvarado": 0,
         "riba2534": 0,
-        "leter": 0,
+        "leter": 1,
         "jischeng": 1,
         "linze0721": 0,
         "SHINGOX13": 0,
@@ -124265,7 +124873,7 @@
         "AloneFire": 1,
         "agch-dev": 1,
         "martinbelcic": 1,
-        "jeganxthan": 0,
+        "jeganxthan": 1,
         "sonhyrd": 0,
         "nmitch17": 0,
         "Srain021": 0,
@@ -130193,8 +130801,8 @@
       "releaseCreditMeta": null
     },
     "thedotmack/claude-mem|community-shipped-v4|all": {
-      "cachedAt": "2026-07-04T23:03:30.962622Z",
-      "refreshedAt": "2026-07-04T23:03:30.962622Z",
+      "cachedAt": "2026-07-06T23:29:35.014304Z",
+      "refreshedAt": "2026-07-06T23:29:35.014304Z",
       "logins": [
         "ousamabenyounes",
         "rodboev",
@@ -130239,6 +130847,8 @@
         "MrSaneApps",
         "JiehoonKwak",
         "7Sageer",
+        "ruddro-roy",
+        "joao-oliveira-softtor",
         "bionicbutterfly13",
         "KaizenPrompt",
         "DRCOMPUTER60290",
@@ -130290,6 +130900,10 @@
         "iefnaf",
         "trevwilson",
         "dreamiurg",
+        "Markoblogline",
+        "Dandi007",
+        "dane11stanisic-a11y",
+        "Hactory",
         "spolspol",
         "Garcia6l20",
         "20alexl",
@@ -130389,7 +131003,6 @@
         "kuishou68",
         "moacnc-lio",
         "quangtran88",
-        "joao-oliveira-softtor",
         "kbroughton",
         "cokoro",
         "ck0park",
@@ -130586,7 +131199,7 @@
         },
         "rodboev": {
           "total": 44,
-          "open": 27,
+          "open": 18,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-26T05:32:41Z"
         },
@@ -130599,7 +131212,7 @@
         "alessandropcostabr": {
           "total": 19,
           "open": 3,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T04:44:57Z"
         },
         "bigph00t": {
@@ -130616,7 +131229,7 @@
         },
         "YOMXXX": {
           "total": 17,
-          "open": 7,
+          "open": 6,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-07T03:15:59Z"
         },
@@ -130628,7 +131241,7 @@
         },
         "laihenyi": {
           "total": 14,
-          "open": 2,
+          "open": 1,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-24T13:18:56Z"
         },
@@ -130670,13 +131283,13 @@
         },
         "darion-yaphet": {
           "total": 6,
-          "open": 3,
+          "open": 2,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-18T09:30:28Z"
         },
         "surfingdoggo": {
           "total": 6,
-          "open": 6,
+          "open": 5,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-08T06:03:32Z"
         },
@@ -130688,7 +131301,7 @@
         },
         "crippledgeek": {
           "total": 5,
-          "open": 3,
+          "open": 1,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-26T00:07:56Z"
         },
@@ -130712,13 +131325,13 @@
         },
         "rymalia": {
           "total": 4,
-          "open": 2,
-          "recentCount": 2,
+          "open": 0,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-01T02:04:35Z"
         },
         "Iyanuoluwa007": {
           "total": 4,
-          "open": 2,
+          "open": 1,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-22T05:21:37Z"
         },
@@ -130766,19 +131379,19 @@
         },
         "Retengart": {
           "total": 3,
-          "open": 2,
+          "open": 1,
           "recentCount": 1,
           "lastCreatedAt": "2026-06-30T14:18:04Z"
         },
         "ChenglinWei97": {
           "total": 3,
           "open": 0,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T22:23:14Z"
         },
         "antfleet-ops": {
           "total": 3,
-          "open": 3,
+          "open": 2,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-14T04:32:45Z"
         },
@@ -130836,6 +131449,18 @@
           "recentCount": 0,
           "lastCreatedAt": "2025-12-15T10:51:54Z"
         },
+        "ruddro-roy": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-06T03:44:06Z"
+        },
+        "joao-oliveira-softtor": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T22:26:06Z"
+        },
         "bionicbutterfly13": {
           "total": 2,
           "open": 2,
@@ -130844,13 +131469,13 @@
         },
         "KaizenPrompt": {
           "total": 2,
-          "open": 2,
+          "open": 0,
           "recentCount": 2,
           "lastCreatedAt": "2026-07-01T19:51:26Z"
         },
         "DRCOMPUTER60290": {
           "total": 2,
-          "open": 2,
+          "open": 1,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-20T19:13:31Z"
         },
@@ -130862,7 +131487,7 @@
         },
         "Slaviator": {
           "total": 2,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-04T11:24:20Z"
         },
@@ -130874,7 +131499,7 @@
         },
         "ShunmeiCho": {
           "total": 2,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-28T08:50:13Z"
         },
@@ -131142,9 +131767,33 @@
           "recentCount": 0,
           "lastCreatedAt": "2025-11-26T21:30:54Z"
         },
-        "spolspol": {
+        "Markoblogline": {
           "total": 1,
           "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T20:54:06Z"
+        },
+        "Dandi007": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T16:27:51Z"
+        },
+        "dane11stanisic-a11y": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T07:40:31Z"
+        },
+        "Hactory": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-05T04:12:58Z"
+        },
+        "spolspol": {
+          "total": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-03T23:43:58Z"
         },
@@ -131174,14 +131823,14 @@
         },
         "rwjk16": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-01T06:58:41Z"
         },
         "bennyyuan1008": {
           "total": 1,
-          "open": 1,
-          "recentCount": 1,
+          "open": 0,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T11:33:04Z"
         },
         "funrun11": {
@@ -131192,7 +131841,7 @@
         },
         "Kurama2d": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-25T19:29:17Z"
         },
@@ -131222,13 +131871,13 @@
         },
         "Osamaali313": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-21T16:00:45Z"
         },
         "shanujans": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-20T20:02:46Z"
         },
@@ -131240,7 +131889,7 @@
         },
         "timoxd7": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-19T10:06:29Z"
         },
@@ -131300,7 +131949,7 @@
         },
         "budriamanda": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-15T21:41:20Z"
         },
@@ -131342,7 +131991,7 @@
         },
         "caioribeiroclw-pixel": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-11T19:03:40Z"
         },
@@ -131390,7 +132039,7 @@
         },
         "destiny520537work-lab": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-04T23:42:32Z"
         },
@@ -131522,7 +132171,7 @@
         },
         "jpw0210430": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-22T17:10:56Z"
         },
@@ -131564,7 +132213,7 @@
         },
         "jaygaha": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-20T05:51:56Z"
         },
@@ -131735,12 +132384,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-04-12T03:02:28Z"
-        },
-        "joao-oliveira-softtor": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-04-11T19:20:47Z"
         },
         "kbroughton": {
           "total": 1,
@@ -132903,6 +133546,8 @@
         "MrSaneApps": 1,
         "JiehoonKwak": 0,
         "7Sageer": 1,
+        "ruddro-roy": 0,
+        "joao-oliveira-softtor": 1,
         "bionicbutterfly13": 0,
         "KaizenPrompt": 0,
         "DRCOMPUTER60290": 0,
@@ -132954,6 +133599,10 @@
         "iefnaf": 0,
         "trevwilson": 1,
         "dreamiurg": 2,
+        "Markoblogline": 0,
+        "Dandi007": 0,
+        "dane11stanisic-a11y": 0,
+        "Hactory": 0,
         "spolspol": 0,
         "Garcia6l20": 0,
         "20alexl": 0,
@@ -133053,7 +133702,6 @@
         "kuishou68": 0,
         "moacnc-lio": 0,
         "quangtran88": 1,
-        "joao-oliveira-softtor": 1,
         "kbroughton": 1,
         "cokoro": 0,
         "ck0park": 1,

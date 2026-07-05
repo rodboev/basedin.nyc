@@ -7,7 +7,7 @@ from datetime import datetime
 from core.models import Comment, Evidence, PullRequest, PullRequestRef, TimelineEvent
 
 MAINTAINER_SHIP_PATTERN = re.compile(
-    r"\b(?:shipped|cherry[- ]?pick(?:ed|ing)?|salvaged\s+into|merged[- ]via|merged\s+(?:onto|into|to)\s+(?:main|master)|merged\s+manually|manually\s+merged)\b",
+    r"\b(?:shipped|cherry[- ]?pick(?:ed|ing)?|salvaged\s+into|merged[- ]via|merged\s+(?:onto|into|to)\s+(?:main|master|(?:the\s+)?\S+\s+branch)|merged\s+manually|manually\s+merged)\b",
     re.IGNORECASE,
 )
 DUPLICATE_PATTERNS: tuple[str, ...] = ("duplicate",)

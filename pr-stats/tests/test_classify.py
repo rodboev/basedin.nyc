@@ -206,6 +206,32 @@ def test_maintainer_merged_via_rebase_comment_ships(
     assert result.evidence_kind == "comment"
 
 
+def test_maintainer_branch_merge_comment_ships(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # thedotmack/claude-mem#3018: open PRs folded into the community-edge release line
+    pr = make_pr()
+    evidence = make_evidence(
+        comments=[
+            make_comment(
+                body=(
+                    "Merged into the `community-edge` branch — claude-mem's bleeding-edge release line. "
+                    "Closing here since your change now lives on that branch. Thanks for the contribution!"
+                ),
+                author={"login": "owner"},
+                authorAssociation="OWNER",
+            ),
+        ],
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "shipped"
+    assert result.evidence_kind == "comment"
+
+
 def test_non_maintainer_ship_claim_does_not_ship(
     make_pr: Callable[..., PullRequest],
     make_comment: Callable[..., Comment],

@@ -160,12 +160,11 @@ allPill.className = 'sort-pill active';
 allPill.setAttribute('data-repo', '');
 allPill.textContent = 'All';
 pillsEl.appendChild(allPill);
-var TL_LABELS = {"hermes-webui": "webui", "claude-mem": "cmem"};
 TL_NAMES.forEach(function(name) {
   var pill = document.createElement('div');
   pill.className = 'sort-pill';
   pill.setAttribute('data-repo', name);
-  pill.textContent = TL_LABELS[name] || name;
+  pill.textContent = name;
   pillsEl.appendChild(pill);
 });
 

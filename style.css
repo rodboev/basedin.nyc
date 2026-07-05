@@ -248,6 +248,7 @@ body.home a.preview:is(:hover, :focus, :active, .hover) > span > span:first-chil
 
 .btn.back,
 .back-link {
+  --back-top: -0.25em;
   display: inline-flex;
   align-items: center;
   font-size: 9pt;
@@ -255,7 +256,7 @@ body.home a.preview:is(:hover, :focus, :active, .hover) > span > span:first-chil
   margin-right: 10pt;
   vertical-align: middle;
   position: relative;
-  top: -0.25em;
+  top: var(--back-top);
   border-radius: 3px;
 }
 
@@ -346,19 +347,27 @@ body .nav-links .current {
 }
 
 @media (min-width: 1100px) {
+  .btn.back,
   body:not(.home) .back-link {
-    position: absolute;
-    left: -4em;
-    top: 0.25em;
+    position: fixed;
+    left: var(--back-left);
+    top: var(--back-top-sticky, 1.5em);
     padding: 0.55em 10pt;
     font-size: 13pt;
     margin-right: 0;
+  }
+
+  body:not(.home) .back-link {
+    --back-left: calc((100vw - min(var(--page-max-width), 90vw)) / 2 - 4.5em);
+    --back-top-sticky: calc(min(2vw, 2rem) + 0.25em);
+    --back-top: 0.25em;
   }
 }
 
 /* ── projects ── */
 
 body.projects {
+  --page-max-width: 1020px;
   --page-h1: rgba(255, 255, 255, 0.88);
   --page-dim: rgba(255, 255, 255, 0.56);
   --page-active: rgba(255, 255, 255, 0.88);
@@ -631,9 +640,10 @@ body.preview > img {
   background: white;
 }
 body.preview > .back {
+  --back-left: calc(50% - min(360px, 48vw) - 3.75em);
   position: fixed;
   top: 1.5em;
-  left: calc(50% - min(360px, 48vw) - 3.75em);
+  left: var(--back-left);
   z-index: 2;
   font-size: 13pt;
   padding: 0.55em 10pt;
@@ -647,6 +657,7 @@ html:has(body.pr) {
 }
 
 body.pr {
+  --page-max-width: 960px;
   --pr-bg: #fff;
   --pr-card: #fff;
   --pr-border: rgba(0, 0, 0, 0.08);
