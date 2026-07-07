@@ -2,6 +2,13 @@
 var TL_TODAY_LABEL = fmtLabel(TL_TODAY);
 var activeRepo = null;
 function activeTL() { return activeRepo ? (TL_REPOS[activeRepo] || []) : TL_ALL; }
+function acceptanceRate(shipped, closed) { return closed > 0 ? shipped / closed * 100 : null; }
+function formatAcceptanceRate(rate) {
+  if (rate == null) return 'N/A';
+  if (rate === 100) return '100';
+  if (rate > 99) return (Math.floor(rate * 10) / 10).toFixed(1);
+  return String(Math.round(rate));
+}
 var isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 var C = {
   green: isDark ? '#3fb950' : '#1a7f37',
@@ -314,13 +321,13 @@ function updateBreakdown(r) {
   }
   var lostSup = lost + superseded;
   var closedDenom = shipped + lost + superseded;
-  var rate = closedDenom > 0 ? Math.round(shipped / closedDenom * 100) : 'N/A';
+  var rate = acceptanceRate(shipped, closedDenom);
   var el;
   if (el = document.getElementById('bd-total')) el.textContent = total;
   if (el = document.getElementById('bd-shipped')) el.textContent = shipped;
   if (el = document.getElementById('bd-open')) el.textContent = open;
   if (el = document.getElementById('bd-lost-sup')) el.textContent = lostSup;
-  if (el = document.getElementById('bd-rate')) el.textContent = typeof rate === 'number' ? rate + '%' : rate;
+  if (el = document.getElementById('bd-rate')) el.textContent = formatAcceptanceRate(rate) + (rate == null ? '' : '%');
   if (el = document.getElementById('bd-rate-label')) el.textContent = 'Acceptance (' + superseded + ' superseded, ' + lost + ' lost)';
   var dayStr = displayDays === 1 ? '1 day' : displayDays + ' days';
   if (el = document.getElementById('bd-days')) el.textContent = dayStr;
@@ -489,7 +496,7 @@ function bdStats(r) {
 }
 function bdDisplay(b) {
   var ls = b.lost + b.sup, cd = b.shipped + b.lost + b.sup;
-  var rate = cd > 0 ? Math.round(b.shipped / cd * 100) : 0;
+  var rate = acceptanceRate(b.shipped, cd) || 0;
   var ad = Math.max(1, b.activeDays);
   var avgPrs = b.total / ad, avgLoc = b.loc / ad;
   var bT = b.total || 1;
@@ -503,7 +510,7 @@ function renderBdFrame(oD, nD, et) {
   var cO = Math.round(oD.open+et*(nD.open-oD.open));
   var cSp = Math.round(oD.sup+et*(nD.sup-oD.sup));
   var cL = Math.round(oD.lost+et*(nD.lost-oD.lost));
-  var cR = Math.round(oD.rate+et*(nD.rate-oD.rate));
+  var cR = oD.rate+et*(nD.rate-oD.rate);
   var cDd = Math.max(0, Math.round(oD.displayDays+et*(nD.displayDays-oD.displayDays)));
   var cAp = oD.avgPrs+et*(nD.avgPrs-oD.avgPrs);
   var cAl = oD.avgLoc+et*(nD.avgLoc-oD.avgLoc);
@@ -513,7 +520,7 @@ function renderBdFrame(oD, nD, et) {
   if (el = document.getElementById('bd-shipped')) el.textContent = cSh;
   if (el = document.getElementById('bd-open')) el.textContent = cO;
   if (el = document.getElementById('bd-lost-sup')) el.textContent = cL + cSp;
-  if (el = document.getElementById('bd-rate')) el.textContent = cR + '%';
+  if (el = document.getElementById('bd-rate')) el.textContent = formatAcceptanceRate(cR) + '%';
   if (el = document.getElementById('bd-avg-prs')) el.textContent = cAp.toFixed(1);
   if (el = document.getElementById('bd-avg-loc')) el.textContent = rL >= 1000 ? (rL/1000).toFixed(1)+'k' : rL;
   if (el = document.getElementById('bd-days')) el.textContent = cDd === 1 ? '1 day' : cDd + ' days';
@@ -728,7 +735,7 @@ build(range);
   function dispAt(f) {
     var t = Math.round(f * total), sh = Math.round(f * shipped);
     var o = Math.round(f * opn), sp = Math.round(f * sup), l = Math.round(f * lost);
-    var cd = sh + l + sp, rate = cd > 0 ? Math.round(sh / cd * 100) : 0;
+    var cd = sh + l + sp, rate = acceptanceRate(sh, cd) || 0;
     var ad = Math.max(1, Math.round(f * activeDays)), loc = Math.round(f * totalLoc);
     var dd = Math.max(0, Math.round(f * displayDays));
     var bT = t || 1;

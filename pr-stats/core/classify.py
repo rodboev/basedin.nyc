@@ -193,6 +193,15 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
                 evidence_kind="lost",
                 log_label=f"lost (competing #{replacement.number} accepted instead)",
             )
+        if replacement is not None and (replacement.state == "MERGED" or replacement.mergedAt):
+            return ClassificationResult(
+                classification="accepted-indirect",
+                release=release,
+                via_label=via_label,
+                via_url=via_url,
+                evidence_kind="accepted-indirect",
+                log_label=f"accepted indirectly via #{replacement.number}",
+            )
         return ClassificationResult(
             classification="superseded",
             release=release,

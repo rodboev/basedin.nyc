@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import re
 from collections.abc import Iterable, Mapping
 from collections import Counter
@@ -80,7 +81,7 @@ class ReportCounts:
     superseded: int
     lost: int
     not_shipped: int
-    acceptance_rate: int | None
+    acceptance_rate: float | None
 
 
 @dataclass(frozen=True)
@@ -406,7 +407,7 @@ def report_counts(
     lost_count = sum(1 for item in item_list if item.classification == lost_status)
     not_shipped = superseded_count + lost_count
     acceptance_closed = accepted_count + not_shipped
-    rate = round((accepted_count / acceptance_closed) * 100) if acceptance_closed > 0 else None
+    rate = (accepted_count / acceptance_closed) * 100 if acceptance_closed > 0 else None
     return ReportCounts(
         total=accepted_count + open_count + not_shipped,
         accepted=accepted_count,
@@ -416,6 +417,16 @@ def report_counts(
         not_shipped=not_shipped,
         acceptance_rate=rate,
     )
+
+
+def format_acceptance_rate(rate: float | None) -> str:
+    if rate is None:
+        return "N/A"
+    if rate == 100:
+        return "100"
+    if rate > 99:
+        return f"{math.floor(rate * 10) / 10:.1f}"
+    return str(round(rate))
 
 
 def report_activity_summary(items: Iterable[PrReportItem]) -> ReportActivitySummary:

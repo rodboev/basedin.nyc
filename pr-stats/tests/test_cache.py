@@ -50,6 +50,50 @@ def test_cache_corruption_returns_usable_empty_cache(
     assert cache.version == 3
 
 
+def test_author_pull_sections_default_without_version_bump(make_cache_file: object) -> None:
+    path = make_cache_file(b'{"version":3,"entries":{}}\n')  # type: ignore[operator]
+
+    cache = load_cache(path)
+
+    assert cache.version == 3
+    assert cache.authorPulls == {}
+    assert cache.authorPullScanMeta == {}
+
+
+def test_author_pull_sections_round_trip(make_cache_file: object, tmp_path: Path) -> None:
+    path = make_cache_file(
+        json.dumps(
+            {
+                "version": 3,
+                "authorPulls": {
+                    "owner/repo#7": {
+                        "repo": "owner/repo",
+                        "number": 7,
+                        "state": "OPEN",
+                        "title": "Fix",
+                        "author": {"login": "rodboev"},
+                    },
+                },
+                "authorPullScanMeta": {
+                    "owner/repo": {
+                        "scannedAt": "2026-07-08T12:00:00Z",
+                        "source": "graphql-search",
+                    },
+                },
+            },
+        ).encode("utf-8"),
+    )  # type: ignore[operator]
+    out_path = tmp_path / "cache.json"
+
+    cache = load_cache(path)
+    save_cache(cache, out_path)
+    reloaded = load_cache(out_path)
+
+    assert reloaded.version == 3
+    assert reloaded.authorPulls == cache.authorPulls
+    assert reloaded.authorPullScanMeta == cache.authorPullScanMeta
+
+
 def test_cache_preserves_valid_sections_when_one_section_is_bad(make_cache_file: object) -> None:
     path = make_cache_file(
         json.dumps(

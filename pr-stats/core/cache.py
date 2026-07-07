@@ -27,6 +27,8 @@ DEFAULT_CLOSED_CLASSIFICATION_TTL_HOURS: Final = 24 * 30
 
 _TOP_LEVEL_SECTIONS: Final[tuple[str, ...]] = (
     "entries",
+    "authorPulls",
+    "authorPullScanMeta",
     "leaderboards",
     "contributorsMdSeeds",
     "prAuthorsByNumber",
@@ -164,6 +166,8 @@ def _cache_from_mapping(raw: dict[str, object]) -> Cache:
     return Cache(
         version=CACHE_VERSION,
         entries=entries,
+        authorPulls=_load_section(raw, "authorPulls", _JSON_OBJECT_MAP, invalid_sections),
+        authorPullScanMeta=_load_section(raw, "authorPullScanMeta", _JSON_OBJECT_MAP, invalid_sections),
         leaderboards=_load_section(raw, "leaderboards", _JSON_OBJECT_MAP, invalid_sections),
         contributorsMdSeeds=_load_section(raw, "contributorsMdSeeds", _JSON_OBJECT_MAP, invalid_sections),
         prAuthorsByNumber=_load_section(raw, "prAuthorsByNumber", _STRING_MAP, invalid_sections),

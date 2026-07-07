@@ -23,6 +23,8 @@ class ClassificationEntry(StrictBaseModel):
 class Cache(StrictBaseModel):
     version: int = 3
     entries: dict[str, ClassificationEntry] = Field(default_factory=dict)
+    authorPulls: dict[str, JsonObject] = Field(default_factory=dict)
+    authorPullScanMeta: dict[str, JsonObject] = Field(default_factory=dict)
     leaderboards: dict[str, JsonObject] = Field(default_factory=dict)
     contributorsMdSeeds: dict[str, JsonObject] = Field(default_factory=dict)
     prAuthorsByNumber: dict[str, str] = Field(default_factory=dict)

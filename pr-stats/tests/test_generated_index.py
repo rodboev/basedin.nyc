@@ -42,12 +42,12 @@ def _stat_number(content: str, class_name: str, label: str) -> int:
 def test_acceptance_rate_card_uses_shortened_not_shipped_wording(repo_root: Path) -> None:
     content = _read_index(repo_root)
     match = re.search(
-        r'<div class="stat-card"><div class="number green"[^>]*>(\d+)%</div><div class="label"[^>]*>Acceptance(?: rate)? \((\d+) superseded, (\d+) lost\)</div></div>',
+        r'<div class="stat-card"><div class="number green"[^>]*>(\d+(?:\.\d)?)%</div><div class="label"[^>]*>Acceptance(?: rate)? \((\d+) superseded, (\d+) lost\)</div></div>',
         content,
     )
 
     assert match is not None
-    rate = int(match.group(1))
+    rate = float(match.group(1))
     superseded = int(match.group(2))
     lost = int(match.group(3))
     assert superseded >= 0

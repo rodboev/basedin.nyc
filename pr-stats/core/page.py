@@ -29,6 +29,7 @@ from core.report import (
     ReportCounts,
     RepresentativeItem,
     default_status_filter_dicts,
+    format_acceptance_rate,
     repo_filter_dicts,
     report_bar_items,
     report_counts,
@@ -79,7 +80,7 @@ def render_breakdown_section(
         StatCard(value=str(counts.open), label="Open", value_class="yellow", value_id="bd-open"),
         StatCard(value=str(counts.not_shipped), label="Lost/Superseded", value_id="bd-lost-sup"),
     ]
-    rate = "N/A" if counts.acceptance_rate is None else str(counts.acceptance_rate)
+    rate = format_acceptance_rate(counts.acceptance_rate)
     secondary_cards = [
         StatCard(
             value=f"{rate}%",

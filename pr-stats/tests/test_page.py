@@ -56,6 +56,17 @@ def test_render_breakdown_section_matches_ps1_owned_markup() -> None:
     )
 
 
+def test_render_breakdown_section_keeps_decimal_acceptance_above_99() -> None:
+    html = render_breakdown_section(
+        ReportCounts(total=1000, accepted=999, open=0, superseded=1, lost=0, not_shipped=1, acceptance_rate=99.9),
+        ReportActivitySummary(time_span="3 days", time_range="Active days from Jul 1 - Jul 3"),
+        avg_prs="12.0",
+        avg_loc="5.5k",
+    )
+
+    assert 'id="bd-rate">99.9%</div>' in html
+
+
 def test_render_timeline_bootstrap_matches_injected_script_shape() -> None:
     assert render_timeline_bootstrap("[1]", '{"a":[]}', '["a"]', "2026-07-02") == (
         "var TL_ALL = [1];\n"

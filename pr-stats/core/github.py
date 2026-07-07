@@ -64,6 +64,7 @@ class GhPullRequestView(GithubModel):
     state: str
     title: str
     createdAt: str = ""
+    updatedAt: str = ""
     closedAt: str | None = None
     mergedAt: str | None = None
     author: GhUser

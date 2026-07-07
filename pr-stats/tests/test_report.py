@@ -11,6 +11,7 @@ from core.report import (
     RepresentativeItem,
     default_status_filter_dicts,
     enrich_representative_items,
+    format_acceptance_rate,
     parse_representative_readme,
     format_eastern_date,
     pr_filter_count,
@@ -304,6 +305,14 @@ def test_report_counts_matches_ps1_summary_math() -> None:
     assert counts.lost == 1
     assert counts.not_shipped == 2
     assert counts.acceptance_rate == 50
+
+
+def test_format_acceptance_rate_keeps_one_decimal_above_99_without_rounding_to_100() -> None:
+    assert format_acceptance_rate((999 / 1000) * 100) == "99.9"
+    assert format_acceptance_rate((9999 / 10000) * 100) == "99.9"
+    assert format_acceptance_rate(100) == "100"
+    assert format_acceptance_rate(98.6) == "99"
+    assert format_acceptance_rate(None) == "N/A"
 
 
 def test_report_counts_match_current_generated_pr_data(repo_root: Path) -> None:

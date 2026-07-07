@@ -3,7 +3,10 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
+from datetime import timedelta
 from pathlib import Path
 
 from jinja2 import TemplateError
@@ -38,7 +41,7 @@ from core.report import (
     sort_report_items_by_effective_date,
     sort_repos_by_accepted_count,
 )
-from core.timeline import build_chart_payload, build_daily_data, load_active_repos_from_text, prepare_timeline_prs
+from core.timeline import build_chart_payload, build_daily_data, load_active_repos_from_text, load_pr_data_from_html, prepare_timeline_prs
 
 DEFAULT_AUTHOR = "rodboev"
 DEFAULT_CACHE_FILE = Path(".pr-classification-cache.json")
@@ -46,7 +49,35 @@ DEFAULT_REBUILD_CACHE_FILE = Path(".pr-classification-cache.rebuild.json")
 DEFAULT_DIVERGENCE_FILE = Path("classification-divergences.json")
 DEFAULT_README_FILE = Path(r"C:\Users\Rod\.claude\skills\pr\README.md")
 README_REPO = "rodboev/pr-sweep"
-PR_LIST_JSON_FIELDS = "number,state,title,createdAt,closedAt,mergedAt,headRefName,author,additions,deletions,changedFiles,url"
+AUTHOR_PULL_LOOKBACK_HOURS = 48
+AUTHOR_PULL_SEARCH_PAGE_SIZE = 100
+AUTHOR_PULL_SEARCH_MAX_PAGES = 10
+AUTHOR_PULL_GRAPHQL_QUERY = """\
+query($searchQuery: String!, $pageSize: Int!, $cursor: String) {
+  search(type: ISSUE, first: $pageSize, after: $cursor, query: $searchQuery) {
+    issueCount
+    pageInfo { hasNextPage endCursor }
+    nodes {
+      ... on PullRequest {
+        number
+        state
+        title
+        createdAt
+        updatedAt
+        closedAt
+        mergedAt
+        headRefName
+        additions
+        deletions
+        changedFiles
+        url
+        author { login }
+        repository { nameWithOwner }
+      }
+    }
+  }
+}
+"""
 WEBUI_REPO = "nesquena/hermes-webui"
 WEBUI_EXCLUDED_LOGINS = ("nesquena", "nesquena-hermes")
 WEBUI_CREDIT_MINIMUMS = (
@@ -80,6 +111,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--contributors-file", type=Path, default=None)
     parser.add_argument("--force-write", action="store_true")
     parser.add_argument("--overlay-config-dir", type=Path, default=DEFAULT_OVERLAY_CONFIG_DIR)
+    parser.add_argument("--silent", action="store_true", help="suppress progress output and end-of-run pause")
     args = parser.parse_args(argv)
 
     set_overlay_config_dir(args.overlay_config_dir)
@@ -102,7 +134,7 @@ def main(argv: list[str] | None = None) -> int:
             promote_output=args.out_cache_file is None,
         )
 
-    return generate_report(
+    rc = generate_report(
         cache_file=args.cache_file,
         template_file=args.template_file,
         out_file=args.out_file or Path("index.html"),
@@ -110,7 +142,15 @@ def main(argv: list[str] | None = None) -> int:
         readme_file=args.readme_file,
         author=args.author,
         force_write=args.force_write,
+        silent=args.silent,
+        workers=args.workers,
     )
+    if not args.silent:
+        try:
+            input("\nPress Enter to exit...")
+        except (EOFError, KeyboardInterrupt):
+            pass
+    return rc
 
 def classify_cache(
     *,
@@ -157,17 +197,33 @@ def generate_report(
     readme_file: Path | None = None,
     author: str = DEFAULT_AUTHOR,
     force_write: bool = False,
+    silent: bool = False,
+    workers: int = 4,
 ) -> int:
+    def log(msg: str) -> None:
+        if not silent:
+            print(msg, file=sys.stderr)
+
     try:
         template_text = template_file.read_text(encoding="utf-8")
         repos = load_active_repos_from_text(repos_file.read_text(encoding="utf-8"))
-        live_prs, failed_repos = fetch_author_pull_requests(repos, author=author)
+        cache = load_cache(cache_file)
+        now = datetime.now(timezone.utc)
+        log(f"Fetching PRs for {len(repos)} repos...")
+        live_prs, failed_repos, author_cache_updated = fetch_author_pull_requests(
+            repos,
+            author=author,
+            cache=cache,
+            out_file=out_file,
+            now=now,
+            log=log,
+            workers=workers,
+        )
+        log(f"Fetched {len(live_prs)} PRs ({len(failed_repos)} repos failed)" if failed_repos else f"Fetched {len(live_prs)} PRs")
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
 
-    cache = load_cache(cache_file)
-    now = datetime.now(timezone.utc)
     cache_updated_early = False
     for repo in repos:
         try:
@@ -180,7 +236,7 @@ def generate_report(
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
-    if cache_updated or cache_updated_early:
+    if cache_updated or cache_updated_early or author_cache_updated:
         try:
             save_cache(cache, cache_file)
         except OSError as exc:
@@ -272,40 +328,271 @@ def load_representative_readme_text(readme_file: Path | None) -> str:
     except GhError:
         return ""
 
-def fetch_author_pull_requests(repos: list[str], *, author: str) -> tuple[list[tuple[str, GhPullRequestView]], tuple[str, ...]]:
-    pulls: list[tuple[str, GhPullRequestView]] = []
+def fetch_author_pull_requests(
+    repos: list[str],
+    *,
+    author: str,
+    cache: Cache,
+    out_file: Path,
+    now: datetime,
+    log: Callable[[str], None] = lambda _: None,
+    workers: int = 4,
+) -> tuple[list[tuple[str, GhPullRequestView]], tuple[str, ...], bool]:
+    cache_updated = seed_author_pull_cache_from_html(cache, out_file=out_file, repos=repos, author=author)
+
+    def fetch_one(repo: str) -> tuple[str, list[dict[str, object]] | None]:
+        try:
+            return repo, fetch_author_pull_deltas(repo, author=author, cache=cache, out_file=out_file, now=now)
+        except GhRetryExhausted:
+            return repo, None
+
     failed_repos: list[str] = []
+    done = 0
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = {pool.submit(fetch_one, repo): repo for repo in repos}
+        for future in as_completed(futures):
+            repo, rows = future.result()
+            done += 1
+            if rows is None:
+                failed_repos.append(repo)
+                count = len(_cached_author_pull_views(cache, repo))
+            else:
+                for row in rows:
+                    cache.authorPulls[classification_cache_key(repo, int_value(row.get("number")))] = row
+                cache.authorPullScanMeta[repo] = {
+                    "scannedAt": _format_datetime(now),
+                    "source": "graphql-search",
+                    "lookbackHours": AUTHOR_PULL_LOOKBACK_HOURS,
+                }
+                cache_updated = True
+                count = len(_cached_author_pull_views(cache, repo))
+            log(f"  [{done}/{len(repos)}] {repo}: {count} PRs")
+
+    pulls: list[tuple[str, GhPullRequestView]] = []
     for repo in repos:
-        raw = run_gh(
-            "pr",
-            "list",
-            "--repo",
-            repo,
-            "--author",
-            author,
-            "--state",
-            "all",
-            "--limit",
-            "500",
-            "--json",
-            PR_LIST_JSON_FIELDS,
-            suppress_errors=True,
-        )
-        if not raw:
-            failed_repos.append(repo)
+        for view in _cached_author_pull_views(cache, repo):
+            pulls.append((repo, view))
+    return pulls, tuple(failed_repos), cache_updated
+
+
+def seed_author_pull_cache_from_html(cache: Cache, *, out_file: Path, repos: list[str], author: str) -> bool:
+    if not out_file.exists():
+        return False
+    try:
+        items = load_pr_data_from_html(out_file.read_text(encoding="utf-8"))
+    except (OSError, ValueError, json.JSONDecodeError):
+        return False
+    active_repos = set(repos)
+    changed = False
+    for item in items:
+        repo = str(item.get("repo") or "")
+        number = int_value(item.get("number"))
+        if repo not in active_repos or number <= 0:
             continue
+        key = classification_cache_key(repo, number)
+        if key in cache.authorPulls:
+            continue
+        cache.authorPulls[key] = _author_pull_row_from_script_item(item, author=author)
+        changed = True
+    return changed
+
+
+def fetch_author_pull_deltas(
+    repo: str,
+    *,
+    author: str,
+    cache: Cache,
+    out_file: Path,
+    now: datetime,
+) -> list[dict[str, object]] | None:
+    queries = [f"repo:{repo} is:pr author:{author} is:open"]
+    cutoff = _author_pull_cutoff(cache, repo=repo, out_file=out_file)
+    if cutoff:
+        queries.append(f"repo:{repo} is:pr author:{author} updated:>={cutoff}")
+    else:
+        queries = [f"repo:{repo} is:pr author:{author}"]
+
+    rows_by_key: dict[str, dict[str, object]] = {}
+    for query in queries:
+        rows = _fetch_author_pull_search_rows(query)
+        if rows is None:
+            return None
+        for row in rows:
+            row_repo = str(row.get("repo") or "")
+            number = int_value(row.get("number"))
+            if row_repo != repo or number <= 0:
+                continue
+            rows_by_key[classification_cache_key(repo, number)] = row
+    if not rows_by_key and not _cached_author_pull_views(cache, repo):
+        return []
+    return list(rows_by_key.values())
+
+
+def _fetch_author_pull_search_rows(query: str) -> list[dict[str, object]] | None:
+    rows: list[dict[str, object]] = []
+    cursor = ""
+    for _page in range(AUTHOR_PULL_SEARCH_MAX_PAGES):
+        args = [
+            "api", "graphql",
+            "-f", f"query={AUTHOR_PULL_GRAPHQL_QUERY}",
+            "-F", f"searchQuery={query}",
+            "-F", f"pageSize={AUTHOR_PULL_SEARCH_PAGE_SIZE}",
+        ]
+        if cursor:
+            args.extend(["-F", f"cursor={cursor}"])
+        raw = run_gh(*args, suppress_errors=True)
+        if not raw:
+            return None
         try:
             payload = json.loads(raw)
         except json.JSONDecodeError:
-            failed_repos.append(repo)
+            return None
+        search = _graphql_search_connection(payload)
+        if search is None:
+            return None
+        nodes = search.get("nodes")
+        if isinstance(nodes, list):
+            for node in nodes:
+                if isinstance(node, dict):
+                    row = _author_pull_row_from_graphql_node(node)
+                    if row is not None:
+                        rows.append(row)
+        page_info = search.get("pageInfo")
+        if not isinstance(page_info, dict) or not page_info.get("hasNextPage"):
+            return rows
+        cursor = str(page_info.get("endCursor") or "")
+        if not cursor:
+            return rows
+    return None
+
+
+def _graphql_search_connection(payload: object) -> dict[str, object] | None:
+    if not isinstance(payload, dict):
+        return None
+    data = payload.get("data")
+    if not isinstance(data, dict):
+        return None
+    search = data.get("search")
+    return search if isinstance(search, dict) else None
+
+
+def _author_pull_cutoff(cache: Cache, *, repo: str, out_file: Path) -> str:
+    meta = cache.authorPullScanMeta.get(repo)
+    scanned_at = str(meta.get("scannedAt") or "") if isinstance(meta, dict) else ""
+    scanned = _parse_datetime(scanned_at)
+    if scanned is not None:
+        return _format_datetime(scanned - timedelta(hours=AUTHOR_PULL_LOOKBACK_HOURS))
+    if any(key.startswith(f"{repo}#") for key in cache.authorPulls):
+        try:
+            mtime = datetime.fromtimestamp(out_file.stat().st_mtime, timezone.utc)
+        except OSError:
+            return ""
+        return _format_datetime(mtime - timedelta(hours=AUTHOR_PULL_LOOKBACK_HOURS))
+    return ""
+
+
+def _cached_author_pull_views(cache: Cache, repo: str) -> list[GhPullRequestView]:
+    views: list[GhPullRequestView] = []
+    prefix = f"{repo}#"
+    for key, raw in cache.authorPulls.items():
+        if not key.startswith(prefix):
             continue
-        if not isinstance(payload, list):
-            failed_repos.append(repo)
-            continue
-        for item in payload:
-            if isinstance(item, dict):
-                pulls.append((repo, GhPullRequestView.model_validate(item)))
-    return pulls, tuple(failed_repos)
+        view = _author_pull_view_from_cache_row(raw)
+        if view is not None:
+            views.append(view)
+    return sorted(views, key=lambda item: _parse_datetime(item.updatedAt or item.createdAt) or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
+
+
+def _author_pull_view_from_cache_row(raw: object) -> GhPullRequestView | None:
+    if not isinstance(raw, dict):
+        return None
+    try:
+        return GhPullRequestView.model_validate(raw)
+    except ValueError:
+        return None
+
+
+def _author_pull_row_from_graphql_node(node: dict[str, object]) -> dict[str, object] | None:
+    repo = _graphql_repo_name(node)
+    number = int_value(node.get("number"))
+    if not repo or number <= 0:
+        return None
+    author = node.get("author")
+    login = str(author.get("login") or "") if isinstance(author, dict) else ""
+    return {
+        "repo": repo,
+        "number": number,
+        "state": str(node.get("state") or ""),
+        "title": str(node.get("title") or ""),
+        "createdAt": str(node.get("createdAt") or ""),
+        "updatedAt": str(node.get("updatedAt") or ""),
+        "closedAt": str(node.get("closedAt") or "") or None,
+        "mergedAt": str(node.get("mergedAt") or "") or None,
+        "headRefName": str(node.get("headRefName") or ""),
+        "author": {"login": login},
+        "additions": int_value(node.get("additions")),
+        "deletions": int_value(node.get("deletions")),
+        "changedFiles": int_value(node.get("changedFiles")),
+        "url": str(node.get("url") or f"https://github.com/{repo}/pull/{number}"),
+    }
+
+
+def _graphql_repo_name(node: dict[str, object]) -> str:
+    repository = node.get("repository")
+    if not isinstance(repository, dict):
+        return ""
+    return str(repository.get("nameWithOwner") or "")
+
+
+def _author_pull_row_from_script_item(item: dict[str, object], *, author: str) -> dict[str, object]:
+    repo = str(item.get("repo") or "")
+    number = int_value(item.get("number"))
+    merged_at = str(item.get("mergedAt") or "")
+    closed_at = str(item.get("closedAt") or "")
+    classification = str(item.get("classification") or "")
+    if classification == "open":
+        state = "OPEN"
+    elif merged_at:
+        state = "MERGED"
+    else:
+        state = "CLOSED"
+    return {
+        "repo": repo,
+        "number": number,
+        "state": state,
+        "title": str(item.get("title") or ""),
+        "createdAt": str(item.get("createdAt") or ""),
+        "updatedAt": "",
+        "closedAt": closed_at or None,
+        "mergedAt": merged_at or None,
+        "headRefName": "",
+        "author": {"login": author},
+        "additions": int_value(item.get("additions")),
+        "deletions": int_value(item.get("deletions")),
+        "changedFiles": int_value(item.get("changedFiles")),
+        "url": str(item.get("url") or f"https://github.com/{repo}/pull/{number}"),
+    }
+
+
+def _parse_datetime(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    candidate = value
+    if candidate.endswith("Z"):
+        candidate = f"{candidate[:-1]}+00:00"
+    try:
+        parsed = datetime.fromisoformat(candidate)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def _format_datetime(value: datetime) -> str:
+    if value.tzinfo is None:
+        return value.isoformat()
+    return value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 def report_items_from_live_pull_requests(

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
 import re
@@ -14,7 +15,7 @@ import core.leaderboard as leaderboard_mod
 from core.classification_rebuild import CacheRebuildInterrupted, CacheRebuildResult
 from core.github import GhRetryExhausted
 from core.classify import ClassificationResult
-from core.models import Evidence
+from core.models import Cache, Evidence
 from core.report import EASTERN
 
 def test_verify_webui_credits_only_uses_python_credit_pipeline(repo_root: Path) -> None:
@@ -75,7 +76,8 @@ def test_default_generate_fetches_live_prs_instead_of_reusing_stale_html(
     cache_file.write_text('{"version":3,"entries":{}}\n', encoding="utf-8")
     repos_file.write_text(_repos_file_text(["owner/repo"]), encoding="utf-8")
 
-    mock_gh = lambda *_args, **_kwargs: json.dumps(
+    mock_gh = _mock_graphql_search(
+        "owner/repo",
         [
             _gh_pr_list_item(
                 number=101,
@@ -131,7 +133,7 @@ def test_default_generate_survives_leaderboard_retry_exhaustion(
     monkeypatch.setattr(
         generate,
         "run_gh",
-        lambda *_args, **_kwargs: json.dumps([_gh_pr_list_item(number=101, state="MERGED", mergedAt="2026-07-02T17:00:00Z")]),
+        _mock_graphql_search("owner/repo", [_gh_pr_list_item(number=101, state="MERGED", mergedAt="2026-07-02T17:00:00Z")]),
     )
 
     def _exhausted(*_args: str, **_kwargs: object) -> str:
@@ -165,7 +167,7 @@ def test_default_generate_sanity_gate_keeps_existing_output(
     out_file.write_text('<div class="number">30</div><div class="label">Total PRs</div>', encoding="utf-8")
     repos_file.write_text(_repos_file_text(["owner/repo"]), encoding="utf-8")
     cache_file.write_text('{"version":3,"entries":{}}\n', encoding="utf-8")
-    mock_gh = lambda *_args, **_kwargs: json.dumps([_gh_pr_list_item(number=101, state="MERGED", mergedAt="2026-07-02T17:00:00Z")])
+    mock_gh = _mock_graphql_search("owner/repo", [_gh_pr_list_item(number=101, state="MERGED", mergedAt="2026-07-02T17:00:00Z")])
     monkeypatch.setattr(generate, "run_gh", mock_gh)
     monkeypatch.setattr(leaderboard_mod, "run_gh", mock_gh)
     monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
@@ -192,7 +194,7 @@ def test_default_generate_classifies_and_caches_closed_unmerged_live_pr(
     cache_file = tmp_path / "cache.json"
     repos_file.write_text(_repos_file_text(["owner/repo"]), encoding="utf-8")
     cache_file.write_text('{"version":3,"entries":{}}\n', encoding="utf-8")
-    mock_gh = lambda *_args, **_kwargs: json.dumps([_gh_pr_list_item(number=7, state="CLOSED", closedAt="2026-07-02T17:00:00Z")])
+    mock_gh = _mock_graphql_search("owner/repo", [_gh_pr_list_item(number=7, state="CLOSED", closedAt="2026-07-02T17:00:00Z")])
     monkeypatch.setattr(generate, "run_gh", mock_gh)
     monkeypatch.setattr(leaderboard_mod, "run_gh", mock_gh)
     monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
@@ -252,7 +254,7 @@ def test_default_generate_uses_cache_for_closed_unmerged_live_pr(
         ),
         encoding="utf-8",
     )
-    mock_gh = lambda *_args, **_kwargs: json.dumps([_gh_pr_list_item(number=7, state="CLOSED", closedAt="2026-07-02T17:00:00Z")])
+    mock_gh = _mock_graphql_search("owner/repo", [_gh_pr_list_item(number=7, state="CLOSED", closedAt="2026-07-02T17:00:00Z")])
     monkeypatch.setattr(generate, "run_gh", mock_gh)
     monkeypatch.setattr(leaderboard_mod, "run_gh", mock_gh)
     monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
@@ -271,6 +273,133 @@ def test_default_generate_uses_cache_for_closed_unmerged_live_pr(
     assert '"classification":"accepted-indirect"' in content
     assert '"viaLabel":"#9"' in content
     assert "#7" not in captured.err
+
+
+def test_seed_author_pull_cache_from_existing_index(tmp_path: Path) -> None:
+    out_file = tmp_path / "index.html"
+    item = _pr_data_item(number=7, repo="owner/repo", classification="shipped", mergedAt="2026-07-02T17:00:00Z")
+    out_file.write_text(f"var PR_DATA = {json.dumps([item])};\n", encoding="utf-8")
+    cache = Cache()
+
+    changed = generate.seed_author_pull_cache_from_html(cache, out_file=out_file, repos=["owner/repo"], author="rodboev")
+
+    row = cache.authorPulls["owner/repo#7"]
+    assert changed
+    assert row["state"] == "MERGED"
+    assert row["title"] == "Test PR"
+    assert row["updatedAt"] == ""
+    assert row["author"] == {"login": "rodboev"}
+
+
+def test_incremental_fetch_returns_cached_closed_rows_and_graphql_open_rows(
+    tmp_path: Path,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    now = datetime(2026, 7, 8, 12, 0, tzinfo=timezone.utc)
+    cache = Cache(
+        authorPulls={
+            "owner/repo#1": _author_pull_cache_row("owner/repo", _gh_pr_list_item(number=1, state="CLOSED", closedAt="2026-07-02T17:00:00Z")),
+        },
+        authorPullScanMeta={"owner/repo": {"scannedAt": "2026-07-08T10:00:00Z"}},
+    )
+    calls: list[str] = []
+
+    def mock_gh(*args: str, **_kwargs: object) -> str:
+        joined = " ".join(args)
+        calls.append(joined)
+        if "is:open" in joined:
+            return _graphql_search_json("owner/repo", [_gh_pr_list_item(number=2, state="OPEN")])
+        return _graphql_search_json("owner/repo", [])
+
+    monkeypatch.setattr(generate, "run_gh", mock_gh)
+
+    pulls, failed, changed = generate.fetch_author_pull_requests(
+        ["owner/repo"],
+        author="rodboev",
+        cache=cache,
+        out_file=tmp_path / "missing.html",
+        now=now,
+        workers=1,
+    )
+
+    assert failed == ()
+    assert changed
+    assert {pr.number for _repo, pr in pulls} == {1, 2}
+    assert any("updated:>=2026-07-06T10:00:00Z" in call for call in calls)
+    assert cache.authorPullScanMeta["owner/repo"]["scannedAt"] == "2026-07-08T12:00:00Z"
+
+
+def test_generate_updates_cached_open_pr_that_graphql_reports_merged(
+    repo_root: Path,
+    tmp_path: Path,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    out_file = tmp_path / "index.html"
+    repos_file = tmp_path / "repos.txt"
+    cache_file = tmp_path / "cache.json"
+    repos_file.write_text(_repos_file_text(["owner/repo"]), encoding="utf-8")
+    cache_file.write_text(
+        json.dumps(
+            {
+                "version": 3,
+                "authorPulls": {
+                    "owner/repo#7": _author_pull_cache_row("owner/repo", _gh_pr_list_item(number=7, state="OPEN")),
+                },
+            },
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(
+        generate,
+        "run_gh",
+        _mock_graphql_search("owner/repo", [_gh_pr_list_item(number=7, state="MERGED", mergedAt="2026-07-08T12:00:00Z")]),
+    )
+    monkeypatch.setattr(leaderboard_mod, "run_gh", _mock_graphql_search("owner/repo", []))
+    monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
+    monkeypatch.setattr(leaderboard_mod, "_overlay_cache", {})
+
+    result = generate.generate_report(
+        cache_file=cache_file,
+        template_file=repo_root / "template.html",
+        out_file=out_file,
+        repos_file=repos_file,
+    )
+
+    cache_content = json.loads(cache_file.read_text(encoding="utf-8"))
+    assert result == 0
+    assert cache_content["authorPulls"]["owner/repo#7"]["state"] == "MERGED"
+    assert cache_content["entries"]["owner/repo#7"]["classification"] == "shipped"
+
+
+def test_incremental_fetch_failure_keeps_cached_rows_and_scan_timestamp(
+    tmp_path: Path,
+    monkeypatch: MonkeyPatch,
+) -> None:
+    cache = Cache(
+        authorPulls={
+            "owner/repo#1": _author_pull_cache_row("owner/repo", _gh_pr_list_item(number=1, state="OPEN")),
+        },
+        authorPullScanMeta={"owner/repo": {"scannedAt": "2026-07-08T10:00:00Z"}},
+    )
+
+    def exhausted(*_args: str, **_kwargs: object) -> str:
+        raise GhRetryExhausted("rate limited")
+
+    monkeypatch.setattr(generate, "run_gh", exhausted)
+
+    pulls, failed, changed = generate.fetch_author_pull_requests(
+        ["owner/repo"],
+        author="rodboev",
+        cache=cache,
+        out_file=tmp_path / "missing.html",
+        now=datetime(2026, 7, 8, 12, 0, tzinfo=timezone.utc),
+        workers=1,
+    )
+
+    assert failed == ("owner/repo",)
+    assert not changed
+    assert [pr.number for _repo, pr in pulls] == [1]
+    assert cache.authorPullScanMeta["owner/repo"]["scannedAt"] == "2026-07-08T10:00:00Z"
 
 
 def test_classify_cache_cli_routes_to_rebuild_worker(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
@@ -396,6 +525,7 @@ def _gh_pr_list_item(
     state: str,
     title: str = "Test PR",
     createdAt: str = "2026-07-02T16:00:00Z",
+    updatedAt: str = "2026-07-02T17:00:00Z",
     closedAt: str | None = None,
     mergedAt: str | None = None,
 ) -> dict[str, object]:
@@ -404,6 +534,7 @@ def _gh_pr_list_item(
         "state": state,
         "title": title,
         "createdAt": createdAt,
+        "updatedAt": updatedAt,
         "closedAt": closedAt,
         "mergedAt": mergedAt,
         "headRefName": "branch",
@@ -413,3 +544,64 @@ def _gh_pr_list_item(
         "changedFiles": 1,
         "url": f"https://github.com/owner/repo/pull/{number}",
     }
+
+
+def _pr_data_item(
+    *,
+    number: int,
+    repo: str,
+    classification: str,
+    mergedAt: str = "",
+    closedAt: str = "2026-07-02T17:00:00Z",
+) -> dict[str, object]:
+    return {
+        "number": number,
+        "url": f"https://github.com/{repo}/pull/{number}",
+        "repo": repo,
+        "repoLabel": repo.rsplit("/", 1)[-1],
+        "title": "Test PR",
+        "classification": classification,
+        "statusKey": "shipped" if classification == "accepted-indirect" else classification,
+        "statusLabel": "Shipped",
+        "statusClass": "tag-shipped",
+        "dateLabel": "7/2/26 1:00 PM",
+        "releaseLabel": "",
+        "viaLabel": "",
+        "viaUrl": "",
+        "createdAt": "2026-07-02T16:00:00Z",
+        "closedAt": closedAt,
+        "mergedAt": mergedAt,
+        "additions": 10,
+        "deletions": 2,
+        "changedFiles": 1,
+    }
+
+
+def _author_pull_cache_row(repo: str, item: dict[str, object]) -> dict[str, object]:
+    row = dict(item)
+    row["repo"] = repo
+    return row
+
+
+def _mock_graphql_search(repo: str, items: list[dict[str, object]]) -> Callable[..., str]:
+    def mock(*_args: str, **_kwargs: object) -> str:
+        return _graphql_search_json(repo, items)
+
+    return mock
+
+
+def _graphql_search_json(repo: str, items: list[dict[str, object]]) -> str:
+    nodes = []
+    for item in items:
+        node = dict(item)
+        node["repository"] = {"nameWithOwner": repo}
+        nodes.append(node)
+    return json.dumps({
+        "data": {
+            "search": {
+                "issueCount": len(nodes),
+                "pageInfo": {"hasNextPage": False, "endCursor": None},
+                "nodes": nodes,
+            },
+        },
+    })
