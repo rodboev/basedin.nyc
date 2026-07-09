@@ -5,6 +5,7 @@ import json
 import sys
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import replace
 from datetime import datetime, timezone
 from datetime import timedelta
 from pathlib import Path
@@ -12,11 +13,12 @@ from pathlib import Path
 from jinja2 import TemplateError
 
 from core.cache import classification_cache_key, load_cache, save_cache, set_cached_closed_classification
-from core.leaderboard import DEFAULT_OVERLAY_CONFIG_DIR, fetch_community_leaderboard, set_overlay_config_dir
+from core.leaderboard import CHANGELOG_RELEASE_PROFILE, DEFAULT_OVERLAY_CONFIG_DIR, fetch_community_leaderboard, repo_credit_profile, set_overlay_config_dir
 from core.classify import ClassificationResult, classify_closed_pr
 from core.classification_rebuild import CacheRebuildInterrupted, live_evidence, rebuild_classification_cache, write_pr_classification_progress
 from core.models import Cache, PullRequest, UserRef, int_value
 from core.credit import cached_release_credit_counts
+from core.releases import refresh_release_cache, release_for_pr
 from core.github import GhError, GhPullRequestView, GhRetryExhausted, run_gh
 from core.html import ReportSanityInput, write_report_if_sane
 from core.page import (
@@ -226,6 +228,18 @@ def generate_report(
 
     cache_updated_early = False
     for repo in repos:
+        if repo_credit_profile(repo) == CHANGELOG_RELEASE_PROFILE:
+            if repo in cache.releaseData:
+                del cache.releaseData[repo]
+                cache_updated_early = True
+            continue
+        author_prs = {pr.number for r, pr in live_prs if r == repo}
+        try:
+            if refresh_release_cache(repo, cache, author_pr_numbers=author_prs, now=now):
+                cache_updated_early = True
+        except GhRetryExhausted:
+            pass
+    for repo in repos:
         try:
             if fetch_community_leaderboard(repo, cache, now=now):
                 cache_updated_early = True
@@ -236,6 +250,8 @@ def generate_report(
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
+    typed_items, release_backfill_updated = backfill_release_data(typed_items, cache, now=now)
+    cache_updated = cache_updated or release_backfill_updated
     if cache_updated or cache_updated_early or author_cache_updated:
         try:
             save_cache(cache, cache_file)
@@ -614,6 +630,63 @@ def report_items_from_live_pull_requests(
         cache_updated = cache_updated or did_update_cache
         items.append(report_item_from_pull_request_view(repo=repo, pr=pr, classification=classification))
     return items, cache_updated
+
+
+def backfill_release_data(
+    items: list[PrReportItem],
+    cache: Cache,
+    *,
+    now: datetime,
+) -> tuple[list[PrReportItem], bool]:
+    updated = False
+    result: list[PrReportItem] = []
+    for item in items:
+        rel = release_for_pr(cache, item.repo, item.number)
+        if rel is None:
+            result.append(item)
+            continue
+        tag_name, release_url = rel
+        if item.statusKey == "shipped" and not item.releaseLabel:
+            item = replace(item, releaseLabel=tag_name, releaseUrl=release_url)
+            entry = cache.entries.get(classification_cache_key(item.repo, item.number))
+            if entry is not None and not entry.release:
+                set_cached_closed_classification(
+                    cache,
+                    repo=item.repo,
+                    number=item.number,
+                    classification=entry.classification,
+                    release=tag_name,
+                    via_label=entry.viaLabel,
+                    via_url=entry.viaUrl,
+                    evidence_kind=entry.evidenceKind,
+                    now=now,
+                )
+                updated = True
+        elif item.classification in ("lost", "withdrawn"):
+            item = replace(
+                item,
+                classification="shipped",
+                statusKey="shipped",
+                statusLabel="Shipped",
+                statusClass="tag-shipped",
+                releaseLabel=tag_name,
+                releaseUrl=release_url,
+                evidenceKind="release-note",
+            )
+            set_cached_closed_classification(
+                cache,
+                repo=item.repo,
+                number=item.number,
+                classification="shipped",
+                release=tag_name,
+                via_label=item.viaLabel,
+                via_url=item.viaUrl,
+                evidence_kind="release-note",
+                now=now,
+            )
+            updated = True
+        result.append(item)
+    return result, updated
 
 
 def _needs_live_classification(repo: str, pr: GhPullRequestView, cache: Cache) -> bool:

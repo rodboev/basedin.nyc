@@ -39,6 +39,7 @@ class PrReportItem:
     statusClass: str
     dateLabel: str
     releaseLabel: str
+    releaseUrl: str
     viaLabel: str
     viaUrl: str
     createdAt: str
@@ -62,6 +63,7 @@ class PrReportItem:
             "statusClass": self.statusClass,
             "dateLabel": self.dateLabel,
             "releaseLabel": self.releaseLabel,
+            "releaseUrl": self.releaseUrl,
             "viaLabel": self.viaLabel,
             "viaUrl": self.viaUrl,
             "createdAt": self.createdAt,
@@ -300,6 +302,7 @@ def report_item_from_script_dict(raw: Mapping[str, object]) -> PrReportItem:
         statusClass=_string_value(raw.get("statusClass")),
         dateLabel=_string_value(raw.get("dateLabel")),
         releaseLabel=_string_value(raw.get("releaseLabel")),
+        releaseUrl=_string_value(raw.get("releaseUrl")),
         viaLabel=_string_value(raw.get("viaLabel")),
         viaUrl=_string_value(raw.get("viaUrl")),
         createdAt=_string_value(raw.get("createdAt")),
@@ -330,6 +333,9 @@ def report_item_from_pull_request_view(
         release_label = "indirect"
     elif classification_key == "shipped" and classification.release:
         release_label = classification.release
+    release_url = ""
+    if release_label and release_label != "indirect":
+        release_url = f"https://github.com/{repo}/releases/tag/{release_label}"
 
     created_at = pr.createdAt
     closed_at = pr.closedAt or ""
@@ -346,6 +352,7 @@ def report_item_from_pull_request_view(
         statusClass=tag,
         dateLabel=format_eastern_date(effective_date),
         releaseLabel=release_label,
+        releaseUrl=release_url,
         viaLabel=classification.via_label,
         viaUrl=classification.via_url,
         createdAt=created_at,

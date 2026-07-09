@@ -10,6 +10,7 @@ from pathlib import Path
 
 from core.github import run_gh
 from core.models import Cache, int_value
+from core.releases import release_credit_counts
 
 LEADERBOARD_CACHE_KEY_VERSION = "community-shipped-v4"
 LEADERBOARD_TTL_SECONDS = 24 * 3600
@@ -322,7 +323,12 @@ def fetch_community_leaderboard(repo: str, cache: Cache, *, now: datetime) -> bo
                     "recentCount": recents.get(login, 0), "lastCreatedAt": last_dates.get(login, "")}
             for login in logins
         },
-        "shippedCounts": _merged_shipped_counts(existing, logins=logins, merged=merged),
+        "shippedCounts": _merged_shipped_counts(
+            existing,
+            logins=logins,
+            merged=merged,
+            release_credited=release_credit_counts(cache, repo) if repo_credit_profile(repo) != CHANGELOG_RELEASE_PROFILE else None,
+        ),
     })
     cache.leaderboards[cache_key] = entry
     print(f"  Built leaderboard for {repo}: {len(nodes)} PRs, {len(logins)} contributors", file=sys.stderr)
@@ -395,18 +401,16 @@ def _merged_shipped_counts(
     *,
     logins: Iterable[str],
     merged: Mapping[str, int],
+    release_credited: Mapping[str, int] | None = None,
 ) -> dict[str, int]:
     prior_raw = existing.get("shippedCounts") if existing is not None else None
     prior = {str(login): int_value(value) for login, value in prior_raw.items()} if isinstance(prior_raw, dict) else {}
-    # Start from the prior map so logins absent from the fresh scan (deleted
-    # accounts return a null author) keep their credit instead of vanishing.
     counts: dict[str, int] = dict(prior)
-    # Prior counts may be evidence-based (cherry-picks, release credit) and exceed
-    # the merged-PR proxy; keep whichever is higher per login.
+    rc = release_credited or {}
     for login in logins:
         prior_key = _existing_case_key(counts, login)
         prior_count = counts.pop(prior_key, 0)
-        counts[login] = max(prior_count, merged.get(login, 0))
+        counts[login] = max(prior_count, merged.get(login, 0), rc.get(login, 0))
     return counts
 
 

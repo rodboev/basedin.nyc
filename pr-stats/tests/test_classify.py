@@ -7,6 +7,7 @@ import pytest
 from core.classify import (
     classify_closed_pr,
     get_pull_request_reference_contexts,
+    get_ship_comment_via,
     has_positive_pull_request_reference_context,
     is_author_withdrawn,
     is_credited_merged_sibling_by_maintainer_carry_forward,
@@ -191,7 +192,6 @@ def test_maintainer_merged_via_rebase_comment_ships(
     make_comment: Callable[..., Comment],
     make_evidence: Callable[..., Evidence],
 ) -> None:
-    # thedotmack/claude-mem#964: ship notice phrased "Merged via rebase onto main"
     pr = make_pr()
     evidence = make_evidence(
         comments=[
@@ -204,6 +204,41 @@ def test_maintainer_merged_via_rebase_comment_ships(
 
     assert result.classification == "shipped"
     assert result.evidence_kind == "comment"
+    assert result.via_label == "rebase"
+
+
+def test_comment_shipped_via_pr_reference(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr()
+    evidence = make_evidence(
+        comments=[make_comment(body="Merged via PR #3601, rebased onto current main.")],
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "shipped"
+    assert result.via_label == "#3601"
+    assert "/pull/3601" in result.via_url
+
+
+def test_comment_shipped_via_commit_reference(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr()
+    evidence = make_evidence(
+        comments=[make_comment(body="Shipped in commit `b750c720` on main.")],
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "shipped"
+    assert result.via_label == "b750c72"
+    assert "/commit/b750c720" in result.via_url
 
 
 def test_maintainer_branch_merge_comment_ships(
@@ -602,3 +637,76 @@ def test_maintainer_carry_forward_rejects_missing_commit_author(
 )
 def test_referenced_pr_resolution_boundary(text: str, number: int, expected: bool) -> None:
     assert should_resolve_referenced_pull_request(text, number) is expected
+
+
+@pytest.mark.parametrize(
+    ("body", "expected_label"),
+    [
+        ("Merged via #3601 — cherry-picked onto main.", "#3601"),
+        ("Cherry-picked into PR #896, rebased onto current main.", "#896"),
+        ("Salvaged into #40561 with authorship credited.", "#40561"),
+        ("Shipped in commit `b750c720` on main.", "b750c72"),
+        ("cherry-picked in commit ee40084, which addresses the issue", "ee40084"),
+        ("Shipped in: `223a2ca` (main)", "223a2ca"),
+        ("Merged via rebase onto main. Build clean.", "rebase"),
+        ("Merged into the community-edge branch. Thanks!", "rebase"),
+    ],
+)
+def test_ship_comment_via_extraction(body: str, expected_label: str) -> None:
+    label, url = get_ship_comment_via(body, "owner/repo", 10)
+    assert label == expected_label
+    assert url  # always non-empty
+
+
+def test_ship_comment_via_skips_own_pr_number() -> None:
+    label, _ = get_ship_comment_via("Merged via #10 onto main.", "owner/repo", 10)
+    assert label == "rebase"
+
+
+def test_closing_because_with_team_replacement_is_accepted_indirect(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr()
+    replacement = make_ref(number=7750, author={"login": "teammember"})
+    evidence = make_evidence(
+        comments=[
+            make_comment(
+                body=(
+                    "Thanks for the design. Closing because the landscape changed: "
+                    "#7750 removed the guard entirely (shipped in v1.4.128), "
+                    "and #7847 reused your approach."
+                ),
+            ),
+        ],
+        pull_states_by_pr={7750: replacement},
+        maintainer_logins={"maintainer", "teammember"},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "accepted-indirect"
+    assert result.via_label == "#7750"
+
+
+def test_closing_because_with_third_party_replacement_is_lost(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr()
+    replacement = make_ref(number=200, author={"login": "competitor"})
+    evidence = make_evidence(
+        comments=[
+            make_comment(body="Closing because #200 solved this differently"),
+        ],
+        pull_states_by_pr={200: replacement},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "lost"
+    assert "competing" in result.log_label

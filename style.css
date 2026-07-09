@@ -319,13 +319,37 @@ body .nav-links a:hover {
 }
 
 body .nav-links .current {
-  color: var(--nav-current);
+  color: var(--nav-current) !important;
   font-weight: 600;
 }
 
 body .nav-links .nav-sep {
   color: var(--nav-sep);
   opacity: 0.5;
+}
+
+body .nav-links .nav-links-icons {
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  gap: 1.1rem;
+}
+
+body .nav-links a.nav-link--icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body .nav-links a.nav-link--icon:hover {
+  text-decoration: none;
+}
+
+body .nav-links a.nav-link--icon svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: currentColor;
+  display: block;
 }
 
 body:not(.home) .back-link {

@@ -167,6 +167,7 @@ def test_report_items_serialize_to_existing_script_shape() -> None:
             "statusClass": "tag-done",
             "dateLabel": "7/2/26 9:27 AM",
             "releaseLabel": "",
+            "releaseUrl": "",
             "viaLabel": "",
             "viaUrl": "",
             "createdAt": "2026-07-01T00:00:00Z",
@@ -182,8 +183,10 @@ def test_report_items_serialize_to_existing_script_shape() -> None:
 def test_report_items_round_trip_existing_script_shape(repo_root: Path) -> None:
     raw_items = load_pr_data_from_html((repo_root / "index.html").read_text(encoding="utf-8"))
     typed_items = report_items_from_script_dicts(raw_items)
+    re_serialized = report_items_to_script_dicts(typed_items[:5])
+    expected = [{**item, "releaseUrl": item.get("releaseUrl", "")} for item in raw_items[:5]]
 
-    assert report_items_to_script_dicts(typed_items[:5]) == raw_items[:5]
+    assert re_serialized == expected
 
 
 def test_report_item_from_pull_request_view_maps_classification_to_pr_data_shape() -> None:
@@ -221,6 +224,7 @@ def test_report_item_from_pull_request_view_maps_classification_to_pr_data_shape
         "statusClass": "tag-shipped",
         "dateLabel": "7/2/26 9:27 AM",
         "releaseLabel": "v1.2.3",
+        "releaseUrl": "https://github.com/nesquena/hermes-webui/releases/tag/v1.2.3",
         "viaLabel": "direct",
         "viaUrl": "https://github.com/nesquena/hermes-webui/pull/42",
         "createdAt": "2026-07-01T00:00:00Z",
@@ -496,6 +500,7 @@ def _item(**overrides: object) -> PrReportItem:
         "statusClass": "tag-done",
         "dateLabel": "7/2/26 9:27 AM",
         "releaseLabel": "",
+        "releaseUrl": "",
         "viaLabel": "",
         "viaUrl": "",
         "createdAt": "2026-07-01T00:00:00Z",
@@ -520,6 +525,7 @@ def _item(**overrides: object) -> PrReportItem:
         statusClass=str(data["statusClass"]),
         dateLabel=str(data["dateLabel"]),
         releaseLabel=str(data["releaseLabel"]),
+        releaseUrl=str(data["releaseUrl"]),
         viaLabel=str(data["viaLabel"]),
         viaUrl=str(data["viaUrl"]),
         createdAt=str(data["createdAt"]),

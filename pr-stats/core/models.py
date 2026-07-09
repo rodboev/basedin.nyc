@@ -35,6 +35,7 @@ class Cache(StrictBaseModel):
     absorbedCreditMap: dict[str, JsonObject] = Field(default_factory=dict)
     shipCommentClassifications: dict[str, JsonObject] = Field(default_factory=dict)
     commitScanMeta: dict[str, JsonObject] = Field(default_factory=dict)
+    releaseData: dict[str, JsonObject] = Field(default_factory=dict)
     invalid_sections: frozenset[str] = Field(default_factory=frozenset, exclude=True)
 
     def section_needs_rebuild(self, name: str) -> bool:

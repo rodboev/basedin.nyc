@@ -39,6 +39,7 @@ _TOP_LEVEL_SECTIONS: Final[tuple[str, ...]] = (
     "absorbedCreditMap",
     "shipCommentClassifications",
     "commitScanMeta",
+    "releaseData",
 )
 
 _T = TypeVar("_T")
@@ -178,6 +179,7 @@ def _cache_from_mapping(raw: dict[str, object]) -> Cache:
         absorbedCreditMap=_load_section(raw, "absorbedCreditMap", _JSON_OBJECT_MAP, invalid_sections),
         shipCommentClassifications=_load_section(raw, "shipCommentClassifications", _JSON_OBJECT_MAP, invalid_sections),
         commitScanMeta=_load_section(raw, "commitScanMeta", _JSON_OBJECT_MAP, invalid_sections),
+        releaseData=_load_section(raw, "releaseData", _JSON_OBJECT_MAP, invalid_sections),
         invalid_sections=frozenset(invalid_sections),
     )
 

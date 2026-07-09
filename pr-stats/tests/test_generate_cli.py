@@ -12,6 +12,7 @@ from pytest import CaptureFixture, MonkeyPatch
 
 import generate
 import core.leaderboard as leaderboard_mod
+import core.releases as releases_mod
 from core.classification_rebuild import CacheRebuildInterrupted, CacheRebuildResult
 from core.github import GhRetryExhausted
 from core.classify import ClassificationResult
@@ -90,6 +91,7 @@ def test_default_generate_fetches_live_prs_instead_of_reusing_stale_html(
     )
     monkeypatch.setattr(generate, "run_gh", mock_gh)
     monkeypatch.setattr(leaderboard_mod, "run_gh", mock_gh)
+    monkeypatch.setattr(releases_mod, "fetch_repo_releases", lambda _repo, **_kw: None)
     monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
     monkeypatch.setattr(leaderboard_mod, "_overlay_cache", {})
 
@@ -140,6 +142,7 @@ def test_default_generate_survives_leaderboard_retry_exhaustion(
         raise GhRetryExhausted("gh api graphql failed after 5 attempts: GitHub rate limit")
 
     monkeypatch.setattr(leaderboard_mod, "run_gh", _exhausted)
+    monkeypatch.setattr(releases_mod, "fetch_repo_releases", lambda _repo, **_kw: None)
     monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
     monkeypatch.setattr(leaderboard_mod, "_overlay_cache", {})
 
@@ -170,6 +173,7 @@ def test_default_generate_sanity_gate_keeps_existing_output(
     mock_gh = _mock_graphql_search("owner/repo", [_gh_pr_list_item(number=101, state="MERGED", mergedAt="2026-07-02T17:00:00Z")])
     monkeypatch.setattr(generate, "run_gh", mock_gh)
     monkeypatch.setattr(leaderboard_mod, "run_gh", mock_gh)
+    monkeypatch.setattr(releases_mod, "fetch_repo_releases", lambda _repo, **_kw: None)
     monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
     monkeypatch.setattr(leaderboard_mod, "_overlay_cache", {})
 
@@ -197,6 +201,7 @@ def test_default_generate_classifies_and_caches_closed_unmerged_live_pr(
     mock_gh = _mock_graphql_search("owner/repo", [_gh_pr_list_item(number=7, state="CLOSED", closedAt="2026-07-02T17:00:00Z")])
     monkeypatch.setattr(generate, "run_gh", mock_gh)
     monkeypatch.setattr(leaderboard_mod, "run_gh", mock_gh)
+    monkeypatch.setattr(releases_mod, "fetch_repo_releases", lambda _repo, **_kw: None)
     monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
     monkeypatch.setattr(leaderboard_mod, "_overlay_cache", {})
     monkeypatch.setattr(generate, "live_evidence", lambda *_args, **_kwargs: Evidence())
@@ -257,6 +262,7 @@ def test_default_generate_uses_cache_for_closed_unmerged_live_pr(
     mock_gh = _mock_graphql_search("owner/repo", [_gh_pr_list_item(number=7, state="CLOSED", closedAt="2026-07-02T17:00:00Z")])
     monkeypatch.setattr(generate, "run_gh", mock_gh)
     monkeypatch.setattr(leaderboard_mod, "run_gh", mock_gh)
+    monkeypatch.setattr(releases_mod, "fetch_repo_releases", lambda _repo, **_kw: None)
     monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
     monkeypatch.setattr(leaderboard_mod, "_overlay_cache", {})
 
@@ -355,6 +361,7 @@ def test_generate_updates_cached_open_pr_that_graphql_reports_merged(
         _mock_graphql_search("owner/repo", [_gh_pr_list_item(number=7, state="MERGED", mergedAt="2026-07-08T12:00:00Z")]),
     )
     monkeypatch.setattr(leaderboard_mod, "run_gh", _mock_graphql_search("owner/repo", []))
+    monkeypatch.setattr(releases_mod, "fetch_repo_releases", lambda _repo, **_kw: None)
     monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
     monkeypatch.setattr(leaderboard_mod, "_overlay_cache", {})
 

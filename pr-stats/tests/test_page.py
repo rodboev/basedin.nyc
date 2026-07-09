@@ -285,7 +285,7 @@ def test_render_pr_controls_and_table_matches_ps1_owned_markup() -> None:
 def test_render_pr_bootstrap_uses_existing_script_surface() -> None:
     assert render_pr_bootstrap(items=[_item(number=1, title="Fix")]) == (
         'var PR_FILTERS = [{"key":"open","label":"Open","count":0},{"key":"shipped","label":"Shipped","count":1},{"key":"not-shipped","label":"Not Shipped","count":0}];\n'
-        'var PR_DATA = [{"number":1,"url":"https://github.com/owner/repo/pull/1","repo":"owner/repo","repoLabel":"repo","title":"Fix","classification":"shipped","statusKey":"shipped","statusLabel":"Shipped","statusClass":"tag-shipped","dateLabel":"7/2/26 9:27 AM","releaseLabel":"","viaLabel":"","viaUrl":"","createdAt":"2026-07-01T00:00:00Z","closedAt":"2026-07-02T13:27:37Z","mergedAt":"","additions":1,"deletions":2,"changedFiles":3}];\n'
+        'var PR_DATA = [{"number":1,"url":"https://github.com/owner/repo/pull/1","repo":"owner/repo","repoLabel":"repo","title":"Fix","classification":"shipped","statusKey":"shipped","statusLabel":"Shipped","statusClass":"tag-shipped","dateLabel":"7/2/26 9:27 AM","releaseLabel":"","releaseUrl":"","viaLabel":"","viaUrl":"","createdAt":"2026-07-01T00:00:00Z","closedAt":"2026-07-02T13:27:37Z","mergedAt":"","additions":1,"deletions":2,"changedFiles":3}];\n'
         "var CURRENT_PR_FILTER = {\n"
         "  statusKey: 'shipped',\n"
         "  repoKey: 'all'\n"
@@ -317,6 +317,7 @@ def _item(**overrides: object) -> PrReportItem:
         "statusClass": "tag-shipped",
         "dateLabel": "7/2/26 9:27 AM",
         "releaseLabel": "",
+        "releaseUrl": "",
         "viaLabel": "",
         "viaUrl": "",
         "createdAt": "2026-07-01T00:00:00Z",
@@ -339,6 +340,7 @@ def _item(**overrides: object) -> PrReportItem:
         statusClass=str(data["statusClass"]),
         dateLabel=str(data["dateLabel"]),
         releaseLabel=str(data["releaseLabel"]),
+        releaseUrl=str(data["releaseUrl"]),
         viaLabel=str(data["viaLabel"]),
         viaUrl=str(data["viaUrl"]),
         createdAt=str(data["createdAt"]),

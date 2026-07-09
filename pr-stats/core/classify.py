@@ -11,7 +11,7 @@ MAINTAINER_SHIP_PATTERN = re.compile(
     re.IGNORECASE,
 )
 DUPLICATE_PATTERNS: tuple[str, ...] = ("duplicate",)
-SUPERSEDED_PATTERNS: tuple[str, ...] = ("supersed", "consolidat", "closing in favor", "closed in favor")
+SUPERSEDED_PATTERNS: tuple[str, ...] = ("supersed", "consolidat", "closing in favor", "closed in favor", "closing because")
 CREDIT_PATTERNS: tuple[str, ...] = ("co-author", "coauthor", "co-authored", "authorship", "attribution", "credited")
 CONTINUATION_PATTERNS: tuple[str, ...] = ("same credit", "same commit", "same change", "reopen")
 WITHDRAWN_PATTERN = re.compile(r"\bwithdraw(?:ing|n)?\b", re.IGNORECASE)
@@ -108,7 +108,7 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
 
     is_direct_merged = pr.state == "MERGED" or bool(pr.mergedAt)
     is_timeline_shipped = bool(merged_release_closer or merged_release_cross_ref or release_ref_commit)
-    is_shipped = has_maintainer_ship_comment(pr, evidence)
+    ship_comment_body = has_maintainer_ship_comment(pr, evidence)
     is_duplicate = matches_any_pattern(comments, DUPLICATE_PATTERNS)
     superseded_evidence = get_superseded_evidence(pr, evidence)
     has_superseded_ref = has_superseded_reference(pr, evidence)
@@ -210,8 +210,16 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
             evidence_kind="superseded",
             log_label="superseded",
         )
-    if is_shipped:
-        return ClassificationResult(classification="shipped", release=release, evidence_kind="comment", log_label="shipped")
+    if ship_comment_body:
+        ship_via_label, ship_via_url = get_ship_comment_via(ship_comment_body, pr.repo, pr.number)
+        return ClassificationResult(
+            classification="shipped",
+            release=release,
+            via_label=ship_via_label,
+            via_url=ship_via_url,
+            evidence_kind="comment",
+            log_label="shipped",
+        )
     if is_duplicate:
         return ClassificationResult(classification="lost", release=release, evidence_kind="lost", log_label="lost (competing PR won)")
     if has_superseded_ref:
@@ -272,7 +280,7 @@ def has_maintainer_non_bot_comment(pr: PullRequest, evidence: Evidence) -> bool:
     return False
 
 
-def has_maintainer_ship_comment(pr: PullRequest, evidence: Evidence) -> bool:
+def has_maintainer_ship_comment(pr: PullRequest, evidence: Evidence) -> str:
     author_login = author_login_for_classification(pr, evidence)
     for comment in evidence.comments:
         if is_review_bot_login(comment.author.login):
@@ -282,8 +290,27 @@ def has_maintainer_ship_comment(pr: PullRequest, evidence: Evidence) -> bool:
         if not is_maintainer_comment(pr.repo, comment, evidence):
             continue
         if has_standalone_ship_statement(comment.body):
-            return True
-    return False
+            return comment.body
+    return ""
+
+
+_COMMIT_REF_PATTERN = re.compile(r"(?:commit\s+|in[:\s]+|Shipped\s+in[:\s]+)`?([0-9a-f]{7,40})`?", re.IGNORECASE)
+
+
+def get_ship_comment_via(body: str, repo: str, pr_number: int) -> tuple[str, str]:
+    for m in re.finditer(r"(?:via|into|in)\s+(?:PR\s+)?#(\d+)", body, re.IGNORECASE):
+        num = int(m.group(1))
+        if num != pr_number and num >= MIN_SPECULATIVE_REFERENCED_PR_NUMBER:
+            return f"#{num}", f"https://github.com/{repo}/pull/{num}"
+    for m in re.finditer(r"(?:PR|pull)\s+#(\d+)", body, re.IGNORECASE):
+        num = int(m.group(1))
+        if num != pr_number and num >= MIN_SPECULATIVE_REFERENCED_PR_NUMBER:
+            return f"#{num}", f"https://github.com/{repo}/pull/{num}"
+    commit_match = _COMMIT_REF_PATTERN.search(body)
+    if commit_match:
+        oid = commit_match.group(1)
+        return oid[:7], f"https://github.com/{repo}/commit/{oid}"
+    return "rebase", f"https://github.com/{repo}/pull/{pr_number}"
 
 
 def has_standalone_ship_statement(text: str, radius: int = 80) -> bool:

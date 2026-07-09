@@ -168,7 +168,7 @@ def build_chart_payload(
     total_opened = sum(int(day["prsOpened"]) for day in chart_data)
     raw_avg_loc = round(total_loc / active_days) if active_days else 0
     avg_loc = f"{raw_avg_loc / 1000:.1f}k" if raw_avg_loc >= 1000 else str(raw_avg_loc)
-    avg_prs = str(round(total_opened / active_days, 1)) if active_days else "0"
+    avg_prs = str(int(total_opened / active_days + 0.5)) if active_days else "0"
     return chart_json, repo_json, names_json, avg_prs, avg_loc
 
 

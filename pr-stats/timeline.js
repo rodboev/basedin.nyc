@@ -339,7 +339,7 @@ function updateBreakdown(r) {
   } else {
     if (el = document.getElementById('bd-days-label')) el.textContent = 'No active days in range';
   }
-  var avgPrs = activeDays > 0 ? (total / activeDays).toFixed(1) : '0';
+  var avgPrs = activeDays > 0 ? String(Math.round(total / activeDays)) : '0';
   var rawAvgLoc = activeDays > 0 ? Math.round(totalLoc / activeDays) : 0;
   var avgLoc = rawAvgLoc >= 1000 ? (rawAvgLoc / 1000).toFixed(1) + 'k' : String(rawAvgLoc);
   if (el = document.getElementById('bd-avg-prs')) el.textContent = avgPrs;
@@ -521,7 +521,7 @@ function renderBdFrame(oD, nD, et) {
   if (el = document.getElementById('bd-open')) el.textContent = cO;
   if (el = document.getElementById('bd-lost-sup')) el.textContent = cL + cSp;
   if (el = document.getElementById('bd-rate')) el.textContent = formatAcceptanceRate(cR) + '%';
-  if (el = document.getElementById('bd-avg-prs')) el.textContent = cAp.toFixed(1);
+  if (el = document.getElementById('bd-avg-prs')) el.textContent = Math.round(cAp);
   if (el = document.getElementById('bd-avg-loc')) el.textContent = rL >= 1000 ? (rL/1000).toFixed(1)+'k' : rL;
   if (el = document.getElementById('bd-days')) el.textContent = cDd === 1 ? '1 day' : cDd + ' days';
   [['bd-bar-shipped',cSh,oD.barSh,nD.barSh],['bd-bar-superseded',cSp,oD.barSp,nD.barSp],
