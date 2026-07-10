@@ -315,6 +315,8 @@ def test_format_acceptance_rate_keeps_one_decimal_above_99_without_rounding_to_1
     assert format_acceptance_rate((999 / 1000) * 100) == "99.9"
     assert format_acceptance_rate((9999 / 10000) * 100) == "99.9"
     assert format_acceptance_rate(100) == "100"
+    assert format_acceptance_rate(99.0) == "99"
+    assert format_acceptance_rate(99.04) == "99"
     assert format_acceptance_rate(98.6) == "99"
     assert format_acceptance_rate(None) == "N/A"
 

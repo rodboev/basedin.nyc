@@ -146,9 +146,9 @@ def render_repo_status_section(repo: str, items: list[PrReportItem]) -> str:
         superseded_status="superseded",
         lost_status="lost",
     )
-    short = repo.rsplit("/", 1)[-1]
+    repo_link = f'<a class="plain-link" href="https://github.com/{escape(repo, quote=True)}">{escape(repo)}</a>'
     return (
-        f"<h2>{escape(short)} ({counts.total} PRs)</h2>\n"
+        f"<h2>{repo_link} ({counts.total} PRs)</h2>\n"
         '<table class="repo-status">\n'
         "  <tr><th>Status</th><th>Count</th><th>Details</th></tr>\n"
         f"{row_html}</table>"
@@ -260,8 +260,9 @@ def render_leaderboard_section(
         f' data-visible-items="{visible_entries}" data-rows-per-item="1"' if collapse_mode == "top" else ""
     )
     projections = render_leaderboard_projections(rows=rows, author=author, my_rank=my_rank, now=now)
+    repo_link = f'<a class="plain-link" href="https://github.com/{escape(repo, quote=True)}">{escape(repo)}</a>'
     return (
-        f"<h2>{escape(short)} Community Leaderboard</h2>\n"
+        f"<h2>{repo_link} Community Leaderboard</h2>\n"
         f'<div class="collapsible-table leaderboard{collapsed_class}" id="{escape(block_id, quote=True)}" '
         f'data-collapse-mode="{collapse_mode}"{top_attrs}>\n'
         "<table>\n"
@@ -335,9 +336,14 @@ def render_representative_section(items: Iterable[RepresentativeItem]) -> str:
     for item in item_list:
         release_cell = _representative_release_cell(item)
         via_cell = _linked_label(item.viaLabel, item.viaUrl)
+        repo_cell = (
+            f'<a class="plain-link" href="https://github.com/{escape(item.repo, quote=True)}">{escape(item.repoLabel)}</a>'
+            if item.repo
+            else escape(item.repoLabel)
+        )
         rows.append(
             f'  <tr class="rep-main-row"><td><a href="{escape(item.url, quote=True)}">#{item.number}</a></td>'
-            f'<td>{escape(item.repoLabel)}</td><td class="rep-desc-cell">{item.desc}</td>'
+            f'<td>{repo_cell}</td><td class="rep-desc-cell">{item.desc}</td>'
             f"<td>{release_cell}</td><td>{via_cell}</td></tr>\n"
             f'  <tr class="rep-desc-row"><td class="rep-desc-gap"></td>'
             f'<td colspan="4"><div class="rep-desc-text">{item.desc}</div></td></tr>\n',

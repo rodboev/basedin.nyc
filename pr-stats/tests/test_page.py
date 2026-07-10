@@ -84,7 +84,7 @@ def test_render_repo_status_sections_orders_by_display_repos_and_skips_empty() -
 
     html = render_repo_status_sections(repos=["owner/beta", "owner/alpha", "owner/empty"], items=items)
 
-    assert html.index("<h2>beta (1 PRs)</h2>") < html.index("<h2>alpha (1 PRs)</h2>")
+    assert html.index('<h2><a class="plain-link" href="https://github.com/owner/beta">owner/beta</a> (1 PRs)</h2>') < html.index('<h2><a class="plain-link" href="https://github.com/owner/alpha">owner/alpha</a> (1 PRs)</h2>')
     assert "empty" not in html
     assert '<table class="repo-status">' in html
 
@@ -110,7 +110,7 @@ def test_render_leaderboard_section_top_mode_statuses_and_projections() -> None:
 
     html = render_leaderboard_section(repo="owner/repo", items=items, cache=cache, now=NOW, author="rodboev")
 
-    assert '<h2>repo Community Leaderboard</h2>' in html
+    assert '<h2><a class="plain-link" href="https://github.com/owner/repo">owner/repo</a> Community Leaderboard</h2>' in html
     assert 'id="lb-repo" data-collapse-mode="top" data-visible-items="10" data-rows-per-item="1"' in html
     assert ' collapsed' not in html
     assert "expand-row" not in html
@@ -210,7 +210,7 @@ def test_render_representative_section_rows_release_and_via() -> None:
     assert '<table class="rep-prs-table shipped-prs">' in html
     assert (
         '  <tr class="rep-main-row"><td><a href="https://github.com/nesquena/hermes-webui/pull/3571">#3571</a></td>'
-        '<td>webui</td><td class="rep-desc-cell">adds a saved prompts library</td>'
+        '<td><a class="plain-link" href="https://github.com/nesquena/hermes-webui">webui</a></td><td class="rep-desc-cell">adds a saved prompts library</td>'
         '<td><a href="https://github.com/nesquena/hermes-webui/releases/tag/v0.51.338">v0.51.338</a></td>'
         '<td><a href="https://github.com/nesquena/hermes-webui/pull/3860">#3860</a></td></tr>'
     ) in html

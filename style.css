@@ -3,6 +3,20 @@
 :root {
   --font: "DM Sans", sans-serif;
   --link-color: #3376d2;
+  /* shared nav palette; matches the stats page. Dark default, light override below. */
+  --nav-link-dim: #8b949e;
+  --nav-link-hover: #58a6ff;
+  --nav-current: #e6edf3;
+  --nav-sep: #5f6770;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --nav-link-dim: #888;
+    --nav-link-hover: #3376d2;
+    --nav-current: #1a1a1a;
+    --nav-sep: #b6b6b6;
+  }
 }
 
 *,
@@ -60,7 +74,7 @@ body.home .home-links {
   font: 400 0.92rem var(--font);
 }
 body.home .home-links a {
-  color: rgba(255, 255, 255, 0.56);
+  color: var(--nav-link-dim);
   text-decoration: none;
   text-align: center;
 }
@@ -230,9 +244,6 @@ body.home a.preview:is(:hover, :focus, :active, .hover) > span > span:first-chil
 }
 
 @media (prefers-color-scheme: light) {
-  body.home .home-links a {
-    color: #777;
-  }
   body.home .home-links a:is(:hover, .hover) {
     color: #1a1a1a;
   }
@@ -393,14 +404,7 @@ body .nav-links .current {
 body.projects {
   --page-max-width: 1020px;
   --page-h1: rgba(255, 255, 255, 0.88);
-  --page-dim: rgba(255, 255, 255, 0.56);
-  --page-active: rgba(255, 255, 255, 0.88);
   --page-link: #6ba3e8;
-  --page-sep: rgba(255, 255, 255, 0.22);
-  --nav-link-dim: var(--page-dim);
-  --nav-link-hover: var(--page-active);
-  --nav-current: var(--page-active);
-  --nav-sep: var(--page-sep);
   --page-link-hover-bg: #6ba3e8;
   --page-link-hover-fg: #1a1a1a;
   color: rgba(255, 255, 255, 0.88);
@@ -412,6 +416,12 @@ body.projects {
 
 body.projects a {
   color: #6ba3e8;
+}
+
+/* keep nav links on the shared palette; the rule above only colors content links */
+body.projects .nav-links a,
+body.projects .nav-links .current {
+  color: var(--nav-link-dim);
 }
 
 .project {
@@ -566,10 +576,7 @@ body.preview .btn span {
   body.projects {
     color: #1a1a1a;
     --page-h1: #1a1a1a;
-    --page-dim: #777;
-    --page-active: #1a1a1a;
     --page-link: #3376d2;
-    --page-sep: #c6c2bc;
     --page-link-hover-bg: #3376d2;
     --page-link-hover-fg: #fff;
   }
@@ -750,6 +757,10 @@ body.pr {
 
 body.pr a {
   color: var(--pr-link);
+}
+
+body.pr a.plain-link {
+  color: inherit;
 }
 
 body.pr .nav-links a,

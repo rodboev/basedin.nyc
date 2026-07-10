@@ -80595,11 +80595,11 @@
     },
     "stablyai/orca#7658": {
       "classification": "shipped",
-      "release": "",
+      "release": "v1.4.131-rc.2",
       "viaLabel": "direct",
       "viaUrl": "https://github.com/stablyai/orca/pull/7658",
       "evidenceKind": "direct-merge",
-      "cachedAt": "2026-07-10T01:04:28.997395Z"
+      "cachedAt": "2026-07-10T20:24:21.326200Z"
     },
     "headroomlabs-ai/headroom#1828": {
       "classification": "shipped",
@@ -80611,19 +80611,19 @@
     },
     "stablyai/orca#7882": {
       "classification": "shipped",
-      "release": "",
+      "release": "v1.4.132-rc.0",
       "viaLabel": "direct",
       "viaUrl": "https://github.com/stablyai/orca/pull/7882",
       "evidenceKind": "direct-merge",
-      "cachedAt": "2026-07-10T12:10:19.759533Z"
+      "cachedAt": "2026-07-10T20:24:21.326200Z"
     },
     "stablyai/orca#7891": {
       "classification": "shipped",
-      "release": "",
+      "release": "v1.4.132-rc.0",
       "viaLabel": "direct",
       "viaUrl": "https://github.com/stablyai/orca/pull/7891",
       "evidenceKind": "direct-merge",
-      "cachedAt": "2026-07-10T12:10:19.759533Z"
+      "cachedAt": "2026-07-10T20:24:21.326200Z"
     },
     "nesquena/hermes-webui#5873": {
       "classification": "accepted-indirect",
@@ -80648,6 +80648,126 @@
       "viaUrl": "https://github.com/mem0ai/mem0/pull/5797",
       "evidenceKind": "direct-merge",
       "cachedAt": "2026-07-10T14:37:01.368325Z"
+    },
+    "nesquena/hermes-webui#5887": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5887",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-10T20:24:21.326200Z"
+    },
+    "stablyai/orca#7392": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/stablyai/orca/pull/7392",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-10T20:24:21.326200Z"
+    },
+    "nesquena/hermes-webui#5677": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5677",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-10T21:51:49.105329Z"
+    },
+    "NVIDIA/SkillSpector#248": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/NVIDIA/SkillSpector/pull/248",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-10T21:51:49.105329Z"
+    },
+    "NousResearch/hermes-agent#37595": {
+      "classification": "accepted-indirect",
+      "release": "",
+      "viaLabel": "#61368",
+      "viaUrl": "https://github.com/NousResearch/hermes-agent/pull/61368",
+      "evidenceKind": "accepted-indirect",
+      "cachedAt": "2026-07-10T21:55:11.487756Z"
+    },
+    "NousResearch/hermes-agent#39407": {
+      "classification": "accepted-indirect",
+      "release": "",
+      "viaLabel": "#61131",
+      "viaUrl": "https://github.com/NousResearch/hermes-agent/pull/61131",
+      "evidenceKind": "accepted-indirect",
+      "cachedAt": "2026-07-10T21:55:11.487756Z"
+    },
+    "nesquena/hermes-webui#5739": {
+      "classification": "shipped",
+      "release": "v0.52.30",
+      "viaLabel": "#5908",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5908",
+      "evidenceKind": "timeline",
+      "cachedAt": "2026-07-11T01:00:31.854354Z"
+    },
+    "nesquena/hermes-webui#5746": {
+      "classification": "shipped",
+      "release": "v0.52.29",
+      "viaLabel": "#5906",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5906",
+      "evidenceKind": "timeline",
+      "cachedAt": "2026-07-11T01:00:31.854354Z"
+    },
+    "kenn-io/agentsview#1084": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1084",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-11T01:00:31.854354Z"
+    },
+    "kenn-io/agentsview#1078": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1078",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-11T01:00:31.854354Z"
+    },
+    "headroomlabs-ai/headroom#2000": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2000",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-11T01:00:31.854354Z"
+    },
+    "stablyai/orca#6427": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-07-11T01:00:31.854354Z"
+    },
+    "headroomlabs-ai/headroom#2015": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2015",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-11T03:44:02.472342Z"
+    },
+    "stablyai/orca#7072": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-07-11T03:44:02.472342Z"
+    },
+    "stablyai/orca#8217": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/stablyai/orca/pull/8217",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-11T06:21:51.229932Z"
     }
   },
   "authorPulls": {
@@ -80924,11 +81044,11 @@
     "nesquena/hermes-webui#5746": {
       "repo": "nesquena/hermes-webui",
       "number": 5746,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "feat(chat): add final answer only activity display mode (#5706)",
       "createdAt": "2026-07-07T11:11:03Z",
-      "updatedAt": "2026-07-07T14:51:05Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-11T00:08:38Z",
+      "closedAt": "2026-07-11T00:07:53Z",
       "mergedAt": null,
       "headRefName": "pr/5706-final-answer-only-activity",
       "author": {
@@ -80960,11 +81080,11 @@
     "nesquena/hermes-webui#5739": {
       "repo": "nesquena/hermes-webui",
       "number": 5739,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "feat(worklog): show Transparent Stream event timestamps",
       "createdAt": "2026-07-07T04:26:02Z",
-      "updatedAt": "2026-07-07T08:01:08Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-11T00:57:14Z",
+      "closedAt": "2026-07-11T00:56:36Z",
       "mergedAt": null,
       "headRefName": "pr/5700-worklog-event-timestamps",
       "author": {
@@ -81035,15 +81155,15 @@
       "state": "OPEN",
       "title": "fix(#2729): show Docker image update notices",
       "createdAt": "2026-07-07T03:49:29Z",
-      "updatedAt": "2026-07-07T07:07:08Z",
+      "updatedAt": "2026-07-11T03:56:43Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/2729-docker-update-notices",
       "author": {
         "login": "rodboev"
       },
-      "additions": 328,
-      "deletions": 4,
+      "additions": 329,
+      "deletions": 5,
       "changedFiles": 5,
       "url": "https://github.com/nesquena/hermes-webui/pull/5733"
     },
@@ -81071,16 +81191,16 @@
       "state": "OPEN",
       "title": "fix(cli): preserve WSL cwd through the Windows bridge (#6965)",
       "createdAt": "2026-07-07T03:37:16Z",
-      "updatedAt": "2026-07-09T16:52:49Z",
+      "updatedAt": "2026-07-11T02:31:35Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/orca-6965-wsl-cli-cwd-bridge",
       "author": {
         "login": "rodboev"
       },
-      "additions": 154,
-      "deletions": 11,
-      "changedFiles": 4,
+      "additions": 143,
+      "deletions": 36,
+      "changedFiles": 3,
       "url": "https://github.com/stablyai/orca/pull/7640"
     },
     "stablyai/orca#7641": {
@@ -81410,12 +81530,12 @@
     "nesquena/hermes-webui#5677": {
       "repo": "nesquena/hermes-webui",
       "number": 5677,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(#4812): add resumable session SSE stream",
       "createdAt": "2026-07-06T09:56:46Z",
-      "updatedAt": "2026-07-10T15:01:09Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-10T20:57:11Z",
+      "closedAt": "2026-07-10T20:56:23Z",
+      "mergedAt": "2026-07-10T20:56:23Z",
       "headRefName": "pr/session-sse-4812",
       "author": {
         "login": "rodboev"
@@ -82130,12 +82250,12 @@
     "stablyai/orca#7392": {
       "repo": "stablyai/orca",
       "number": 7392,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(browser): allow trusted embedded popup windows",
       "createdAt": "2026-07-05T02:02:33Z",
-      "updatedAt": "2026-07-10T18:39:10Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-10T18:52:49Z",
+      "closedAt": "2026-07-10T18:52:49Z",
+      "mergedAt": "2026-07-10T18:52:49Z",
       "headRefName": "pr/orca-7374-embedded-oauth-popups",
       "author": {
         "login": "rodboev"
@@ -82295,16 +82415,16 @@
       "state": "OPEN",
       "title": "feat(#3351): add trusted-header auth core",
       "createdAt": "2026-07-04T19:36:06Z",
-      "updatedAt": "2026-07-10T09:22:32Z",
+      "updatedAt": "2026-07-10T23:32:11Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/t339-trusted-header-auth",
       "author": {
         "login": "rodboev"
       },
-      "additions": 999,
-      "deletions": 36,
-      "changedFiles": 4,
+      "additions": 1218,
+      "deletions": 46,
+      "changedFiles": 6,
       "url": "https://github.com/nesquena/hermes-webui/pull/5568"
     },
     "nesquena/hermes-webui#5547": {
@@ -83120,11 +83240,11 @@
     "stablyai/orca#7072": {
       "repo": "stablyai/orca",
       "number": 7072,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(git): normalize WSL Source Control pathspecs",
       "createdAt": "2026-07-02T05:27:47Z",
-      "updatedAt": "2026-07-09T03:46:52Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-11T01:05:54Z",
+      "closedAt": "2026-07-11T01:05:54Z",
       "mergedAt": null,
       "headRefName": "pr/wsl-git-pathspecs",
       "author": {
@@ -84311,15 +84431,15 @@
       "state": "OPEN",
       "title": "feat(ccr): teach agents when retrieval adds no information",
       "createdAt": "2026-06-27T23:38:42Z",
-      "updatedAt": "2026-07-10T01:19:11Z",
+      "updatedAt": "2026-07-11T05:17:59Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/ccr-retrieve-literacy",
       "author": {
         "login": "rodboev"
       },
-      "additions": 1053,
-      "deletions": 201,
+      "additions": 1068,
+      "deletions": 203,
       "changedFiles": 51,
       "url": "https://github.com/headroomlabs-ai/headroom/pull/1514"
     },
@@ -84419,15 +84539,15 @@
       "state": "OPEN",
       "title": "feat(codex): keep wrap routing session-scoped",
       "createdAt": "2026-06-27T19:52:17Z",
-      "updatedAt": "2026-07-10T01:19:18Z",
+      "updatedAt": "2026-07-11T05:16:47Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/1483-codex-session-config",
       "author": {
         "login": "rodboev"
       },
-      "additions": 443,
-      "deletions": 122,
+      "additions": 457,
+      "deletions": 287,
       "changedFiles": 3,
       "url": "https://github.com/headroomlabs-ai/headroom/pull/1507"
     },
@@ -84830,11 +84950,11 @@
     "stablyai/orca#6427": {
       "repo": "stablyai/orca",
       "number": 6427,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "Preserve SSH pre-Codex scrollback on tab restore",
       "createdAt": "2026-06-26T14:28:22Z",
-      "updatedAt": "2026-07-09T03:46:59Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-11T00:49:03Z",
+      "closedAt": "2026-07-11T00:47:17Z",
       "mergedAt": null,
       "headRefName": "pr/preserve-ssh-pre-codex-scrollback",
       "author": {
@@ -84923,15 +85043,15 @@
       "state": "OPEN",
       "title": "feat(wrap): add Grok Build CLI support",
       "createdAt": "2026-06-26T02:48:17Z",
-      "updatedAt": "2026-07-10T01:19:50Z",
+      "updatedAt": "2026-07-11T05:33:53Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/1291-wrap-grok-build-cli",
       "author": {
         "login": "rodboev"
       },
-      "additions": 852,
-      "deletions": 11,
+      "additions": 874,
+      "deletions": 51,
       "changedFiles": 7,
       "url": "https://github.com/headroomlabs-ai/headroom/pull/1455"
     },
@@ -85661,14 +85781,14 @@
       "state": "OPEN",
       "title": "feat(vector-stores): add Databricks provider to TypeScript OSS SDK",
       "createdAt": "2026-06-24T14:20:03Z",
-      "updatedAt": "2026-07-10T17:17:20Z",
+      "updatedAt": "2026-07-10T18:52:43Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/ts-databricks-vector-store",
       "author": {
         "login": "rodboev"
       },
-      "additions": 4334,
+      "additions": 4399,
       "deletions": 92,
       "changedFiles": 15,
       "url": "https://github.com/mem0ai/mem0/pull/5824"
@@ -86147,16 +86267,16 @@
       "state": "OPEN",
       "title": "feat(notifications): add true Web Push delivery for closed PWAs (#3196)",
       "createdAt": "2026-06-22T05:29:22Z",
-      "updatedAt": "2026-07-04T03:47:43Z",
+      "updatedAt": "2026-07-11T02:36:32Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/web-push-3196",
       "author": {
         "login": "rodboev"
       },
-      "additions": 1925,
-      "deletions": 15,
-      "changedFiles": 16,
+      "additions": 2061,
+      "deletions": 16,
+      "changedFiles": 20,
       "url": "https://github.com/nesquena/hermes-webui/pull/4664"
     },
     "thedotmack/claude-mem#2919": {
@@ -88487,15 +88607,15 @@
       "state": "OPEN",
       "title": "feat(memory): expose opt-in OpenAI usage for OSS add",
       "createdAt": "2026-06-12T00:28:50Z",
-      "updatedAt": "2026-07-09T22:32:04Z",
+      "updatedAt": "2026-07-11T03:48:14Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/python-openai-usage-opt-in",
       "author": {
         "login": "rodboev"
       },
-      "additions": 1119,
-      "deletions": 429,
+      "additions": 1118,
+      "deletions": 428,
       "changedFiles": 6,
       "url": "https://github.com/mem0ai/mem0/pull/5501"
     },
@@ -90377,16 +90497,16 @@
       "state": "OPEN",
       "title": "feat(projects): read project rows from projects db",
       "createdAt": "2026-07-08T06:59:40Z",
-      "updatedAt": "2026-07-09T04:24:50Z",
+      "updatedAt": "2026-07-11T02:19:37Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/5763-projects-db-read",
       "author": {
         "login": "rodboev"
       },
-      "additions": 971,
-      "deletions": 32,
-      "changedFiles": 5,
+      "additions": 1650,
+      "deletions": 71,
+      "changedFiles": 12,
       "url": "https://github.com/nesquena/hermes-webui/pull/5771"
     },
     "headroomlabs-ai/headroom#1871": {
@@ -90791,15 +90911,15 @@
       "state": "OPEN",
       "title": "fix(crash-reporting): persist no-capture crash diagnostics",
       "createdAt": "2026-07-09T02:49:45Z",
-      "updatedAt": "2026-07-09T16:50:27Z",
+      "updatedAt": "2026-07-11T06:15:41Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/orca-7776-2-no-capture-diagnostics",
       "author": {
         "login": "rodboev"
       },
-      "additions": 576,
-      "deletions": 86,
+      "additions": 599,
+      "deletions": 95,
       "changedFiles": 5,
       "url": "https://github.com/stablyai/orca/pull/7875"
     },
@@ -90809,16 +90929,16 @@
       "state": "OPEN",
       "title": "fix(crash-reporting): retry failed log-backed crash report submits",
       "createdAt": "2026-07-09T02:49:45Z",
-      "updatedAt": "2026-07-09T16:50:28Z",
+      "updatedAt": "2026-07-11T06:09:03Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/orca-7776-1-crash-submit-log-fallback",
       "author": {
         "login": "rodboev"
       },
-      "additions": 385,
+      "additions": 410,
       "deletions": 51,
-      "changedFiles": 4,
+      "changedFiles": 9,
       "url": "https://github.com/stablyai/orca/pull/7874"
     },
     "stablyai/orca#7873": {
@@ -90989,16 +91109,16 @@
       "state": "OPEN",
       "title": "feat(sessions): show read progress",
       "createdAt": "2026-07-10T06:29:08Z",
-      "updatedAt": "2026-07-10T17:20:30Z",
+      "updatedAt": "2026-07-11T04:13:08Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/1057-read-progress",
       "author": {
         "login": "rodboev"
       },
-      "additions": 2371,
-      "deletions": 142,
-      "changedFiles": 46,
+      "additions": 3580,
+      "deletions": 357,
+      "changedFiles": 49,
       "url": "https://github.com/kenn-io/agentsview/pull/1065"
     },
     "kenn-io/agentsview#1064": {
@@ -91022,12 +91142,12 @@
     "nesquena/hermes-webui#5887": {
       "repo": "nesquena/hermes-webui",
       "number": 5887,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(#5884): focus composer after URL prefill",
       "createdAt": "2026-07-10T15:09:30Z",
-      "updatedAt": "2026-07-10T16:22:02Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-10T18:51:01Z",
+      "closedAt": "2026-07-10T18:50:23Z",
+      "mergedAt": "2026-07-10T18:50:23Z",
       "headRefName": "pr/5884-prefill-focus",
       "author": {
         "login": "rodboev"
@@ -91036,36 +91156,2314 @@
       "deletions": 15,
       "changedFiles": 3,
       "url": "https://github.com/nesquena/hermes-webui/pull/5887"
+    },
+    "kenn-io/agentsview#1078": {
+      "repo": "kenn-io/agentsview",
+      "number": 1078,
+      "state": "MERGED",
+      "title": "perf(claude): apply subagent linkage incrementally",
+      "createdAt": "2026-07-10T19:56:12Z",
+      "updatedAt": "2026-07-11T00:10:31Z",
+      "closedAt": "2026-07-11T00:10:31Z",
+      "mergedAt": "2026-07-11T00:10:31Z",
+      "headRefName": "pr/claude-subagent-linkage",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 675,
+      "deletions": 95,
+      "changedFiles": 11,
+      "url": "https://github.com/kenn-io/agentsview/pull/1078"
+    },
+    "headroomlabs-ai/headroom#2001": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2001,
+      "state": "OPEN",
+      "title": "fix(proxy): keep Kompress warmup off the startup path",
+      "createdAt": "2026-07-10T20:12:10Z",
+      "updatedAt": "2026-07-11T04:05:09Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/1908-kompress-startup-crash",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 79,
+      "deletions": 40,
+      "changedFiles": 3,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2001"
+    },
+    "headroomlabs-ai/headroom#2000": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2000,
+      "state": "MERGED",
+      "title": "fix(proxy): preserve terminal tool on Codex Responses",
+      "createdAt": "2026-07-10T20:12:08Z",
+      "updatedAt": "2026-07-10T23:17:25Z",
+      "closedAt": "2026-07-10T23:17:25Z",
+      "mergedAt": "2026-07-10T23:17:25Z",
+      "headRefName": "pr/1946-cache-mode-terminal-tool",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 30,
+      "deletions": 1,
+      "changedFiles": 3,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2000"
+    },
+    "headroomlabs-ai/headroom#1999": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 1999,
+      "state": "OPEN",
+      "title": "fix(wrap): keep Claude context-tool setup explicit",
+      "createdAt": "2026-07-10T20:12:06Z",
+      "updatedAt": "2026-07-11T04:14:18Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/1915-wrap-rtk-default",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 82,
+      "deletions": 4,
+      "changedFiles": 4,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/1999"
+    },
+    "stablyai/orca#8154": {
+      "repo": "stablyai/orca",
+      "number": 8154,
+      "state": "OPEN",
+      "title": "fix(preflight): scope local agent detection to WSL targets (#7563)",
+      "createdAt": "2026-07-10T20:11:47Z",
+      "updatedAt": "2026-07-10T20:24:46Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/orca-7563-wsl-claude-detection",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 161,
+      "deletions": 28,
+      "changedFiles": 6,
+      "url": "https://github.com/stablyai/orca/pull/8154"
+    },
+    "stablyai/orca#8153": {
+      "repo": "stablyai/orca",
+      "number": 8153,
+      "state": "OPEN",
+      "title": "fix(sidebar): surface Git tabs after in-place git init (#8125)",
+      "createdAt": "2026-07-10T20:11:47Z",
+      "updatedAt": "2026-07-10T20:23:02Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/orca-8125-git-tab-after-git-init",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 214,
+      "deletions": 8,
+      "changedFiles": 4,
+      "url": "https://github.com/stablyai/orca/pull/8153"
+    },
+    "kenn-io/agentsview#1085": {
+      "repo": "kenn-io/agentsview",
+      "number": 1085,
+      "state": "OPEN",
+      "title": "feat(grok): add a metadata-first session provider",
+      "createdAt": "2026-07-10T20:26:32Z",
+      "updatedAt": "2026-07-11T04:03:56Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/grok-session-metadata",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 930,
+      "deletions": 13,
+      "changedFiles": 16,
+      "url": "https://github.com/kenn-io/agentsview/pull/1085"
+    },
+    "kenn-io/agentsview#1084": {
+      "repo": "kenn-io/agentsview",
+      "number": 1084,
+      "state": "MERGED",
+      "title": "fix(hermes): export only the requested session transcript",
+      "createdAt": "2026-07-10T20:26:24Z",
+      "updatedAt": "2026-07-11T00:10:55Z",
+      "closedAt": "2026-07-11T00:10:55Z",
+      "mergedAt": "2026-07-11T00:10:55Z",
+      "headRefName": "pr/fix-hermes-session-export",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 713,
+      "deletions": 25,
+      "changedFiles": 5,
+      "url": "https://github.com/kenn-io/agentsview/pull/1084"
+    },
+    "NVIDIA/SkillSpector#249": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 249,
+      "state": "OPEN",
+      "title": "feat(provider): allow scoped LLM provider injection (#243)",
+      "createdAt": "2026-07-04T04:02:21Z",
+      "updatedAt": "2026-07-09T18:21:40Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/provider-injection-243",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 504,
+      "deletions": 25,
+      "changedFiles": 11,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/249"
+    },
+    "NVIDIA/SkillSpector#247": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 247,
+      "state": "OPEN",
+      "title": "fix(yara): reduce packaged malware-signature false positives (#236)",
+      "createdAt": "2026-07-04T04:02:21Z",
+      "updatedAt": "2026-07-10T00:21:58Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/yara-packaging-236",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 236,
+      "deletions": 143,
+      "changedFiles": 4,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/247"
+    },
+    "NVIDIA/SkillSpector#248": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 248,
+      "state": "MERGED",
+      "title": "fix(mcp): prove stdio initialize compatibility (#199)",
+      "createdAt": "2026-07-04T04:02:21Z",
+      "updatedAt": "2026-07-10T20:16:12Z",
+      "closedAt": "2026-07-10T20:16:12Z",
+      "mergedAt": "2026-07-10T20:16:12Z",
+      "headRefName": "pr/mcp-stdio-initialize-199",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 25,
+      "deletions": 0,
+      "changedFiles": 1,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/248"
+    },
+    "NVIDIA/SkillSpector#232": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 232,
+      "state": "OPEN",
+      "title": "fix(analyzer): reduce instructional-prose false positives in static scans (#103)",
+      "createdAt": "2026-06-29T18:06:21Z",
+      "updatedAt": "2026-07-10T00:21:58Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/static-prose-false-positive-103",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 552,
+      "deletions": 17,
+      "changedFiles": 4,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/232"
+    },
+    "NVIDIA/SkillSpector#231": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 231,
+      "state": "OPEN",
+      "title": "fix(cli): preserve full per-skill JSON payload in recursive scans (#228)",
+      "createdAt": "2026-06-29T15:42:03Z",
+      "updatedAt": "2026-07-09T18:21:40Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/recursive-json-full-schema-228",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 344,
+      "deletions": 17,
+      "changedFiles": 2,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/231"
+    },
+    "NVIDIA/SkillSpector#230": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 230,
+      "state": "OPEN",
+      "title": "fix(report): preserve full finding metadata in SARIF output (#229)",
+      "createdAt": "2026-06-29T15:21:43Z",
+      "updatedAt": "2026-07-10T20:25:52Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/sarif-full-finding-metadata-229",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 158,
+      "deletions": 5,
+      "changedFiles": 4,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/230"
+    },
+    "NVIDIA/SkillSpector#225": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 225,
+      "state": "OPEN",
+      "title": "feat(scan): add opt-in transitive reference scanning",
+      "createdAt": "2026-06-29T03:49:14Z",
+      "updatedAt": "2026-07-09T18:21:40Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/transitive-external-reference-scanning",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 3063,
+      "deletions": 220,
+      "changedFiles": 25,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/225"
+    },
+    "NVIDIA/SkillSpector#216": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 216,
+      "state": "MERGED",
+      "title": "docs(mcp): surface install extra in quick-start and add stdio caveat",
+      "createdAt": "2026-06-27T03:45:01Z",
+      "updatedAt": "2026-06-28T09:15:21Z",
+      "closedAt": "2026-06-28T09:15:21Z",
+      "mergedAt": "2026-06-28T09:15:21Z",
+      "headRefName": "pr/mcp-docs-install-scope",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 21,
+      "deletions": 9,
+      "changedFiles": 2,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/216"
+    },
+    "NVIDIA/SkillSpector#211": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 211,
+      "state": "OPEN",
+      "title": "feat(analyzer): add phase-1 structured skill summaries",
+      "createdAt": "2026-06-25T12:12:48Z",
+      "updatedAt": "2026-07-10T00:21:58Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/structured-skill-role-summary",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 945,
+      "deletions": 12,
+      "changedFiles": 14,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/211"
+    },
+    "NVIDIA/SkillSpector#209": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 209,
+      "state": "MERGED",
+      "title": "fix(cli): write concatenated multi-skill report to --output for non-JSON formats",
+      "createdAt": "2026-06-25T01:00:42Z",
+      "updatedAt": "2026-06-30T07:52:14Z",
+      "closedAt": "2026-06-30T07:52:14Z",
+      "mergedAt": "2026-06-30T07:52:14Z",
+      "headRefName": "fix/recursive-multiskill-output-203",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 91,
+      "deletions": 6,
+      "changedFiles": 2,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/209"
+    },
+    "NVIDIA/SkillSpector#208": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 208,
+      "state": "MERGED",
+      "title": "fix(input): support scp-style SSH Git URLs in host validation",
+      "createdAt": "2026-06-25T01:00:09Z",
+      "updatedAt": "2026-06-30T07:53:20Z",
+      "closedAt": "2026-06-30T07:53:20Z",
+      "mergedAt": "2026-06-30T07:53:20Z",
+      "headRefName": "fix/scp-ssh-git-url-202",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 63,
+      "deletions": 1,
+      "changedFiles": 2,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/208"
+    },
+    "NVIDIA/SkillSpector#197": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 197,
+      "state": "OPEN",
+      "title": "fix(provider): honor ANTHROPIC_BASE_URL in native Anthropic provider",
+      "createdAt": "2026-06-24T20:22:49Z",
+      "updatedAt": "2026-07-09T13:54:01Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/anthropic-base-url-native",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 102,
+      "deletions": 29,
+      "changedFiles": 9,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/197"
+    },
+    "NVIDIA/SkillSpector#196": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 196,
+      "state": "OPEN",
+      "title": "fix(mcp): reject local targets over HTTP transport",
+      "createdAt": "2026-06-24T20:13:38Z",
+      "updatedAt": "2026-07-09T13:56:26Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/mcp-http-local-target-guard",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 231,
+      "deletions": 20,
+      "changedFiles": 6,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/196"
+    },
+    "stablyai/orca#8165": {
+      "repo": "stablyai/orca",
+      "number": 8165,
+      "state": "OPEN",
+      "title": "fix(cli): report starting instead of stale_bootstrap while the app process is alive",
+      "createdAt": "2026-07-10T21:07:49Z",
+      "updatedAt": "2026-07-11T03:42:33Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/cli-status-stale-bootstrap-flap",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 111,
+      "deletions": 4,
+      "changedFiles": 2,
+      "url": "https://github.com/stablyai/orca/pull/8165"
+    },
+    "NousResearch/hermes-agent#58567": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 58567,
+      "state": "CLOSED",
+      "title": "Add run-message steering for API runs",
+      "createdAt": "2026-07-04T23:55:43Z",
+      "updatedAt": "2026-07-05T00:13:44Z",
+      "closedAt": "2026-07-05T00:10:46Z",
+      "mergedAt": null,
+      "headRefName": "pr/api-run-message-steer",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 180,
+      "deletions": 0,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/58567"
+    },
+    "NousResearch/hermes-agent#54525": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 54525,
+      "state": "CLOSED",
+      "title": "fix(agent): persist compression backoff across resume (#54465)",
+      "createdAt": "2026-06-29T00:32:33Z",
+      "updatedAt": "2026-06-30T08:07:06Z",
+      "closedAt": "2026-06-30T08:07:06Z",
+      "mergedAt": null,
+      "headRefName": "pr/agent-compression-session-safety",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 1062,
+      "deletions": 333,
+      "changedFiles": 12,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/54525"
+    },
+    "NousResearch/hermes-agent#45888": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 45888,
+      "state": "OPEN",
+      "title": "fix(gateway): wire approval callbacks into Responses API path (#45505)",
+      "createdAt": "2026-06-14T00:50:15Z",
+      "updatedAt": "2026-07-07T05:22:37Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/responses-api-approval",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 200,
+      "deletions": 2,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/45888"
+    },
+    "NousResearch/hermes-agent#45887": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 45887,
+      "state": "CLOSED",
+      "title": "fix(agent): harden early-turn persistence to survive session-DB failures (#45110)",
+      "createdAt": "2026-06-14T00:49:57Z",
+      "updatedAt": "2026-06-28T09:21:55Z",
+      "closedAt": "2026-06-28T09:21:55Z",
+      "mergedAt": null,
+      "headRefName": "pr/early-persist-harden",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 264,
+      "deletions": 5,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/45887"
+    },
+    "NousResearch/hermes-agent#45886": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 45886,
+      "state": "OPEN",
+      "title": "fix(config): reject MCP server entries with shell egress patterns (#45620)",
+      "createdAt": "2026-06-14T00:49:36Z",
+      "updatedAt": "2026-07-07T05:20:11Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/mcp-server-validation",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 33,
+      "deletions": 5,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/45886"
+    },
+    "NousResearch/hermes-agent#44473": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 44473,
+      "state": "OPEN",
+      "title": "fix(approval): bound dangerous-command regex input (#7485)",
+      "createdAt": "2026-06-11T20:49:40Z",
+      "updatedAt": "2026-07-07T05:08:37Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/approval-redos-guard",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 31,
+      "deletions": 0,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/44473"
+    },
+    "NousResearch/hermes-agent#43597": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 43597,
+      "state": "OPEN",
+      "title": "refactor(gateway): remove dead Slack approval allowlist code (#36848)",
+      "createdAt": "2026-06-10T14:57:51Z",
+      "updatedAt": "2026-07-07T04:27:02Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/slack-approval-dead-code-cleanup",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 17,
+      "deletions": 26,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/43597"
+    },
+    "NousResearch/hermes-agent#42971": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 42971,
+      "state": "CLOSED",
+      "title": "fix(desktop): let explicit model switches escape broken config providers (#42241)",
+      "createdAt": "2026-06-09T17:05:57Z",
+      "updatedAt": "2026-06-15T19:37:32Z",
+      "closedAt": "2026-06-15T19:37:32Z",
+      "mergedAt": null,
+      "headRefName": "pr/desktop-model-switch-provider-override",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 212,
+      "deletions": 20,
+      "changedFiles": 4,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/42971"
+    },
+    "NousResearch/hermes-agent#42970": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 42970,
+      "state": "OPEN",
+      "title": "fix(desktop): keep retrying remote backends after in-app update (#42354)",
+      "createdAt": "2026-06-09T17:05:57Z",
+      "updatedAt": "2026-07-07T04:27:08Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/desktop-remote-reconnect-after-update",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 295,
+      "deletions": 6,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/42970"
+    },
+    "NousResearch/hermes-agent#42937": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 42937,
+      "state": "OPEN",
+      "title": "fix(auth): honor HERMES_DASHBOARD_PUBLIC_URL for self-hosted OIDC callback (#42780)",
+      "createdAt": "2026-06-09T16:12:59Z",
+      "updatedAt": "2026-07-07T04:27:13Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/dashboard-public-url-selfhosted-oidc",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 84,
+      "deletions": 3,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/42937"
+    },
+    "NousResearch/hermes-agent#41270": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 41270,
+      "state": "OPEN",
+      "title": "fix(config): re-read model.context_length from config after /model switch (#40979)",
+      "createdAt": "2026-06-07T12:55:04Z",
+      "updatedAt": "2026-07-07T05:20:40Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/config-context-length-model-switch",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 94,
+      "deletions": 1,
+      "changedFiles": 4,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/41270"
+    },
+    "NousResearch/hermes-agent#41266": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 41266,
+      "state": "CLOSED",
+      "title": "fix(provider): preserve interleaved thinking+tool_use block order for Anthropic multi-turn (#35975)",
+      "createdAt": "2026-06-07T12:55:03Z",
+      "updatedAt": "2026-06-18T12:42:21Z",
+      "closedAt": "2026-06-18T12:42:21Z",
+      "mergedAt": null,
+      "headRefName": "pr/anthropic-interleaved-thinking-ordering",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 329,
+      "deletions": 1,
+      "changedFiles": 6,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/41266"
+    },
+    "NousResearch/hermes-agent#41267": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 41267,
+      "state": "CLOSED",
+      "title": "fix(agent): block inter-turn compaction loop when compress() makes zero structural progress (#40803)",
+      "createdAt": "2026-06-07T12:55:03Z",
+      "updatedAt": "2026-06-11T20:58:08Z",
+      "closedAt": "2026-06-11T20:58:08Z",
+      "mergedAt": null,
+      "headRefName": "pr/agent-compaction-no-progress-guard",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 917,
+      "deletions": 100,
+      "changedFiles": 5,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/41267"
+    },
+    "NousResearch/hermes-agent#41268": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 41268,
+      "state": "CLOSED",
+      "title": "fix(config): preserve custom_providers and prevent defaults-bloat on version-bump write (#40821)",
+      "createdAt": "2026-06-07T12:55:03Z",
+      "updatedAt": "2026-06-12T12:13:22Z",
+      "closedAt": "2026-06-12T12:13:22Z",
+      "mergedAt": null,
+      "headRefName": "pr/config-preserve-custom-providers-write",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 96,
+      "deletions": 8,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/41268"
+    },
+    "NousResearch/hermes-agent#41271": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 41271,
+      "state": "OPEN",
+      "title": "fix(deps): pin urllib3, python-multipart, idna against known CVEs (#40176)",
+      "createdAt": "2026-06-07T12:55:03Z",
+      "updatedAt": "2026-07-07T08:41:11Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/security-bump-cve-deps",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 5,
+      "deletions": 0,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/41271"
+    },
+    "NousResearch/hermes-agent#41269": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 41269,
+      "state": "OPEN",
+      "title": "fix(cron): execute job immediately on action=run instead of waiting for next tick (#41037)",
+      "createdAt": "2026-06-07T12:55:03Z",
+      "updatedAt": "2026-07-07T05:09:25Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/cron-trigger-execute-job",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 604,
+      "deletions": 202,
+      "changedFiles": 5,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/41269"
+    },
+    "NousResearch/hermes-agent#40425": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 40425,
+      "state": "OPEN",
+      "title": "fix(memory): keep recalled context off customer and downstream paths (#40170)",
+      "createdAt": "2026-06-06T10:19:12Z",
+      "updatedAt": "2026-07-07T05:46:56Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/memory-customer-recall-guard",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 3068,
+      "deletions": 259,
+      "changedFiles": 38,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/40425"
+    },
+    "NousResearch/hermes-agent#40410": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 40410,
+      "state": "CLOSED",
+      "title": "fix(config): preserve custom model maps on migration (#25272)",
+      "createdAt": "2026-06-06T09:43:46Z",
+      "updatedAt": "2026-06-06T15:14:20Z",
+      "closedAt": "2026-06-06T15:14:20Z",
+      "mergedAt": null,
+      "headRefName": "pr/config-preserve-custom-model-maps",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 134,
+      "deletions": 17,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/40410"
+    },
+    "NousResearch/hermes-agent#40329": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 40329,
+      "state": "CLOSED",
+      "title": "perf(agent): move runtime metadata out of cached prompt (#3353)",
+      "createdAt": "2026-06-06T05:44:33Z",
+      "updatedAt": "2026-06-08T16:39:10Z",
+      "closedAt": "2026-06-08T16:39:09Z",
+      "mergedAt": null,
+      "headRefName": "pr/runtime-metadata-user-note",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 329,
+      "deletions": 49,
+      "changedFiles": 5,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/40329"
+    },
+    "NousResearch/hermes-agent#40144": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 40144,
+      "state": "CLOSED",
+      "title": "fix(gateway): route /clear to session reset (#40123)",
+      "createdAt": "2026-06-05T21:50:26Z",
+      "updatedAt": "2026-06-06T04:22:16Z",
+      "closedAt": "2026-06-06T04:22:16Z",
+      "mergedAt": null,
+      "headRefName": "pr/gateway-clear-reset",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 41,
+      "deletions": 6,
+      "changedFiles": 6,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/40144"
+    },
+    "NousResearch/hermes-agent#39881": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39881,
+      "state": "MERGED",
+      "title": "fix(tests): use cross-platform pytest-timeout method",
+      "createdAt": "2026-06-05T14:40:06Z",
+      "updatedAt": "2026-06-09T18:18:00Z",
+      "closedAt": "2026-06-09T18:18:00Z",
+      "mergedAt": "2026-06-09T18:18:00Z",
+      "headRefName": "pr/pytest-timeout-thread",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 2,
+      "deletions": 2,
+      "changedFiles": 1,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39881"
+    },
+    "NousResearch/hermes-agent#39806": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39806,
+      "state": "OPEN",
+      "title": "fix(agent): add stale-state guard to background review writes (#9055)",
+      "createdAt": "2026-06-05T12:25:49Z",
+      "updatedAt": "2026-07-07T04:37:50Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/agent-background-review-stale-guard",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 185,
+      "deletions": 3,
+      "changedFiles": 4,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39806"
+    },
+    "NousResearch/hermes-agent#39796": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39796,
+      "state": "OPEN",
+      "title": "fix(auth): recover codex tokens from sibling profile stores (#6653)",
+      "createdAt": "2026-06-05T12:10:54Z",
+      "updatedAt": "2026-07-07T04:27:27Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/auth-codex-shared-profile-refresh",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 658,
+      "deletions": 26,
+      "changedFiles": 5,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39796"
+    },
+    "NousResearch/hermes-agent#39793": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39793,
+      "state": "CLOSED",
+      "title": "fix(kanban): preserve scratch artifacts before workspace cleanup (#39747)",
+      "createdAt": "2026-06-05T12:00:51Z",
+      "updatedAt": "2026-06-05T12:29:12Z",
+      "closedAt": "2026-06-05T12:27:51Z",
+      "mergedAt": null,
+      "headRefName": "pr/kanban-scratch-artifact-preserve",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 204,
+      "deletions": 10,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39793"
+    },
+    "NousResearch/hermes-agent#39784": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39784,
+      "state": "OPEN",
+      "title": "fix(agent): relax repeated hermes-agent skill loading guidance (#20721)",
+      "createdAt": "2026-06-05T11:55:57Z",
+      "updatedAt": "2026-07-07T04:28:34Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/agent-relax-hermes-skill-guidance",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 52,
+      "deletions": 24,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39784"
+    },
+    "NousResearch/hermes-agent#39783": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39783,
+      "state": "OPEN",
+      "title": "fix(kanban): confirm corrupt boards before backoff (#33486)",
+      "createdAt": "2026-06-05T11:48:39Z",
+      "updatedAt": "2026-07-07T04:28:39Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/kanban-corrupt-board-backoff",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 359,
+      "deletions": 63,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39783"
+    },
+    "NousResearch/hermes-agent#39782": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39782,
+      "state": "OPEN",
+      "title": "fix(cron): wait for timed-out agent run to stop before failing job (#18004)",
+      "createdAt": "2026-06-05T11:44:22Z",
+      "updatedAt": "2026-07-07T02:59:39Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/cron-timeout-stop-confirmation",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 433,
+      "deletions": 6,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39782"
+    },
+    "NousResearch/hermes-agent#39756": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39756,
+      "state": "OPEN",
+      "title": "fix(environments): reconcile stale daytona sandboxes on startup (#28807)",
+      "createdAt": "2026-06-05T10:54:13Z",
+      "updatedAt": "2026-07-07T05:29:08Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/daytona-orphan-reconcile",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 478,
+      "deletions": 5,
+      "changedFiles": 4,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39756"
+    },
+    "NousResearch/hermes-agent#39754": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39754,
+      "state": "OPEN",
+      "title": "fix(plugins): update hindsight embedded dependency (#39424)",
+      "createdAt": "2026-06-05T10:53:31Z",
+      "updatedAt": "2026-07-09T03:55:39Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/hindsight-embedded-dependency",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 2582,
+      "deletions": 118,
+      "changedFiles": 9,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39754"
+    },
+    "NousResearch/hermes-agent#39751": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39751,
+      "state": "OPEN",
+      "title": "fix(plugins): bound lifecycle hook execution on hot paths (#10048)",
+      "createdAt": "2026-06-05T10:46:58Z",
+      "updatedAt": "2026-07-07T04:28:44Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/plugin-hook-timeouts",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 239,
+      "deletions": 2,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39751"
+    },
+    "NousResearch/hermes-agent#39748": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39748,
+      "state": "OPEN",
+      "title": "test(honcho): keep dynamic context out of system prompt (#13631)",
+      "createdAt": "2026-06-05T10:37:42Z",
+      "updatedAt": "2026-07-01T15:08:37Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/plugins-honcho-session-freeze",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 114,
+      "deletions": 1,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39748"
+    },
+    "NousResearch/hermes-agent#39737": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39737,
+      "state": "OPEN",
+      "title": "fix(mcp): avoid nested mcp loop registration deadlock (#10138)",
+      "createdAt": "2026-06-05T10:25:47Z",
+      "updatedAt": "2026-07-01T15:08:25Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/mcp-register-loop-reentrancy",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 108,
+      "deletions": 0,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39737"
+    },
+    "NousResearch/hermes-agent#39653": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39653,
+      "state": "OPEN",
+      "title": "fix(langfuse): surface reasoning_content in traces (#29482)",
+      "createdAt": "2026-06-05T07:36:15Z",
+      "updatedAt": "2026-07-01T15:08:14Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/langfuse-reasoning-content",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 66,
+      "deletions": 1,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39653"
+    },
+    "NousResearch/hermes-agent#39642": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39642,
+      "state": "OPEN",
+      "title": "fix(plugins): enable plugins by canonical manifest key (#18005)",
+      "createdAt": "2026-06-05T07:13:39Z",
+      "updatedAt": "2026-07-01T19:15:50Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/plugins-canonical-enable-key",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 396,
+      "deletions": 76,
+      "changedFiles": 4,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39642"
+    },
+    "NousResearch/hermes-agent#39641": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39641,
+      "state": "OPEN",
+      "title": "fix(config): warn when env shadows gateway config (#13582)",
+      "createdAt": "2026-06-05T07:13:39Z",
+      "updatedAt": "2026-07-07T05:30:39Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/gateway-env-shadow-warning",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 612,
+      "deletions": 206,
+      "changedFiles": 10,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39641"
+    },
+    "NousResearch/hermes-agent#39643": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39643,
+      "state": "OPEN",
+      "title": "fix(gateway): randomize fallback api session ids (#7484)",
+      "createdAt": "2026-06-05T07:13:39Z",
+      "updatedAt": "2026-07-07T04:28:53Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/api-random-session-ids",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 86,
+      "deletions": 105,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39643"
+    },
+    "NousResearch/hermes-agent#39627": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39627,
+      "state": "OPEN",
+      "title": "fix(cron): normalize script paths before validation (#26595)",
+      "createdAt": "2026-06-05T06:38:32Z",
+      "updatedAt": "2026-07-01T18:41:56Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/cron-script-path-normalize",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 173,
+      "deletions": 24,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39627"
+    },
+    "NousResearch/hermes-agent#39628": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39628,
+      "state": "OPEN",
+      "title": "fix(cli): drain completion notifications before blocking for input (#21904)",
+      "createdAt": "2026-06-05T06:38:32Z",
+      "updatedAt": "2026-07-01T14:59:54Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/cli-drain-completion-notifications",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 34,
+      "deletions": 14,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39628"
+    },
+    "NousResearch/hermes-agent#39629": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39629,
+      "state": "OPEN",
+      "title": "fix(approval): avoid flagging ordinary absolute paths as root deletes (#18083)",
+      "createdAt": "2026-06-05T06:38:32Z",
+      "updatedAt": "2026-07-01T15:00:07Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/approval-root-path-regex",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 38,
+      "deletions": 1,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39629"
+    },
+    "NousResearch/hermes-agent#39408": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39408,
+      "state": "OPEN",
+      "title": "perf(plugins): add session-level Mem0 retrieval cache to preserve prefix cache stability (#25971)",
+      "createdAt": "2026-06-04T23:58:03Z",
+      "updatedAt": "2026-07-01T19:15:50Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/plugins-mem0-session-cache",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 185,
+      "deletions": 5,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39408"
+    },
+    "NousResearch/hermes-agent#39407": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39407,
+      "state": "CLOSED",
+      "title": "perf(agent): fast-path skills snapshot validation via directory mtime (#3354)",
+      "createdAt": "2026-06-04T23:57:05Z",
+      "updatedAt": "2026-07-08T21:12:26Z",
+      "closedAt": "2026-07-08T21:12:26Z",
+      "mergedAt": null,
+      "headRefName": "pr/agent-skills-metadata-cache",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 119,
+      "deletions": 1,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39407"
+    },
+    "NousResearch/hermes-agent#39406": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39406,
+      "state": "CLOSED",
+      "title": "fix(agent): recover visible content from reasoning-only Opus responses (#39234)",
+      "createdAt": "2026-06-04T23:56:06Z",
+      "updatedAt": "2026-06-14T04:57:03Z",
+      "closedAt": "2026-06-14T04:57:03Z",
+      "mergedAt": null,
+      "headRefName": "pr/agent-opus-streaming-reasoning",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 82,
+      "deletions": 0,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39406"
+    },
+    "NousResearch/hermes-agent#39401": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39401,
+      "state": "OPEN",
+      "title": "test(website): cover uncovered branches in generate-skill-docs to reach >=70% (#36618)",
+      "createdAt": "2026-06-04T23:38:15Z",
+      "updatedAt": "2026-07-01T14:58:51Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/test-generate-skill-docs",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 319,
+      "deletions": 0,
+      "changedFiles": 1,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39401"
+    },
+    "NousResearch/hermes-agent#39400": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39400,
+      "state": "OPEN",
+      "title": "perf(agent): preserve skills snapshot on managed mutations to avoid cold rebuild (#36031)",
+      "createdAt": "2026-06-04T23:38:04Z",
+      "updatedAt": "2026-07-01T14:58:39Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/agent-incremental-role-sync",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 106,
+      "deletions": 1,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39400"
+    },
+    "NousResearch/hermes-agent#39399": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39399,
+      "state": "OPEN",
+      "title": "perf(cli): add --prefer-offline to npm install during update (#39267)",
+      "createdAt": "2026-06-04T23:37:50Z",
+      "updatedAt": "2026-07-07T06:03:54Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/cli-npm-prefer-offline",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 20,
+      "deletions": 7,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39399"
+    },
+    "NousResearch/hermes-agent#39397": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39397,
+      "state": "OPEN",
+      "title": "perf(cli): skip npm install during update when lockfile is unchanged (#17268)",
+      "createdAt": "2026-06-04T23:37:37Z",
+      "updatedAt": "2026-07-07T06:07:24Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/cli-skip-npm-unchanged",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 132,
+      "deletions": 1,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39397"
+    },
+    "NousResearch/hermes-agent#39396": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39396,
+      "state": "OPEN",
+      "title": "fix(cli): propagate venv Scripts to session PATH on Windows install (#39185)",
+      "createdAt": "2026-06-04T23:37:17Z",
+      "updatedAt": "2026-07-07T04:30:19Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/cli-hermes-exe-entrypoint",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 34,
+      "deletions": 4,
+      "changedFiles": 1,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39396"
+    },
+    "NousResearch/hermes-agent#39394": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39394,
+      "state": "OPEN",
+      "title": "fix(skills): skip .bak-* and .backup-* directories in skill discovery",
+      "createdAt": "2026-06-04T23:35:10Z",
+      "updatedAt": "2026-07-07T04:30:25Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/skills-exclude-backup-dirs",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 90,
+      "deletions": 31,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39394"
+    },
+    "NousResearch/hermes-agent#39393": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39393,
+      "state": "OPEN",
+      "title": "test(tui): cover WSTransport write paths, peer label, and handle_ws lifecycle (#36617)",
+      "createdAt": "2026-06-04T23:35:06Z",
+      "updatedAt": "2026-07-07T04:30:30Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/test-slash-worker",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 225,
+      "deletions": 0,
+      "changedFiles": 1,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39393"
+    },
+    "NousResearch/hermes-agent#39392": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39392,
+      "state": "CLOSED",
+      "title": "fix(mcp): use server url instead of config key for connectivity check hostname",
+      "createdAt": "2026-06-04T23:34:53Z",
+      "updatedAt": "2026-06-05T07:58:58Z",
+      "closedAt": "2026-06-05T07:58:58Z",
+      "mergedAt": null,
+      "headRefName": "pr/mcp-connectivity-hostname",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 64,
+      "deletions": 0,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39392"
+    },
+    "NousResearch/hermes-agent#39391": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39391,
+      "state": "CLOSED",
+      "title": "fix(tools): check is_approved() before prompting in execute_code guard",
+      "createdAt": "2026-06-04T23:34:28Z",
+      "updatedAt": "2026-06-05T07:58:56Z",
+      "closedAt": "2026-06-05T07:58:56Z",
+      "mergedAt": null,
+      "headRefName": "pr/code-exec-approval-check",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 60,
+      "deletions": 5,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39391"
+    },
+    "NousResearch/hermes-agent#39390": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39390,
+      "state": "OPEN",
+      "title": "fix(gateway): copy context into run_in_executor for _run_agent",
+      "createdAt": "2026-06-04T23:34:13Z",
+      "updatedAt": "2026-07-07T06:29:43Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/gateway-contextvars-executor",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 158,
+      "deletions": 5,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39390"
+    },
+    "NousResearch/hermes-agent#39389": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39389,
+      "state": "OPEN",
+      "title": "test(tui): cover transport protocol write errors, TeeTransport, and ContextVar helpers (#36616)",
+      "createdAt": "2026-06-04T23:33:34Z",
+      "updatedAt": "2026-07-07T04:30:15Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/test-tui-transport",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 184,
+      "deletions": 0,
+      "changedFiles": 1,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39389"
+    },
+    "NousResearch/hermes-agent#39388": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39388,
+      "state": "OPEN",
+      "title": "fix(mcp): persist EventBridge cursor across subprocess restarts (#22000)",
+      "createdAt": "2026-06-04T23:32:24Z",
+      "updatedAt": "2026-07-07T04:34:44Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/mcp-eventbridge-durable-cursor",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 293,
+      "deletions": 38,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39388"
+    },
+    "NousResearch/hermes-agent#39387": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39387,
+      "state": "OPEN",
+      "title": "test(tools): cover session_search_tool guard clauses and edge branches (#36581)",
+      "createdAt": "2026-06-04T23:32:19Z",
+      "updatedAt": "2026-07-07T04:30:18Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/test-session-search-tool",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 193,
+      "deletions": 0,
+      "changedFiles": 1,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39387"
+    },
+    "NousResearch/hermes-agent#39386": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39386,
+      "state": "OPEN",
+      "title": "test(toolsets): cover uncovered branches to reach >=70% (#36608)",
+      "createdAt": "2026-06-04T23:31:57Z",
+      "updatedAt": "2026-07-01T19:15:51Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/test-toolset-distributions",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 90,
+      "deletions": 3,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39386"
+    },
+    "NousResearch/hermes-agent#39385": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39385,
+      "state": "OPEN",
+      "title": "test(openrouter): cover get_async_client singleton and check_api_key (#36575)",
+      "createdAt": "2026-06-04T23:31:43Z",
+      "updatedAt": "2026-07-01T14:58:13Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/test-openrouter-client",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 57,
+      "deletions": 0,
+      "changedFiles": 1,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39385"
+    },
+    "NousResearch/hermes-agent#39384": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39384,
+      "state": "OPEN",
+      "title": "test(cron): cover uncovered branches in cronjob_tools to reach >=70% (#36538)",
+      "createdAt": "2026-06-04T23:30:28Z",
+      "updatedAt": "2026-07-01T14:57:56Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/test-cronjob-tools",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 176,
+      "deletions": 3,
+      "changedFiles": 1,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39384"
+    },
+    "NousResearch/hermes-agent#39383": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39383,
+      "state": "OPEN",
+      "title": "feat(cron): add session_retention_days config to auto-prune old cron sessions (#38378)",
+      "createdAt": "2026-06-04T23:30:05Z",
+      "updatedAt": "2026-07-07T04:33:52Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/cron-session-retention",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 114,
+      "deletions": 0,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39383"
+    },
+    "NousResearch/hermes-agent#39039": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39039,
+      "state": "OPEN",
+      "title": "fix(agent): close long-lived read transactions to unblock WAL auto-checkpoint (#35201)",
+      "createdAt": "2026-06-04T12:53:21Z",
+      "updatedAt": "2026-07-01T18:38:39Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/agent-wal-checkpoint-unblock",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 155,
+      "deletions": 26,
+      "changedFiles": 4,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39039"
+    },
+    "NousResearch/hermes-agent#39038": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39038,
+      "state": "OPEN",
+      "title": "test(cli): fix importlib.reload isolation leak in test_web_server.py (#38034)",
+      "createdAt": "2026-06-04T12:52:44Z",
+      "updatedAt": "2026-07-01T14:57:22Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/test-web-server-reload-isolation",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 8,
+      "deletions": 3,
+      "changedFiles": 1,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39038"
+    },
+    "NousResearch/hermes-agent#39037": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39037,
+      "state": "OPEN",
+      "title": "fix(cli): detect venv python workers before update to prevent .pyd lock failures (#38789)",
+      "createdAt": "2026-06-04T12:52:16Z",
+      "updatedAt": "2026-07-01T14:57:09Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/cli-detect-venv-workers-update",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 104,
+      "deletions": 6,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39037"
+    },
+    "NousResearch/hermes-agent#39036": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39036,
+      "state": "OPEN",
+      "title": "fix(tui): warm skill command cache at startup so slash popover shows matches (#38651)",
+      "createdAt": "2026-06-04T12:51:38Z",
+      "updatedAt": "2026-07-01T14:56:58Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/tui-warm-skill-cache",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 48,
+      "deletions": 0,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39036"
+    },
+    "NousResearch/hermes-agent#39035": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39035,
+      "state": "CLOSED",
+      "title": "fix(config): honor configured timeout for auxiliary title generation (#32729)",
+      "createdAt": "2026-06-04T12:51:20Z",
+      "updatedAt": "2026-07-01T11:06:58Z",
+      "closedAt": "2026-07-01T11:06:58Z",
+      "mergedAt": null,
+      "headRefName": "pr/config-title-generation-timeout",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 51,
+      "deletions": 9,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39035"
+    },
+    "NousResearch/hermes-agent#39034": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39034,
+      "state": "OPEN",
+      "title": "fix(auth): evict placeholder credentials from the pool on write (#38799)",
+      "createdAt": "2026-06-04T12:50:55Z",
+      "updatedAt": "2026-07-01T14:56:43Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/auth-evict-placeholder-creds",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 139,
+      "deletions": 3,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39034"
+    },
+    "NousResearch/hermes-agent#39006": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39006,
+      "state": "OPEN",
+      "title": "feat(gateway): expose reasoning/thinking blocks in /v1/chat/completions responses (#37044)",
+      "createdAt": "2026-06-04T12:30:56Z",
+      "updatedAt": "2026-07-01T14:56:29Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/gateway-reasoning-in-oai-compat",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 249,
+      "deletions": 6,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39006"
+    },
+    "NousResearch/hermes-agent#39005": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39005,
+      "state": "CLOSED",
+      "title": "test(gateway): add compression session_id rotation integration tests (#34089)",
+      "createdAt": "2026-06-04T12:30:21Z",
+      "updatedAt": "2026-06-08T05:40:21Z",
+      "closedAt": "2026-06-08T05:40:21Z",
+      "mergedAt": null,
+      "headRefName": "pr/agent-compression-session-sync",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 338,
+      "deletions": 0,
+      "changedFiles": 4,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39005"
+    },
+    "NousResearch/hermes-agent#39004": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39004,
+      "state": "OPEN",
+      "title": "fix(security): enforce HERMES_WRITE_SAFE_ROOT in terminal and execute_code tools (#36645)",
+      "createdAt": "2026-06-04T12:29:55Z",
+      "updatedAt": "2026-07-01T18:37:40Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/security-safe-root-terminal",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 297,
+      "deletions": 0,
+      "changedFiles": 5,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39004"
+    },
+    "NousResearch/hermes-agent#39003": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39003,
+      "state": "CLOSED",
+      "title": "fix(gateway): scrub credential env vars from subprocess environments (#29157)",
+      "createdAt": "2026-06-04T12:29:13Z",
+      "updatedAt": "2026-06-28T03:46:10Z",
+      "closedAt": "2026-06-28T03:45:33Z",
+      "mergedAt": null,
+      "headRefName": "pr/gateway-scrub-subprocess-creds",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 265,
+      "deletions": 31,
+      "changedFiles": 9,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39003"
+    },
+    "NousResearch/hermes-agent#39001": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 39001,
+      "state": "CLOSED",
+      "title": "fix(agent): restrict secret redaction to credential fields to stop corrupting code output (#33801)",
+      "createdAt": "2026-06-04T12:28:43Z",
+      "updatedAt": "2026-06-28T08:15:55Z",
+      "closedAt": "2026-06-28T08:15:55Z",
+      "mergedAt": null,
+      "headRefName": "pr/agent-scoped-secret-redaction",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 142,
+      "deletions": 10,
+      "changedFiles": 5,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/39001"
+    },
+    "NousResearch/hermes-agent#38991": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 38991,
+      "state": "OPEN",
+      "title": "perf(agent): defer synchronous httpx.post out of AIAgent.__init__ (#32221)",
+      "createdAt": "2026-06-04T12:23:09Z",
+      "updatedAt": "2026-07-01T14:55:33Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/agent-lazy-init-httpx",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 129,
+      "deletions": 22,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/38991"
+    },
+    "NousResearch/hermes-agent#38988": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 38988,
+      "state": "OPEN",
+      "title": "perf(agent): run _sync_external_memory_for_turn in background to unblock response (#24453)",
+      "createdAt": "2026-06-04T12:22:29Z",
+      "updatedAt": "2026-07-01T14:55:22Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/agent-async-memory-sync",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 122,
+      "deletions": 14,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/38988"
+    },
+    "NousResearch/hermes-agent#38987": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 38987,
+      "state": "OPEN",
+      "title": "fix(agent): defer background skill review when a user message is queued (#34102)",
+      "createdAt": "2026-06-04T12:21:58Z",
+      "updatedAt": "2026-07-01T14:55:15Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/agent-defer-skill-review-busy",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 111,
+      "deletions": 1,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/38987"
+    },
+    "NousResearch/hermes-agent#38986": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 38986,
+      "state": "OPEN",
+      "title": "perf(vision): lazy-import torchvision to avoid reserving VRAM at startup (#29292)",
+      "createdAt": "2026-06-04T12:21:19Z",
+      "updatedAt": "2026-07-01T18:36:17Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/vision-lazy-import-torch",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 71,
+      "deletions": 0,
+      "changedFiles": 5,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/38986"
+    },
+    "NousResearch/hermes-agent#38985": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 38985,
+      "state": "OPEN",
+      "title": "fix(gateway): pass encoding=\"utf-8\" to read_text/write_text in update path (#37423)",
+      "createdAt": "2026-06-04T12:20:47Z",
+      "updatedAt": "2026-07-07T05:37:32Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/gateway-utf8-update-path",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 83,
+      "deletions": 32,
+      "changedFiles": 10,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/38985"
+    },
+    "NousResearch/hermes-agent#38983": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 38983,
+      "state": "OPEN",
+      "title": "fix(delegate): scope HERMES_SESSION_ID to subagent env instead of mutating parent (#37356)",
+      "createdAt": "2026-06-04T12:20:15Z",
+      "updatedAt": "2026-07-01T14:55:01Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/delegate-scoped-session-env",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 82,
+      "deletions": 6,
+      "changedFiles": 4,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/38983"
+    },
+    "NousResearch/hermes-agent#38943": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 38943,
+      "state": "OPEN",
+      "title": "test(memory): fix encoding bug and cover missing branches in test_memory_tool (#36570)",
+      "createdAt": "2026-06-04T10:55:51Z",
+      "updatedAt": "2026-07-01T14:54:54Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/test-memory-tool-coverage",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 121,
+      "deletions": 1,
+      "changedFiles": 1,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/38943"
+    },
+    "NousResearch/hermes-agent#38942": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 38942,
+      "state": "OPEN",
+      "title": "feat(gateway): paginate /api/sessions/{id}/messages and /api/jobs (#38370)",
+      "createdAt": "2026-06-04T10:55:40Z",
+      "updatedAt": "2026-07-07T04:30:20Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/api-server-pagination",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 119,
+      "deletions": 12,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/38942"
+    },
+    "NousResearch/hermes-agent#38941": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 38941,
+      "state": "OPEN",
+      "title": "perf(dashboard): skip full InsightsEngine on /api/analytics/usage (#18511)",
+      "createdAt": "2026-06-04T10:55:23Z",
+      "updatedAt": "2026-07-01T14:53:59Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/insights-analytics-prefilter",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 72,
+      "deletions": 12,
+      "changedFiles": 4,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/38941"
+    },
+    "NousResearch/hermes-agent#38940": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 38940,
+      "state": "OPEN",
+      "title": "test(toolsets): cover platform branch, alias loops, and exception fallbacks (#36609)",
+      "createdAt": "2026-06-04T10:54:51Z",
+      "updatedAt": "2026-07-01T14:53:52Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/test-toolsets-coverage",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 259,
+      "deletions": 0,
+      "changedFiles": 1,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/38940"
+    },
+    "NousResearch/hermes-agent#38939": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 38939,
+      "state": "OPEN",
+      "title": "test(schema-sanitizer): cover uncovered branches to reach >=70% (#36579)",
+      "createdAt": "2026-06-04T10:54:40Z",
+      "updatedAt": "2026-07-01T14:53:44Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/test-schema-sanitizer-coverage",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 323,
+      "deletions": 0,
+      "changedFiles": 1,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/38939"
+    },
+    "NousResearch/hermes-agent#38938": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 38938,
+      "state": "OPEN",
+      "title": "fix(mcp): omit mcp-protocol-version header on initialize request (#27569)",
+      "createdAt": "2026-06-04T10:54:21Z",
+      "updatedAt": "2026-07-01T14:53:37Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/mcp-protocol-version-initialize",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 159,
+      "deletions": 10,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/38938"
+    },
+    "NousResearch/hermes-agent#37714": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 37714,
+      "state": "OPEN",
+      "title": "fix(auth): resolve bare \"openai\" slug to \"openai-api\" provider",
+      "createdAt": "2026-06-02T23:22:09Z",
+      "updatedAt": "2026-07-07T04:30:22Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/openai-provider-alias",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 45,
+      "deletions": 0,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/37714"
+    },
+    "NousResearch/hermes-agent#37706": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 37706,
+      "state": "CLOSED",
+      "title": "fix(provider): warn when model config dict omits provider instead of silently routing to auto (#29285)",
+      "createdAt": "2026-06-02T22:59:11Z",
+      "updatedAt": "2026-06-28T02:49:27Z",
+      "closedAt": "2026-06-28T02:49:27Z",
+      "mergedAt": null,
+      "headRefName": "pr/warn-model-config-missing-provider",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 66,
+      "deletions": 1,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/37706"
+    },
+    "NousResearch/hermes-agent#37705": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 37705,
+      "state": "CLOSED",
+      "title": "fix(provider): select anthropic base_url for dual-section named providers in sub-sessions (#11059)",
+      "createdAt": "2026-06-02T22:59:07Z",
+      "updatedAt": "2026-07-01T14:40:13Z",
+      "closedAt": "2026-07-01T14:40:13Z",
+      "mergedAt": null,
+      "headRefName": "pr/named-provider-anthropic-base-url",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 183,
+      "deletions": 14,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/37705"
+    },
+    "NousResearch/hermes-agent#37703": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 37703,
+      "state": "OPEN",
+      "title": "feat(anthropic): add anthropic.drop_context_1m_beta config flag and honor it in auxiliary clients (#21557)",
+      "createdAt": "2026-06-02T22:59:02Z",
+      "updatedAt": "2026-07-01T14:53:29Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/anthropic-drop-1m-config-flag",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 115,
+      "deletions": 3,
+      "changedFiles": 5,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/37703"
+    },
+    "NousResearch/hermes-agent#37656": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 37656,
+      "state": "CLOSED",
+      "title": "fix(anthropic): strip trailing /v1 from base_url in build_anthropic_client (#24833)",
+      "createdAt": "2026-06-02T21:25:41Z",
+      "updatedAt": "2026-07-01T14:40:12Z",
+      "closedAt": "2026-07-01T14:40:12Z",
+      "mergedAt": null,
+      "headRefName": "pr/anthropic-strip-v1-base-url",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 35,
+      "deletions": 8,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/37656"
+    },
+    "NousResearch/hermes-agent#37628": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 37628,
+      "state": "CLOSED",
+      "title": "feat(anthropic): opt-in fixed-budget thinking for Claude 4.6 via thinking_mode config",
+      "createdAt": "2026-06-02T20:26:28Z",
+      "updatedAt": "2026-06-10T14:01:23Z",
+      "closedAt": "2026-06-10T14:01:23Z",
+      "mergedAt": null,
+      "headRefName": "pr/fixed-budget-thinking-4-6",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 0,
+      "deletions": 0,
+      "changedFiles": 0,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/37628"
+    },
+    "NousResearch/hermes-agent#37611": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 37611,
+      "state": "OPEN",
+      "title": "perf(prompt-caching): cache tool schemas via Anthropic cache breakpoints",
+      "createdAt": "2026-06-02T19:49:58Z",
+      "updatedAt": "2026-07-01T14:53:21Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/tool-schema-caching",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 146,
+      "deletions": 8,
+      "changedFiles": 4,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/37611"
+    },
+    "NousResearch/hermes-agent#37595": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 37595,
+      "state": "CLOSED",
+      "title": "perf(model-metadata): resolve localhost to IPv4 in detect_local_server_type",
+      "createdAt": "2026-06-02T19:25:45Z",
+      "updatedAt": "2026-07-09T08:41:57Z",
+      "closedAt": "2026-07-09T08:41:57Z",
+      "mergedAt": null,
+      "headRefName": "pr/ipv4-localhost-probe",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 69,
+      "deletions": 2,
+      "changedFiles": 2,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/37595"
+    },
+    "NousResearch/hermes-agent#37547": {
+      "repo": "NousResearch/hermes-agent",
+      "number": 37547,
+      "state": "CLOSED",
+      "title": "fix(provider): honor ANTHROPIC_BASE_URL in native anthropic path",
+      "createdAt": "2026-06-02T17:54:55Z",
+      "updatedAt": "2026-07-01T14:40:12Z",
+      "closedAt": "2026-07-01T14:40:12Z",
+      "mergedAt": null,
+      "headRefName": "pr/anthropic-base-url-env",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 125,
+      "deletions": 9,
+      "changedFiles": 3,
+      "url": "https://github.com/NousResearch/hermes-agent/pull/37547"
+    },
+    "kenn-io/agentsview#1088": {
+      "repo": "kenn-io/agentsview",
+      "number": 1088,
+      "state": "OPEN",
+      "title": "fix(stats): align session counts with list visibility (#1048)",
+      "createdAt": "2026-07-11T03:41:11Z",
+      "updatedAt": "2026-07-11T04:30:28Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/1048-hermes-list-stats-parity",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 235,
+      "deletions": 112,
+      "changedFiles": 11,
+      "url": "https://github.com/kenn-io/agentsview/pull/1088"
+    },
+    "kenn-io/agentsview#1087": {
+      "repo": "kenn-io/agentsview",
+      "number": 1087,
+      "state": "OPEN",
+      "title": "feat(parser): ingest ZCode transcript messages and tool calls (#1050)",
+      "createdAt": "2026-07-11T03:41:11Z",
+      "updatedAt": "2026-07-11T04:30:16Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/1050-zcode-transcript-ingestion",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 951,
+      "deletions": 16,
+      "changedFiles": 5,
+      "url": "https://github.com/kenn-io/agentsview/pull/1087"
+    },
+    "headroomlabs-ai/headroom#2018": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2018,
+      "state": "OPEN",
+      "title": "fix(packaging): keep [all] installable on Intel macOS",
+      "createdAt": "2026-07-11T03:33:14Z",
+      "updatedAt": "2026-07-11T05:21:32Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/1931-macos-intel-install",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 117,
+      "deletions": 7,
+      "changedFiles": 5,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2018"
+    },
+    "headroomlabs-ai/headroom#2017": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2017,
+      "state": "OPEN",
+      "title": "fix(memory): honor explicit store=false on Responses requests",
+      "createdAt": "2026-07-11T03:28:03Z",
+      "updatedAt": "2026-07-11T05:21:18Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/1944-codex-responses-disconnect",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 38,
+      "deletions": 71,
+      "changedFiles": 3,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2017"
+    },
+    "headroomlabs-ai/headroom#2016": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2016,
+      "state": "OPEN",
+      "title": "fix(update): let Windows self-update replace headroom.exe",
+      "createdAt": "2026-07-11T03:20:17Z",
+      "updatedAt": "2026-07-11T04:07:31Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/1941-update-install-break",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 126,
+      "deletions": 1,
+      "changedFiles": 4,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2016"
+    },
+    "headroomlabs-ai/headroom#2015": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2015,
+      "state": "MERGED",
+      "title": "fix(proxy): keep PRE_SEND from reintroducing empty tool arrays",
+      "createdAt": "2026-07-11T03:14:26Z",
+      "updatedAt": "2026-07-11T03:38:27Z",
+      "closedAt": "2026-07-11T03:38:27Z",
+      "mergedAt": "2026-07-11T03:38:27Z",
+      "headRefName": "pr/1983-empty-tools-presend",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 20,
+      "deletions": 1,
+      "changedFiles": 3,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2015"
+    },
+    "nesquena/hermes-webui#5916": {
+      "repo": "nesquena/hermes-webui",
+      "number": 5916,
+      "state": "OPEN",
+      "title": "fix(#5867): re-arm hands-free voice mode and honor silence grace",
+      "createdAt": "2026-07-11T03:20:51Z",
+      "updatedAt": "2026-07-11T04:25:29Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/5867-voice-mode-rearm-silence-grace",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 157,
+      "deletions": 10,
+      "changedFiles": 4,
+      "url": "https://github.com/nesquena/hermes-webui/pull/5916"
+    },
+    "stablyai/orca#8218": {
+      "repo": "stablyai/orca",
+      "number": 8218,
+      "state": "OPEN",
+      "title": "fix(files): keep SSH deletes on the remote path",
+      "createdAt": "2026-07-11T05:13:59Z",
+      "updatedAt": "2026-07-11T05:25:54Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/ssh-folder-delete-connection-guard",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 318,
+      "deletions": 10,
+      "changedFiles": 7,
+      "url": "https://github.com/stablyai/orca/pull/8218"
+    },
+    "stablyai/orca#8217": {
+      "repo": "stablyai/orca",
+      "number": 8217,
+      "state": "MERGED",
+      "title": "fix(github): recover oversized issue creation",
+      "createdAt": "2026-07-11T05:13:49Z",
+      "updatedAt": "2026-07-11T06:16:14Z",
+      "closedAt": "2026-07-11T06:16:14Z",
+      "mergedAt": "2026-07-11T06:16:14Z",
+      "headRefName": "pr/github-oversized-issue-create",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 308,
+      "deletions": 45,
+      "changedFiles": 7,
+      "url": "https://github.com/stablyai/orca/pull/8217"
+    },
+    "stablyai/orca#8216": {
+      "repo": "stablyai/orca",
+      "number": 8216,
+      "state": "OPEN",
+      "title": "fix(terminal): detect PR links with ANSI resets",
+      "createdAt": "2026-07-11T04:59:24Z",
+      "updatedAt": "2026-07-11T06:03:28Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/detect-pr-links-with-ansi-resets",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 79,
+      "deletions": 4,
+      "changedFiles": 2,
+      "url": "https://github.com/stablyai/orca/pull/8216"
+    },
+    "stablyai/orca#8215": {
+      "repo": "stablyai/orca",
+      "number": 8215,
+      "state": "OPEN",
+      "title": "fix(terminal): open WSL file links on Windows",
+      "createdAt": "2026-07-11T04:54:42Z",
+      "updatedAt": "2026-07-11T05:01:15Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/open-wsl-file-links-on-windows",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 229,
+      "deletions": 33,
+      "changedFiles": 4,
+      "url": "https://github.com/stablyai/orca/pull/8215"
+    },
+    "stablyai/orca#8209": {
+      "repo": "stablyai/orca",
+      "number": 8209,
+      "state": "OPEN",
+      "title": "fix(terminal): normalize ZDOTDIR for WSL zsh",
+      "createdAt": "2026-07-11T04:27:00Z",
+      "updatedAt": "2026-07-11T05:19:44Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/normalize-zdotdir-for-wsl-zsh",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 215,
+      "deletions": 6,
+      "changedFiles": 6,
+      "url": "https://github.com/stablyai/orca/pull/8209"
+    },
+    "NVIDIA/SkillSpector#266": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 266,
+      "state": "OPEN",
+      "title": "fix(analyzer): gate documentation false positives for PE3/RA1/TM1/AR2",
+      "createdAt": "2026-07-11T04:38:01Z",
+      "updatedAt": "2026-07-11T04:38:01Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/static-doc-fp-gating",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 118,
+      "deletions": 12,
+      "changedFiles": 2,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/266"
     }
   },
   "authorPullScanMeta": {
     "kenn-io/agentsview": {
-      "scannedAt": "2026-07-10T18:41:41.405343Z",
+      "scannedAt": "2026-07-11T06:21:51.229932Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "thedotmack/claude-mem": {
-      "scannedAt": "2026-07-10T18:41:41.405343Z",
+      "scannedAt": "2026-07-11T06:21:51.229932Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "headroomlabs-ai/headroom": {
-      "scannedAt": "2026-07-10T18:41:41.405343Z",
+      "scannedAt": "2026-07-11T06:21:51.229932Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "nesquena/hermes-webui": {
-      "scannedAt": "2026-07-10T18:41:41.405343Z",
+      "scannedAt": "2026-07-11T06:21:51.229932Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "stablyai/orca": {
-      "scannedAt": "2026-07-10T18:41:41.405343Z",
+      "scannedAt": "2026-07-11T06:21:51.229932Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "mem0ai/mem0": {
-      "scannedAt": "2026-07-10T18:41:41.405343Z",
+      "scannedAt": "2026-07-11T06:21:51.229932Z",
+      "source": "graphql-search",
+      "lookbackHours": 48
+    },
+    "NVIDIA/SkillSpector": {
+      "scannedAt": "2026-07-11T06:21:51.229932Z",
+      "source": "graphql-search",
+      "lookbackHours": 48
+    },
+    "NousResearch/hermes-agent": {
+      "scannedAt": "2026-07-10T21:55:11.487756Z",
       "source": "graphql-search",
       "lookbackHours": 48
     }
@@ -94068,23 +96466,23 @@
       "releaseCreditMeta": null
     },
     "headroomlabs-ai/headroom|community-shipped-v4|all": {
-      "cachedAt": "2026-07-10T04:21:41.074185Z",
-      "refreshedAt": "2026-07-10T04:21:41.074185Z",
+      "cachedAt": "2026-07-11T05:29:18.702641Z",
+      "refreshedAt": "2026-07-11T05:29:18.702641Z",
       "logins": [
-        "oxura",
         "rodboev",
+        "oxura",
         "gglucass",
         "MrAshRhodes",
         "Parideboy",
         "agaonker",
         "aivinay",
+        "abhay-codes07",
         "neogenix",
         "peterlodri-sec",
         "inix-x",
-        "abhay-codes07",
         "tenderdeve",
-        "lifeodyssey",
         "ousamabenyounes",
+        "lifeodyssey",
         "Eyalm321",
         "pratikbin",
         "ashishpatel26",
@@ -94107,6 +96505,8 @@
         "SuperMarioYL",
         "falkoro",
         "pacifio",
+        "dspv",
+        "ztkent",
         "orty",
         "mvanhorn",
         "adryanev",
@@ -94133,7 +96533,6 @@
         "MdHussain121",
         "julienguarino",
         "dex0shubham",
-        "dspv",
         "eggrollofchaos",
         "amcfague",
         "iiroak",
@@ -94156,7 +96555,6 @@
         "xspawnnn",
         "purva-8",
         "ianks",
-        "ztkent",
         "hareeshkar",
         "nyxst4ck",
         "aniruddh909",
@@ -94178,6 +96576,11 @@
         "mbluecoder2",
         "nicolabeghin",
         "pythoninthegrass",
+        "agunggnn",
+        "fculpo",
+        "dsorensen",
+        "wzy-del",
+        "alex33d",
         "orbisai0security",
         "jecacs",
         "27apapa",
@@ -94375,17 +96778,17 @@
         "sodiumsun"
       ],
       "stats": {
+        "rodboev": {
+          "total": 61,
+          "open": 10,
+          "recentCount": 34,
+          "lastCreatedAt": "2026-07-11T03:33:14Z"
+        },
         "oxura": {
           "total": 57,
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-06T17:40:33Z"
-        },
-        "rodboev": {
-          "total": 54,
-          "open": 5,
-          "recentCount": 30,
-          "lastCreatedAt": "2026-07-09T02:31:36Z"
         },
         "gglucass": {
           "total": 41,
@@ -94402,7 +96805,7 @@
         "Parideboy": {
           "total": 30,
           "open": 1,
-          "recentCount": 6,
+          "recentCount": 4,
           "lastCreatedAt": "2026-07-07T07:57:32Z"
         },
         "agaonker": {
@@ -94416,6 +96819,12 @@
           "open": 2,
           "recentCount": 8,
           "lastCreatedAt": "2026-07-09T16:27:31Z"
+        },
+        "abhay-codes07": {
+          "total": 20,
+          "open": 5,
+          "recentCount": 7,
+          "lastCreatedAt": "2026-07-10T19:43:13Z"
         },
         "neogenix": {
           "total": 20,
@@ -94432,14 +96841,8 @@
         "inix-x": {
           "total": 15,
           "open": 1,
-          "recentCount": 4,
+          "recentCount": 2,
           "lastCreatedAt": "2026-07-05T17:10:22Z"
-        },
-        "abhay-codes07": {
-          "total": 14,
-          "open": 4,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-08T20:35:43Z"
         },
         "tenderdeve": {
           "total": 13,
@@ -94447,17 +96850,17 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-07-02T12:20:17Z"
         },
+        "ousamabenyounes": {
+          "total": 11,
+          "open": 4,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-10T23:15:00Z"
+        },
         "lifeodyssey": {
           "total": 11,
           "open": 2,
-          "recentCount": 3,
-          "lastCreatedAt": "2026-07-03T13:51:37Z"
-        },
-        "ousamabenyounes": {
-          "total": 9,
-          "open": 3,
           "recentCount": 0,
-          "lastCreatedAt": "2026-06-25T07:50:55Z"
+          "lastCreatedAt": "2026-07-03T13:51:37Z"
         },
         "Eyalm321": {
           "total": 9,
@@ -94474,7 +96877,7 @@
         "ashishpatel26": {
           "total": 8,
           "open": 4,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T09:28:26Z"
         },
         "lennney": {
@@ -94492,7 +96895,7 @@
         "KennethWKZ": {
           "total": 7,
           "open": 1,
-          "recentCount": 3,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-04T15:10:57Z"
         },
         "jichaowang02-lang": {
@@ -94591,6 +96994,18 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-06T04:11:12Z"
         },
+        "dspv": {
+          "total": 3,
+          "open": 1,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-10T21:13:14Z"
+        },
+        "ztkent": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T17:12:36Z"
+        },
         "orty": {
           "total": 3,
           "open": 0,
@@ -94606,7 +97021,7 @@
         "adryanev": {
           "total": 3,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T14:35:52Z"
         },
         "Krishnachaitanyakc": {
@@ -94747,12 +97162,6 @@
           "recentCount": 1,
           "lastCreatedAt": "2026-07-07T11:22:34Z"
         },
-        "dspv": {
-          "total": 2,
-          "open": 1,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-07T09:32:38Z"
-        },
         "eggrollofchaos": {
           "total": 2,
           "open": 0,
@@ -94885,12 +97294,6 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-18T23:41:01Z"
         },
-        "ztkent": {
-          "total": 2,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-18T13:50:10Z"
-        },
         "hareeshkar": {
           "total": 2,
           "open": 1,
@@ -95017,6 +97420,36 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-01-15T02:31:42Z"
         },
+        "agunggnn": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T18:46:19Z"
+        },
+        "fculpo": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T17:51:08Z"
+        },
+        "dsorensen": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T12:41:58Z"
+        },
+        "wzy-del": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T08:42:52Z"
+        },
+        "alex33d": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T07:11:42Z"
+        },
         "orbisai0security": {
           "total": 1,
           "open": 0,
@@ -95134,25 +97567,25 @@
         "logicalor": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-04T00:55:13Z"
         },
         "NN---": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T11:40:43Z"
         },
         "rohanprichard": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T11:04:43Z"
         },
         "MeGaurav4": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T09:16:12Z"
         },
         "dylanrussellmd": {
@@ -95631,7 +98064,7 @@
         },
         "sgfdhgfnjgmhgmnfd657-sys": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-17T15:33:57Z"
         },
@@ -96190,20 +98623,20 @@
       },
       "shippedCounts": {
         "ketpatil77": 3,
+        "rodboev": 51,
         "oxura": 3,
-        "rodboev": 49,
         "gglucass": 37,
         "MrAshRhodes": 30,
         "Parideboy": 29,
         "agaonker": 19,
         "aivinay": 14,
+        "abhay-codes07": 10,
         "neogenix": 12,
         "peterlodri-sec": 2,
         "inix-x": 13,
-        "abhay-codes07": 6,
         "tenderdeve": 7,
+        "ousamabenyounes": 7,
         "lifeodyssey": 9,
-        "ousamabenyounes": 6,
         "Eyalm321": 7,
         "pratikbin": 6,
         "ashishpatel26": 2,
@@ -96226,6 +98659,8 @@
         "SuperMarioYL": 4,
         "falkoro": 0,
         "pacifio": 2,
+        "dspv": 2,
+        "ztkent": 2,
         "orty": 3,
         "mvanhorn": 3,
         "adryanev": 3,
@@ -96252,7 +98687,6 @@
         "MdHussain121": 1,
         "julienguarino": 2,
         "dex0shubham": 0,
-        "dspv": 1,
         "eggrollofchaos": 2,
         "amcfague": 2,
         "iiroak": 0,
@@ -96275,7 +98709,6 @@
         "xspawnnn": 2,
         "purva-8": 1,
         "ianks": 1,
-        "ztkent": 1,
         "hareeshkar": 0,
         "nyxst4ck": 0,
         "aniruddh909": 2,
@@ -96297,6 +98730,11 @@
         "mbluecoder2": 0,
         "nicolabeghin": 2,
         "pythoninthegrass": 2,
+        "agunggnn": 0,
+        "fculpo": 1,
+        "dsorensen": 0,
+        "wzy-del": 0,
+        "alex33d": 0,
         "orbisai0security": 1,
         "jecacs": 0,
         "27apapa": 0,
@@ -96399,7 +98837,7 @@
         "simkessy": 1,
         "magicpro97": 0,
         "ahhdammm": 1,
-        "sgfdhgfnjgmhgmnfd657-sys": 0,
+        "sgfdhgfnjgmhgmnfd657-sys": 1,
         "mateusoliveirab": 1,
         "davdittrich": 0,
         "umi08ma": 1,
@@ -96498,8 +98936,8 @@
       "releaseCreditMeta": null
     },
     "kenn-io/agentsview|community-shipped-v4|all": {
-      "cachedAt": "2026-07-10T04:21:41.074185Z",
-      "refreshedAt": "2026-07-10T04:21:41.074185Z",
+      "cachedAt": "2026-07-11T05:29:18.702641Z",
+      "refreshedAt": "2026-07-11T05:29:18.702641Z",
       "logins": [
         "rodboev",
         "mjacobs",
@@ -96532,6 +98970,7 @@
         "sinnet3000",
         "cdeil",
         "thellert",
+        "k0zmo",
         "statik",
         "Mr-Koala",
         "RobSchilderr",
@@ -96599,15 +99038,15 @@
       ],
       "stats": {
         "rodboev": {
-          "total": 58,
-          "open": 0,
-          "recentCount": 14,
-          "lastCreatedAt": "2026-07-09T01:12:40Z"
+          "total": 65,
+          "open": 4,
+          "recentCount": 16,
+          "lastCreatedAt": "2026-07-11T03:41:11Z"
         },
         "mjacobs": {
           "total": 47,
           "open": 0,
-          "recentCount": 5,
+          "recentCount": 3,
           "lastCreatedAt": "2026-07-09T03:46:52Z"
         },
         "userFRM": {
@@ -96637,7 +99076,7 @@
         "prateek": {
           "total": 8,
           "open": 0,
-          "recentCount": 5,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T07:31:23Z"
         },
         "icatw": {
@@ -96708,7 +99147,7 @@
         },
         "tomzx": {
           "total": 2,
-          "open": 1,
+          "open": 0,
           "recentCount": 2,
           "lastCreatedAt": "2026-07-09T09:54:13Z"
         },
@@ -96783,6 +99222,12 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-02-28T19:42:26Z"
+        },
+        "k0zmo": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T19:24:54Z"
         },
         "statik": {
           "total": 1,
@@ -97170,7 +99615,7 @@
         }
       },
       "shippedCounts": {
-        "rodboev": 56,
+        "rodboev": 59,
         "mjacobs": 47,
         "userFRM": 12,
         "tpn": 12,
@@ -97201,6 +99646,7 @@
         "sinnet3000": 2,
         "cdeil": 2,
         "thellert": 2,
+        "k0zmo": 1,
         "statik": 1,
         "Mr-Koala": 1,
         "RobSchilderr": 1,
@@ -99318,8 +101764,8 @@
       "releaseCreditMeta": null
     },
     "mem0ai/mem0|community-shipped-v4|all": {
-      "cachedAt": "2026-07-09T20:10:06.937024Z",
-      "refreshedAt": "2026-07-09T20:10:06.937024Z",
+      "cachedAt": "2026-07-10T20:24:21.326200Z",
+      "refreshedAt": "2026-07-10T20:24:21.326200Z",
       "logins": [
         "Dev-Khant",
         "whysosaket",
@@ -99348,10 +101794,12 @@
         "haosenwang1018",
         "youneshima",
         "frederikb96",
+        "jaythehardcoder",
         "Himanshu-Sangshetti",
         "gabrielstein-mem0",
         "haroldfabla2-hue",
         "misrasaurabh1",
+        "abhay-codes07",
         "DivyamTalwar",
         "johnwlockwood",
         "shafdev",
@@ -99371,13 +101819,11 @@
         "sjsjsjjs534",
         "KushagraB424",
         "Krishnachaitanyakc",
-        "abhay-codes07",
         "rakheesingh",
         "thecaptain789",
         "Prikshit7766",
         "rupeshbansal",
         "octo-patch",
-        "jaythehardcoder",
         "soumil-rathi",
         "fengjikui",
         "jfeng18",
@@ -99388,6 +101834,7 @@
         "omercnet",
         "Mrinank-Bhowmick",
         "techcontributor",
+        "ac12644",
         "ShauryaaSharma",
         "Oxygen56",
         "shraderdm",
@@ -99410,7 +101857,6 @@
         "barry166",
         "adarshprabhu03",
         "rafid001",
-        "ac12644",
         "AjaasMk",
         "orbisai0security",
         "Highlander37",
@@ -99426,6 +101872,7 @@
         "shlokkhemani",
         "vatsalrathod16",
         "krescent",
+        "huveewomg",
         "freya0926",
         "VectorPeak",
         "rudrajmehta-mem0",
@@ -99457,7 +101904,6 @@
         "ianupamsingh",
         "ahnedeee",
         "gasolin",
-        "huveewomg",
         "bharadwaj-13",
         "csmdelinea",
         "Malhis",
@@ -99680,6 +102126,11 @@
         "jonasiwnl",
         "amjadraza",
         "Rayhanpatel",
+        "Phoenix1454",
+        "chrisqu777",
+        "gavdevs",
+        "rajarshidattapy",
+        "ManasVardhan",
         "turtletongue",
         "nandanadileep",
         "Diwak4r",
@@ -100128,7 +102579,7 @@
         "Divya16Sharma",
         "fatmind",
         "AG2AI-Admin",
-        "lazakrisz",
+        "kriszlazar",
         "Mocha-s",
         "WLS2002",
         "ciekawy",
@@ -100461,10 +102912,10 @@
           "lastCreatedAt": "2025-11-13T18:38:45Z"
         },
         "Bartok9": {
-          "total": 57,
-          "open": 34,
-          "recentCount": 13,
-          "lastCreatedAt": "2026-07-09T07:22:23Z"
+          "total": 61,
+          "open": 37,
+          "recentCount": 15,
+          "lastCreatedAt": "2026-07-10T18:57:30Z"
         },
         "HrushiYadav": {
           "total": 52,
@@ -100504,7 +102955,7 @@
         },
         "rodboev": {
           "total": 22,
-          "open": 9,
+          "open": 8,
           "recentCount": 2,
           "lastCreatedAt": "2026-07-08T21:53:12Z"
         },
@@ -100580,6 +103031,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2025-10-19T13:29:57Z"
         },
+        "jaythehardcoder": {
+          "total": 12,
+          "open": 6,
+          "recentCount": 7,
+          "lastCreatedAt": "2026-07-10T00:24:58Z"
+        },
         "Himanshu-Sangshetti": {
           "total": 12,
           "open": 2,
@@ -100603,6 +103060,12 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2024-06-11T22:19:58Z"
+        },
+        "abhay-codes07": {
+          "total": 11,
+          "open": 4,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-10T05:31:47Z"
         },
         "DivyamTalwar": {
           "total": 11,
@@ -100654,7 +103117,7 @@
         },
         "RobinALG87": {
           "total": 9,
-          "open": 8,
+          "open": 6,
           "recentCount": 9,
           "lastCreatedAt": "2026-07-08T22:45:44Z"
         },
@@ -100703,7 +103166,7 @@
         "sjsjsjjs534": {
           "total": 8,
           "open": 5,
-          "recentCount": 5,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-08T02:43:46Z"
         },
         "KushagraB424": {
@@ -100717,12 +103180,6 @@
           "open": 4,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-06T15:48:57Z"
-        },
-        "abhay-codes07": {
-          "total": 8,
-          "open": 3,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-07-02T18:17:30Z"
         },
         "rakheesingh": {
           "total": 8,
@@ -100753,12 +103210,6 @@
           "open": 3,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-09T06:16:35Z"
-        },
-        "jaythehardcoder": {
-          "total": 7,
-          "open": 2,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-09T01:31:36Z"
         },
         "soumil-rathi": {
           "total": 7,
@@ -100820,9 +103271,15 @@
           "recentCount": 0,
           "lastCreatedAt": "2025-04-01T19:44:55Z"
         },
+        "ac12644": {
+          "total": 6,
+          "open": 2,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T05:16:25Z"
+        },
         "ShauryaaSharma": {
           "total": 6,
-          "open": 5,
+          "open": 4,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-05T10:07:58Z"
         },
@@ -100952,12 +103409,6 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-25T13:48:55Z"
         },
-        "ac12644": {
-          "total": 5,
-          "open": 1,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-24T13:29:21Z"
-        },
         "AjaasMk": {
           "total": 5,
           "open": 1,
@@ -101047,6 +103498,12 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2024-08-08T14:42:30Z"
+        },
+        "huveewomg": {
+          "total": 4,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-10T09:24:30Z"
         },
         "freya0926": {
           "total": 4,
@@ -101234,12 +103691,6 @@
           "recentCount": 0,
           "lastCreatedAt": "2023-07-07T00:29:55Z"
         },
-        "huveewomg": {
-          "total": 3,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-06T12:34:15Z"
-        },
         "bharadwaj-13": {
           "total": 3,
           "open": 2,
@@ -101249,7 +103700,7 @@
         "csmdelinea": {
           "total": 3,
           "open": 3,
-          "recentCount": 3,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T12:23:31Z"
         },
         "Malhis": {
@@ -101602,7 +104053,7 @@
         },
         "QunBB": {
           "total": 2,
-          "open": 2,
+          "open": 1,
           "recentCount": 2,
           "lastCreatedAt": "2026-07-09T15:30:31Z"
         },
@@ -102572,6 +105023,36 @@
           "recentCount": 0,
           "lastCreatedAt": "2023-07-15T06:25:23Z"
         },
+        "Phoenix1454": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T18:01:05Z"
+        },
+        "chrisqu777": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T06:27:15Z"
+        },
+        "gavdevs": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T05:22:45Z"
+        },
+        "rajarshidattapy": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-09T22:48:52Z"
+        },
+        "ManasVardhan": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-09T20:19:33Z"
+        },
         "turtletongue": {
           "total": 1,
           "open": 0,
@@ -102610,7 +105091,7 @@
         },
         "okaditya84": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-08T08:01:30Z"
         },
@@ -102689,7 +105170,7 @@
         "adogfm": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T05:28:26Z"
         },
         "YinkaMetrics": {
@@ -105260,7 +107741,7 @@
           "recentCount": 0,
           "lastCreatedAt": "2025-07-18T21:15:46Z"
         },
-        "lazakrisz": {
+        "kriszlazar": {
           "total": 1,
           "open": 0,
           "recentCount": 0,
@@ -106991,6 +109472,7 @@
       },
       "shippedCounts": {
         "a-rybnikov": 0,
+        "lazakrisz": 1,
         "Dev-Khant": 414,
         "whysosaket": 166,
         "cachho": 98,
@@ -106998,14 +109480,14 @@
         "sidmohanty11": 77,
         "parshvadaftari": 61,
         "prateekchhikara": 73,
-        "Bartok9": 14,
+        "Bartok9": 15,
         "HrushiYadav": 38,
         "parthshr370": 32,
         "utkarsh240799": 36,
         "ly-wang19": 6,
         "Itz-Antaripa": 25,
         "spike-spiegel-21": 15,
-        "rodboev": 12,
+        "rodboev": 13,
         "harshgupta-mem0": 15,
         "yashs33244": 15,
         "PHclaw": 4,
@@ -107018,10 +109500,12 @@
         "haosenwang1018": 2,
         "youneshima": 10,
         "frederikb96": 6,
+        "jaythehardcoder": 0,
         "Himanshu-Sangshetti": 7,
         "gabrielstein-mem0": 12,
         "haroldfabla2-hue": 0,
         "misrasaurabh1": 5,
+        "abhay-codes07": 4,
         "DivyamTalwar": 0,
         "johnwlockwood": 5,
         "shafdev": 3,
@@ -107030,7 +109514,7 @@
         "veeceey": 4,
         "shenxiangzhuang": 9,
         "sahilyadav902": 10,
-        "RobinALG87": 0,
+        "RobinALG87": 1,
         "ChiragArora31": 2,
         "harshitanand": 1,
         "Prithvi1994": 3,
@@ -107041,13 +109525,11 @@
         "sjsjsjjs534": 1,
         "KushagraB424": 1,
         "Krishnachaitanyakc": 2,
-        "abhay-codes07": 2,
         "rakheesingh": 4,
         "thecaptain789": 0,
         "Prikshit7766": 6,
         "rupeshbansal": 7,
         "octo-patch": 0,
-        "jaythehardcoder": 0,
         "soumil-rathi": 6,
         "fengjikui": 2,
         "jfeng18": 1,
@@ -107058,7 +109540,8 @@
         "omercnet": 0,
         "Mrinank-Bhowmick": 5,
         "techcontributor": 7,
-        "ShauryaaSharma": 0,
+        "ac12644": 4,
+        "ShauryaaSharma": 1,
         "Oxygen56": 0,
         "shraderdm": 2,
         "sharziki": 0,
@@ -107080,7 +109563,6 @@
         "barry166": 4,
         "adarshprabhu03": 0,
         "rafid001": 1,
-        "ac12644": 4,
         "AjaasMk": 0,
         "orbisai0security": 0,
         "Highlander37": 0,
@@ -107096,6 +109578,7 @@
         "shlokkhemani": 2,
         "vatsalrathod16": 3,
         "krescent": 3,
+        "huveewomg": 1,
         "freya0926": 0,
         "VectorPeak": 1,
         "rudrajmehta-mem0": 4,
@@ -107127,7 +109610,6 @@
         "ianupamsingh": 3,
         "ahnedeee": 2,
         "gasolin": 2,
-        "huveewomg": 1,
         "bharadwaj-13": 0,
         "csmdelinea": 0,
         "Malhis": 1,
@@ -107188,7 +109670,7 @@
         "SerSamgy": 2,
         "KapilM26": 2,
         "aalmuarik": 0,
-        "QunBB": 0,
+        "QunBB": 1,
         "hedging8563": 0,
         "bennyyuan1008": 0,
         "JackCloudman": 0,
@@ -107350,13 +109832,18 @@
         "jonasiwnl": 2,
         "amjadraza": 1,
         "Rayhanpatel": 2,
+        "Phoenix1454": 0,
+        "chrisqu777": 1,
+        "gavdevs": 0,
+        "rajarshidattapy": 0,
+        "ManasVardhan": 0,
         "turtletongue": 1,
         "nandanadileep": 0,
         "Diwak4r": 0,
         "oldnicke": 0,
         "basnijholt": 0,
         "iroiro147": 0,
-        "okaditya84": 0,
+        "okaditya84": 1,
         "sahithreddy05": 1,
         "magicashu": 0,
         "asif786ka": 0,
@@ -107798,7 +110285,7 @@
         "Divya16Sharma": 0,
         "fatmind": 0,
         "AG2AI-Admin": 0,
-        "lazakrisz": 1,
+        "kriszlazar": 1,
         "Mocha-s": 0,
         "WLS2002": 0,
         "ciekawy": 0,
@@ -112707,8 +115194,8 @@
       "releaseCreditMeta": null
     },
     "nesquena/hermes-webui|community-shipped-v4|all": {
-      "cachedAt": "2026-07-10T04:21:41.074185Z",
-      "refreshedAt": "2026-07-10T04:21:41.074185Z",
+      "cachedAt": "2026-07-11T05:29:18.702641Z",
+      "refreshedAt": "2026-07-11T05:29:18.702641Z",
       "logins": [
         "rodboev",
         "franksong2702",
@@ -112753,13 +115240,14 @@
         "luperrypf",
         "24601",
         "NocGeek",
+        "silent-reader-cn",
         "mo7al876any",
         "Carry00",
         "lucasrc",
         "Charanis",
         "espokaos-ops",
         "armorbreak001",
-        "silent-reader-cn",
+        "Kopamed",
         "webtecnica",
         "kaishi00",
         "mvanhorn",
@@ -112767,6 +115255,7 @@
         "KingBoyAndGirl",
         "cloudyun888",
         "iRonin",
+        "ChonSong",
         "tomtong2015",
         "enihcam",
         "Paladin173",
@@ -112778,7 +115267,6 @@
         "fecolinhares",
         "EdwardWason",
         "renheqiang",
-        "ChonSong",
         "leszek3737",
         "b-yelverton",
         "tomas-forgac",
@@ -112791,6 +115279,8 @@
         "frap129",
         "pavolbiely",
         "TaraTheStar",
+        "igorroncevic",
+        "akay64",
         "octo-patch",
         "sbe27",
         "sheldon-im",
@@ -112820,9 +115310,9 @@
         "renatomott",
         "Bobby9228",
         "deboste",
-        "Kopamed",
+        "tkuhlengel",
+        "soria-clawd-bot",
         "DrMaks22",
-        "akay64",
         "CharlesMcquade",
         "NextDoorLaoHuang-HF",
         "rumotoshino",
@@ -112883,6 +115373,10 @@
         "gabogabucho",
         "DavidSchuchert",
         "thadreber-web",
+        "t1t4nium",
+        "Paslestrange",
+        "moosnelly",
+        "maxon1233",
         "Toqsick",
         "stefanpieter",
         "kibach",
@@ -113093,7 +115587,7 @@
         "minh-armadin",
         "KayZz69",
         "hi-friday",
-        "knowledge-forest",
+        "underdog-org",
         "nickgiulioni1",
         "yzp12138",
         "Voicle99",
@@ -113152,14 +115646,14 @@
       ],
       "stats": {
         "rodboev": {
-          "total": 355,
-          "open": 18,
-          "recentCount": 57,
-          "lastCreatedAt": "2026-07-10T03:54:55Z"
+          "total": 357,
+          "open": 15,
+          "recentCount": 50,
+          "lastCreatedAt": "2026-07-11T03:20:51Z"
         },
         "franksong2702": {
           "total": 335,
-          "open": 1,
+          "open": 0,
           "recentCount": 5,
           "lastCreatedAt": "2026-07-07T03:49:16Z"
         },
@@ -113172,7 +115666,7 @@
         "ai-ag2026": {
           "total": 184,
           "open": 5,
-          "recentCount": 33,
+          "recentCount": 28,
           "lastCreatedAt": "2026-07-09T16:55:14Z"
         },
         "bergeouss": {
@@ -113188,10 +115682,10 @@
           "lastCreatedAt": "2026-06-02T14:19:53Z"
         },
         "starship-s": {
-          "total": 46,
-          "open": 0,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-10T02:03:18Z"
+          "total": 50,
+          "open": 3,
+          "recentCount": 6,
+          "lastCreatedAt": "2026-07-11T03:50:39Z"
         },
         "dso2ng": {
           "total": 45,
@@ -113202,7 +115696,7 @@
         "allenliang2022": {
           "total": 32,
           "open": 0,
-          "recentCount": 11,
+          "recentCount": 10,
           "lastCreatedAt": "2026-07-07T17:44:33Z"
         },
         "jasonjcwu": {
@@ -113279,8 +115773,8 @@
         },
         "ruizanthony": {
           "total": 14,
-          "open": 2,
-          "recentCount": 7,
+          "open": 0,
+          "recentCount": 3,
           "lastCreatedAt": "2026-07-08T20:36:42Z"
         },
         "aronprins": {
@@ -113309,7 +115803,7 @@
         },
         "TomBanksAU": {
           "total": 12,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-22T06:46:28Z"
         },
@@ -113352,12 +115846,12 @@
         "Stacey2911": {
           "total": 9,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T09:04:37Z"
         },
         "akrhin": {
           "total": 9,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-24T06:54:48Z"
         },
@@ -113409,10 +115903,16 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-01T01:28:31Z"
         },
+        "silent-reader-cn": {
+          "total": 7,
+          "open": 2,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-11T02:37:30Z"
+        },
         "mo7al876any": {
           "total": 7,
           "open": 1,
-          "recentCount": 7,
+          "recentCount": 6,
           "lastCreatedAt": "2026-07-04T13:06:57Z"
         },
         "Carry00": {
@@ -113445,16 +115945,16 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-15T08:51:10Z"
         },
-        "silent-reader-cn": {
+        "Kopamed": {
           "total": 6,
-          "open": 1,
-          "recentCount": 3,
-          "lastCreatedAt": "2026-07-09T14:28:04Z"
+          "open": 3,
+          "recentCount": 6,
+          "lastCreatedAt": "2026-07-10T19:59:07Z"
         },
         "webtecnica": {
           "total": 6,
           "open": 1,
-          "recentCount": 6,
+          "recentCount": 3,
           "lastCreatedAt": "2026-07-05T22:53:41Z"
         },
         "kaishi00": {
@@ -113492,6 +115992,12 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-04-09T20:04:20Z"
+        },
+        "ChonSong": {
+          "total": 5,
+          "open": 2,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T05:40:04Z"
         },
         "tomtong2015": {
           "total": 5,
@@ -113558,12 +116064,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-04-17T07:58:44Z"
-        },
-        "ChonSong": {
-          "total": 4,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-04T03:47:22Z"
         },
         "leszek3737": {
           "total": 4,
@@ -113637,6 +116137,18 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-08T16:52:09Z"
         },
+        "igorroncevic": {
+          "total": 3,
+          "open": 2,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-10T15:20:36Z"
+        },
+        "akay64": {
+          "total": 3,
+          "open": 1,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-10T04:25:19Z"
+        },
         "octo-patch": {
           "total": 3,
           "open": 1,
@@ -113657,7 +116169,7 @@
         },
         "Pythonming2020": {
           "total": 3,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-07-01T14:43:28Z"
         },
@@ -113811,23 +116323,23 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-03-31T15:06:53Z"
         },
-        "Kopamed": {
+        "tkuhlengel": {
           "total": 2,
-          "open": 0,
+          "open": 1,
           "recentCount": 2,
-          "lastCreatedAt": "2026-07-08T23:32:02Z"
+          "lastCreatedAt": "2026-07-11T00:13:16Z"
+        },
+        "soria-clawd-bot": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-10T20:21:38Z"
         },
         "DrMaks22": {
           "total": 2,
           "open": 1,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-08T16:24:53Z"
-        },
-        "akay64": {
-          "total": 2,
-          "open": 1,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-08T09:51:10Z"
         },
         "CharlesMcquade": {
           "total": 2,
@@ -113844,7 +116356,7 @@
         "rumotoshino": {
           "total": 2,
           "open": 0,
-          "recentCount": 2,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-04T20:07:40Z"
         },
         "Loukky": {
@@ -113855,7 +116367,7 @@
         },
         "promptclickrun": {
           "total": 2,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-30T23:53:25Z"
         },
@@ -113885,7 +116397,7 @@
         },
         "perejaslav": {
           "total": 2,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-21T18:27:35Z"
         },
@@ -114189,6 +116701,30 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-04T03:26:35Z"
         },
+        "t1t4nium": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T18:36:05Z"
+        },
+        "Paslestrange": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T17:44:21Z"
+        },
+        "moosnelly": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T14:27:58Z"
+        },
+        "maxon1233": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T06:15:41Z"
+        },
         "Toqsick": {
           "total": 1,
           "open": 1,
@@ -114240,19 +116776,19 @@
         "djsavvy": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T21:19:34Z"
         },
         "ildunari": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T16:21:17Z"
         },
         "alexfoxtm": {
           "total": 1,
-          "open": 1,
-          "recentCount": 1,
+          "open": 0,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T16:13:04Z"
         },
         "WallaceWebster": {
@@ -114287,7 +116823,7 @@
         },
         "MicoRobot": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-07-01T10:22:44Z"
         },
@@ -114407,7 +116943,7 @@
         },
         "harryazj": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-23T04:25:32Z"
         },
@@ -115031,7 +117567,7 @@
         },
         "jakob1379": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-21T13:24:49Z"
         },
@@ -115449,7 +117985,7 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-29T17:04:47Z"
         },
-        "knowledge-forest": {
+        "underdog-org": {
           "total": 1,
           "open": 0,
           "recentCount": 0,
@@ -115788,6 +118324,7 @@
       },
       "shippedCounts": {
         "minhh-le": 0,
+        "knowledge-forest": 1,
         "rodboev": 267,
         "franksong2702": 239,
         "Michaelyklam": 152,
@@ -115809,7 +118346,7 @@
         "nankingjing": 4,
         "LumenYoung": 8,
         "Jordan-SkyLF": 11,
-        "ruizanthony": 2,
+        "ruizanthony": 3,
         "aronprins": 4,
         "zapabob": 3,
         "mysoul12138": 10,
@@ -115831,13 +118368,14 @@
         "luperrypf": 0,
         "24601": 6,
         "NocGeek": 6,
+        "silent-reader-cn": 1,
         "mo7al876any": 3,
         "Carry00": 5,
         "lucasrc": 4,
         "Charanis": 1,
         "espokaos-ops": 3,
         "armorbreak001": 7,
-        "silent-reader-cn": 1,
+        "Kopamed": 0,
         "webtecnica": 1,
         "kaishi00": 3,
         "mvanhorn": 3,
@@ -115845,6 +118383,7 @@
         "KingBoyAndGirl": 3,
         "cloudyun888": 5,
         "iRonin": 6,
+        "ChonSong": 0,
         "tomtong2015": 0,
         "enihcam": 2,
         "Paladin173": 1,
@@ -115856,7 +118395,6 @@
         "fecolinhares": 1,
         "EdwardWason": 0,
         "renheqiang": 3,
-        "ChonSong": 0,
         "leszek3737": 1,
         "b-yelverton": 3,
         "tomas-forgac": 1,
@@ -115869,6 +118407,8 @@
         "frap129": 3,
         "pavolbiely": 2,
         "TaraTheStar": 0,
+        "igorroncevic": 1,
+        "akay64": 1,
         "octo-patch": 0,
         "sbe27": 1,
         "sheldon-im": 1,
@@ -115898,9 +118438,9 @@
         "renatomott": 0,
         "Bobby9228": 0,
         "deboste": 3,
-        "Kopamed": 0,
+        "tkuhlengel": 0,
+        "soria-clawd-bot": 0,
         "DrMaks22": 0,
-        "akay64": 1,
         "CharlesMcquade": 1,
         "NextDoorLaoHuang-HF": 0,
         "rumotoshino": 0,
@@ -115961,6 +118501,10 @@
         "gabogabucho": 0,
         "DavidSchuchert": 1,
         "thadreber-web": 1,
+        "t1t4nium": 0,
+        "Paslestrange": 0,
+        "moosnelly": 0,
+        "maxon1233": 0,
         "Toqsick": 0,
         "stefanpieter": 0,
         "kibach": 0,
@@ -116171,7 +118715,7 @@
         "minh-armadin": 0,
         "KayZz69": 0,
         "hi-friday": 0,
-        "knowledge-forest": 1,
+        "underdog-org": 1,
         "nickgiulioni1": 0,
         "yzp12138": 1,
         "Voicle99": 0,
@@ -133210,8 +135754,8 @@
       "releaseCreditMeta": null
     },
     "NVIDIA/SkillSpector|community-shipped-v4|all": {
-      "cachedAt": "2026-07-04T00:46:15.358918Z",
-      "refreshedAt": "2026-07-04T00:46:15.358918Z",
+      "cachedAt": "2026-07-10T21:51:49.105329Z",
+      "refreshedAt": "2026-07-10T21:51:49.105329Z",
       "logins": [
         "mimran-khan",
         "CharmingGroot",
@@ -133220,14 +135764,21 @@
         "tcconnally",
         "wernerkasselman-au",
         "Shrotriya-lalit",
+        "koriyoshi2041",
         "smoy",
         "zhenliemao",
         "zied-jlassi",
         "asadbekXodjayev",
+        "WhereIs38",
+        "Dxboy266",
         "assinchu",
         "tuanaiseo",
         "rcha0s",
         "nyxst4ck",
+        "Root-Aamir",
+        "major-security",
+        "badnoodle",
+        "Ruanyuxi1337",
         "HexSleeves",
         "scholesgx",
         "Hiten0305l",
@@ -133241,7 +135792,6 @@
         "will-exaforce",
         "Akshatmish",
         "yonatangross",
-        "WhereIs38",
         "matt-appno",
         "dc995",
         "medhdj",
@@ -133275,19 +135825,19 @@
         "CharmingGroot": {
           "total": 14,
           "open": 2,
-          "recentCount": 4,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-30T13:40:43Z"
         },
         "rodboev": {
-          "total": 10,
-          "open": 7,
-          "recentCount": 5,
-          "lastCreatedAt": "2026-06-29T18:06:21Z"
+          "total": 13,
+          "open": 9,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-04T04:02:21Z"
         },
         "AbhiramDwivedi": {
           "total": 7,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T15:08:58Z"
         },
         "tcconnally": {
@@ -133298,7 +135848,7 @@
         },
         "wernerkasselman-au": {
           "total": 6,
-          "open": 4,
+          "open": 3,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-25T00:00:00Z"
         },
@@ -133308,16 +135858,22 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-24T07:03:32Z"
         },
+        "koriyoshi2041": {
+          "total": 4,
+          "open": 3,
+          "recentCount": 4,
+          "lastCreatedAt": "2026-07-10T05:03:30Z"
+        },
         "smoy": {
           "total": 4,
           "open": 2,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-01T20:56:53Z"
         },
         "zhenliemao": {
           "total": 3,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-28T10:07:39Z"
         },
         "zied-jlassi": {
@@ -133331,6 +135887,18 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-23T06:58:30Z"
+        },
+        "WhereIs38": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-07T11:19:25Z"
+        },
+        "Dxboy266": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-05T07:11:50Z"
         },
         "assinchu": {
           "total": 2,
@@ -133356,22 +135924,46 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-19T05:37:07Z"
         },
-        "HexSleeves": {
+        "Root-Aamir": {
           "total": 1,
           "open": 1,
           "recentCount": 1,
+          "lastCreatedAt": "2026-07-09T17:44:05Z"
+        },
+        "major-security": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-09T01:47:08Z"
+        },
+        "badnoodle": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-08T10:42:09Z"
+        },
+        "Ruanyuxi1337": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-06T14:28:03Z"
+        },
+        "HexSleeves": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T04:02:22Z"
         },
         "scholesgx": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-30T00:10:05Z"
         },
         "Hiten0305l": {
           "total": 1,
-          "open": 1,
-          "recentCount": 1,
+          "open": 0,
+          "recentCount": 0,
           "lastCreatedAt": "2026-06-29T10:00:34Z"
         },
         "S-zhi": {
@@ -133433,12 +136025,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-19T10:32:19Z"
-        },
-        "WhereIs38": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-18T21:07:04Z"
         },
         "matt-appno": {
           "total": 1,
@@ -133577,22 +136163,29 @@
         "keshprad": 9,
         "mimran-khan": 15,
         "CharmingGroot": 10,
-        "rodboev": 3,
+        "rodboev": 4,
         "AbhiramDwivedi": 6,
         "tcconnally": 7,
         "wernerkasselman-au": 2,
         "Shrotriya-lalit": 5,
+        "koriyoshi2041": 1,
         "smoy": 2,
         "zhenliemao": 0,
         "zied-jlassi": 2,
         "asadbekXodjayev": 2,
+        "WhereIs38": 2,
+        "Dxboy266": 0,
         "assinchu": 2,
         "tuanaiseo": 2,
         "rcha0s": 1,
         "nyxst4ck": 1,
+        "Root-Aamir": 0,
+        "major-security": 0,
+        "badnoodle": 0,
+        "Ruanyuxi1337": 0,
         "HexSleeves": 0,
         "scholesgx": 0,
-        "Hiten0305l": 0,
+        "Hiten0305l": 1,
         "S-zhi": 0,
         "caius72": 1,
         "morus246": 1,
@@ -133603,7 +136196,6 @@
         "will-exaforce": 0,
         "Akshatmish": 1,
         "yonatangross": 1,
-        "WhereIs38": 0,
         "matt-appno": 1,
         "dc995": 1,
         "medhdj": 1,
@@ -133632,21 +136224,21 @@
       "releaseCreditMeta": null
     },
     "stablyai/orca|community-shipped-v4|all": {
-      "cachedAt": "2026-07-10T04:21:41.074185Z",
-      "refreshedAt": "2026-07-10T04:21:41.074185Z",
+      "cachedAt": "2026-07-11T05:29:18.702641Z",
+      "refreshedAt": "2026-07-11T05:29:18.702641Z",
       "logins": [
         "gatsby74",
         "rodboev",
         "wolfiesch",
+        "bbingz",
         "gsxdsm",
         "heyramzi",
-        "bbingz",
         "slashdevcorpse",
         "leynier",
         "sudoeren",
         "BorjaLL",
-        "siddqamar",
         "OrcaWin",
+        "siddqamar",
         "AnddyAgudelo",
         "Nikolatesla-lj",
         "LesleyMurfin",
@@ -133684,6 +136276,7 @@
         "P-de-Jong",
         "sasha-id",
         "ypatel2022",
+        "kaynansc",
         "branben",
         "amondnet",
         "ParkerRex",
@@ -133691,7 +136284,7 @@
         "jonavila",
         "SSwser",
         "drakontia",
-        "kaynansc",
+        "sonhyrd",
         "ryushione",
         "alpiyev99",
         "vincent-lxc",
@@ -133728,6 +136321,7 @@
         "shamounY",
         "mralexsaavedra",
         "xiaolai",
+        "Cainiaooo",
         "andrecristodev",
         "andres-vr",
         "saurabh",
@@ -133776,6 +136370,13 @@
         "crilofer",
         "zerone0x",
         "aparusel",
+        "sbkim",
+        "reopard007",
+        "leomleao",
+        "TaeSungLee96",
+        "lucasdaniellopes",
+        "Vitus213",
+        "westkite1201",
         "preschian",
         "timsuchanek",
         "NGdust",
@@ -133783,7 +136384,6 @@
         "eusoucarlosmedeiros",
         "Jonezzyboy",
         "TopGrd",
-        "Cainiaooo",
         "MeGaurav4",
         "itsXuSt",
         "shady2k",
@@ -133863,7 +136463,6 @@
         "agch-dev",
         "martinbelcic",
         "jeganxthan",
-        "sonhyrd",
         "nmitch17",
         "Srain021",
         "rsaulo",
@@ -133950,16 +136549,16 @@
       ],
       "stats": {
         "gatsby74": {
-          "total": 45,
-          "open": 31,
-          "recentCount": 20,
-          "lastCreatedAt": "2026-07-09T18:48:24Z"
+          "total": 48,
+          "open": 33,
+          "recentCount": 22,
+          "lastCreatedAt": "2026-07-10T19:17:09Z"
         },
         "rodboev": {
-          "total": 39,
-          "open": 19,
-          "recentCount": 26,
-          "lastCreatedAt": "2026-07-09T04:36:38Z"
+          "total": 47,
+          "open": 22,
+          "recentCount": 32,
+          "lastCreatedAt": "2026-07-11T05:13:59Z"
         },
         "wolfiesch": {
           "total": 37,
@@ -133967,9 +136566,15 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-29T09:44:00Z"
         },
+        "bbingz": {
+          "total": 30,
+          "open": 21,
+          "recentCount": 30,
+          "lastCreatedAt": "2026-07-11T00:23:42Z"
+        },
         "gsxdsm": {
           "total": 26,
-          "open": 5,
+          "open": 4,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-21T10:38:02Z"
         },
@@ -133979,28 +136584,22 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-21T11:39:27Z"
         },
-        "bbingz": {
-          "total": 21,
-          "open": 17,
-          "recentCount": 21,
-          "lastCreatedAt": "2026-07-10T01:37:39Z"
-        },
         "slashdevcorpse": {
           "total": 20,
           "open": 9,
-          "recentCount": 4,
+          "recentCount": 3,
           "lastCreatedAt": "2026-07-04T23:01:26Z"
         },
         "leynier": {
           "total": 18,
           "open": 1,
-          "recentCount": 2,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-04T06:36:35Z"
         },
         "sudoeren": {
           "total": 18,
           "open": 6,
-          "recentCount": 4,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T22:32:42Z"
         },
         "BorjaLL": {
@@ -134009,17 +136608,17 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-16T15:59:06Z"
         },
+        "OrcaWin": {
+          "total": 16,
+          "open": 4,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-10T20:53:10Z"
+        },
         "siddqamar": {
           "total": 16,
-          "open": 5,
+          "open": 4,
           "recentCount": 4,
           "lastCreatedAt": "2026-07-09T19:47:11Z"
-        },
-        "OrcaWin": {
-          "total": 15,
-          "open": 4,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-10T00:06:23Z"
         },
         "AnddyAgudelo": {
           "total": 13,
@@ -134048,13 +136647,13 @@
         "xianjianlf2": {
           "total": 11,
           "open": 9,
-          "recentCount": 9,
+          "recentCount": 7,
           "lastCreatedAt": "2026-07-08T13:26:33Z"
         },
         "huhuhulululu": {
           "total": 11,
           "open": 4,
-          "recentCount": 5,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-04T03:12:42Z"
         },
         "mathnogueira": {
@@ -134071,7 +136670,7 @@
         },
         "mturac": {
           "total": 10,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-29T15:21:54Z"
         },
@@ -134096,7 +136695,7 @@
         "RubinCarter": {
           "total": 8,
           "open": 4,
-          "recentCount": 3,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-07T08:42:12Z"
         },
         "Jingyue-Wu": {
@@ -134161,7 +136760,7 @@
         },
         "doanbactam": {
           "total": 6,
-          "open": 3,
+          "open": 2,
           "recentCount": 3,
           "lastCreatedAt": "2026-07-09T02:32:35Z"
         },
@@ -134180,7 +136779,7 @@
         "nexusjuniorai": {
           "total": 6,
           "open": 3,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T18:20:01Z"
         },
         "jtalborough": {
@@ -134192,7 +136791,7 @@
         "CleonSuo": {
           "total": 5,
           "open": 1,
-          "recentCount": 5,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-04T06:15:58Z"
         },
         "ppw-stack": {
@@ -134243,6 +136842,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-19T23:48:54Z"
         },
+        "kaynansc": {
+          "total": 4,
+          "open": 3,
+          "recentCount": 4,
+          "lastCreatedAt": "2026-07-10T18:22:36Z"
+        },
         "branben": {
           "total": 4,
           "open": 4,
@@ -134285,16 +136890,16 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-20T18:51:30Z"
         },
-        "kaynansc": {
+        "sonhyrd": {
           "total": 3,
-          "open": 2,
-          "recentCount": 3,
-          "lastCreatedAt": "2026-07-09T22:16:14Z"
+          "open": 1,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-10T13:49:32Z"
         },
         "ryushione": {
           "total": 3,
           "open": 3,
-          "recentCount": 3,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-09T17:39:53Z"
         },
         "alpiyev99": {
@@ -134311,7 +136916,7 @@
         },
         "fsdwen": {
           "total": 3,
-          "open": 3,
+          "open": 2,
           "recentCount": 3,
           "lastCreatedAt": "2026-07-08T01:23:14Z"
         },
@@ -134323,7 +136928,7 @@
         },
         "hmrserver": {
           "total": 3,
-          "open": 2,
+          "open": 1,
           "recentCount": 3,
           "lastCreatedAt": "2026-07-05T20:35:14Z"
         },
@@ -134342,7 +136947,7 @@
         "tofunori": {
           "total": 3,
           "open": 2,
-          "recentCount": 3,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T15:52:50Z"
         },
         "Kesta-bos": {
@@ -134507,6 +137112,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-23T06:44:27Z"
         },
+        "Cainiaooo": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-10T08:16:02Z"
+        },
         "andrecristodev": {
           "total": 2,
           "open": 2,
@@ -134515,7 +137126,7 @@
         },
         "andres-vr": {
           "total": 2,
-          "open": 2,
+          "open": 0,
           "recentCount": 2,
           "lastCreatedAt": "2026-07-09T18:14:05Z"
         },
@@ -134564,7 +137175,7 @@
         "Daily-AC": {
           "total": 2,
           "open": 1,
-          "recentCount": 2,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-06T15:33:31Z"
         },
         "suiramdev": {
@@ -134605,8 +137216,8 @@
         },
         "hirorocky": {
           "total": 2,
-          "open": 2,
-          "recentCount": 2,
+          "open": 0,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-04T03:21:33Z"
         },
         "Pomy1": {
@@ -134795,6 +137406,48 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-19T11:43:25Z"
         },
+        "sbkim": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-11T05:27:32Z"
+        },
+        "reopard007": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-11T04:04:45Z"
+        },
+        "leomleao": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T18:08:28Z"
+        },
+        "TaeSungLee96": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T18:06:02Z"
+        },
+        "lucasdaniellopes": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T17:07:11Z"
+        },
+        "Vitus213": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T06:13:22Z"
+        },
+        "westkite1201": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T04:22:19Z"
+        },
         "preschian": {
           "total": 1,
           "open": 1,
@@ -134803,7 +137456,7 @@
         },
         "timsuchanek": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-10T01:47:53Z"
         },
@@ -134836,12 +137489,6 @@
           "open": 1,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-09T09:24:38Z"
-        },
-        "Cainiaooo": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-09T09:22:15Z"
         },
         "MeGaurav4": {
           "total": 1,
@@ -134917,7 +137564,7 @@
         },
         "n-leezy": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-08T01:21:47Z"
         },
@@ -134935,7 +137582,7 @@
         },
         "omnificate": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-07T07:06:59Z"
         },
@@ -135044,37 +137691,37 @@
         "haozhenfei": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T14:32:48Z"
         },
         "handsomeXZ": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T14:31:52Z"
         },
         "Naxon": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T12:41:34Z"
         },
         "yuqi1991": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T11:21:53Z"
         },
         "minhoryang": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T08:13:02Z"
         },
         "ZaynJarvis": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T06:07:30Z"
         },
         "loong95": {
@@ -135316,12 +137963,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-24T15:55:14Z"
-        },
-        "sonhyrd": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-23T20:19:12Z"
         },
         "nmitch17": {
           "total": 1,
@@ -135824,18 +138465,18 @@
       },
       "shippedCounts": {
         "shiva24082": 0,
-        "gatsby74": 11,
-        "rodboev": 17,
+        "gatsby74": 12,
+        "rodboev": 20,
         "wolfiesch": 16,
+        "bbingz": 5,
         "gsxdsm": 16,
         "heyramzi": 11,
-        "bbingz": 1,
         "slashdevcorpse": 6,
         "leynier": 15,
         "sudoeren": 6,
         "BorjaLL": 9,
-        "siddqamar": 7,
-        "OrcaWin": 11,
+        "OrcaWin": 12,
+        "siddqamar": 8,
         "AnddyAgudelo": 3,
         "Nikolatesla-lj": 4,
         "LesleyMurfin": 11,
@@ -135844,7 +138485,7 @@
         "huhuhulululu": 7,
         "mathnogueira": 11,
         "devajmeireles": 8,
-        "mturac": 7,
+        "mturac": 8,
         "prateek": 5,
         "carlosbaraza": 6,
         "colinchambachan": 8,
@@ -135859,7 +138500,7 @@
         "timothyjlaurent": 1,
         "muddlebee": 4,
         "AmoabaKelvin": 6,
-        "doanbactam": 2,
+        "doanbactam": 3,
         "lvfen": 4,
         "s546126": 1,
         "nexusjuniorai": 2,
@@ -135873,6 +138514,7 @@
         "P-de-Jong": 5,
         "sasha-id": 2,
         "ypatel2022": 5,
+        "kaynansc": 1,
         "branben": 0,
         "amondnet": 2,
         "ParkerRex": 4,
@@ -135880,13 +138522,13 @@
         "jonavila": 4,
         "SSwser": 2,
         "drakontia": 4,
-        "kaynansc": 1,
+        "sonhyrd": 1,
         "ryushione": 0,
         "alpiyev99": 0,
         "vincent-lxc": 0,
-        "fsdwen": 0,
+        "fsdwen": 1,
         "Dvitash": 3,
-        "hmrserver": 1,
+        "hmrserver": 2,
         "kenfdev": 1,
         "AvichalDwivedi2205": 2,
         "tofunori": 0,
@@ -135917,8 +138559,9 @@
         "shamounY": 2,
         "mralexsaavedra": 3,
         "xiaolai": 1,
+        "Cainiaooo": 0,
         "andrecristodev": 0,
-        "andres-vr": 0,
+        "andres-vr": 2,
         "saurabh": 0,
         "thiagomsoares": 1,
         "hu-qi": 1,
@@ -135965,14 +138608,20 @@
         "crilofer": 2,
         "zerone0x": 2,
         "aparusel": 1,
+        "sbkim": 0,
+        "reopard007": 0,
+        "leomleao": 0,
+        "TaeSungLee96": 0,
+        "lucasdaniellopes": 0,
+        "Vitus213": 1,
+        "westkite1201": 0,
         "preschian": 0,
-        "timsuchanek": 0,
+        "timsuchanek": 1,
         "NGdust": 0,
         "SiteupAgencia": 0,
         "eusoucarlosmedeiros": 0,
         "Jonezzyboy": 0,
         "TopGrd": 0,
-        "Cainiaooo": 0,
         "MeGaurav4": 0,
         "itsXuSt": 0,
         "shady2k": 0,
@@ -135988,7 +138637,7 @@
         "n-leezy": 0,
         "CamillePolice": 0,
         "kiyeonjeon21": 0,
-        "omnificate": 0,
+        "omnificate": 1,
         "mattehlol": 0,
         "lotgood": 0,
         "3499623985": 1,
@@ -136052,7 +138701,6 @@
         "agch-dev": 1,
         "martinbelcic": 1,
         "jeganxthan": 1,
-        "sonhyrd": 0,
         "nmitch17": 0,
         "Srain021": 0,
         "rsaulo": 1,
@@ -141977,8 +144625,8 @@
       "releaseCreditMeta": null
     },
     "thedotmack/claude-mem|community-shipped-v4|all": {
-      "cachedAt": "2026-07-10T04:21:41.074185Z",
-      "refreshedAt": "2026-07-10T04:21:41.074185Z",
+      "cachedAt": "2026-07-11T05:29:18.702641Z",
+      "refreshedAt": "2026-07-11T05:29:18.702641Z",
       "logins": [
         "rodboev",
         "ousamabenyounes",
@@ -142023,6 +144671,7 @@
         "MrSaneApps",
         "JiehoonKwak",
         "7Sageer",
+        "DNA",
         "ruddro-roy",
         "joao-oliveira-softtor",
         "bionicbutterfly13",
@@ -142076,6 +144725,7 @@
         "iefnaf",
         "trevwilson",
         "dreamiurg",
+        "eralpozcan",
         "girish-kanjiyani7",
         "tiagogbarbosa",
         "winklemad",
@@ -142123,7 +144773,6 @@
         "caioribeiroclw-pixel",
         "NRCP-HarrisonBooth",
         "emilzo",
-        "DNA",
         "husniadil",
         "siddy6969",
         "mas5464",
@@ -142424,7 +145073,7 @@
         },
         "laihenyi": {
           "total": 14,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-24T13:18:56Z"
         },
@@ -142631,6 +145280,12 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2025-12-15T10:51:54Z"
+        },
+        "DNA": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T20:32:17Z"
         },
         "ruddro-roy": {
           "total": 2,
@@ -142950,6 +145605,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2025-11-26T21:30:54Z"
         },
+        "eralpozcan": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-11T00:51:51Z"
+        },
         "girish-kanjiyani7": {
           "total": 1,
           "open": 1,
@@ -143019,7 +145680,7 @@
         "spolspol": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-03T23:43:58Z"
         },
         "Garcia6l20": {
@@ -143231,12 +145892,6 @@
           "open": 1,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-11T02:57:43Z"
-        },
-        "DNA": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-10T20:22:04Z"
         },
         "husniadil": {
           "total": 1,
@@ -144771,6 +147426,7 @@
         "MrSaneApps": 1,
         "JiehoonKwak": 0,
         "7Sageer": 1,
+        "DNA": 0,
         "ruddro-roy": 0,
         "joao-oliveira-softtor": 1,
         "bionicbutterfly13": 0,
@@ -144824,6 +147480,7 @@
         "iefnaf": 0,
         "trevwilson": 1,
         "dreamiurg": 2,
+        "eralpozcan": 0,
         "girish-kanjiyani7": 0,
         "tiagogbarbosa": 0,
         "winklemad": 0,
@@ -144871,7 +147528,6 @@
         "caioribeiroclw-pixel": 0,
         "NRCP-HarrisonBooth": 0,
         "emilzo": 0,
-        "DNA": 0,
         "husniadil": 0,
         "siddy6969": 1,
         "mas5464": 0,
@@ -227001,8 +229657,22 @@
   },
   "releaseData": {
     "kenn-io/agentsview": {
-      "cachedAt": "2026-07-09T18:45:26.801357Z",
+      "cachedAt": "2026-07-10T20:24:21.326200Z",
       "releases": [
+        {
+          "tagName": "v0.37.5",
+          "htmlUrl": "https://github.com/kenn-io/agentsview/releases/tag/v0.37.5",
+          "publishedAt": "2026-07-10T03:26:44Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v0.37.4",
+          "htmlUrl": "https://github.com/kenn-io/agentsview/releases/tag/v0.37.4",
+          "publishedAt": "2026-07-09T20:14:01Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
         {
           "tagName": "v0.37.3",
           "htmlUrl": "https://github.com/kenn-io/agentsview/releases/tag/v0.37.3",
@@ -227476,8 +230146,15 @@
       "prToRelease": {}
     },
     "thedotmack/claude-mem": {
-      "cachedAt": "2026-07-09T18:45:26.801357Z",
+      "cachedAt": "2026-07-10T20:24:21.326200Z",
       "releases": [
+        {
+          "tagName": "v13.10.3-community-edge.0",
+          "htmlUrl": "https://github.com/thedotmack/claude-mem/releases/tag/v13.10.3-community-edge.0",
+          "publishedAt": "2026-07-09T19:22:48Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
         {
           "tagName": "v13.10.2",
           "htmlUrl": "https://github.com/thedotmack/claude-mem/releases/tag/v13.10.2",
@@ -229577,7 +232254,7 @@
       }
     },
     "headroomlabs-ai/headroom": {
-      "cachedAt": "2026-07-09T18:45:26.801357Z",
+      "cachedAt": "2026-07-10T20:24:21.326200Z",
       "releases": [
         {
           "tagName": "v0.31.0",
@@ -231536,7 +234213,7 @@
       }
     },
     "mem0ai/mem0": {
-      "cachedAt": "2026-07-09T18:45:26.801357Z",
+      "cachedAt": "2026-07-10T20:24:21.326200Z",
       "releases": [
         {
           "tagName": "v2.0.11",
@@ -243933,8 +246610,329 @@
       }
     },
     "stablyai/orca": {
-      "cachedAt": "2026-07-09T18:45:26.801357Z",
+      "cachedAt": "2026-07-10T20:24:21.326200Z",
       "releases": [
+        {
+          "tagName": "v1.4.134",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.134",
+          "publishedAt": "2026-07-10T10:26:33Z",
+          "credits": {
+            "brennanb2025": [
+              8012
+            ],
+            "AmethystLiang": [
+              3922,
+              8101,
+              8102
+            ],
+            "hmrserver": [
+              7423
+            ],
+            "fsdwen": [
+              7762
+            ],
+            "nwparker": [
+              8039,
+              8050,
+              8087
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.133",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.133",
+          "publishedAt": "2026-07-10T10:05:08Z",
+          "credits": {
+            "brennanb2025": [
+              8012
+            ],
+            "AmethystLiang": [
+              3922
+            ],
+            "hmrserver": [
+              7423
+            ],
+            "fsdwen": [
+              7762
+            ],
+            "nwparker": [
+              8039,
+              8050,
+              8087
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.133-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.133-rc.0",
+          "publishedAt": "2026-07-10T09:47:26Z",
+          "credits": {
+            "brennanb2025": [
+              8012
+            ],
+            "AmethystLiang": [
+              3922
+            ],
+            "hmrserver": [
+              7423
+            ],
+            "fsdwen": [
+              7762
+            ],
+            "nwparker": [
+              8050
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.132",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132",
+          "publishedAt": "2026-07-10T09:22:14Z",
+          "credits": {
+            "Jinwoo-H": [
+              7966,
+              7967,
+              7969,
+              7980,
+              7982,
+              7984,
+              7993,
+              7998,
+              7999
+            ],
+            "AmethystLiang": [
+              7544,
+              7923,
+              7924,
+              8007,
+              8008,
+              8017,
+              8018,
+              8019,
+              8020,
+              8021,
+              8022,
+              8023,
+              8024,
+              8025,
+              8026,
+              8027,
+              8036,
+              8037,
+              8040,
+              8041,
+              8042,
+              8043,
+              8044
+            ],
+            "brennanb2025": [
+              7053,
+              7619,
+              7903,
+              7990,
+              8005,
+              8010
+            ],
+            "bbingz": [
+              7867,
+              7876
+            ],
+            "rodboev": [
+              7882,
+              7891
+            ],
+            "doanbactam": [
+              7869
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.132-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.1",
+          "publishedAt": "2026-07-10T07:47:22Z",
+          "credits": {
+            "AmethystLiang": [
+              7544,
+              8036,
+              8037,
+              8040,
+              8041,
+              8042,
+              8043,
+              8044
+            ],
+            "doanbactam": [
+              7869
+            ],
+            "brennanb2025": [
+              7903
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.132-rc.0.perf",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0.perf",
+          "publishedAt": "2026-07-10T01:39:20Z",
+          "credits": {
+            "Jinwoo-H": [
+              7340,
+              7966,
+              7967,
+              7969,
+              7980,
+              7984
+            ],
+            "AmethystLiang": [
+              7924
+            ],
+            "brennanb2025": [
+              7053
+            ],
+            "bbingz": [
+              7867
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0",
+          "publishedAt": "2026-07-10T06:01:19Z",
+          "credits": {
+            "Jinwoo-H": [
+              7966,
+              7967,
+              7969,
+              7980,
+              7982,
+              7984,
+              7993,
+              7998,
+              7999
+            ],
+            "AmethystLiang": [
+              7923,
+              7924,
+              8007,
+              8008,
+              8017,
+              8018,
+              8019,
+              8020,
+              8021,
+              8022,
+              8023,
+              8024,
+              8025,
+              8026,
+              8027
+            ],
+            "brennanb2025": [
+              7053,
+              7619,
+              7990,
+              8005,
+              8010
+            ],
+            "bbingz": [
+              7867,
+              7876
+            ],
+            "rodboev": [
+              7882,
+              7891
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.131",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.131",
+          "publishedAt": "2026-07-09T23:07:39Z",
+          "credits": {
+            "AmethystLiang": [
+              7932,
+              7933,
+              7977
+            ],
+            "OrcaWin": [
+              7845
+            ],
+            "brennanb2025": [
+              7860,
+              7906
+            ],
+            "Jinwoo-H": [
+              7960
+            ],
+            "rodboev": [
+              7658
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.131-rc.2.perf",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.131-rc.2.perf",
+          "publishedAt": "2026-07-09T20:14:01Z",
+          "credits": {
+            "Jinwoo-H": [
+              7340
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.131-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.131-rc.2",
+          "publishedAt": "2026-07-09T22:09:50Z",
+          "credits": {
+            "brennanb2025": [
+              7906
+            ],
+            "rodboev": [
+              7658
+            ],
+            "AmethystLiang": [
+              7977
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.131-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.131-rc.1",
+          "publishedAt": "2026-07-09T19:51:21Z",
+          "credits": {
+            "Jinwoo-H": [
+              7960
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.131-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.131-rc.0",
+          "publishedAt": "2026-07-09T18:54:57Z",
+          "credits": {
+            "AmethystLiang": [
+              7932,
+              7933
+            ],
+            "OrcaWin": [
+              7845
+            ],
+            "brennanb2025": [
+              7860
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
         {
           "tagName": "v1.4.131-rc.0.perf",
           "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.131-rc.0.perf",
@@ -285218,8 +288216,398 @@
         "7933": {
           "tagName": "v1.4.131-rc.0.perf",
           "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.131-rc.0.perf"
+        },
+        "7845": {
+          "tagName": "v1.4.131-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.131-rc.0"
+        },
+        "7860": {
+          "tagName": "v1.4.131-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.131-rc.0"
+        },
+        "7960": {
+          "tagName": "v1.4.131-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.131-rc.1"
+        },
+        "7906": {
+          "tagName": "v1.4.131-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.131-rc.2"
+        },
+        "7658": {
+          "tagName": "v1.4.131-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.131-rc.2"
+        },
+        "7977": {
+          "tagName": "v1.4.131-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.131-rc.2"
+        },
+        "7966": {
+          "tagName": "v1.4.132-rc.0.perf",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0.perf"
+        },
+        "7967": {
+          "tagName": "v1.4.132-rc.0.perf",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0.perf"
+        },
+        "7969": {
+          "tagName": "v1.4.132-rc.0.perf",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0.perf"
+        },
+        "7980": {
+          "tagName": "v1.4.132-rc.0.perf",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0.perf"
+        },
+        "7984": {
+          "tagName": "v1.4.132-rc.0.perf",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0.perf"
+        },
+        "7924": {
+          "tagName": "v1.4.132-rc.0.perf",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0.perf"
+        },
+        "7053": {
+          "tagName": "v1.4.132-rc.0.perf",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0.perf"
+        },
+        "7867": {
+          "tagName": "v1.4.132-rc.0.perf",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0.perf"
+        },
+        "7982": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "7993": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "7998": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "7999": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "7923": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8007": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8008": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8017": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8018": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8019": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8020": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8021": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8022": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8023": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8024": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8025": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8026": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8027": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "7619": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "7990": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8005": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "8010": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "7876": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "7882": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "7891": {
+          "tagName": "v1.4.132-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.0"
+        },
+        "7544": {
+          "tagName": "v1.4.132-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.1"
+        },
+        "8036": {
+          "tagName": "v1.4.132-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.1"
+        },
+        "8037": {
+          "tagName": "v1.4.132-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.1"
+        },
+        "8040": {
+          "tagName": "v1.4.132-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.1"
+        },
+        "8041": {
+          "tagName": "v1.4.132-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.1"
+        },
+        "8042": {
+          "tagName": "v1.4.132-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.1"
+        },
+        "8043": {
+          "tagName": "v1.4.132-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.1"
+        },
+        "8044": {
+          "tagName": "v1.4.132-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.1"
+        },
+        "7869": {
+          "tagName": "v1.4.132-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.1"
+        },
+        "7903": {
+          "tagName": "v1.4.132-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.132-rc.1"
+        },
+        "8012": {
+          "tagName": "v1.4.133-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.133-rc.0"
+        },
+        "3922": {
+          "tagName": "v1.4.133-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.133-rc.0"
+        },
+        "7423": {
+          "tagName": "v1.4.133-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.133-rc.0"
+        },
+        "7762": {
+          "tagName": "v1.4.133-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.133-rc.0"
+        },
+        "8050": {
+          "tagName": "v1.4.133-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.133-rc.0"
+        },
+        "8039": {
+          "tagName": "v1.4.133",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.133"
+        },
+        "8087": {
+          "tagName": "v1.4.133",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.133"
+        },
+        "8101": {
+          "tagName": "v1.4.134",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.134"
+        },
+        "8102": {
+          "tagName": "v1.4.134",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.134"
         }
       }
+    },
+    "NVIDIA/SkillSpector": {
+      "cachedAt": "2026-07-10T21:51:49.105329Z",
+      "releases": [],
+      "prToRelease": {}
+    },
+    "NousResearch/hermes-agent": {
+      "cachedAt": "2026-07-10T21:55:11.487756Z",
+      "releases": [
+        {
+          "tagName": "v2026.7.7.2",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.7.7.2",
+          "publishedAt": "2026-07-08T03:11:22Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.7.7",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.7.7",
+          "publishedAt": "2026-07-08T01:15:00Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.7.1",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.7.1",
+          "publishedAt": "2026-07-01T20:08:06Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.6.19",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.6.19",
+          "publishedAt": "2026-06-19T19:39:06Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.6.5",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.6.5",
+          "publishedAt": "2026-06-06T00:55:58Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.5.29.2",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.5.29.2",
+          "publishedAt": "2026-05-29T13:37:26Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.5.29",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.5.29",
+          "publishedAt": "2026-05-29T01:12:15Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.5.28",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.5.28",
+          "publishedAt": "2026-05-28T17:46:09Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.5.16",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.5.16",
+          "publishedAt": "2026-05-16T09:59:15Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.5.7",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.5.7",
+          "publishedAt": "2026-05-07T16:23:08Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.4.30",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.4.30",
+          "publishedAt": "2026-04-30T18:31:21Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.4.23",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.4.23",
+          "publishedAt": "2026-04-23T22:32:13Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.4.16",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.4.16",
+          "publishedAt": "2026-04-16T19:53:25Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.4.13",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.4.13",
+          "publishedAt": "2026-04-13T18:52:41Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.4.8",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.4.8",
+          "publishedAt": "2026-04-08T11:56:44Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.4.3",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.4.3",
+          "publishedAt": "2026-04-03T18:15:29Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.3.30",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.3.30",
+          "publishedAt": "2026-03-30T15:30:14Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.3.28",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.3.28",
+          "publishedAt": "2026-03-28T20:12:05Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.3.23",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.3.23",
+          "publishedAt": "2026-03-24T05:34:23Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.3.17",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.3.17",
+          "publishedAt": "2026-03-17T07:56:07Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v2026.3.12",
+          "htmlUrl": "https://github.com/NousResearch/hermes-agent/releases/tag/v2026.3.12",
+          "publishedAt": "2026-03-12T10:07:34Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        }
+      ],
+      "prToRelease": {}
     }
   }
 }

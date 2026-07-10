@@ -158,9 +158,12 @@ function renderPrTable(statusKey, repoKey) {
     if (item.viaLabel) {
       via = item.viaUrl ? '<a href="' + item.viaUrl + '">' + item.viaLabel + '</a>' : item.viaLabel;
     }
+    var repoCell = item.repo
+      ? '<a class="plain-link" href="https://github.com/' + item.repo + '">' + escapeHtml(item.repoLabel || '') + '</a>'
+      : escapeHtml(item.repoLabel || '');
     html += '<tr class="pr-main-row">' +
       '<td><a href="' + item.url + '">#' + item.number + '</a></td>' +
-      '<td>' + item.repoLabel + '</td>' +
+      '<td>' + repoCell + '</td>' +
       '<td><span class="tag ' + item.statusClass + '">' + item.statusLabel + '</span></td>' +
       '<td>' + prDateCell(item.dateLabel) + '</td>' +
       '<td>' + (item.releaseUrl ? '<a href="' + item.releaseUrl + '">' + escapeHtml(item.releaseLabel) + '</a>' : escapeHtml(item.releaseLabel || '')) + '</td>' +

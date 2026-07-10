@@ -432,7 +432,10 @@ def format_acceptance_rate(rate: float | None) -> str:
     if rate == 100:
         return "100"
     if rate > 99:
-        return f"{math.floor(rate * 10) / 10:.1f}"
+        floored = math.floor(rate * 10) / 10
+        if floored == int(floored):
+            return str(int(floored))
+        return f"{floored:.1f}"
     return str(round(rate))
 
 

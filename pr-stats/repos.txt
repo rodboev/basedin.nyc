@@ -6,9 +6,9 @@ thedotmack/claude-mem
 headroomlabs-ai/headroom
 mem0ai/mem0
 stablyai/orca
-# unslothai/unsloth
-# NVIDIA/SkillSpector
+NVIDIA/SkillSpector
 # NousResearch/hermes-agent
+# unslothai/unsloth
 # cline/cline
 # continuedev/continue
 # CopilotKit/CopilotKit
