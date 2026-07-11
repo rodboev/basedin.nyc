@@ -414,7 +414,7 @@ def test_repo_status_rows_match_ps1_rollup_and_details() -> None:
     assert [(row.label, row.tag_class, row.count, row.details) for row in rows] == [
         ("Shipped", "tag-shipped", 3, "Merged, cherry-picked, and release-credited"),
         ("Open", "tag-open", 1, "Pending review"),
-        ("Lost", "tag-lost", 1, "Closed without acceptance"),
+        ("Lost", "tag-lost", 1, "Maintainer-closed without acceptance"),
     ]
 
 

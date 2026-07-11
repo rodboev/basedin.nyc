@@ -22,7 +22,7 @@ CLASSIFICATION_STATUS_META: dict[str, tuple[str, str, str]] = {
     "open": ("Open", "tag-open", "Pending review"),
     "withdrawn": ("Withdrawn", "tag-withdrawn", "Closed without maintainer action"),
     "superseded": ("Superseded", "tag-superseded", "Replaced by a newer PR"),
-    "lost": ("Lost", "tag-lost", "Closed without acceptance"),
+    "lost": ("Lost", "tag-lost", "Maintainer-closed without acceptance"),
 }
 
 

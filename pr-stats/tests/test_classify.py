@@ -377,6 +377,62 @@ def test_supersession_by_maintainer_replacement_stays_superseded(
     assert result.via_label == "#4330"
 
 
+def test_maintainer_independent_merged_replacement_without_credit_is_superseded(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # orca#7874/#7875: the maintainer account closes the PR as superseded by its own
+    # merged consolidation. No co-author trailer, ship, or credit comment, and the
+    # replacement's self-description referencing this PR is not credit -> superseded.
+    pr = make_pr()
+    replacement = make_ref(
+        number=8242,
+        author={"login": "orcawin"},
+        url="https://github.com/owner/repo/pull/8242",
+    )
+    evidence = make_evidence(
+        comments=[
+            make_comment(
+                body="Closing as superseded by #8242, now merged. Thanks for the work and focused tests here.",
+                author={"login": "orcawin"},
+                authorAssociation="MEMBER",
+            ),
+        ],
+        pull_states_by_pr={8242: replacement},
+        reference_text_by_pr={8242: "This combines and extends the narrower approaches in #10."},
+        commit_author_logins_by_pr={8242: {"orcawin"}},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "superseded"
+    assert result.via_label == "#8242"
+
+
+def test_maintainer_merged_replacement_with_coauthor_credit_is_accepted_indirect(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # orca#6362: same supersession shape, but the author is a co-author on the merged
+    # replacement, so the content demonstrably landed -> accepted-indirect.
+    pr = make_pr()
+    replacement = make_ref(number=6574, author={"login": "maintainer"}, url="https://github.com/owner/repo/pull/6574")
+    evidence = make_evidence(
+        comments=[make_comment(body="Closing this one as superseded by #6574, but the implementation here was yours.")],
+        pull_states_by_pr={6574: replacement},
+        commit_author_logins_by_pr={6574: {"rodboev"}},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "accepted-indirect"
+    assert result.via_label == "#6574"
+
+
 def test_supersession_by_author_resubmit_stays_superseded(
     make_pr: Callable[..., PullRequest],
     make_ref: Callable[..., PullRequestRef],
@@ -670,25 +726,28 @@ def test_closing_because_with_team_replacement_is_accepted_indirect(
     make_evidence: Callable[..., Evidence],
 ) -> None:
     pr = make_pr()
-    replacement = make_ref(number=7750, author={"login": "teammember"})
+    guard_remover = make_ref(number=7750, author={"login": "teammember"})
+    adopting = make_ref(number=7847, author={"login": "maintainer"})
     evidence = make_evidence(
         comments=[
             make_comment(
                 body=(
                     "Thanks for the design. Closing because the landscape changed: "
                     "#7750 removed the guard entirely (shipped in v1.4.128), "
-                    "and #7847 reused your approach."
+                    "and #7847 fixed the residual failure using the same approach you proposed here."
                 ),
             ),
         ],
-        pull_states_by_pr={7750: replacement},
+        pull_states_by_pr={7750: guard_remover, 7847: adopting},
         maintainer_logins={"maintainer", "teammember"},
     )
 
     result = classify_closed_pr(pr, evidence)
 
+    # The credit is the adopting PR named in the "you proposed here" sentence, not the
+    # guard-removing PR that merely made the fallback moot.
     assert result.classification == "accepted-indirect"
-    assert result.via_label == "#7750"
+    assert result.via_label == "#7847"
 
 
 def test_closing_because_with_third_party_replacement_is_lost(

@@ -14,6 +14,12 @@ DUPLICATE_PATTERNS: tuple[str, ...] = ("duplicate",)
 SUPERSEDED_PATTERNS: tuple[str, ...] = ("supersed", "consolidat", "closing in favor", "closed in favor", "closing because")
 CREDIT_PATTERNS: tuple[str, ...] = ("co-author", "coauthor", "co-authored", "authorship", "attribution", "credited")
 CONTINUATION_PATTERNS: tuple[str, ...] = ("same credit", "same commit", "same change", "reopen")
+# Maintainer language crediting the author's design/approach as adopted into a
+# named merged PR, even without a co-author trailer on that PR.
+ADOPTION_CREDIT_PATTERN = re.compile(
+    r"\b(?:you\s+proposed|design\s+carried\s+through|carried\s+through\s+to\s+the\s+final|based\s+on\s+your|your\s+(?:approach|design|implementation|proposal|opt-in))\b",
+    re.IGNORECASE,
+)
 WITHDRAWN_PATTERN = re.compile(r"\bwithdraw(?:ing|n)?\b", re.IGNORECASE)
 AUTHOR_CLOSE_PATTERN = re.compile(r"\bclos(?:ing|ed|e)\b", re.IGNORECASE)
 MERGED_CARRY_FORWARD_PATTERN = re.compile(r"\bmerge(?:d|s|ing)?(?:\s+to\s+main)?\b", re.IGNORECASE)
@@ -41,6 +47,11 @@ class ClassificationResult:
 
 @dataclass(frozen=True)
 class CreditedShipEvidence:
+    via_number: int = 0
+
+
+@dataclass(frozen=True)
+class AdoptionCredit:
     via_number: int = 0
 
 
@@ -117,6 +128,18 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
     if accepted_sibling is None and (is_duplicate or superseded_evidence is not None or bool(comments)):
         accepted_sibling = get_referenced_merged_pull_request(pr.repo, pr, evidence, comments)
     credited_ship = get_credited_ship_evidence(pr, evidence)
+    adoption_credit = get_adoption_credit(pr, evidence)
+    if (
+        accepted_sibling is not None
+        and superseded_evidence is not None
+        and superseded_evidence.replacement is not None
+        and superseded_evidence.replacement.number == accepted_sibling.number
+        and not has_landing_credit(pr, evidence, accepted_sibling)
+    ):
+        # A maintainer supersession names this merged sibling, but nothing shows the
+        # author's content landed there (no co-authorship, ship, or credit comment);
+        # the sibling's own "combines/extends" self-description is not credit.
+        accepted_sibling = None
 
     if is_direct_merged or is_timeline_shipped:
         if is_direct_merged:
@@ -168,6 +191,15 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
             evidence_kind="accepted-indirect",
             log_label=f"accepted indirectly via #{accepted_sibling.number}",
         )
+    if adoption_credit is not None:
+        return ClassificationResult(
+            classification="accepted-indirect",
+            release=release,
+            via_label=f"#{adoption_credit.via_number}",
+            via_url=f"https://github.com/{pr.repo}/pull/{adoption_credit.via_number}",
+            evidence_kind="accepted-indirect",
+            log_label=f"accepted indirectly via #{adoption_credit.via_number} (design adopted)",
+        )
     if credited_ship is not None:
         via_label = f"#{credited_ship.via_number}" if credited_ship.via_number > 0 else ""
         via_url = f"https://github.com/{pr.repo}/pull/{credited_ship.via_number}" if credited_ship.via_number > 0 else ""
@@ -193,7 +225,11 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
                 evidence_kind="lost",
                 log_label=f"lost (competing #{replacement.number} accepted instead)",
             )
-        if replacement is not None and (replacement.state == "MERGED" or replacement.mergedAt):
+        if (
+            replacement is not None
+            and (replacement.state == "MERGED" or replacement.mergedAt)
+            and has_landing_credit(pr, evidence, replacement)
+        ):
             return ClassificationResult(
                 classification="accepted-indirect",
                 release=release,
@@ -354,9 +390,92 @@ def get_superseded_evidence(pr: PullRequest, evidence: Evidence) -> SupersededEv
         if not (matches_any_pattern(body, SUPERSEDED_PATTERNS) and not matches_any_pattern(body, CONTINUATION_PATTERNS)):
             continue
         replacement = get_replacement_pull_request(pr, evidence, body)
-        third_party = replacement is not None and is_third_party_login(replacement.author.login, author_login, evidence)
+        # A replacement whose author acts as a maintainer on this PR (e.g. the account
+        # that filed the "superseded by" close) is a maintainer consolidation, not a
+        # competing third-party contributor, even if it is absent from the Members block.
+        third_party = (
+            replacement is not None
+            and is_third_party_login(replacement.author.login, author_login, evidence)
+            and replacement.author.login.casefold() not in maintainer_comment_authors(pr, evidence)
+        )
         return SupersededEvidence(replacement=replacement, third_party=third_party)
     return None
+
+
+def maintainer_comment_authors(pr: PullRequest, evidence: Evidence) -> set[str]:
+    author_login = author_login_for_classification(pr, evidence)
+    logins: set[str] = set()
+    for comment in evidence.comments:
+        if is_review_bot_login(comment.author.login):
+            continue
+        if author_login and comment.author.login == author_login:
+            continue
+        if is_maintainer_comment(pr.repo, comment, evidence):
+            logins.add(comment.author.login.casefold())
+    return logins
+
+
+def author_has_commit_credit(pr: PullRequest, evidence: Evidence, number: int) -> bool:
+    author_login = author_login_for_classification(pr, evidence)
+    if not author_login:
+        return False
+    logins = {login.casefold() for login in evidence.commit_author_logins_by_pr.get(number, set())}
+    return author_login.casefold() in logins
+
+
+def has_landing_credit(pr: PullRequest, evidence: Evidence, replacement: PullRequestRef) -> bool:
+    # Evidence that the author's content actually landed in the replacement: a
+    # co-author trailer, a maintainer ship comment, or an explicit credit comment.
+    if author_has_commit_credit(pr, evidence, replacement.number):
+        return True
+    if has_maintainer_ship_comment(pr, evidence):
+        return True
+    return get_credited_ship_evidence(pr, evidence) is not None
+
+
+def get_adoption_credit(pr: PullRequest, evidence: Evidence) -> AdoptionCredit | None:
+    author_login = author_login_for_classification(pr, evidence)
+    for comment in evidence.comments:
+        if is_review_bot_login(comment.author.login):
+            continue
+        if author_login and comment.author.login == author_login:
+            continue
+        if not is_maintainer_comment(pr.repo, comment, evidence):
+            continue
+        body = comment.body or ""
+        if not ADOPTION_CREDIT_PATTERN.search(body):
+            continue
+        via_number = _adoption_via_number(pr, evidence, body)
+        if via_number:
+            return AdoptionCredit(via_number=via_number)
+    return None
+
+
+def _adoption_via_number(pr: PullRequest, evidence: Evidence, body: str) -> int:
+    def is_merged(number: int) -> bool:
+        ref = evidence.pull_states_by_pr.get(number)
+        return ref is not None and (ref.state == "MERGED" or bool(ref.mergedAt))
+
+    # Credit the merged PR named closest to an adoption phrase; a supersession comment
+    # can also name the PR that merely made this one moot, which is not the credit.
+    adoptions = list(ADOPTION_CREDIT_PATTERN.finditer(body))
+    if adoptions:
+        best_number = 0
+        best_distance = -1
+        for match in re.finditer(r"#(\d+)", body):
+            number = int(match.group(1))
+            if number == pr.number or not is_merged(number):
+                continue
+            distance = min(abs(match.start() - adoption.start()) for adoption in adoptions)
+            if best_distance < 0 or distance < best_distance:
+                best_number, best_distance = number, distance
+        if best_number:
+            return best_number
+    for match in re.finditer(r"#(\d+)", body):
+        number = int(match.group(1))
+        if number != pr.number and is_merged(number):
+            return number
+    return 0
 
 
 def get_replacement_pull_request(pr: PullRequest, evidence: Evidence, body: str) -> PullRequestRef | None:
