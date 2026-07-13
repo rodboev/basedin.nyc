@@ -78,6 +78,28 @@ def test_author_withdrawal_branch(make_pr: Callable[..., PullRequest], make_comm
     assert result.evidence_kind == "author-withdrawn"
 
 
+def test_non_author_close_is_not_withdrawn(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # The author says "I closed both points from the review" (matches the close pattern),
+    # but a maintainer closed the PR as superseded; the close phrasing is not a withdrawal.
+    pr = make_pr()
+    evidence = make_evidence(
+        comments=[
+            make_comment(body="I closed both points from the review", author={"login": "rodboev"}, authorAssociation="CONTRIBUTOR"),
+            make_comment(body="Re-closing as superseded by the broader fix", author={"login": "maintainer"}, authorAssociation="COLLABORATOR"),
+        ],
+        timeline_items=[make_event(actor={"login": "maintainer"})],
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "superseded"
+
+
 def test_accepted_sibling_branch(
     make_pr: Callable[..., PullRequest],
     make_ref: Callable[..., PullRequestRef],
@@ -306,6 +328,29 @@ def test_maintainer_ship_statement_attributing_other_pr_does_not_ship(
     assert result.classification == "lost"
 
 
+def test_shipped_as_adjective_does_not_ship(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # claude-mem#2849: the maintainer rejects the fix as dead code; "shipped" appears
+    # only as an adjective in "shipped artifact", which is not a ship statement.
+    pr = make_pr()
+    evidence = make_evidence(
+        comments=[
+            make_comment(
+                body="The patched classes are tree-shaken out of every shipped artifact, so this never runs.",
+                author={"login": "maintainer"},
+                authorAssociation="OWNER",
+            ),
+        ],
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "lost"
+
+
 def test_maintainer_negative_context_merge_comment_does_not_ship(
     make_pr: Callable[..., PullRequest],
     make_comment: Callable[..., Comment],
@@ -431,6 +476,57 @@ def test_maintainer_merged_replacement_with_coauthor_credit_is_accepted_indirect
 
     assert result.classification == "accepted-indirect"
     assert result.via_label == "#6574"
+
+
+def test_replacement_ship_comment_is_not_landing_credit(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # hermes-webui#5996: the replacement's own text references this PR positively and a
+    # maintainer notes the replacement shipped, but that ship credits the replacement,
+    # not this PR's content -> superseded, not accepted-indirect.
+    pr = make_pr()
+    replacement = make_ref(number=220, author={"login": "maintainer"}, url="https://github.com/owner/repo/pull/220")
+    evidence = make_evidence(
+        comments=[
+            make_comment(body="Closing as superseded by #220."),
+            make_comment(body="For context, #220 just shipped in v1.2.3."),
+        ],
+        pull_states_by_pr={220: replacement},
+        reference_text_by_pr={220: "This fixes a different arm than #10. Both needed."},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "superseded"
+    assert result.via_label == "#220"
+
+
+def test_ship_comment_crediting_this_pr_is_landing_credit(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # A ship statement that names this PR alongside the replacement is genuine landing
+    # credit -> accepted-indirect.
+    pr = make_pr()
+    replacement = make_ref(number=220, author={"login": "maintainer"}, url="https://github.com/owner/repo/pull/220")
+    evidence = make_evidence(
+        comments=[
+            make_comment(body="Closing as superseded by #220."),
+            make_comment(body="Cherry-picked your #10 changes into #220 and shipped in v1.2.3."),
+        ],
+        pull_states_by_pr={220: replacement},
+        reference_text_by_pr={220: "This fixes a different arm than #10. Both needed."},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "accepted-indirect"
+    assert result.via_label == "#220"
 
 
 def test_supersession_by_author_resubmit_stays_superseded(

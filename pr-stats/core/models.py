@@ -72,6 +72,7 @@ class Comment(StrictBaseModel):
 class TimelineEvent(StrictBaseModel):
     typename: str = Field(default="", alias="__typename")
     createdAt: str = ""
+    actor: UserRef | None = None
     closer: PullRequestRef | None = None
     source: PullRequestRef | None = None
     commit: CommitRef | None = None

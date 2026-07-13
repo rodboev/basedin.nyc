@@ -80952,6 +80952,118 @@
       "viaUrl": "https://github.com/kenn-io/agentsview/pull/1100",
       "evidenceKind": "direct-merge",
       "cachedAt": "2026-07-13T00:00:28.382839Z"
+    },
+    "nesquena/hermes-webui#5969": {
+      "classification": "accepted-indirect",
+      "release": "v0.52.60",
+      "viaLabel": "#6004",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/6004",
+      "evidenceKind": "accepted-indirect",
+      "cachedAt": "2026-07-13T04:51:23.859426Z"
+    },
+    "nesquena/hermes-webui#5996": {
+      "classification": "superseded",
+      "release": "v0.52.58",
+      "viaLabel": "#5999",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/5999",
+      "evidenceKind": "superseded",
+      "cachedAt": "2026-07-13T04:51:23.859426Z"
+    },
+    "thedotmack/claude-mem#2855": {
+      "classification": "lost",
+      "release": "v1.16.2",
+      "viaLabel": "#3208",
+      "viaUrl": "https://github.com/thedotmack/claude-mem/pull/3208",
+      "evidenceKind": "lost",
+      "cachedAt": "2026-07-13T04:51:23.859426Z"
+    },
+    "thedotmack/claude-mem#2857": {
+      "classification": "superseded",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "superseded",
+      "cachedAt": "2026-07-13T04:51:23.859426Z"
+    },
+    "thedotmack/claude-mem#2885": {
+      "classification": "lost",
+      "release": "",
+      "viaLabel": "#3168",
+      "viaUrl": "https://github.com/thedotmack/claude-mem/pull/3168",
+      "evidenceKind": "lost",
+      "cachedAt": "2026-07-13T04:51:23.859426Z"
+    },
+    "thedotmack/claude-mem#3200": {
+      "classification": "superseded",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "superseded",
+      "cachedAt": "2026-07-13T04:51:23.859426Z"
+    },
+    "thedotmack/claude-mem#3060": {
+      "classification": "lost",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "lost",
+      "cachedAt": "2026-07-13T04:51:23.859426Z"
+    },
+    "thedotmack/claude-mem#3011": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-07-13T05:17:05.975849Z"
+    },
+    "thedotmack/claude-mem#2918": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-07-13T05:17:05.975849Z"
+    },
+    "thedotmack/claude-mem#2858": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-07-13T05:17:05.975849Z"
+    },
+    "thedotmack/claude-mem#3046": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-07-13T05:17:05.975849Z"
+    },
+    "thedotmack/claude-mem#2997": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-07-13T05:17:05.975849Z"
+    },
+    "thedotmack/claude-mem#2920": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-07-13T05:17:05.975849Z"
+    },
+    "thedotmack/claude-mem#2849": {
+      "classification": "lost",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "lost",
+      "cachedAt": "2026-07-13T05:17:05.975849Z"
     }
   },
   "authorPulls": {
@@ -82941,7 +83053,7 @@
       "state": "OPEN",
       "title": "feat(mcp): add streamable HTTP MCP transport",
       "createdAt": "2026-07-03T21:45:51Z",
-      "updatedAt": "2026-07-12T03:22:22Z",
+      "updatedAt": "2026-07-13T02:02:51Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/1346-mcp-http",
@@ -84633,7 +84745,7 @@
       "state": "OPEN",
       "title": "feat(mcp): publish canonical server.json",
       "createdAt": "2026-06-27T21:37:40Z",
-      "updatedAt": "2026-07-12T03:27:58Z",
+      "updatedAt": "2026-07-13T01:52:13Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/mcp-server-json",
@@ -85350,11 +85462,11 @@
     "thedotmack/claude-mem#3060": {
       "repo": "thedotmack/claude-mem",
       "number": 3060,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(supervisor): preserve Bedrock and Vertex skip-auth flags in SDK env (closes #3053)",
       "createdAt": "2026-06-25T18:48:00Z",
-      "updatedAt": "2026-06-26T02:04:54Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T04:30:35Z",
+      "closedAt": "2026-07-13T04:30:35Z",
       "mergedAt": null,
       "headRefName": "fix/3053-preserve-skip-auth-env",
       "author": {
@@ -85692,11 +85804,11 @@
     "thedotmack/claude-mem#3046": {
       "repo": "thedotmack/claude-mem",
       "number": 3046,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(installer): drop shell:IS_WINDOWS from version-probe spawns to silence DEP0190 on Node 22 (closes #2941)",
       "createdAt": "2026-06-25T01:15:17Z",
-      "updatedAt": "2026-06-25T01:45:41Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T05:05:07Z",
+      "closedAt": "2026-07-13T05:05:07Z",
       "mergedAt": null,
       "headRefName": "fix/2941-dep0190-npxcli-shell",
       "author": {
@@ -86682,11 +86794,11 @@
     "thedotmack/claude-mem#3011": {
       "repo": "thedotmack/claude-mem",
       "number": 3011,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(context): recover semantic injection when scoped Chroma metadata misses matches (closes #2979)",
       "createdAt": "2026-06-20T06:57:45Z",
-      "updatedAt": "2026-06-25T20:46:59Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T05:16:24Z",
+      "closedAt": "2026-07-13T05:16:24Z",
       "mergedAt": null,
       "headRefName": "fix/2979-semantic-project-filter-fallback",
       "author": {
@@ -87078,11 +87190,11 @@
     "thedotmack/claude-mem#2997": {
       "repo": "thedotmack/claude-mem",
       "number": 2997,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix: bypass cmd.exe when spawning .cmd files to prevent console window flash",
       "createdAt": "2026-06-18T01:09:30Z",
-      "updatedAt": "2026-06-18T01:22:35Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T05:05:06Z",
+      "closedAt": "2026-07-13T05:05:06Z",
       "mergedAt": null,
       "headRefName": "fix/2946-cmd-console-flash",
       "author": {
@@ -88410,11 +88522,11 @@
     "thedotmack/claude-mem#2920": {
       "repo": "thedotmack/claude-mem",
       "number": 2920,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(chroma): prewarm uvx installs before the MCP connect deadline (closes #2897)",
       "createdAt": "2026-06-13T12:22:53Z",
-      "updatedAt": "2026-06-24T21:26:13Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T05:05:05Z",
+      "closedAt": "2026-07-13T05:05:05Z",
       "mergedAt": null,
       "headRefName": "fix/2897-chroma-connect-timeout",
       "author": {
@@ -88428,11 +88540,11 @@
     "thedotmack/claude-mem#2918": {
       "repo": "thedotmack/claude-mem",
       "number": 2918,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(setup): restore tree-sitter CLI on clean Windows installs (closes #2910)",
       "createdAt": "2026-06-13T12:22:53Z",
-      "updatedAt": "2026-07-01T03:13:45Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T05:16:23Z",
+      "closedAt": "2026-07-13T05:16:23Z",
       "mergedAt": null,
       "headRefName": "fix/2910-tree-sitter-cli-windows",
       "author": {
@@ -89040,11 +89152,11 @@
     "thedotmack/claude-mem#2885": {
       "repo": "thedotmack/claude-mem",
       "number": 2885,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(hooks): cap summarize Stop-hook retry loop with per-session disabled sentinel (closes #2846)",
       "createdAt": "2026-06-10T15:58:11Z",
-      "updatedAt": "2026-06-19T23:17:01Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T04:31:19Z",
+      "closedAt": "2026-07-13T04:31:19Z",
       "mergedAt": null,
       "headRefName": "fix/2846-summarize-retry-cap",
       "author": {
@@ -89274,11 +89386,11 @@
     "thedotmack/claude-mem#2857": {
       "repo": "thedotmack/claude-mem",
       "number": 2857,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(observer): accept prose-empty acknowledgements without poison respawn (closes #2817)",
       "createdAt": "2026-06-09T16:52:57Z",
-      "updatedAt": "2026-06-19T23:17:24Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T04:31:21Z",
+      "closedAt": "2026-07-13T04:31:21Z",
       "mergedAt": null,
       "headRefName": "fix/2817-empty-prose-observer-ack",
       "author": {
@@ -89292,11 +89404,11 @@
     "thedotmack/claude-mem#2855": {
       "repo": "thedotmack/claude-mem",
       "number": 2855,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(hooks): restore OpenCode capture on the current plugin hook contract (closes #2832)",
       "createdAt": "2026-06-09T16:52:57Z",
-      "updatedAt": "2026-06-25T20:19:45Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T04:31:23Z",
+      "closedAt": "2026-07-13T04:31:23Z",
       "mergedAt": null,
       "headRefName": "fix/2832-opencode-capture-hooks",
       "author": {
@@ -89310,11 +89422,11 @@
     "thedotmack/claude-mem#2858": {
       "repo": "thedotmack/claude-mem",
       "number": 2858,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(context): inject project dream namespaces alongside recent raw memory (closes #2834)",
       "createdAt": "2026-06-09T16:52:57Z",
-      "updatedAt": "2026-06-25T20:38:03Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T05:05:08Z",
+      "closedAt": "2026-07-13T05:05:08Z",
       "mergedAt": null,
       "headRefName": "fix/2834-dream-context-injection",
       "author": {
@@ -89328,11 +89440,11 @@
     "thedotmack/claude-mem#2849": {
       "repo": "thedotmack/claude-mem",
       "number": 2849,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(sqlite): apply busy_timeout to primary SQLite connections (closes #2821)",
       "createdAt": "2026-06-09T09:02:40Z",
-      "updatedAt": "2026-06-25T19:57:57Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T04:30:50Z",
+      "closedAt": "2026-07-13T04:30:50Z",
       "mergedAt": null,
       "headRefName": "fix/2821-sqlite-busy-timeout",
       "author": {
@@ -91365,7 +91477,7 @@
       "state": "OPEN",
       "title": "fix(proxy): keep Kompress warmup off the startup path",
       "createdAt": "2026-07-10T20:12:10Z",
-      "updatedAt": "2026-07-12T23:20:35Z",
+      "updatedAt": "2026-07-13T04:48:39Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/1908-kompress-startup-crash",
@@ -93774,11 +93886,11 @@
     "thedotmack/claude-mem#3200": {
       "repo": "thedotmack/claude-mem",
       "number": 3200,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(observer): treat correct-empty observer prose as idle (#3193)",
       "createdAt": "2026-07-12T01:06:06Z",
-      "updatedAt": "2026-07-12T01:16:56Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T04:31:03Z",
+      "closedAt": "2026-07-13T04:31:03Z",
       "mergedAt": null,
       "headRefName": "fix/3193-observer-empty-batch-noop",
       "author": {
@@ -93792,19 +93904,19 @@
     "nesquena/hermes-webui#5969": {
       "repo": "nesquena/hermes-webui",
       "number": 5969,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(#5940): classify gateway terminal provider errors instead of generic empty turns",
       "createdAt": "2026-07-12T01:16:36Z",
-      "updatedAt": "2026-07-12T23:03:07Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T03:50:49Z",
+      "closedAt": "2026-07-13T03:50:49Z",
       "mergedAt": null,
       "headRefName": "pr/5940-gateway-terminal-errors",
       "author": {
         "login": "rodboev"
       },
-      "additions": 370,
-      "deletions": 6,
-      "changedFiles": 2,
+      "additions": 578,
+      "deletions": 58,
+      "changedFiles": 7,
       "url": "https://github.com/nesquena/hermes-webui/pull/5969"
     },
     "nesquena/hermes-webui#5967": {
@@ -93849,15 +93961,15 @@
       "state": "OPEN",
       "title": "fix(worker): fail fast on unhealthy listeners that already own the worker port (refs #3171)",
       "createdAt": "2026-07-13T00:48:27Z",
-      "updatedAt": "2026-07-13T00:53:04Z",
+      "updatedAt": "2026-07-13T01:45:52Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "fix/3171-fail-fast-wedged-port",
       "author": {
         "login": "rodboev"
       },
-      "additions": 246,
-      "deletions": 9,
+      "additions": 424,
+      "deletions": 15,
       "changedFiles": 4,
       "url": "https://github.com/thedotmack/claude-mem/pull/3219"
     },
@@ -93867,7 +93979,7 @@
       "state": "OPEN",
       "title": "feat(#4673): add backend-backed recursive workspace search",
       "createdAt": "2026-07-13T00:21:57Z",
-      "updatedAt": "2026-07-13T01:03:38Z",
+      "updatedAt": "2026-07-13T02:59:10Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/4673-recursive-workspace-search",
@@ -93885,7 +93997,7 @@
       "state": "OPEN",
       "title": "fix(#5989): deduplicate proxy and catalog model rows in the picker",
       "createdAt": "2026-07-13T00:21:56Z",
-      "updatedAt": "2026-07-13T01:10:34Z",
+      "updatedAt": "2026-07-13T03:45:30Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/5989-picker-proxy-model-dedup",
@@ -93900,11 +94012,11 @@
     "nesquena/hermes-webui#5996": {
       "repo": "nesquena/hermes-webui",
       "number": 5996,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(#5979): preserve namespaced models for proxy-backed configured providers",
       "createdAt": "2026-07-13T00:21:56Z",
-      "updatedAt": "2026-07-13T01:10:27Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T02:37:20Z",
+      "closedAt": "2026-07-13T02:36:52Z",
       "mergedAt": null,
       "headRefName": "pr/5979-proxy-model-namespace",
       "author": {
@@ -94008,37 +94120,37 @@
   },
   "authorPullScanMeta": {
     "kenn-io/agentsview": {
-      "scannedAt": "2026-07-13T01:32:29.216827Z",
+      "scannedAt": "2026-07-13T05:17:05.975849Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "thedotmack/claude-mem": {
-      "scannedAt": "2026-07-13T01:32:29.216827Z",
+      "scannedAt": "2026-07-13T05:17:05.975849Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "headroomlabs-ai/headroom": {
-      "scannedAt": "2026-07-13T01:32:29.216827Z",
+      "scannedAt": "2026-07-13T05:17:05.975849Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "nesquena/hermes-webui": {
-      "scannedAt": "2026-07-13T01:32:29.216827Z",
+      "scannedAt": "2026-07-13T05:17:05.975849Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "stablyai/orca": {
-      "scannedAt": "2026-07-13T01:32:29.216827Z",
+      "scannedAt": "2026-07-13T05:17:05.975849Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "mem0ai/mem0": {
-      "scannedAt": "2026-07-13T01:32:29.216827Z",
+      "scannedAt": "2026-07-13T05:17:05.975849Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "NVIDIA/SkillSpector": {
-      "scannedAt": "2026-07-13T01:32:29.216827Z",
+      "scannedAt": "2026-07-13T05:17:05.975849Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },

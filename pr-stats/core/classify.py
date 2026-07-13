@@ -349,10 +349,19 @@ def get_ship_comment_via(body: str, repo: str, pr_number: int) -> tuple[str, str
     return "rebase", f"https://github.com/{repo}/pull/{pr_number}"
 
 
+SHIPPED_ADJECTIVE_PATTERN = re.compile(
+    r"\bshipped\s+(?:artifact|artifacts|build|builds|bundle|bundles|binary|binaries|release|releases|version|versions|code|dist|output|outputs|package|packages)\b",
+    re.IGNORECASE,
+)
+
+
 def has_standalone_ship_statement(text: str, radius: int = 80) -> bool:
     # The negative gate is scoped to the statement's own context: a long ship
     # comment may carry incidental negative vocabulary in unrelated sentences.
     for match in MAINTAINER_SHIP_PATTERN.finditer(text or ""):
+        # "shipped artifact/bundle/..." uses "shipped" as an adjective, not a ship verb.
+        if match.group(0).lower() == "shipped" and SHIPPED_ADJECTIVE_PATTERN.match(text, match.start()):
+            continue
         start = max(0, match.start() - radius)
         window = text[start : match.end() + radius]
         if not NEGATIVE_REFERENCE_PATTERN.search(window):
@@ -360,9 +369,22 @@ def has_standalone_ship_statement(text: str, radius: int = 80) -> bool:
     return False
 
 
+def pr_closer_login(evidence: Evidence) -> str:
+    for item in reversed(evidence.timeline_items):
+        if item.typename == "ClosedEvent" and item.actor is not None and item.actor.login:
+            return item.actor.login
+    return ""
+
+
 def is_author_withdrawn(pr: PullRequest, evidence: Evidence) -> bool:
     author_login = author_login_for_classification(pr, evidence)
     if not author_login:
+        return False
+    # A withdrawal is the author closing their own PR. When the recorded closer is
+    # someone else, the close was a maintainer decision (supersede, reject), so the
+    # author's own "closing"/"closed" phrasing must not read as a withdrawal.
+    closer_login = pr_closer_login(evidence)
+    if closer_login and closer_login.casefold() != author_login.casefold():
         return False
     author_commented = False
     for comment in evidence.comments:
@@ -425,12 +447,37 @@ def author_has_commit_credit(pr: PullRequest, evidence: Evidence, number: int) -
 
 def has_landing_credit(pr: PullRequest, evidence: Evidence, replacement: PullRequestRef) -> bool:
     # Evidence that the author's content actually landed in the replacement: a
-    # co-author trailer, a maintainer ship comment, or an explicit credit comment.
+    # co-author trailer, a maintainer ship comment about this PR, or an explicit
+    # credit comment. A ship statement about the replacement PR itself shipping is
+    # expected in every supersession and is not evidence the author's work landed.
     if author_has_commit_credit(pr, evidence, replacement.number):
         return True
-    if has_maintainer_ship_comment(pr, evidence):
+    if maintainer_ship_comment_credits_author(pr, evidence, replacement.number):
         return True
     return get_credited_ship_evidence(pr, evidence) is not None
+
+
+def maintainer_ship_comment_credits_author(pr: PullRequest, evidence: Evidence, replacement_number: int, radius: int = 80) -> bool:
+    author_login = author_login_for_classification(pr, evidence)
+    for comment in evidence.comments:
+        if is_review_bot_login(comment.author.login):
+            continue
+        if author_login and comment.author.login == author_login:
+            continue
+        if not is_maintainer_comment(pr.repo, comment, evidence):
+            continue
+        body = comment.body or ""
+        for match in MAINTAINER_SHIP_PATTERN.finditer(body):
+            window = body[max(0, match.start() - radius) : match.end() + radius]
+            if NEGATIVE_REFERENCE_PATTERN.search(window):
+                continue
+            numbers = {int(m.group(1)) for m in re.finditer(r"#(\d+)", window)}
+            # A ship statement whose only PR reference is the replacement credits the
+            # replacement, not this PR; require it to name this PR or no competitor.
+            if replacement_number in numbers and pr.number not in numbers:
+                continue
+            return True
+    return False
 
 
 def get_adoption_credit(pr: PullRequest, evidence: Evidence) -> AdoptionCredit | None:

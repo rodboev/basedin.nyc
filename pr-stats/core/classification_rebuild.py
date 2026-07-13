@@ -532,7 +532,12 @@ def _timeline_event(event: dict[str, object]) -> TimelineEvent | None:
             },
         )
     if event_name == "closed":
-        return TimelineEvent.model_validate({"__typename": "ClosedEvent", "createdAt": str(event.get("created_at") or "")})
+        actor = event.get("actor")
+        actor_login = str(actor.get("login") or "") if isinstance(actor, dict) else ""
+        data: dict[str, object] = {"__typename": "ClosedEvent", "createdAt": str(event.get("created_at") or "")}
+        if actor_login:
+            data["actor"] = {"login": actor_login}
+        return TimelineEvent.model_validate(data)
     return None
 
 
