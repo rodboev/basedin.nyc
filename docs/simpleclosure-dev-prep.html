@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>SimpleClosure: Engineer Round Prep</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+</head>
+<body class="pr">
+<div class="top-row">
+  <h1><a class="back-link" href="../docs/"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>SimpleClosure: Engineer Round Prep</h1>
+</div>
+
+<main class="doc-page">
+<p class="subtitle">Technical walkthrough with Synclair Wang and Franziska Mack. Format: conversation about the TMDB take-home, how you think, how you plan, how you use tooling.</p>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="interviewers" type="button">Interviewers</button>
+    <button class="sort-pill" data-target="vocab" type="button">Vocabulary</button>
+    <button class="sort-pill" data-target="isolation" type="button">Isolation</button>
+    <button class="sort-pill" data-target="data-boundary" type="button">Data Boundary</button>
+    <button class="sort-pill" data-target="sort" type="button">Sort Decision</button>
+    <button class="sort-pill" data-target="states" type="button">States &amp; Edges</button>
+    <button class="sort-pill" data-target="testing" type="button">Testing</button>
+    <button class="sort-pill" data-target="tooling" type="button">Tooling</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="interviewers">Interviewers</h2>
+<div class="card">
+  <h3>Synclair Wang &middot; Senior Software Engineer</h3>
+  <p>Self-described "0-1 engineer." His most serious personal project is More Ore, an idle/clicker game with 885 commits. Idle games are interval engines: every resource ticks on its own timer, timers interact, the UI updates continuously. He's spent years debugging the intersection of <code>setInterval</code>, React state, and stale closures. Recently forked a Claude Code agent skills repo, so he's hands-on with AI-assisted development. Led the engineering side of SimpleClosure's recent rebrand across multiple teams on a tight timeline.</p>
+  <p><strong>He'll probe:</strong> component boundaries and why they're drawn where they are. Whether state flows in one direction or leaks across concerns. How you decide what's worth testing versus what's ceremony. He ships under constraints and values that over theoretical purity.</p>
+
+  <h3>Franziska Mack &middot; Software Engineer</h3>
+  <p>Designer turned developer. MFA from Parsons in Design and Technology, BA in Industrial Design from Germany. Went from designer to Data Visualization Developer (TypeScript, Redux) to Software Developer at Riskified over 3.5 years. Taught Python at Parsons. Her personal GitHub has a NestJS/TypeScript backend deployed on Fly.io.</p>
+  <p><strong>She'll probe:</strong> visual details. Whether the dark surface was a considered choice or a default. Whether the overlay text is legible against light posters. Whether the grid breaks down on small screens. Her dataviz work trained her to read animation and transition quality as engineering quality. She came up through TypeScript and Redux, so she'll care about type modeling and whether props carry their meaning or just their shape.</p>
+</div>
+
+<h2 class="doc-nav-target" id="vocab">Vocabulary</h2>
+<div class="card">
+  <p>Interview terms mapped to the concrete thing in the code. Scan this before the call so you recognize the word when they use it.</p>
+  <table>
+    <tr><td><strong>comparator</strong></td><td>The <code>(a, b) =&gt; ...</code> arrow function you pass to <code>.sort()</code>. Returns negative, zero, or positive. That's the whole contract.</td><td><code>sort.ts</code></td></tr>
+    <tr><td><strong>fixture</strong></td><td>A saved real API response used as test data. Tests return it from a stubbed <code>fetch</code> instead of hitting the network.</td><td><code>src/test/fixtures/*.json</code></td></tr>
+    <tr><td><strong>pure function</strong></td><td>Same input, same output, no side effects. <code>sortMovies()</code> takes an array and returns a new one; it doesn't modify the original or touch any state.</td><td><code>sort.ts</code></td></tr>
+    <tr><td><strong>data boundary</strong></td><td>The one file that talks to TMDB. Everything else uses your own types (<code>Movie</code>, <code>Genre</code>) and has no idea what <code>poster_path</code> or <code>vote_average</code> are.</td><td><code>tmdb.ts</code></td></tr>
+    <tr><td><strong>normalization</strong></td><td>Converting TMDB's raw fields into your own types. <code>poster_path</code> becomes <code>posterUrl</code>, <code>vote_average</code> becomes <code>rating</code>, nulls get explicit defaults.</td><td><code>mapMovie()</code> in <code>tmdb.ts</code></td></tr>
+    <tr><td><strong>structural constraint</strong></td><td>Something the compiler enforces, not a code review comment. The <code>server-only</code> import makes a client-side import of <code>tmdb.ts</code> a build error.</td><td><code>tmdb.ts</code>, line 1</td></tr>
+    <tr><td><strong>reference equality</strong></td><td>React checks if the array is the same object in memory. <code>movies.sort()</code> mutates in place and returns the same reference; React sees no change and skips the re-render. That's why sort copies first.</td><td><code>[...movies].sort()</code> in <code>sort.ts</code></td></tr>
+    <tr><td><strong>canonicalization</strong></td><td>Redirecting messy URLs to the clean version. <code>?genre=878</code>, <code>?genre=Science+Fiction</code>, and bare <code>/</code> all redirect to <code>?genre=science-fiction</code>.</td><td><code>DiscoverView.tsx</code></td></tr>
+    <tr><td><strong>isolation</strong></td><td>One concern per file or PR, so a failure points at one place. The sort logic is in its own file with its own tests; a sort bug can't hide behind a fetch problem.</td><td>repo PR structure</td></tr>
+  </table>
+</div>
+
+<h2 class="doc-nav-target" id="isolation">Why the work is split into isolated PRs</h2>
+<div class="card">
+  <p>The submission has six PRs, each merged independently: scaffold, data layer, grid and cards, filter and sort controls, polish, and genre slugs. The reason is testability.</p>
+  <p>Coupled code can only be verified as a unit. When the data layer, the grid, and the sort logic all live in the same commit, a sorting bug requires reading the fetch code to rule out a data problem, then the grid code to rule out a rendering problem, before you can isolate the comparator. When they're in separate PRs with separate tests, the sort tests run against hand-built fixtures that never touch the network, and a failure in <code>sort.test.ts</code> points at <code>sort.ts</code> and nothing else.</p>
+  <p>The same principle applies to review. A reviewer looking at the grid PR doesn't need to hold the data layer in their head. A reviewer looking at the data layer doesn't need to understand Tailwind. Each PR has one concern and its own rationale in the commit messages, so the review surface matches the cognitive surface.</p>
+  <p>The same principle drives separation of concerns in component architecture. Coupled things can only fail together, and diagnosing a failure in a coupled system means eliminating every other piece before you find the one that broke.</p>
+</div>
+
+<h2 class="doc-nav-target" id="data-boundary">The TMDB boundary</h2>
+<div class="card">
+  <p>Everything TMDB-specific lives in <code>src/lib/tmdb.ts</code>: request construction, response types, image URL assembly, field normalization. Components consume <code>Movie</code> and <code>Genre</code>, normalized types with no TMDB vocabulary. If TMDB renames <code>poster_path</code> to <code>poster</code> or wraps responses in a new envelope, one file changes. The rest of the app keeps working.</p>
+
+  <h3>The boundary is greppable</h3>
+  <p>Searching <code>src</code> for <code>image.tmdb.org</code> or any raw TMDB field name (<code>poster_path</code>, <code>vote_average</code>, <code>release_date</code>) matches only the data layer and its test fixtures. A grep you can run at any time to verify the boundary holds. The README records this as a verification method.</p>
+
+  <h3><code>server-only</code> as a structural constraint</h3>
+  <p>The data layer imports <code>server-only</code>. If a client component tries to import <code>tmdb.ts</code>, the build fails. The constraint is enforced by the compiler: it survives refactors, team turnover, and late-night commits. A code review comment saying "keep this server-side" depends on attention. A build error depends on the compiler. Same principle as making illegal states unrepresentable in a type system.</p>
+
+  <h3>Normalization: converting raw TMDB fields into your own types</h3>
+  <p>TMDB's API returns movies with null posters, empty release dates, zero vote counts, and absent overviews. These show up on the first page of a low-popularity genre. The mapper defaults every field: absent titles become "Untitled," absent ratings become 0, empty strings and nulls are distinguished. The tests exercise this against a fixture captured from a real sparse TMDB response, so the test data matches what the API actually sends.</p>
+  <pre><code>// Defaults absent fields instead of passing undefined through
+function mapMovie(raw: RawMovie): Movie {
+  return {
+    id: raw.id,
+    title: raw.title ?? "Untitled",
+    posterUrl: posterUrl(raw.poster_path),
+    rating: raw.vote_average ?? 0,
+    voteCount: raw.vote_count ?? 0,
+    releaseDate: raw.release_date || null,
+    overview: raw.overview ?? "",
+  };
+}</code></pre>
+</div>
+
+<h2 class="doc-nav-target" id="sort">Why client-side sort over API-side <code>sort_by</code></h2>
+<div class="card">
+  <p>TMDB's <code>sort_by=vote_average.desc</code> sorts across the entire catalog with no minimum vote threshold. The first result is a movie with 3 votes and a perfect 10.0. TMDB's own charts apply a vote-count floor to avoid this; the raw API doesn't. An unfloored sort surfaces titles nobody has heard of above movies with thousands of reviews.</p>
+  <p>The brief says "first page is sufficient." API-side sort changes <em>which</em> 20 movies you get. Client-side sort reorders the 20 you already have. Those are different operations. The API's popularity ordering already does the hard work of surfacing movies people have actually watched. Sorting that page by rating gives you recognizable movies in rating order, and the interaction is instant because there's no round-trip.</p>
+  <p>The flaw is invisible unless you check the data. An API-side sort returns 20 movies with high ratings. It looks correct. You only discover the problem by inspecting vote counts and recognizing that 10.0 on 3 votes is noise.</p>
+
+  <h3>The comparator (the arrow function inside <code>.sort()</code>) handles three edge cases</h3>
+  <pre><code>export function sortMovies(movies: Movie[], key: SortKey, dir: SortDir): Movie[] {
+  const flip = dir === "desc" ? -1 : 1;
+  return [...movies].sort((a, b) => { ... });
+}</code></pre>
+  <ul>
+    <li><strong>Ties break by vote count:</strong> two movies rated 6.4 are ordered by confidence, not left in arbitrary order. The movie with 4,000 votes ranks above the one with 900.</li>
+    <li><strong>Unknown release dates sink to the bottom:</strong> a <code>null</code> release date goes last regardless of sort direction. Date ascending should show the oldest movie first, and "unknown" means "no date," which belongs at the end.</li>
+    <li><strong>It copies before sorting:</strong> <code>[...movies].sort()</code> instead of <code>movies.sort()</code>. In-place <code>Array.sort</code> mutates the array. React compares references to detect state changes. Mutating the same array and calling the setter with the original reference means React sees no change and skips the re-render. The sort silently does nothing. Easy to write, hard to spot.</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="states">States and edge cases</h2>
+<div class="card">
+  <h3>Filter goes to the API; sort stays on the client</h3>
+  <p>Genre changes the result set, so it travels to TMDB as <code>with_genres</code> and lives in the URL via <code>searchParams</code>. Every filtered view is shareable and bookmarkable. Sort only reorders the 20 movies already fetched, so it stays in plain client state: <code>useState</code> for the key and direction. Syncing sort to the URL would add router machinery whose only benefit is a shareable sort order over 20 items.</p>
+  <p>This asymmetry is the interesting part. Filter and sort both appear as dropdowns in the UI, but they have different data-flow semantics. One changes the dataset, the other rearranges it. Routing the filter through the URL and keeping the sort in state encodes that distinction structurally.</p>
+
+  <h3>Refetch feedback during genre changes</h3>
+  <p>Next's App Router keeps the current page visible during same-route <code>searchParams</code> navigation. The <code>loading.tsx</code> skeleton shows exactly once, on the initial cold load. After that, switching genres shows nothing: the old grid stays on screen while the server fetches the new results, and then the new grid replaces it with no visual feedback that anything happened.</p>
+  <p>The fix is a <code>useTransition</code> wrapper around the router push. The genre change runs inside <code>startTransition</code>, which sets <code>isPending</code> to true while the navigation resolves. The grid container gets <code>aria-busy</code> and dims to half opacity. The old results stay visible (better than a flash to skeleton), and the dim makes the wait legible on slow connections.</p>
+  <pre><code>const [isPending, startTransition] = useTransition();
+// ...
+startTransition(() => {
+  router.push(value === "all" ? "/?genre=all" : `/?genre=${value}`);
+});
+// ...
+&lt;div
+  aria-busy={isPending}
+  className={`motion-safe:transition-opacity ${isPending ? "opacity-50" : "opacity-100"}`}
+&gt;</code></pre>
+
+  <h3>Empty state</h3>
+  <p>If a genre filter returns no movies, the grid renders "No movies matched this filter. Try another genre." With genre-only filtering against TMDB's catalog this is near-unreachable (every genre has results), so it gets one conditional and one test. The point: a blank grid reads as a bug. A sentence reads as an answer. The cost is one <code>if</code> statement.</p>
+
+  <h3>Null posters are real</h3>
+  <p>TMDB returns <code>null</code> posters on live pages. A sparse-page fixture captured from the API has 3 of 20 movies with no poster. Those cards render a styled placeholder showing the title in the poster slot, with <code>role="img"</code> and an <code>aria-label</code> for screen readers. The test uses that real sparse fixture, so the coverage comes from actual API data.</p>
+
+  <h3>Zero-vote titles hide the badge</h3>
+  <p>Unreleased movies arrive with a vote average of 0.0 over 0 votes. A red "0.0" badge would misread as a real rating rather than an absence of one. Movies with <code>voteCount === 0</code> render no badge. The distinction is between "this movie was rated 0" and "nobody has rated this movie."</p>
+
+  <h3>Genre slugs and URL canonicalization</h3>
+  <p><code>?genre=science-fiction</code> is an address. <code>?genre=878</code> is a lookup key. The URL uses slugs derived from the fetched genre names, so the address is human-readable and stable across API changes. Any non-canonical path (bare <code>/</code>, numeric ids, case variants, repeated params) redirects to its canonical slug URL with a history replacement, so the address bar always settles on a complete, shareable URL and Back returns to the previous page instead of looping through redirect intermediates.</p>
+  <p>The slug generator handles collisions: if two genre names slugify to the same string (e.g., "A&B" and "A B" both become "a-b"), the second gets an id suffix. If a name has no alphanumeric characters at all, the slug falls back to the genre id. The test covers both cases against hand-built collision fixtures.</p>
+</div>
+
+<h2 class="doc-nav-target" id="testing">What the tests prove</h2>
+<div class="card">
+  <p>Four test files in Vitest: <code>tmdb.test.ts</code>, <code>sort.test.ts</code>, <code>MovieCard.test.tsx</code>, <code>DiscoverView.test.tsx</code>. Each file covers one layer and stays within it. The tests collectively close a <a href="https://github.com/rodboev/simpleclosure/blob/main/README.md#requirements-trace">requirements trace</a>: one row per requirement, each mapping to the file that fulfills it and the test or observation that proves it.</p>
+
+  <h3>Fixtures</h3>
+  <p>A fixture is a captured real API response saved as a JSON file. Three live in <code>src/test/fixtures/</code>: <a href="https://github.com/rodboev/simpleclosure/blob/main/src/test/fixtures/discover.json">discover.json</a> (a full 20-movie page), <a href="https://github.com/rodboev/simpleclosure/blob/main/src/test/fixtures/discover-sparse.json">discover-sparse.json</a> (a page with null posters and empty dates), and <a href="https://github.com/rodboev/simpleclosure/blob/main/src/test/fixtures/genres.json">genres.json</a> (the genre list). Tests stub <code>fetch</code> and return these fixtures instead of hitting the network.</p>
+  <p>The alternative is hand-building test objects: <code>{ id: 1, title: "Test Movie", rating: 7.5 }</code>. That approach tests against what you imagine the API sends. Fixtures test against what the API actually sends. If TMDB nests ratings inside a new <code>scores</code> object tomorrow, hand-built tests still pass because they never had the old shape; fixture-based tests break, which is correct, because the mapper hasn't been updated for the new shape.</p>
+  <p>Sort tests are the exception: they use four hand-built movies with deliberate ratings and dates, because the sort comparator's job is ordering logic, not data fidelity. Fixtures for sort would couple the test to TMDB's response when the comparator has nothing to do with TMDB.</p>
+
+  <h3>Data layer tests (<code>tmdb.test.ts</code>)</h3>
+  <p>Two concerns: request construction and response mapping.</p>
+  <p>Request tests verify the URL, params, and error handling. They check that <code>with_genres</code> appears when a genre is selected and is absent when it isn't. They check that a missing API key throws before making a network call, and that a non-OK response throws instead of silently returning malformed data.</p>
+  <p>Mapping tests run against the captured fixtures. The first movie in the discover fixture is checked field by field. The sparse fixture exercises null posters, empty release dates, and absent overviews. A minimal fixture (<code>{ id: 42 }</code> with everything else absent) verifies that every default fires. The tests pin to the contract TMDB actually serves.</p>
+
+  <h3>Sort tests (<code>sort.test.ts</code>)</h3>
+  <p>Seven tests against four hand-built movies with deliberately chosen ratings, vote counts, and release dates. The fixtures are designed to exercise tie-breaking (two movies with rating 6.4 and different vote counts), null handling (one movie with no release date), and immutability (the input array is unchanged after sorting). Each test asserts the full ordering, not just the first element.</p>
+
+  <h3>Component tests (<code>MovieCard.test.tsx</code>)</h3>
+  <p>Cards render from the real mapping layer's output. The test for null posters finds a posterless movie in the sparse fixture and renders it. Badge color thresholds are parametrized: <code>[7.0, "high"], [6.9, "mid"], [5.0, "mid"], [4.9, "low"]</code> cover the exact boundary values.</p>
+  <p>One test pins the overlay's CSS utility classes directly. It exists because the Tailwind v3-to-v4 migration broke the gradient: <code>bg-gradient-to-t</code> compiles to nothing in v4 (the correct class is <code>bg-linear-to-t</code>). The overlay shipped with no background at all; overview text was invisible against light posters. The test is ugly, but jsdom doesn't compute CSS, so asserting the class name is the only way to catch this regression.</p>
+
+  <h3>View tests (<code>DiscoverView.test.tsx</code>)</h3>
+  <p>The view tests mock <code>next/navigation</code> and verify three things: genre changes navigate via URL (calling <code>router.push</code>), sort reorders the existing cards with zero network traffic (a fetch spy asserts zero calls), and switching the sort property resets direction to descending.</p>
+  <p>The zero-traffic assertion is the one that matters most. It encodes the filter/sort asymmetry as a testable invariant. If someone refactors the sort to re-fetch from the API, this test breaks.</p>
+</div>
+
+<h2 class="doc-nav-target" id="tooling">How AI tooling was used</h2>
+<div class="card">
+  <p>The submission was built with AI assistance. Nimrod said the exercise "may be beneath your level," and the evaluators will assume AI use. What matters is how the output was verified.</p>
+
+  <h3>Verification through the Tailwind migration bug</h3>
+  <p>The overlay originally used <code>bg-gradient-to-t</code>, a Tailwind v3 class that compiles to nothing in v4. The overlay rendered with no background. Overview text was invisible against light posters. The happy path looked fine because most posters are dark. A test that pins the actual class names in the DOM caught it. The fix was one line: rename to <code>bg-linear-to-t</code>.</p>
+  <p>The cycle: generation produced code, a test caught the error, the fix was mechanical. Generation is fast. Verification is where quality comes from.</p>
+
+  <h3>Verification through the sort decision</h3>
+  <p>The default AI-generated approach would use <code>sort_by=vote_average.desc</code> because it's the obvious API parameter. Inspecting the actual response revealed the junk-rating problem: 10.0 on 3 votes at the top. The decision to sort client-side came from looking at real data.</p>
+
+  <h3>Structural constraints</h3>
+  <p>Compiler-enforced and test-enforced constraints survive regardless of who writes the next change. The Tailwind class test catches gradient regressions on any future migration. The copy-before-sort test (<code>expect(sorted).not.toBe(input)</code>) catches the in-place mutation bug even if the developer has never encountered it. The <code>server-only</code> import makes an accidental client-side data layer import a build error.</p>
+  <p>SimpleClosure's JD says "trusts but verifies." Concretely, that means tests that catch failure modes you weren't specifically looking for.</p>
+</div>
+
+<p class="footer">Written July 5, 2026.</p>
+</main>
+<script src="doc-nav.js"></script>
+<script src="../assets/script.js?v=20260609u"></script>
+</body>
+</html>

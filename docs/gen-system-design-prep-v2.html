@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>System Design Prep v2: Frontend Focus</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+<style>
+  .sd-table { width: 100%; border-collapse: collapse; margin: 0.85rem 0; font-size: 0.92rem; }
+  .sd-table th, .sd-table td { text-align: left; vertical-align: top; padding: 0.55rem 0.65rem; border: 1px solid rgba(148, 163, 184, 0.3); }
+  .sd-table th { background: rgba(30, 64, 175, 0.14); font-weight: 700; }
+  .sd-def { margin: 0.6rem 0; padding-left: 0.85rem; border-left: 3px solid rgba(96, 165, 250, 0.5); }
+  .sd-def strong { color: #93c5fd; }
+  .sd-num { font-variant-numeric: tabular-nums; }
+  .card pre { overflow-x: auto; }
+</style>
+</head>
+<body class="pr">
+<main class="doc-page">
+<h1><a class="back-link" href="../docs/"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>System Design: Frontend Focus (v2)</h1>
+<p class="subtitle">Technical reference for the client, the client-to-server contract, and the production frontend of a telemetry/metrics system. Definitions, APIs, and code you can study. The v1 doc holds the backend detail if you want it.</p>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="contract" type="button">Event Contract</button>
+    <button class="sort-pill" data-target="collection" type="button">Client Collection</button>
+    <button class="sort-pill" data-target="attribution" type="button">Attribution</button>
+    <button class="sort-pill" data-target="pii" type="button">PII Handling</button>
+    <button class="sort-pill" data-target="rendering" type="button">Rendering &amp; Freshness</button>
+    <button class="sort-pill" data-target="handoff" type="button">The Backend, Briefly</button>
+    <button class="sort-pill" data-target="health" type="button">Production Health</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="contract">The Event Contract</h2>
+
+<div class="card">
+  <h3>The envelope the client emits</h3>
+  <p>Agree on one shape for every event so the backend never special-cases a producer. A workable envelope:</p>
+<pre><code>{
+  "event_id":   "6f9c...e2",   // UUID the client generates; used to de-duplicate
+  "event_type": "offer_click",
+  "occurred_at":"2026-07-14T15:04:03.221Z", // when it happened, stamped on the client
+  "anonymous_id":"a1b2...",    // device/cookie id, present before login
+  "user_id":     null,         // stable id, present after login
+  "context": { "page_url": "…", "subid": "partnerX", "clickid": "…" },
+  "properties": { "offer_id": "loan_4417", "apr": 12.9, "position": 3 }
+}</code></pre>
+  <div class="sd-def"><strong>The client stamps <code>occurred_at</code>.</strong> A device can be offline when the action happens, so the event's real time is set on the client, not when the server receives it. This is called <em>event time</em> (as opposed to <em>processing time</em>, when the server sees it). Aggregates that bucket by minute or hour must use event time or offline events land in the wrong bucket.</div>
+  <div class="sd-def"><strong>The client generates <code>event_id</code> as a UUID.</strong> Browsers use <code>crypto.randomUUID()</code>. It exists so the backend can discard duplicates, which matters because reliable sending from a browser means "retry until acknowledged," and a retry after a lost acknowledgment sends the same event twice. A stable id makes the duplicate a no-op instead of a double count.</div>
+</div>
+
+<div class="card">
+  <h3>Type the envelope as a discriminated union</h3>
+  <p>Key the union on <code>event_type</code> so each event's <code>properties</code> are typed to that specific type, and the compiler rejects a payload that doesn't match:</p>
+<pre><code>type Event =
+  | { type: 'offer_click';  props: { offerId: string; position: number } }
+  | { type: 'page_view';    props: { path: string } }
+  | { type: 'app_submit';   props: { leadId: string; stepCount: number } }
+
+function track(e: Event) { /* narrowing on e.type gives you e.props typed */ }</code></pre>
+  <p>A plain <code>Record&lt;string, unknown&gt;</code> for <code>props</code> would let a wrong field through to production. The union moves that error to compile time. This is the same immutability-and-exhaustiveness discipline that shows up again in the UI state machine below.</p>
+</div>
+
+<h2 class="doc-nav-target" id="collection">Client-Side Collection</h2>
+
+<div class="card">
+  <h3>The four jobs of a browser analytics SDK</h3>
+  <div class="sd-def"><strong>Batch and flush.</strong> Buffer events in memory; send them as a group on a size threshold (e.g. 20 events) or a time threshold (e.g. 5s), whichever hits first. One request per click floods the network and the endpoint; batching cuts request count by one to two orders of magnitude.</div>
+  <div class="sd-def"><strong>Send unload events with <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon">navigator.sendBeacon()</a>.</strong> An event that fires as the user navigates away is lost with a normal <code>fetch</code>, because the browser cancels in-flight requests when the document unloads. <code>sendBeacon</code> queues the request with the browser to send in the background, and it survives the teardown. Use it in a <code>visibilitychange</code>/<code>pagehide</code> handler to flush the buffer on exit. It is limited to POST and can't read the response, which is fine for fire-and-forget telemetry.</div>
+  <div class="sd-def"><strong>Buffer offline.</strong> Persist the unsent queue to <code>localStorage</code> (simple, ~5MB, synchronous) or IndexedDB (larger, async) so a crash or dead connection doesn't drop it. Drain the persisted queue on next load before enqueuing new events.</div>
+  <div class="sd-def"><strong>Retry with exponential backoff and jitter.</strong> On a failed send, retry after 1s, 2s, 4s, 8s, each with a random jitter added, so a server coming back up doesn't get every client retrying in lockstep (a thundering herd). Cap the delay and the queue length so a permanently offline client stays bounded.</div>
+</div>
+
+<div class="card">
+  <h3>Sampling</h3>
+  <p>For high-volume, low-value signals (scroll depth, mouse movement, hover), send a random fraction from the client, say 1&ndash;10%, and include the sample rate in the payload so the backend multiplies back up to an estimate. Sampling is a client decision because it's the only place you can cut the volume before it costs anything to transmit or store. Never sample events tied to money or conversions; those need every instance.</p>
+</div>
+
+<h2 class="doc-nav-target" id="attribution">Attribution Capture</h2>
+
+<div class="card">
+  <h3>Capture, persist, re-inject</h3>
+  <p>Source params enter as URL query string and must survive every navigation to the outbound lender handoff.</p>
+  <p><strong>Capture at entry</strong>, against a whitelist so you don't store junk:</p>
+<pre><code>const KEYS = ['subid', 'clickid', 'utm_source', 'utm_campaign', 'partner']
+const incoming = new URLSearchParams(location.search)
+const attribution = {}
+for (const k of KEYS) {
+  const v = incoming.get(k)
+  if (v) attribution[k] = v
+}</code></pre>
+  <p><strong>Persist first-party:</strong> a server-set <code>httpOnly</code> cookie as the durable copy, <code>localStorage</code> as a client fallback, stamped with a first-seen timestamp so a later visit doesn't overwrite first-touch.</p>
+  <p><strong>Re-inject on every hop</strong> so a param stripped somewhere still reaches the next page:</p>
+<pre><code>function decorateUrl(href, attribution) {
+  const url = new URL(href, location.origin)
+  for (const [k, v] of Object.entries(attribution)) {
+    if (!url.searchParams.has(k)) url.searchParams.set(k, v)
+  }
+  return url.toString()
+}</code></pre>
+</div>
+
+<div class="card">
+  <h3>Why the referrer can't carry attribution</h3>
+  <p>The <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Referer">Referer header</a> and <code>document.referrer</code> report where a request came from, and both decay across origins. Browsers default <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Referrer-Policy">Referrer-Policy</a> to <code>strict-origin-when-cross-origin</code>: a cross-site navigation sends only the origin, dropping the path and query, and an HTTPS&rarr;HTTP hop sends nothing. Every hop from the marketplace to a lender is cross-origin, so a design that recovers the source from the referrer starts broken. Some browsers now also strip known tracking params from URLs (Firefox since 102 removes <code>fbclid</code>, <code>mkt_tok</code> and similar under strict protection), which is why a first-party, server-owned copy is the durable source and the URL param is a convenience.</p>
+</div>
+
+<div class="card">
+  <h3>Attribution models</h3>
+  <div class="sd-def"><strong>First-touch:</strong> full credit to the source that first introduced the user.</div>
+  <div class="sd-def"><strong>Last-touch:</strong> full credit to the final click before conversion. Most common in lead-gen billing because it maps to the click that immediately preceded the lead.</div>
+  <div class="sd-def"><strong>Multi-touch:</strong> credit split across touchpoints (linear, time-decay, or position-based weighting).</div>
+  <p>Stitching an anonymous click to a later logged-in conversion is done server-side with an identity graph mapping each <code>anonymous_id</code> to a <code>user_id</code>. The client's job is only to carry both ids on the events so the join is possible.</p>
+</div>
+
+<h2 class="doc-nav-target" id="pii">PII Handling</h2>
+
+<div class="card">
+  <h3>GET vs POST is about where the data ends up, not secrecy</h3>
+  <p>Both travel inside TLS, so the wire is equally private. The difference is what records the URL afterward. A GET puts values in the URL, and the URL is written to browser history, server access logs, proxy logs, and the Referer sent to the next origin. A POST keeps values in the request body, which none of those record by default. So identifiers that are safe to log (<code>subid</code>, <code>clickid</code>) travel in the URL over GET; applicant data (SSN, income) travels in a POST body. Writing an SSN into a query string copies it into logs you don't control and hands it to whatever site the user visits next.</p>
+</div>
+
+<div class="card">
+  <h3>iframe isolation for PII forms</h3>
+  <p>A cross-origin iframe runs on its own origin with its own DOM, and the <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy">same-origin policy</a> prevents the host page's scripts from reading fields inside it. That isolation is why sensitive forms belong in an iframe: pass attribution in through the frame <code>src</code>, keep the SSN inside the frame, and post only non-sensitive events (resize, step-complete) back to the parent via <code>postMessage</code>. A script SDK that renders into the host DOM gives the host full styling control but also lets the host's scripts read anything the user types, which suits an offer carousel and disqualifies SSN capture.</p>
+  <div class="sd-def"><strong>postMessage safety:</strong> set an explicit <code>targetOrigin</code> on send (never <code>'*'</code> for anything sensitive), and validate <code>event.origin</code> on receive before trusting the payload.</div>
+  <div class="sd-def"><strong>Harden the frame:</strong> <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP">CSP</a> <code>frame-ancestors</code> to control who can embed you, the iframe <code>sandbox</code> attribute, and a tight <code>referrerpolicy</code>.</div>
+  <p>Past capture, the value is <strong>tokenized</strong> server-side (swapped for an opaque reference, the real value encrypted in a vault, one service able to read it back). That part isn't a frontend concern beyond knowing the token, not the SSN, is what flows through the rest of the app.</p>
+</div>
+
+<h2 class="doc-nav-target" id="rendering">Rendering And Data Freshness</h2>
+
+<div class="card">
+  <h3>Model async UI as a state machine</h3>
+  <p>Represent the fetch lifecycle as a discriminated union, not separate boolean flags that can contradict each other:</p>
+<pre><code>type State&lt;T&gt; =
+  | { status: 'idle' }
+  | { status: 'loading' }
+  | { status: 'success'; data: T }
+  | { status: 'error'; error: Error }</code></pre>
+  <p>Separate <code>isLoading</code> and <code>isError</code> booleans allow "loading and error at once," an impossible state that becomes a bug. The union makes that unrepresentable and forces every case to be handled at the render site. Render all of: idle, loading, success, <em>empty</em> (success with zero results, which is not an error and shouldn't show an error UI), and error-with-retry.</p>
+</div>
+
+<div class="card">
+  <h3>Data freshness decides the client pattern</h3>
+  <p>Latency the user feels is mostly set server-side by <em>where</em> the number was computed: precomputed at write time is instant to read, computed on demand answers any query but slower, batch is cheapest but stale. You consume whichever the API offers and pick the matching client pattern:</p>
+  <table class="sd-table">
+    <thead><tr><th>Freshness</th><th>Example</th><th>Client pattern</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Live</strong> (sub-second)</td><td>A counter or ops tile ticking in near-real-time</td><td>Server-Sent Events (one-way server push over a single HTTP connection) or a WebSocket (bidirectional); fall back to interval polling if the API is request/response only</td></tr>
+      <tr><td><strong>Fresh</strong> (seconds)</td><td>A dashboard the user expects current-ish</td><td>Fetch on load and on demand, cache and revalidate with React Query or SWR, show a "last updated" time so staleness is explicit</td></tr>
+      <tr><td><strong>Batch</strong> (hours/daily)</td><td>A report reflecting yesterday</td><td>Plain fetch of a precomputed summary; surface the as-of date so nobody reads it as live</td></tr>
+    </tbody>
+  </table>
+  <div class="sd-def"><strong>SSE vs WebSocket:</strong> SSE is simpler, auto-reconnects, and runs over plain HTTP, right for server&rarr;client streams like a live counter. WebSocket is bidirectional and needed only when the client also pushes frequently (chat, collaborative editing). For dashboards, SSE is usually enough.</div>
+  <div class="sd-def"><strong>Next.js rendering:</strong> personalized per-user offers are server-rendered per request (an uncached fetch in the App Router, or <code>getServerSideProps</code> in Pages), not statically generated, because every user sees different data. Static generation only fits content identical for everyone.</div>
+</div>
+
+<h2 class="doc-nav-target" id="handoff">The Backend, Briefly</h2>
+
+<div class="card">
+  <h3>Enough to consume the contract and collaborate</h3>
+  <div class="sd-def"><strong>The shape.</strong> The client posts events to a collector endpoint; the collector drops them onto a durable log (Kafka or similar) so a traffic spike can't overwhelm the database; a processing job aggregates events and writes to an analytics store the dashboards read.</div>
+  <div class="sd-def"><strong>Delivery guarantees, three levels.</strong> <em>At-most-once</em> may drop, never duplicates (cheap, fine for sampled telemetry). <em>At-least-once</em> never drops but may duplicate (the default; duplicates removed downstream via <code>event_id</code>). <em>Exactly-once</em> neither drops nor duplicates (expensive; reserved for money). The browser side of at-least-once is the retry loop plus the idempotency key; the rest is the backend's problem.</div>
+  <div class="sd-def"><strong>Not every event needs the same guarantee.</strong> A page view can be lost or double-counted with no harm, so it should be cheap. A payout event is billing, so it needs exactly-once and an audit trail. Splitting the pipeline by event criticality is the one backend tradeoff worth understanding from the frontend seat.</div>
+</div>
+
+<h2 class="doc-nav-target" id="health">Frontend Production Health</h2>
+
+<div class="card">
+  <h3>How a frontend engineer measures a healthy production app</h3>
+  <div class="sd-def"><strong>Core Web Vitals via Real User Monitoring.</strong> Measure real users, not a lab run. <strong>LCP</strong> (Largest Contentful Paint): time until the main content renders; good is &lt;2.5s. <strong>INP</strong> (Interaction to Next Paint): responsiveness to user input, which replaced FID in March 2024; good is &lt;200ms. <strong>CLS</strong> (Cumulative Layout Shift): how much the page visually jumps; good is &lt;0.1. The <a href="https://github.com/GoogleChrome/web-vitals"><code>web-vitals</code></a> library reports all three from the browser; Vercel Analytics, Datadog RUM, and Sentry ingest them.</div>
+  <div class="sd-def"><strong>Error and session tracking.</strong> <a href="https://sentry.io/">Sentry</a> captures frontend exceptions with stack traces and tags them by release, so a spike lines up with a deploy. Session replay reconstructs the exact user path into a bug, which finds breaks no server metric shows because they happened in the browser.</div>
+  <div class="sd-def"><strong>Feature flags and gradual rollout.</strong> LaunchDarkly or Statsig gate a change behind a flag. Ship it off, enable for a small percentage of traffic (a canary), watch error rate and Web Vitals, then ramp up or flip off without a redeploy. This is how a frontend change is validated in production safely.</div>
+  <div class="sd-def"><strong>Funnel and conversion analytics.</strong> Drop-off between application steps, joined back to attribution, is the metric connecting frontend work to revenue. A step where users abandon is a UX or performance problem you can act on.</div>
+  <div class="sd-def"><strong>Performance budgets in CI.</strong> Lighthouse CI fails the build on a bundle-size or Web Vitals regression, making performance a gate rather than something noticed after it ships.</div>
+</div>
+
+</main>
+<script src="doc-nav.js"></script>
+<script src="../assets/script.js?v=20260609u"></script>
+</body>
+</html>

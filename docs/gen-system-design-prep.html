@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>System Design Prep: Event & Metric Collection Platform</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+<style>
+  .sd-table { width: 100%; border-collapse: collapse; margin: 0.85rem 0; font-size: 0.92rem; }
+  .sd-table th, .sd-table td { text-align: left; vertical-align: top; padding: 0.55rem 0.65rem; border: 1px solid rgba(148, 163, 184, 0.3); }
+  .sd-table th { background: rgba(30, 64, 175, 0.14); font-weight: 700; }
+  .sd-table code { white-space: nowrap; }
+  .sd-def { margin: 0.6rem 0; padding-left: 0.85rem; border-left: 3px solid rgba(96, 165, 250, 0.5); }
+  .sd-def strong { color: #93c5fd; }
+  .sd-num { font-variant-numeric: tabular-nums; }
+  .card pre { overflow-x: auto; }
+</style>
+</head>
+<body class="pr">
+<main class="doc-page">
+<h1><a class="back-link" href="../docs/"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>System Design: Event &amp; Metric Collection Platform</h1>
+<p class="subtitle">Engine (Gen Digital / MoneyLion) &middot; Onsite system design round &middot; Prompt: design a telemetry platform that collects click events, page views, identities, and business metrics, then processes and serves analytics. Reference notes: definitions, tools, patterns, and concrete examples.</p>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="model" type="button">Event Model</button>
+    <button class="sort-pill" data-target="classes" type="button">Event Classes</button>
+    <button class="sort-pill" data-target="guarantees" type="button">Delivery Tiers</button>
+    <button class="sort-pill" data-target="ingest" type="button">Ingestion</button>
+    <button class="sort-pill" data-target="processing" type="button">Stream Processing</button>
+    <button class="sort-pill" data-target="storage" type="button">Storage</button>
+    <button class="sort-pill" data-target="serving" type="button">Serving &amp; Latency</button>
+    <button class="sort-pill" data-target="identity" type="button">Identity &amp; Attribution</button>
+    <button class="sort-pill" data-target="pii" type="button">PII</button>
+    <button class="sort-pill" data-target="observability" type="button">Observability</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="model">What An Event Is</h2>
+
+<div class="card">
+  <h3>The envelope</h3>
+  <p>An event is an immutable record that something happened at a point in time. The design discipline is to fix a common envelope so every producer emits the same shape and every consumer can read it without special-casing. A workable envelope:</p>
+<pre><code>{
+  "event_id":   "6f9c...e2",   // client-generated UUID; the dedup key
+  "event_type": "offer_click", // enum from a registered catalog
+  "occurred_at":"2026-07-14T15:04:03.221Z", // event time, set on the client
+  "received_at":"2026-07-14T15:04:04.008Z", // processing time, set on ingest
+  "anonymous_id":"a1b2...",    // device/cookie id, present before login
+  "user_id":     null,         // stable id, present after login
+  "context": {                 // ambient facts, same for many events
+    "ip": "…", "ua": "…", "page_url": "…", "referrer": "…",
+    "subid": "partnerX", "clickid": "…"   // attribution, safe to log
+  },
+  "properties": {              // event-type-specific payload
+    "offer_id": "loan_4417", "apr": 12.9, "position": 3
+  }
+}</code></pre>
+  <p>Two timestamps, not one, and this matters downstream. <code>occurred_at</code> is <strong>event time</strong>, when the action happened on the device. <code>received_at</code> is <strong>processing time</strong>, when your servers saw it. A phone that was offline for an hour produces an event whose event time is an hour before its processing time. Every correct aggregate keys off event time; every latency measurement is the gap between the two.</p>
+</div>
+
+<div class="card">
+  <h3>Schema and the schema registry</h3>
+  <p>If producers can emit any field at any time, consumers break silently and your storage layer fills with garbage columns. A <strong>schema registry</strong> is a service that stores the agreed schema for each event type and rejects producers that violate it. Confluent Schema Registry is the standard one; events are encoded as <a href="https://avro.apache.org/">Avro</a> or <a href="https://protobuf.dev/">Protobuf</a> (compact binary, typed) instead of raw JSON, and the registry version-controls the definition.</p>
+  <p><strong>Schema evolution</strong> is the rule set for changing a schema without a coordinated redeploy of every producer and consumer at once. Two directions:</p>
+  <div class="sd-def"><strong>Backward compatible</strong>: a new consumer can read old data. You get this by only adding fields with defaults, never removing or renaming. The analytics team upgrades the reader; last week's events still parse.</div>
+  <div class="sd-def"><strong>Forward compatible</strong>: an old consumer can read new data. It ignores fields it doesn't know about. A producer ships a new property; the not-yet-upgraded warehouse loader keeps running.</div>
+  <p>The registry enforces the compatibility mode you pick and blocks a producer whose schema would break it. Concrete failure it prevents: someone renames <code>apr</code> to <code>rate</code>, the dashboard's <code>SUM(apr)</code> silently reads null for all new rows, and a week later finance asks why average APR dropped to zero.</p>
+</div>
+
+<h2 class="doc-nav-target" id="classes">Why A Page View And A Payout Are Not The Same Data</h2>
+
+<div class="card">
+  <h3>The value and the cost of being wrong differ by orders of magnitude</h3>
+  <p>Treating every event with one guarantee either wastes money hardening things that don't need it or loses money under-protecting things that do. Two concrete events at opposite ends:</p>
+  <div class="sd-def"><strong>A page view.</strong> Worth a fraction of a cent as an analytics signal. You collect hundreds of millions a day. If you drop 0.1% of them, every dashboard still reads the same to three significant figures and no decision changes. If you accidentally count one twice, same story. Loss-tolerant and duplicate-tolerant.</div>
+  <div class="sd-def"><strong>A qualified-lead / payout event.</strong> This is the moment a lender agrees to pay for a lead, commonly <span class="sd-num">$20&ndash;40</span> for a personal-loan lead and <span class="sd-num">$50&ndash;150+</span> for an approved credit card. Drop one and you never bill the lender: direct lost revenue. Count one twice and you bill the lender twice: that's an invoice you can't defend in a reconciliation dispute, it erodes the partner relationship, and in a regulated flow it's an audit finding. Loss-intolerant and duplicate-intolerant.</div>
+  <p>Same platform, same wire format, completely different correctness contract. A page view wants throughput and low cost. A payout wants an accounting ledger.</p>
+</div>
+
+<div class="card">
+  <h3>How you actually guarantee the payout happens</h3>
+  <p>"Send it through Kafka" is not a guarantee. The specific problem is the <strong>dual-write problem</strong>: a service that must both write a row to its database and publish an event cannot do both atomically. If it writes the DB then crashes before publishing, the payout is lost. If it publishes then crashes before the DB commit, you have a phantom payout for a conversion that didn't persist. You need the business fact and the event to be all-or-nothing. The pattern that solves it is the <strong>transactional outbox</strong>:</p>
+  <ol>
+    <li>In one database transaction, insert the conversion row <em>and</em> an <code>outbox</code> row describing the event. Both commit or neither does. The dual write is gone because it's now a single local transaction.</li>
+    <li>A separate relay reads the outbox and publishes to Kafka. <a href="https://debezium.io/">Debezium</a> does this by tailing the database's change log (change data capture), or a simple poller selects unpublished rows on an interval.</li>
+    <li>The relay marks each row published only after Kafka acknowledges. If it crashes mid-flight it re-publishes, which is fine because the consumer is idempotent (next point).</li>
+  </ol>
+  <p>Then make every write <strong>idempotent</strong> so replays and retries can't double-count. Idempotent means applying the operation twice has the same effect as applying it once. Concretely, the conversion carries a stable <code>lead_id</code>, and the ledger insert is <code>INSERT ... ON CONFLICT (lead_id) DO NOTHING</code> against a unique constraint. The second arrival is a no-op. The payout topic itself runs at the strongest Kafka durability (<code>acks=all</code>, replication factor 3, so the write survives losing two brokers), and the billing consumer writes to an <strong>append-only ledger</strong>: you never update a payout row, you append immutable entries and sum them, which gives you an auditable history instead of a mutable balance you have to trust.</p>
+  <p>Finally, <strong>reconcile out of band</strong>, because internal correctness isn't enough when money crosses a company boundary. Lead-gen partners confirm conversions with a <strong>server-to-server postback</strong> (the lender's backend calls your endpoint with the <code>clickid</code> when the lead converts on their side, instead of relying on a browser pixel that ad blockers eat). A nightly job matches your ledger against their postbacks on <code>lead_id</code>/<code>clickid</code>; any row present on one side and missing on the other is flagged for a human. That closes the loop: the outbox stops loss, idempotency stops duplication, and reconciliation catches anything that slips past both.</p>
+</div>
+
+<h2 class="doc-nav-target" id="guarantees">Delivery Semantics And Tiered Guarantees</h2>
+
+<div class="card">
+  <h3>The three delivery semantics, defined</h3>
+  <div class="sd-def"><strong>At-most-once.</strong> Send and forget; on failure, don't retry. You may lose events, you'll never duplicate one. Cheapest. Right for signals where a gap is invisible.</div>
+  <div class="sd-def"><strong>At-least-once.</strong> Retry until you get an acknowledgment. You'll never lose an event, but a retry after a lost ack produces a duplicate. This is the default for most pipelines because loss is usually worse than duplication, and duplication is fixable downstream by deduping on <code>event_id</code>.</div>
+  <div class="sd-def"><strong>Exactly-once.</strong> No loss and no duplicates. Genuinely expensive: it requires coordination that the two cheaper modes skip. In practice you rarely get true exactly-once end to end; you get <strong>effectively-once</strong>, which is at-least-once delivery plus idempotent writes, so duplicates arrive but land harmlessly. Reserve the real thing for money.</div>
+  <p>Where exactly-once is real: <a href="https://flink.apache.org/">Apache Flink</a> achieves it inside its pipeline with distributed checkpoints plus a two-phase-commit sink, and Kafka's transactional producer (<code>enable.idempotence=true</code> plus transactions) dedups by producer id and sequence number within a partition. Both cost throughput and latency, which is exactly why you don't pay for them on page views.</p>
+</div>
+
+<div class="card">
+  <h3>Tiering, with the concrete knobs per tier</h3>
+  <p>"Tiered guarantees" means you classify each event type into a tier and configure the pipeline differently for each, instead of running one worst-case-expensive pipeline for everything. A workable three-tier split:</p>
+  <table class="sd-table">
+    <thead><tr><th>Tier</th><th>Examples</th><th>Delivery</th><th>Concrete configuration</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>0 &middot; Best-effort</strong></td>
+        <td>Mouse-move heatmaps, scroll depth, hover telemetry</td>
+        <td>At-most-once, sampled</td>
+        <td>Sample at 1&ndash;10% on the client and record the rate to extrapolate. Kafka <code>acks=0</code> or a UDP-style collector. First thing dropped when the system sheds load. Approximate counts are the point.</td>
+      </tr>
+      <tr>
+        <td><strong>1 &middot; Standard</strong></td>
+        <td>Page views, offer impressions, clicks, searches</td>
+        <td>At-least-once, deduped</td>
+        <td>Kafka <code>acks=1</code>, replication factor 3, retention ~7 days for replay. Dedup on <code>event_id</code> in the stream job. Aggregates may use approximate algorithms (unique users via HyperLogLog). No sampling.</td>
+      </tr>
+      <tr>
+        <td><strong>2 &middot; Critical / revenue</strong></td>
+        <td>Qualified lead, application submit, conversion, payout</td>
+        <td>Effectively-once, audited</td>
+        <td>Transactional outbox from the system of record, dedicated topic at <code>acks=all</code> + RF 3, idempotent ledger writes, exact (never approximate) counts, never sampled, nightly reconciliation against partner postbacks, long retention for audit.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>The routing is physical, not just a label: separate Kafka topics per tier, so the critical topic's stricter <code>acks</code> and replication don't tax the firehose of page views, and so a flood of Tier 0 traffic can be shed without touching the payout path. That's the whole payoff of tiering: you spend durability where the dollars are and buy throughput everywhere else.</p>
+</div>
+
+<h2 class="doc-nav-target" id="ingest">Ingestion And Transport</h2>
+
+<div class="card">
+  <h3>The client SDK: where events are lost before you ever see them</h3>
+  <p>The failure mode nobody instruments is events that die at the edge, because you can't measure what never arrived. Four concrete SDK responsibilities:</p>
+  <div class="sd-def"><strong>Batch and flush.</strong> Buffer events in memory and send them in groups on a size threshold (say 20 events) or a time threshold (say every 5 seconds), whichever comes first. One HTTP request per click would swamp both the client's radio and your collector; batching cuts request count by one to two orders of magnitude.</div>
+  <div class="sd-def"><strong>Survive page unload with <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon">navigator.sendBeacon()</a>.</strong> A click that navigates the user to a lender fires as the page is tearing down, and a normal <code>fetch</code> gets cancelled when the document unloads. <code>sendBeacon</code> hands the request to the browser to send in the background, fire-and-forget, guaranteed to outlive the page. This is the correct tool for exit and last-click events specifically.</div>
+  <div class="sd-def"><strong>Offline durability.</strong> Persist the unsent buffer to <code>localStorage</code> or IndexedDB so a crash, a closed tab, or a dead connection doesn't drop the queue. On next load, drain it first.</div>
+  <div class="sd-def"><strong>Retry with exponential backoff and jitter.</strong> On a failed send, wait 1s, then 2s, then 4s, and so on, with a random jitter added so a recovering backend doesn't get every client retrying in the same instant (a thundering herd). Cap the backoff and the queue size so a permanently offline client doesn't grow unbounded.</div>
+</div>
+
+<div class="card">
+  <h3>The collector: keep it stateless and fast</h3>
+  <p>The collector is the HTTP endpoint the SDK posts to. Its one rule: do the minimum, acknowledge, and get the event onto the log. It validates the envelope against the schema, enriches it with facts the client shouldn't be trusted for or doesn't have (server <code>received_at</code> timestamp, geo-IP from the source address, parsed user-agent, tenant tag), writes to Kafka, and returns <code>202 Accepted</code> immediately. It does <em>no</em> aggregation or business logic on the request path, because that would couple the user's latency to your processing health.</p>
+  <p>Stateless is the operative word: the collector holds nothing between requests, so you run N identical copies behind a load balancer and autoscale on CPU. Peak traffic on a consumer marketplace runs <span class="sd-num">10&ndash;20&times;</span> the daily average (evenings, paydays, promotions), and horizontal statelessness is what absorbs that without a redesign.</p>
+</div>
+
+<div class="card">
+  <h3>The log: Kafka and why a durable log beats a queue</h3>
+  <p><a href="https://kafka.apache.org/">Apache Kafka</a> (or <a href="https://aws.amazon.com/kinesis/">Kinesis</a>, <a href="https://cloud.google.com/pubsub">Pub/Sub</a>, <a href="https://redpanda.com/">Redpanda</a>) is the spine. It's a <strong>distributed, append-only, partitioned log</strong>, and each property earns its place:</p>
+  <ul>
+    <li><strong>Decoupling.</strong> Producers write, consumers read at their own pace. A slow warehouse loader can't slow down ingestion; it just reads further behind.</li>
+    <li><strong>Durability and replay.</strong> Events are retained on disk for a configured window (hours to weeks), so you can rewind a consumer to reprocess after a bug fix, or spin up a brand-new consumer that reads all of history to build a new dataset. A traditional message queue deletes on consume and can't do this.</li>
+    <li><strong>Backpressure absorption.</strong> A traffic spike lands in the log and drains when consumers catch up, instead of overwhelming a downstream store. The log is the shock absorber.</li>
+    <li><strong>Ordering within a partition.</strong> Kafka guarantees order only inside one partition, not across the topic.</li>
+  </ul>
+  <p>That last point forces the key design decision, the <strong>partition key</strong>. Events with the same key go to the same partition and stay ordered. Key by <code>user_id</code> and you get per-user ordering, which sessionization needs (a user's clicks arrive in order). The risk is a <strong>hot partition</strong>: one bot, one whale tenant, or a null key sends a disproportionate share to a single partition, and that partition's consumer falls behind while others idle. You watch per-partition lag for skew and, for the pathological keys, salt them (append a small random suffix) to spread the load, accepting that you lose strict ordering for those. State the tradeoff out loud: ordering versus even distribution, and you can't always have both.</p>
+</div>
+
+<h2 class="doc-nav-target" id="processing">Stream Processing</h2>
+
+<div class="card">
+  <h3>Event time vs processing time, and watermarks</h3>
+  <p>The hardest correctness problem in this whole system is that events arrive late and out of order, and naive aggregation on arrival time is simply wrong. If you count "clicks in the 3:00&ndash;3:01 minute" by when events showed up, a batch of phone events that were buffered offline and arrive at 3:05 get miscounted into the wrong minute. You must aggregate on <strong>event time</strong> (<code>occurred_at</code>), not processing time.</p>
+  <p>But if you aggregate on event time, when is the 3:00&ndash;3:01 window "done" so you can emit its count? You can't wait forever for a straggler. A <strong>watermark</strong> is the stream processor's moving assertion "I believe I've now seen all events with event time up to T." When the watermark passes 3:01, the engine closes that window and emits the result. You configure <strong>allowed lateness</strong> (say 10 minutes) for events later than the watermark; those either update the already-emitted result or divert to a side output for separate handling, rather than corrupting a closed number. Flink implements this natively; Spark Structured Streaming and Kafka Streams have their own versions. The concept is the same everywhere: watermarks trade a little latency for correctness under out-of-order arrival.</p>
+</div>
+
+<div class="card">
+  <h3>Windowing, defined by type</h3>
+  <div class="sd-def"><strong>Tumbling window.</strong> Fixed size, non-overlapping. "Count clicks per 1-minute bucket." Every event belongs to exactly one window. This is your basic time-bucketed rollup.</div>
+  <div class="sd-def"><strong>Sliding (hopping) window.</strong> Fixed size, overlapping, advancing by a smaller step. "Rolling 5-minute click count, updated every minute." An event belongs to several windows at once. Used for smoothed trend lines and rate alerts.</div>
+  <div class="sd-def"><strong>Session window.</strong> Sized dynamically by activity; it closes after a gap of inactivity. This is <strong>sessionization</strong>: group a user's events into a visit, starting a new session once they've been idle past a threshold. The web convention is a 30-minute inactivity gap (the same rule classic Google Analytics used). Session windows are keyed per user, which is exactly why you partitioned Kafka by <code>user_id</code>.</div>
+</div>
+
+<div class="card">
+  <h3>Choosing the engine</h3>
+  <p><strong>Flink</strong> is true event-at-a-time streaming with first-class event-time, watermarks, and exactly-once; it's the strongest default for a serious platform. <strong>Spark Structured Streaming</strong> is micro-batch (it processes in small chunks, say every few seconds), which adds latency but reuses the Spark batch ecosystem, good if your team already lives there. <strong>Kafka Streams</strong> is a library, not a cluster: it embeds directly in a JVM service, lightweight for straightforward per-key aggregations without standing up separate infrastructure. The axis to reason about aloud is latency and operational weight versus how much stateful, event-time correctness you need.</p>
+</div>
+
+<h2 class="doc-nav-target" id="storage">Storage: What Each Kind Actually Is</h2>
+
+<div class="card">
+  <h3>Row stores vs column stores, mechanically</h3>
+  <p>This is the single most useful storage distinction and it's concrete, not abstract. Take <code>SELECT count(*) FROM events WHERE campaign = 'x'</code> over 2 billion rows with 40 columns each.</p>
+  <div class="sd-def"><strong>Row-oriented (OLTP: Postgres, MySQL).</strong> Stores all 40 columns of a row together on disk. To count by campaign it must read every row's full 40 columns off disk just to inspect one. Great when you want the <em>whole</em> row and few of them ("fetch this one lead by primary key," sub-millisecond), terrible for wide scans.</div>
+  <div class="sd-def"><strong>Column-oriented (OLAP: ClickHouse, BigQuery, Snowflake, Redshift).</strong> Stores each column together on disk. The same count reads only the <code>campaign</code> column and skips the other 39, roughly 40&times; less I/O, and because a column holds one data type its values compress hard (event data commonly 10:1). This is why analytical aggregates over billions of rows return in hundreds of milliseconds. The tradeoff is the mirror image: single-row updates and point lookups are slow, so a column store is never your system of record.</div>
+  <p>OLTP means online transaction processing (the operational database that owns current state); OLAP means online analytical processing (the query engine for aggregates over history). You use both, for different jobs.</p>
+</div>
+
+<div class="card">
+  <h3>The specific stores and what each is for</h3>
+  <table class="sd-table">
+    <thead><tr><th>Store</th><th>What it is</th><th>Use it for</th></tr></thead>
+    <tbody>
+      <tr><td><strong>ClickHouse</strong></td><td>Column store optimized for raw-event scans and ad-hoc <code>GROUP BY</code>; materialized views maintain rollups on insert (SummingMergeTree, AggregatingMergeTree).</td><td>The workhorse analytics store: keep recent raw events, run any query over any dimension, internal dashboards and exploration.</td></tr>
+      <tr><td><strong>Druid / Pinot</strong></td><td>Real-time OLAP that ingests straight from Kafka and <strong>pre-aggregates at ingestion (rollup)</strong>; built for very high query concurrency at low latency. Pinot's star-tree index is the extreme of this.</td><td>User-facing dashboards where thousands of publishers each hit their own live numbers concurrently and expect them fast.</td></tr>
+      <tr><td><strong>Time-series DB</strong> (TimescaleDB, InfluxDB)</td><td>Optimized for timestamp-indexed metrics with built-in downsampling and retention policies.</td><td>Operational and infrastructure metrics, the monitoring of the pipeline itself.</td></tr>
+      <tr><td><strong>Data lake</strong> (S3 + <a href="https://parquet.apache.org/">Parquet</a> + <a href="https://iceberg.apache.org/">Iceberg</a>/Delta/Hudi)</td><td>Cheap object storage holding columnar files; a table format adds ACID, schema evolution, and time-travel over those files. Queried by Trino, Athena, or Spark.</td><td>Full-history cold storage, backfills, reprocessing, ML training data. Infinite retention at object-storage prices.</td></tr>
+      <tr><td><strong>Redis</strong></td><td>In-memory key-value store; sub-millisecond reads; holds counters and probabilistic sketches.</td><td>Live "events in the last minute" counters and the HyperLogLog structures behind unique-visitor tiles.</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Hot / cold tiering</strong> ties it together: keep the last 30&ndash;90 days in ClickHouse or Druid where queries are fast and storage is expensive, and age everything older into Parquet on S3 where storage is nearly free and queries are slower. The retention boundary is a direct cost lever you name as a tradeoff.</p>
+</div>
+
+<h2 class="doc-nav-target" id="serving">Serving And Where Latency Actually Comes From</h2>
+
+<div class="card">
+  <h3>Latency is a consequence of where you compute the answer</h3>
+  <p>"Real-time versus daily" is not a spec you're handed; it's the result of choosing <em>when</em> the aggregation runs relative to the query. There are three real patterns, and each has a distinct cost and constraint:</p>
+  <div class="sd-def"><strong>Precompute at write time (read is a lookup).</strong> As events stream in, you continuously maintain rollup tables keyed by dimension and time granularity. The dashboard query then reads a handful of already-summed rows. Concrete: Druid maintains per-minute rollups by campaign as it ingests, so "clicks per campaign in the last hour" reads 60 pre-summed rows and returns in single-digit milliseconds. The cost: you must know the query shape in advance to have rolled up those dimensions; a dimension you didn't pre-aggregate isn't available without reprocessing. This is what makes a sub-second user-facing dashboard possible.</div>
+  <div class="sd-def"><strong>Compute at query time (scan and aggregate on read).</strong> Store raw events columnar; the query scans and aggregates on demand. Concrete: ClickHouse scanning 2 billion rows for a brand-new <code>GROUP BY</code> the analyst just wrote, in roughly 200ms to 2s. The benefit is total flexibility, any dimension, any question, no pre-planning. The cost is that each query does real work proportional to data scanned, so it doesn't hold up under thousands of concurrent users the way a precomputed store does. This is the "seconds-fresh, any question" internal-analytics experience.</div>
+  <div class="sd-def"><strong>Compute on a schedule (batch, serve a stale answer).</strong> A job runs periodically over the data lake and writes summary tables. Concrete: a dbt or Spark job at 2am rolls up yesterday's revenue by partner over Parquet in S3, and the report reads instantly but reflects the world as of last night. The benefit is arbitrarily complex logic (multi-way joins, attribution models) at the lowest compute cost per query. The cost is staleness measured in hours. This is the "daily finance report" experience, and it's the right tool when the question is complex and the answer doesn't need to be current.</div>
+  <p>So the mechanism, not the adjective: sub-second means you paid the compute at ingestion and the read is a lookup; seconds-fresh means you're scanning raw columns on demand; hours-stale means a scheduled batch did the work once and everyone reads its output. You pick per surface, and a real platform runs all three at once for different consumers.</p>
+</div>
+
+<div class="card">
+  <h3>Approximate algorithms, and why exact is often the wrong goal</h3>
+  <p>Counting distinct things exactly at scale means remembering every distinct thing, which is memory you don't have. Three sketches solve specific questions for kilobytes:</p>
+  <div class="sd-def"><strong>HyperLogLog</strong> estimates cardinality (count of distinct values), the answer to "how many unique visitors." Redis's implementation uses about 12KB to estimate counts into the billions with roughly 0.8% standard error, and critically it's <strong>mergeable</strong>: the sketch for Monday merged with Tuesday's gives the exact unique count across both days without re-scanning either. Exact distinct counting would need a set holding every user id. For a dashboard tile, 0.8% error is invisible and the memory saving is the difference between feasible and not.</div>
+  <div class="sd-def"><strong>t-digest</strong> (or DDSketch) estimates quantiles, the answer to "p95 and p99 response time." Also mergeable across partitions and time buckets, so you can roll percentiles up the same way you roll up sums.</div>
+  <div class="sd-def"><strong>Count-min sketch</strong> estimates per-item frequency for heavy-hitter and top-K questions, "which publishers sent the most traffic this hour," in fixed memory regardless of how many distinct publishers exist.</div>
+  <p>The rule: approximate is fine and often mandatory for Tier 0/1 exploratory metrics; it is never acceptable for Tier 2 revenue counts, which must be exact and reconcilable. Match the algorithm to the tier.</p>
+</div>
+
+<h2 class="doc-nav-target" id="identity">Identity Resolution And Attribution</h2>
+
+<div class="card">
+  <h3>Stitching anonymous to known</h3>
+  <p>The defining sequence in this business: a user clicks an offer <em>anonymously</em> (you only have a cookie/device <code>anonymous_id</code>), then converts later after <em>logging in</em> (now you have a stable <code>user_id</code>). If you can't connect the two, the payout attaches to nobody and the click that earned it is orphaned. <strong>Identity resolution</strong> is maintaining an <strong>identity graph</strong> that links every <code>anonymous_id</code> a person used to their <code>user_id</code>, so that on login you can retroactively re-attribute the earlier anonymous events to the now-known user. This is a join over history, which is one more reason you keep raw events, not just aggregates.</p>
+</div>
+
+<div class="card">
+  <h3>Attribution models and windows</h3>
+  <p><strong>Attribution</strong> is deciding which touchpoint gets credit (and the payout) for a conversion when a user interacted with several. The models:</p>
+  <div class="sd-def"><strong>First-touch:</strong> the first source that introduced the user gets full credit. Rewards top-of-funnel acquisition.</div>
+  <div class="sd-def"><strong>Last-touch:</strong> the final source before conversion gets full credit. Simplest and most common in lead-gen billing because it maps cleanly to the click that immediately preceded the lead.</div>
+  <div class="sd-def"><strong>Multi-touch:</strong> credit is split across touchpoints by a rule (linear, time-decay, position-based). More accurate, more complex, and it turns a single payout into fractional allocations you have to sum correctly.</div>
+  <p>An <strong>attribution window</strong> is the lookback period in which a prior touch still counts, for example "a conversion credits a click only if that click was within the last 30 days." Mechanically, first- versus last-touch and the window are both just decisions about which event in a user's event-time-ordered session sequence receives credit, which is why sessionization and event-time ordering underpin the whole thing.</p>
+</div>
+
+<h2 class="doc-nav-target" id="pii">PII And Data Governance</h2>
+
+<div class="card">
+  <h3>Keep PII out of the event stream entirely</h3>
+  <p>The governing rule: attribution identifiers (<code>subid</code>, <code>clickid</code>, <code>utm_*</code>) are safe to put in URLs, logs, and events; applicant PII (SSN, income, date of birth) is not, ever. A telemetry pipeline fans data out to logs, warehouses, dashboards, and analytics beacons, which is precisely the wrong place for an SSN. So the SSN never enters the stream. What enters is a <strong>token</strong>.</p>
+  <p><strong>Tokenization</strong> swaps the sensitive value for an opaque reference and stores the real value encrypted under tight access control, in a dedicated PII vault (Skyflow, Basis Theory, or an internal equivalent; PCI DSS formalizes the same approach for card numbers). The SSN is captured once over POST and TLS, tokenized immediately, and only the token travels through the funnel and the event stream. Exactly one service can detokenize, the one that submits to the lender. The blast radius of a leak shrinks from your entire analytics estate to a single service.</p>
+</div>
+
+<div class="card">
+  <h3>Right-to-delete on an immutable log: crypto-shredding</h3>
+  <p>GDPR and CCPA give users the right to have their data deleted, which collides head-on with an append-only event log and immutable object storage where you deliberately can't edit history. The technique that resolves it is <strong>crypto-shredding</strong>: encrypt each user's data with a per-user key, keep the keys in a separate key store, and to "delete" a user, destroy their key. The ciphertext remains in the log, now permanently unreadable, so you satisfy erasure without rewriting immutable storage. Pair it with consent gating at collection (don't collect what the user didn't consent to) and you have a governance story that survives an audit.</p>
+</div>
+
+<h2 class="doc-nav-target" id="observability">Observability Of The Pipeline Itself</h2>
+
+<div class="card">
+  <h3>Three different lags people conflate</h3>
+  <p>Most "our data is delayed" incidents are a failure to distinguish these, so name all three precisely:</p>
+  <div class="sd-def"><strong>Consumer lag.</strong> In Kafka, the offset difference between the latest message produced to a partition and the last offset your consumer group has committed, measured in messages. It answers "how far behind is this consumer." Concrete: a lag of 2,000,000 messages on a partition flowing at 5,000/s means the consumer is ~400 seconds (nearly 7 minutes) behind, so a dashboard reading from it is 7 minutes stale. Alert on <em>monotonic growth</em> (the consumer can't keep up and is falling further behind), not on an absolute number, since a brief spike that drains is fine. Tools: Burrow, or the Kafka exporter feeding Prometheus.</div>
+  <div class="sd-def"><strong>Ingestion (processing) latency.</strong> Wall-clock time from <code>received_at</code> to the moment the event is queryable in the serving store. It answers "once we have it, how long until a user can see it." This is dominated by your stream job and store write path, independent of Kafka lag.</div>
+  <div class="sd-def"><strong>Event-time skew.</strong> The gap between <code>occurred_at</code> and <code>received_at</code>, when the action happened on the device versus when your servers received it. A mobile client offline for an hour produces an hour of skew with <em>zero</em> consumer lag and <em>zero</em> ingestion latency. This is the one that quietly corrupts event-time windows if allowed lateness is set too tight.</div>
+</div>
+
+<div class="card">
+  <h3>The specific metrics to emit, with thresholds and the action each triggers</h3>
+  <ul>
+    <li><strong>Throughput in vs out</strong> (events/sec at the collector and at each consumer). A sustained divergence means a backlog is building upstream of the slower stage. Action: scale that stage or investigate a poison partition.</li>
+    <li><strong>Error rate</strong> (validation failures, processing exceptions per second) and <strong>dead-letter-queue depth</strong>. The <strong>DLQ</strong> is where events that fail validation or repeatedly fail processing get parked instead of silently dropped or blocking the stream. A rising DLQ almost always means a schema change shipped or a poison message is looping. Action: inspect the DLQ, fix the producer or the consumer, then replay the DLQ.</li>
+    <li><strong>Volume anomaly per event-type per source.</strong> This catches the class of bug that no infra metric shows: the pipeline is green, but a publisher's SDK deploy broke and their click events dropped 40% at 3pm. A quiet Tuesday and a broken SDK look identical on a throughput graph unless you compare against an expected baseline. Detect with a z-score against the same hour on prior days, or a data-quality tool (Great Expectations, dbt tests, Monte Carlo). Action: alert the publisher-integrations team; this is lost revenue in progress.</li>
+    <li><strong>Duplicate rate</strong> (fraction of arriving <code>event_id</code>s already seen). A rising duplicate rate means an at-least-once path is double-firing or a retry storm is underway. Harmless for deduped tiers, but a leading indicator of an upstream retry bug.</li>
+    <li><strong>Cardinality of each rollup dimension.</strong> If a dimension you're grouping by (say a URL that accidentally includes a unique query param) suddenly explodes from hundreds of distinct values to millions, your rollup tables and query cost blow up. Action: cap or bucket the dimension, fix the producer.</li>
+    <li><strong>Watermark / freshness lag</strong> on the stream job. How far the watermark trails wall-clock tells you when windows will actually close and emit. A stalled watermark means results stop updating even though events keep flowing.</li>
+    <li><strong>Reconciliation gap</strong> (Tier 2 only): count of your recorded conversions versus partner postbacks, per day. Any nonzero gap is either lost revenue or a double-count, and it goes to a human. This is the metric that protects the money directly.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Frameworks to structure the answer, and end-to-end tracing</h3>
+  <p>Two standard vocabularies signal you've operated systems, not just built them. The <strong>four golden signals</strong> (from Google SRE) are latency, traffic, errors, and saturation; <strong>saturation</strong> means how full your most constrained resource is (disk, memory, consumer capacity), the leading indicator of a stage about to tip over. <strong>RED</strong> (Rate, Errors, Duration) frames request-driven services like the collector; <strong>USE</strong> (Utilization, Saturation, Errors) frames the resources behind them.</p>
+  <p>To debug one event's journey rather than aggregate health, use <strong>distributed tracing</strong>: propagate a trace id (the <code>event_id</code> works) from the SDK through the collector, the stream job, and the write to the store, instrumented with <a href="https://opentelemetry.io/">OpenTelemetry</a>. Then you can follow a single event end to end and see exactly which hop added latency or dropped it, instead of inferring from counters. The principle underneath every metric here: a pipeline that fails silently is worse than one that fails loudly, so you instrument for the silent failures first, the dropped SDK and the reconciliation gap, because those are the ones no infrastructure dashboard will ever show you.</p>
+</div>
+
+</main>
+<script src="doc-nav.js"></script>
+<script src="../assets/script.js?v=20260609u"></script>
+</body>
+</html>

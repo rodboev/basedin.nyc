@@ -328,7 +328,7 @@ function updateBreakdown(r) {
   if (el = document.getElementById('bd-open')) el.textContent = open;
   if (el = document.getElementById('bd-lost-sup')) el.textContent = lostSup;
   if (el = document.getElementById('bd-rate')) el.textContent = formatAcceptanceRate(rate) + (rate == null ? '' : '%');
-  if (el = document.getElementById('bd-rate-label')) el.textContent = 'Acceptance (' + superseded + ' superseded, ' + lost + ' lost)';
+  if (el = document.getElementById('bd-rate-label')) el.textContent = 'Acceptance rate (' + superseded + ' superseded, ' + lost + ' lost)';
   var dayStr = displayDays === 1 ? '1 day' : displayDays + ' days';
   if (el = document.getElementById('bd-days')) el.textContent = dayStr;
   if (firstDate && lastDate) {

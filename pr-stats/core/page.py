@@ -84,7 +84,7 @@ def render_breakdown_section(
     secondary_cards = [
         StatCard(
             value=f"{rate}%",
-            label=f"Acceptance ({counts.superseded} superseded, {counts.lost} lost)",
+            label=f"Acceptance rate ({counts.superseded} superseded, {counts.lost} lost)",
             value_class="green",
             value_id="bd-rate",
             label_id="bd-rate-label",

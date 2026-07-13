@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>Onsite Prep: Engine by MoneyLion (Gen Digital)</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+</head>
+<body class="pr">
+<main class="doc-page">
+<h1><a class="back-link" href="../docs/"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>Onsite Prep: Engine by MoneyLion</h1>
+<p class="subtitle">Senior II Frontend Engineer &middot; Engine (Gen Digital / MoneyLion) &middot; Onsite final round, Tuesday July 14, 2026 &middot; Culture fit, systems-thinking with engineers, solo coding</p>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="frame" type="button">The Business</button>
+    <button class="sort-pill" data-target="attribution" type="button">Attribution</button>
+    <button class="sort-pill" data-target="transport" type="button">GET, POST &amp; Transport</button>
+    <button class="sort-pill" data-target="signing" type="button">Signing &amp; Storage</button>
+    <button class="sort-pill" data-target="embedding" type="button">Embedding</button>
+    <button class="sort-pill" data-target="coding" type="button">Coding Round</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="frame">The Business You're Interviewing For</h2>
+
+<div class="card">
+  <h3>What Engine actually is</h3>
+  <p><a href="https://engine.tech/">Engine by MoneyLion</a> is the former Even Financial: an embedded-finance marketplace. A publisher or landing page sends a consumer into a funnel, Engine matches that consumer to lenders, card issuers, and insurers across 60-plus product types, and the financial institution pays per qualified lead. Because the payout attaches to a specific publisher and a specific click, <a href="https://en.wikipedia.org/wiki/UTM_parameters">attribution</a> is the product itself. Their integration docs thread client tags such as <code>subID</code>, <code>clickID</code>, and traffic source through every hop and settle payouts per lead against them.</p>
+</div>
+
+<div class="card">
+  <h3>The two rules that unify every question he asked</h3>
+  <p>Provenance is revenue. The source of a lead travels as explicit, persisted data that any downstream service can read on demand.</p>
+  <p>PII is liability. A Social Security number stays out of anything that can leak: URLs, <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Referer">Referer headers</a>, server logs, browser history, and analytics beacons. Attribution identifiers belong in the URL; applicant data never does.</p>
+  <p>His GET-versus-POST question, his referrer-architecture frustration, and his interest in observability all resolve to these two rules. Say them out loud and you're on his frequency.</p>
+</div>
+
+<h2 class="doc-nav-target" id="attribution">Attribution: Where Provenance Lives</h2>
+
+<div class="card">
+  <h3>Why the Referer header can't carry it</h3>
+  <p>The <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Referer">Referer header</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/referrer"><code>document.referrer</code></a> report where a request came from, and both decay the moment traffic crosses origins. Modern browsers default <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Referrer-Policy">Referrer-Policy</a> to <code>strict-origin-when-cross-origin</code>, so a cross-site navigation sends only the origin, drops the path and query, and sends nothing at all on an HTTPS-to-HTTP hop. <code>rel="noreferrer"</code>, privacy extensions, and corporate proxies strip more. Every redirect from the marketplace to a lender is cross-origin, so a design that recovers the source by reading the referrer starts broken and degrades further in the browsers privacy-conscious users run. This is almost certainly the bug the hiring manager was reworking.</p>
+</div>
+
+<div class="card">
+  <h3>The browser change behind his HTTP/2 comment</h3>
+  <p>His memory garbled two separate things, and the correct version is worth carrying in. HTTP/2 still sends the query string (see the transport section). What genuinely changed recently is that browsers now strip tracking parameters from URLs. Since <a href="https://firefox-source-docs.mozilla.org/toolkit/components/antitracking/anti-tracking/query-stripping/index.html">Firefox 102</a>, Firefox removes known tracking params such as <code>fbclid</code> and <code>mkt_tok</code> from URLs under strict tracking protection and private browsing, and it strips them on redirects too. Brave and Safari trim comparable params.</p>
+  <p>The strip-lists target known third-party trackers, so a first-party <code>subID</code> usually survives. Leaning on <code>utm_*</code> or on the referrer to reconstruct a lead's source will still lose data in those browsers. The durable answer keeps attribution first-party and server-owned, so a stripped or absent URL param costs nothing.</p>
+</div>
+
+<div class="card">
+  <h3>The pattern that survives the whole funnel</h3>
+  <p>Capture, persist, re-inject. Three moves carry the source from entry to the lender handoff.</p>
+  <p><strong>Capture at entry.</strong> Read the params once with <a href="https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams">URLSearchParams</a> against a whitelist of your keys.</p>
+<pre><code>const KEYS = ['subid', 'clickid', 'utm_source', 'utm_campaign', 'partner']
+const incoming = new URLSearchParams(location.search)
+const attribution = {}
+for (const k of KEYS) {
+  const v = incoming.get(k)
+  if (v) attribution[k] = v
+}</code></pre>
+  <p><strong>Persist first-party.</strong> Store the values where a later page reads them: a server-set <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies">httpOnly cookie</a> for the durable copy, <code>localStorage</code> as a client fallback, stamped with a first-seen time so you hold first-touch.</p>
+  <p><strong>Re-inject on every hop.</strong> Decorate internal links and the outbound redirect so the source rides along.</p>
+<pre><code>function decorateUrl(href, attribution) {
+  const url = new URL(href, location.origin)
+  for (const [k, v] of Object.entries(attribution)) {
+    if (!url.searchParams.has(k)) url.searchParams.set(k, v)
+  }
+  return url.toString()
+}</code></pre>
+  <p><strong>Own it server-side.</strong> Mint a lead id at entry and store the attribution against it, so the URL becomes a convenience and the server record is the source of truth. Source captured once, owned server-side, readable by every downstream consumer: that's the architecture he described rebuilding.</p>
+</div>
+
+<h2 class="doc-nav-target" id="transport">GET, POST, and What Rides the Wire</h2>
+
+<div class="card">
+  <h3>The real difference, which is observability</h3>
+  <p>GET and POST both travel inside TLS, so wire secrecy is a wash. The difference is where the URL goes afterward. A <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/GET">GET</a> puts parameters in the URL, and the URL lands in browser history, server access logs, proxy logs, and the Referer sent to the next origin. A <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods/POST">POST</a> keeps them in the request body, which none of those record by default. Write an SSN into a query string and you've copied it into logs you don't control and handed it to whatever site the user visits next. That's the practical answer he liked, and it's why POST carries applicant data while GET carries only identifiers that are safe to log.</p>
+</div>
+
+<div class="card">
+  <h3>What HTTP/2 changed, precisely</h3>
+  <p>HTTP/2 still delivers the query string. It moves inside the <a href="https://www.rfc-editor.org/rfc/rfc9113"><code>:path</code> pseudo-header</a>, compressed with <a href="https://www.rfc-editor.org/rfc/rfc7541">HPACK</a> and wrapped in TLS; <a href="https://www.rfc-editor.org/rfc/rfc9204">HTTP/3</a> does the same with QPACK. The server decodes it, access logs record it, and a third party can still receive it through the Referer. HTTP/2 changed the framing and header compression on the wire, and left untouched whether the query reaches the far end. If he raises "HTTP/2 stopped sending params," the graceful correction is that HTTP/2 compresses the path into a header stream, and the param still arrives and still logs; the leak he cares about is a browser and logging concern, not a protocol one.</p>
+</div>
+
+<h2 class="doc-nav-target" id="signing">Signed Cookies, Tokens, and Storing PII</h2>
+
+<div class="card">
+  <h3>Signed cookies, explained simply</h3>
+  <p>A signed cookie is a value plus a fingerprint only your server can produce. The server computes an <a href="https://en.wikipedia.org/wiki/HMAC">HMAC</a> of the value with a secret key and sends value plus signature. When the cookie comes back, the server recomputes the HMAC and compares. Edit the value in devtools and the two signatures diverge, so the server rejects it. Signing proves integrity. It hides nothing, because the value still travels readable (base64 encodes, it doesn't encrypt).</p>
+  <ul>
+    <li>It's an HMAC over the value with a server-only secret: tamper-evident, still readable.</li>
+    <li>Keep the secret on the server, rotate it, and accept several keys during rotation.</li>
+    <li>Pair it with <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies"><code>httpOnly</code>, <code>Secure</code>, and <code>SameSite</code></a> so script can't read it, it's TLS-only, and cross-site sends are constrained.</li>
+    <li>Batteries exist: <a href="https://expressjs.com/en/resources/middleware/cookie-parser.html">Express cookie-parser</a> signed cookies, Python <a href="https://itsdangerous.palletsprojects.com/">itsdangerous</a>, <a href="https://api.rubyonrails.org/classes/ActionDispatch/Cookies.html">Rails signed cookies</a>.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Signed versus encrypted versus JWT</h3>
+  <p>Signing and encryption answer different questions. Sign when the client may read the value but must not change it, such as a user id or a cart id. Encrypt when the client must not read it either; Rails encrypted cookies and encrypt-then-MAC schemes cover that case. A <a href="https://www.rfc-editor.org/rfc/rfc7519">JWT</a> is a signed token in a standard envelope, handy in a cookie or an <code>Authorization</code> header, and it exposes its claims to anyone who holds it unless you also encrypt it. For anything genuinely secret, the strongest option keeps the data server-side and puts only an opaque session id in the cookie.</p>
+</div>
+
+<div class="card">
+  <h3>Tokenization: where PII lives when it isn't in a cookie</h3>
+  <p>Storing sensitive data well starts with keeping it out of the browser. The client holds a reference; the value lives server-side. Three homes for the value:</p>
+  <ul>
+    <li>A server-side session store (Redis, Postgres) keyed by a session id in an httpOnly cookie. The browser holds the key, the server holds the data.</li>
+    <li>A signed or encrypted token that carries only non-sensitive claims, so nothing private rides along with it.</li>
+    <li>A <a href="https://en.wikipedia.org/wiki/Tokenization_(data_security)">PII vault</a> that swaps the SSN for a token and stores the real value encrypted under tight access control. Vendors like <a href="https://www.skyflow.com/">Skyflow</a> and <a href="https://basistheory.com/">Basis Theory</a> sell this, and <a href="https://www.pcisecuritystandards.org/">PCI DSS</a> formalizes the approach for card data.</li>
+  </ul>
+  <p>For an SSN in a prequalification flow: capture it over POST and TLS, tokenize it immediately, pass the token through the funnel, and decrypt only inside the one service that submits to the lender. The blast radius shrinks to a single service instead of your whole frontend.</p>
+</div>
+
+<h2 class="doc-nav-target" id="embedding">Embedding on Third-Party Sites</h2>
+
+<div class="card">
+  <h3>postMessage and CORS don't gate each other</h3>
+  <p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage">postMessage</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CORS">CORS</a> sit on different layers. CORS controls cross-origin HTTP requests made by script with <code>fetch</code> or XHR, and the server grants access with <code>Access-Control-Allow-Origin</code>. postMessage moves messages between browsing contexts, a page and its iframe or a popup, across origins, and the server plays no part. A cross-origin iframe can't touch the parent DOM under the <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy">same-origin policy</a> and can't call the parent's API without CORS, yet it can postMessage to coordinate. So an embedded offer widget posts events outward (resize, step-complete) and fetches its own data from its own origin, where CORS never enters the picture.</p>
+  <p>Two habits keep it safe: set an explicit <code>targetOrigin</code> on send and never <code>'*'</code> for anything sensitive; validate <code>event.origin</code> on receive and treat the payload as untrusted input.</p>
+</div>
+
+<div class="card">
+  <h3>iframe versus SDK decides who can read the SSN</h3>
+  <p>The embedding choice is a security boundary. An <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/iframe">iframe</a> runs on its own origin with its own DOM, so the host page can't read fields inside it. That isolation is the reason PII forms belong in an iframe: pass attribution in through the frame <code>src</code>, keep the SSN inside, post only non-sensitive events back.</p>
+  <p>A script SDK renders into the host's DOM for full styling control, which also lets the host's scripts read whatever the user types. That suits an offer carousel and disqualifies SSN capture. Harden the frame with <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/CSP">CSP</a> <code>frame-ancestors</code>, the iframe <code>sandbox</code> attribute, and a tight <code>referrerpolicy</code>.</p>
+</div>
+
+<h2 class="doc-nav-target" id="coding">The Solo Coding Round</h2>
+
+<div class="card">
+  <h3>Likely problem shapes</h3>
+  <p>Expect a realistic React and TypeScript build drawn from their surface, not an algorithm puzzle.</p>
+  <ul>
+    <li>An offer marketplace component: fetch offers, render cards, sort by APR, term, or "recommended," filter by amount or credit tier, and handle loading, error, and empty states.</li>
+    <li>A URL-param utility: read <code>subID</code>, <code>clickID</code>, and <code>utm_*</code> on entry, persist them, and re-attach them to every outbound link. Their business expressed as code.</li>
+    <li>A multi-step application funnel that preserves those params and user state across steps, with input masking and validation for SSN and currency fields.</li>
+    <li>A pure transform: given lead events, roll them into per-lead attribution or payout.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>Rep 1: the attribution utility</h3>
+  <p>Build the <code>decorateUrl</code> helper and a capture-on-entry hook from the <a href="#attribution">attribution section</a>, then wire them into a two-page demo. Acceptance criteria to hit:</p>
+  <ul>
+    <li>Land on <code>/?subid=abc&amp;utm_source=partnerX</code>, click an internal link, and confirm both params ride to the next page.</li>
+    <li>Reload the second page without params in the URL and confirm the values still resolve from your persisted copy.</li>
+    <li>Follow an outbound link and confirm the params attach to that URL through <code>decorateUrl</code>.</li>
+  </ul>
+  <p>References worth an hour: <a href="https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams">URLSearchParams</a>, the <a href="https://developer.mozilla.org/en-US/docs/Web/API/URL/URL"><code>URL</code></a> constructor, and the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">localStorage</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies">cookie</a> storage surfaces.</p>
+</div>
+
+<div class="card">
+  <h3>Rep 2: the offer list</h3>
+  <p>Render a list of offers from a mock API with sort and filter and the three states. Say one thing unprompted while you build it: attribution rides the apply link, applicant data never touches a URL. That single remark tells the room you understand the domain. Lean on the <a href="https://react.dev/reference/react/useState">React state</a> and <a href="https://react.dev/reference/react/useEffect">effect</a> docs and the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/fetch">fetch</a> API. Debounce the filter input and reach for windowing only if the list is genuinely long.</p>
+</div>
+
+<div class="card">
+  <h3>Delivery calibration</h3>
+  <p>He already told you the frequency: practical over textbook. Lead each systems answer with the failure mode and the tradeoff, then cite the spec only to show why you're deviating from it. Keep everything anchored to the two rules, provenance is revenue and PII is liability. In the solo round, state your assumptions in comments before you code, name one tradeoff aloud, handle the states explicitly, and leave a note on what you'd harden with more time. When a URL shows up in the problem, mark it: identifiers here, PII never. That habit is the whole interview in one sentence.</p>
+</div>
+
+</main>
+<script src="doc-nav.js"></script>
+<script src="../assets/script.js?v=20260609u"></script>
+</body>
+</html>

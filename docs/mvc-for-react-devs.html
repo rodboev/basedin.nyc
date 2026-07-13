@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>MVC for React Developers</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+</head>
+<body class="pr">
+<div class="top-row">
+  <h1><a class="back-link" href="../docs/"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>MVC for React Developers</h1>
+</div>
+
+<main class="doc-page">
+<p class="subtitle">Architecture patterns you already use, named and mapped to interview vocabulary. Grounded in Next.js, the Liberty scheduling engine, and the Gen Digital code challenge.</p>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="already" type="button">You Already Do This</button>
+    <button class="sort-pill" data-target="layers" type="button">The Three Layers</button>
+    <button class="sort-pill" data-target="nextjs" type="button">Next.js Is MVC</button>
+    <button class="sort-pill" data-target="your-code" type="button">Your Code, Labeled</button>
+    <button class="sort-pill" data-target="divergence" type="button">Where You Diverge</button>
+    <button class="sort-pill" data-target="neighbors" type="button">Neighboring Patterns</button>
+    <button class="sort-pill" data-target="vocab" type="button">Interview Vocab</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="already">You already do this</h2>
+<div class="card">
+  <p>MVC isn't a framework or a library. It's a name for keeping three concerns in separate places: where data comes from, how it looks on screen, and what happens when the user does something. If your React components don't query databases and your SQL queries don't return JSX, you're already doing it.</p>
+  <p>The scheduling engine at Liberty has a SQL connection pool in <code>lib/db.js</code>, route handlers that run queries and return JSON, and React components that render calendars. Those are the three layers. You wired them up that way because mixing them would've been a mess, not because someone told you it was called MVC.</p>
+  <p>The Gen Digital code challenge is the same story. <code>filterArtworks</code> is a pure function that operates on data. <code>artFetcher</code> handles HTTP. The page component orchestrates fetching and state transitions. The card components render artwork. Each piece does one thing.</p>
+  <p>When an interviewer asks "do you know MVC?" they're asking whether you think about these boundaries deliberately. You do. Now you have the vocabulary for it.</p>
+</div>
+
+<h2 class="doc-nav-target" id="layers">The three layers</h2>
+<div class="card">
+  <h3>Model</h3>
+  <p>The Model is everything about data: where it's stored, how you get it, what rules apply to it, and how it's shaped. Business logic lives here. Validation lives here. Database queries, API calls to third-party services, calculations, filtering, sorting, transformation of raw records into something the rest of the app can use.</p>
+  <p>The defining characteristic: the Model has no idea it's part of a web app. It doesn't know about HTTP requests, HTML, React, or what the URL looks like. You could call a Model function from a CLI script, a cron job, or a test, and it would work the same way.</p>
+  <p>In JavaScript terms, a Model is a plain function or class that takes data in, does something with it, and returns data out. No <code>req</code>/<code>res</code> objects, no JSX, no <code>useState</code>.</p>
+  <h3>View</h3>
+  <p>The View is what the user sees. In React, that's your components. They receive data as props, render it, and report user interactions back up. A well-behaved View doesn't fetch data, doesn't run business logic, doesn't decide what's valid. It renders what it's given.</p>
+  <p>This is the layer React devs understand intuitively. A <code>&lt;ServiceCard service={service} /&gt;</code> that renders a technician's name, a schedule, and a map pin is pure View. If you handed it different data, it'd render different content. It has no opinions about where the data came from.</p>
+  <h3>Controller</h3>
+  <p>The Controller is the middleman. It receives a request (an HTTP request, a user action, a page load), decides which Model functions to call, and hands the results to the View. It's the wiring layer.</p>
+  <p>This is the one that feels least natural in React, because React components often do all three jobs at once. A component that fetches data in <code>useEffect</code>, filters it, and renders the result is acting as Model, View, and Controller simultaneously. MVC says: split those into separate pieces.</p>
+  <p>In Next.js, the Controller layer maps to several constructs (covered in the next section). The key idea: the Controller knows about both the Model and the View, but they don't know about each other.</p>
+</div>
+<div class="card">
+  <h3>Why the separation matters</h3>
+  <p>At one developer, mixing layers feels faster. You can hold the whole thing in your head. At a team, mixed layers become expensive:</p>
+  <ul>
+    <li><strong>Testing:</strong> if your offer-eligibility rules are inside a React component, you need to mount the component, mock the DOM, and render to test them. If they're in a plain function, you call the function with test data and check the output. The scheduling engine's gap-packing algorithm runs in a Worker thread precisely because it's pure computation, decoupled from everything else.</li>
+    <li><strong>Reuse:</strong> if two different pages need the same business logic (say, an offer comparison page and a checkout page both need rate calculations), and that logic lives inside a component, you're either duplicating it or extracting it into a shared component that exists only for the logic. A Model function can be called from anywhere.</li>
+    <li><strong>Compliance:</strong> in fintech, regulators can ask for evidence that rate display logic is correct. "Here's the function, here are the 40 tests" is a cleaner answer than "it's computed inline in the JSX of the OfferCard component."</li>
+    <li><strong>AI-generated code:</strong> when AI scaffolds a component that fetches, transforms, and renders in one place, the review surface is the entire component. When the layers are separate, you can review the business logic independently of the rendering.</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="nextjs">Next.js is MVC</h2>
+<div class="card">
+  <p>Next.js, especially with the App Router, gives you constructs that map to all three layers. It doesn't enforce the separation, but it provides the slots.</p>
+  <h3>Model layer in Next.js</h3>
+  <p>Plain TypeScript/JavaScript modules, typically in <code>lib/</code>, <code>services/</code>, or <code>models/</code> directories. No Next.js-specific imports. These are the files that talk to your database (Prisma, Drizzle, raw SQL), call external APIs, validate input (Zod, Pydantic-style), and contain business rules.</p>
+  <pre><code>// lib/offers.ts — Model layer
+export async function getPersonalizedOffers(userId: string, creditScore: number) {
+  const eligible = await db.offers.findMany({
+    where: { minCreditScore: { lte: creditScore } }
+  })
+  return eligible.map(offer => ({
+    ...offer,
+    monthlyPayment: calculatePayment(offer.apr, offer.term, offer.amount)
+  }))
+}
+
+export function calculatePayment(apr: number, termMonths: number, principal: number) {
+  const monthlyRate = apr / 100 / 12
+  return (principal * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -termMonths))
+}</code></pre>
+  <p><code>calculatePayment</code> is the clearest Model function: pure math, no framework, independently testable. <code>getPersonalizedOffers</code> has a database dependency but still has no knowledge of HTTP or React.</p>
+
+  <h3>Controller layer in Next.js</h3>
+  <p>Four constructs fill this role:</p>
+  <table>
+    <tr><th style="min-width: 30%">Construct</th><th>Role</th><th>When to use</th></tr>
+    <tr><td><strong>Server Components</strong> (default in App Router)</td><td>Page controllers. They run on the server, call Model functions, pass data as props to View components.</td><td>Initial page loads, data that's known at request time.</td></tr>
+    <tr><td><strong>Route Handlers</strong> (<code>route.ts</code>)</td><td>API controllers. REST-style endpoints that receive HTTP requests, call Model functions, return JSON.</td><td>Client-side fetches after initial load, webhooks, third-party callbacks.</td></tr>
+    <tr><td><strong>Server Actions</strong> (<code>'use server'</code>)</td><td>Mutation controllers. Functions that handle form submissions and state changes.</td><td>Any write operation: submitting an application, updating preferences, saving a draft.</td></tr>
+    <tr><td><strong>Middleware</strong> (<code>middleware.ts</code>)</td><td>Cross-cutting controller. Runs before every request.</td><td>Auth redirects, A/B bucketing, geo-routing, header injection.</td></tr>
+  </table>
+  <p>A Server Component acting as a controller:</p>
+  <pre><code>// app/offers/page.tsx — Controller layer (Server Component)
+import { getPersonalizedOffers } from '@/lib/offers'
+import { OfferList } from '@/components/OfferList'
+import { getSession } from '@/lib/auth'
+
+export default async function OffersPage() {
+  const session = await getSession()
+  const offers = await getPersonalizedOffers(session.userId, session.creditScore)
+  return &lt;OfferList offers={offers} /&gt;
+}</code></pre>
+  <p>Three lines: authenticate, fetch, render. The page component has no business logic, no database queries, no JSX beyond handing data to a View component.</p>
+
+  <h3>View layer in Next.js</h3>
+  <p>Client components (<code>'use client'</code>) that receive props and render UI. Design system primitives (Reshaped, Radix, shadcn). Anything that calls <code>useState</code>, <code>useEffect</code>, or handles browser events.</p>
+  <pre><code>// components/OfferList.tsx — View layer
+'use client'
+
+export function OfferList({ offers }: { offers: Offer[] }) {
+  return (
+    &lt;div className="offer-grid"&gt;
+      {offers.map(offer =&gt; (
+        &lt;OfferCard key={offer.id} offer={offer} /&gt;
+      ))}
+    &lt;/div&gt;
+  )
+}</code></pre>
+  <p>The View doesn't know where the offers came from. Database? Cache? Hardcoded test fixture? Doesn't matter. Same props, same output.</p>
+</div>
+<div class="card">
+  <h3>Where the line blurs</h3>
+  <p>Client components that fetch data are acting as both Controller and View. This is common and not always wrong, but it's where bugs hide. The gen-digital code challenge's <code>Search</code> component is a Controller-View hybrid: it manages the fetch lifecycle (Controller) and renders the search input and results (View). The <code>filterArtworks</code> extraction pulled the Model logic out of that hybrid, which is why 16 tests cover the filtering without mounting a single component.</p>
+  <p>The pragmatic rule: if a function could be useful outside of React (in a test, a script, a server action, a different page), it belongs in the Model layer. If it's wired to a specific request/response cycle, it's Controller. If it renders pixels, it's View.</p>
+</div>
+
+<h2 class="doc-nav-target" id="your-code">Your code, labeled</h2>
+<div class="card">
+  <h3>Liberty scheduling engine</h3>
+  <table>
+    <tr><th style="min-width: 15%">Layer</th><th style="min-width: 35%">File</th><th>What it does</th></tr>
+    <tr><td><strong>Model</strong></td><td><code>src/lib/db.js</code></td><td>MSSQL connection pool with FreeTDS fallback. Data access primitive.</td></tr>
+    <tr><td><strong>Model</strong></td><td><code>api/serviceSetups/route.js</code></td><td>SQL JOINs across ServiceSetups, Locations, Schedules, Technicians. Transforms raw records into structured objects. Disk cache with 30-day TTL.</td></tr>
+    <tr><td><strong>Model</strong></td><td><code>api/schedule/route.js</code> (Worker)</td><td>The scheduling algorithm itself: gap-packing, geographic clustering, weighted scoring. Runs in a Worker thread because it's pure computation.</td></tr>
+    <tr><td><strong>Controller</strong></td><td><code>api/schedule/route.js</code> (handler)</td><td>Receives <code>?start=X&end=Y</code>, calls the scheduling Model, returns JSON.</td></tr>
+    <tr><td><strong>Controller</strong></td><td><code>hooks/useSchedule.js</code></td><td>Client-side orchestration: fetches <code>/api/schedule</code>, batches results (100 at a time), manages loading/progress state, transforms response into calendar events.</td></tr>
+    <tr><td><strong>View</strong></td><td><code>calendar/BigCalendar.js</code></td><td>Renders schedule data in a calendar grid. Receives events as props.</td></tr>
+    <tr><td><strong>View</strong></td><td><code>ServiceContent.js</code></td><td>Renders service details. Pure presentation.</td></tr>
+    <tr><td><strong>View</strong></td><td><code>map/page.js</code></td><td>Map visualization with Leaflet pins.</td></tr>
+  </table>
+  <p>Notice that <code>api/schedule/route.js</code> appears twice. The Route Handler itself is Controller (receives request, returns response), but the Worker thread it spawns is Model (pure scheduling computation). One file, two layers. This is common and fine as long as you could pull the Worker into its own module without changing its behavior.</p>
+</div>
+<div class="card">
+  <h3>Gen Digital code challenge</h3>
+  <table>
+    <tr><th style="min-width: 15%">Layer</th><th style="min-width: 35%">Code</th><th>What it does</th></tr>
+    <tr><td><strong>Model</strong></td><td><code>filterArtworks()</code></td><td>Pure function: takes artworks, query, and threshold; returns filtered array. No React, no fetch, no DOM. 16 unit tests with zero setup.</td></tr>
+    <tr><td><strong>Model</strong></td><td><code>artFetcher()</code></td><td>Builds the ARTIC API URL with <code>URLSearchParams</code>, handles HTTP errors, manages abort signals and caching. Knows the API contract but not the UI.</td></tr>
+    <tr><td><strong>Controller</strong></td><td><code>Search</code> component (lifecycle)</td><td>The <code>useEffect</code> that debounces, fetches, manages the generation counter, handles retry countdown, syncs URL params. This is the wiring between user intent and data.</td></tr>
+    <tr><td><strong>View</strong></td><td><code>Search</code> component (JSX)</td><td>The search input, loading skeleton, error message, retry button. Reads from <code>status</code> to decide what to show.</td></tr>
+    <tr><td><strong>View</strong></td><td><code>Results</code> / artwork cards</td><td>Receives artworks as props, renders image grid. Doesn't know about the API, the cache, or the generation counter.</td></tr>
+  </table>
+  <p>The <code>Search</code> component is a Controller-View hybrid. In a larger app, you'd split it: a custom hook (<code>useArtSearch</code>) for the Controller logic, a presentational component for the View. At the scale of this challenge, the hybrid is proportional. Jerome saw the separation where it mattered most: <code>filterArtworks</code> extracted as testable Model logic.</p>
+</div>
+
+<h2 class="doc-nav-target" id="divergence">Where your code diverges from strict MVC</h2>
+<div class="card">
+  <h3>Notes-AI: the same instinct, more moving parts</h3>
+  <p>Notes-AI borrows the same skeleton as the scheduling engine (same <code>db.js</code> pool, same Next.js route handler pattern, same React Query hooks on the client), but the AI processing layer makes the architecture more complex. Here's how it maps:</p>
+  <table>
+    <tr><th style="min-width: 15%">Layer</th><th style="min-width: 35%">Code</th><th>What it does</th></tr>
+    <tr><td><strong>Model</strong></td><td><code>src/lib/db.js</code></td><td>Same MSSQL pool as scheduling-v2. Data access primitive.</td></tr>
+    <tr><td><strong>Model</strong></td><td><code>utils/supabaseHelper.js</code></td><td>Supabase CRUD: <code>batchGet</code>, <code>batchWrite</code>, <code>getDoc</code>, <code>setDoc</code>. Generic data access, no business logic.</td></tr>
+    <tr><td><strong>Model</strong></td><td><code>utils/diskStorage.js</code></td><td>Local JSON cache in <code>/data</code>. Third storage tier.</td></tr>
+    <tr><td><strong>Controller<br>+ Model</strong></td><td><code>api/notes/route.js</code></td><td>SQL query building, date formatting, note transformation, fingerprinting with object-hash. Business logic mixed into the route handler.</td></tr>
+    <tr><td><strong>Controller<br>+ Model</strong></td><td><code>api/emails/route.js</code></td><td>OpenAI streaming, prompt expansion, batch grouping, cache invalidation, ReadableStream encoding. ~300 lines doing three jobs.</td></tr>
+    <tr><td><strong>Controller<br>+ Model</strong></td><td><code>hooks/useEmails.js</code></td><td>EventSource lifecycle, streaming JSON parsing (<code>processServerMessage</code>), merge logic. ~220 lines of client-side business logic inside a hook.</td></tr>
+    <tr><td><strong>View</strong></td><td><code>components/Note.js</code>, <code>Editor.js</code></td><td>Presentational. Receive data, render it. Clean.</td></tr>
+  </table>
+  <p>The data access layer is actually cleaner than scheduling-v2: <code>supabaseHelper.js</code> and <code>diskStorage.js</code> are genuine Model modules with generic CRUD operations and no awareness of routes or React. The problem is above them.</p>
+</div>
+<div class="card">
+  <h3>The pattern both projects share</h3>
+  <p>In both the scheduling engine and notes-ai, the route handlers are doing too much. They're the Controller (receive request, return response) and also a chunk of the Model (SQL building, data transformation, business rules). This is the most common way MVC blurs in Next.js codebases, and it's the thing a team like Gen Engine's would formalize.</p>
+  <p>In strict MVC, you'd extract the business logic into service modules:</p>
+  <table>
+    <tr><th style="min-width: 35%">What you have</th><th>What strict MVC looks like</th></tr>
+    <tr>
+      <td><code>api/notes/route.js</code> builds SQL, transforms records, fingerprints them, writes to three storage tiers, and returns the response.</td>
+      <td>A <code>services/notes.ts</code> owns the query, transformation, and fingerprinting. A <code>services/noteCache.ts</code> owns the three-tier read-through. The route handler calls both and returns the result.</td>
+    </tr>
+    <tr>
+      <td><code>api/emails/route.js</code> expands prompts, streams from OpenAI, parses chunks, groups batches, and manages caching. 300 lines.</td>
+      <td>A <code>services/emailGenerator.ts</code> owns prompt expansion and OpenAI streaming. A <code>services/emailCache.ts</code> owns cache coordination. The route handler wires them together and returns a stream. Maybe 30 lines.</td>
+    </tr>
+    <tr>
+      <td><code>api/schedule/route.js</code> receives date range, runs the scheduling algorithm in a Worker, and returns JSON.</td>
+      <td>Already close. The Worker thread is a natural service boundary. The route handler is thinner here because the heavy logic lives in the Worker.</td>
+    </tr>
+  </table>
+  <p>The scheduling engine is actually closer to MVC than notes-ai, because the Worker thread forced a separation. When the computation is expensive enough to need its own thread, you've already extracted the Model. Notes-ai doesn't have that forcing function: the OpenAI call is I/O-bound, not CPU-bound, so there's no performance reason to pull it out of the route handler. The architectural reason still applies, though.</p>
+</div>
+<div class="card">
+  <h3>The hook problem</h3>
+  <p>Both projects also put business logic in React hooks. <code>useSchedule</code> batches results (100 at a time), transforms API responses into calendar events, and manages progress state. <code>useEmails</code> parses streaming JSON, merges partial results, and handles EventSource lifecycle.</p>
+  <p>In MVC terms, these hooks are client-side Controllers that also contain Model logic. The View components are clean (they receive props and render), but the hooks are doing data transformation that could live in a utility module.</p>
+  <p>The practical test: could you call the batching logic or the streaming parser from a different context (a test, a CLI tool, a different component) without importing React? If not, the business logic is coupled to the hook lifecycle.</p>
+  <p>This is worth naming because it's the exact pattern the Gen Digital code challenge addressed. <code>filterArtworks</code> was extracted from the component into a pure function, making it testable without React. The same extraction would apply to the streaming JSON parser in <code>useEmails</code> or the calendar-event transformation in <code>useSchedule</code>.</p>
+</div>
+<div class="card">
+  <h3>Where you're clean, where you're not</h3>
+  <ul>
+    <li><strong>Clean:</strong> data access modules (<code>db.js</code>, <code>supabaseHelper.js</code>, <code>diskStorage.js</code>) are genuine Model code with no framework awareness. Components are genuine Views. The overall data flow (component → hook → API route → storage) follows the right direction.</li>
+    <li><strong>Not clean:</strong> route handlers mix Controller and Model responsibilities. Hooks mix Controller and Model responsibilities. There's no <code>services/</code> or <code>lib/</code> layer between "receive the HTTP request" and "talk to the database / call OpenAI." The wiring logic and the business logic live in the same functions.</li>
+    <li><strong>Incidentally right:</strong> the scheduling engine's Worker thread is the closest thing to a proper service layer in either project, and it exists for performance, not architecture. The separation is real, but it was a side effect of needing a separate thread, not a deliberate MVC choice.</li>
+  </ul>
+  <p>None of this means the code is wrong. Both projects work and ship. The point is recognizing where the seams are so that when an interviewer asks about MVC, you can say: "I've built this way, and I know where the extraction points are when the codebase grows."</p>
+</div>
+
+<h2 class="doc-nav-target" id="neighbors">Neighboring patterns</h2>
+<div class="card">
+  <p>MVC is the oldest and most widely referenced of these patterns (1979, Smalltalk). In interviews, people sometimes use these terms interchangeably or ask how they differ. Here's the minimum you need to recognize each one and nod along.</p>
+  <table>
+    <tr><th style="min-width: 12%">Pattern</th><th style="min-width: 30%">Key idea</th><th>Where you've seen it</th></tr>
+    <tr>
+      <td><strong>MVC</strong></td>
+      <td>Model holds data/logic. View renders. Controller handles input and mediates.</td>
+      <td>Next.js App Router, Rails, Django, ASP.NET, Spring. What Jerome's team uses.</td>
+    </tr>
+    <tr>
+      <td><strong>MVVM</strong></td>
+      <td>Model-View-ViewModel. The ViewModel is a data-binding layer between the Model and the View. The View "observes" the ViewModel and updates automatically when it changes.</td>
+      <td>Angular (two-way data binding), Vue (reactive refs), SwiftUI, WPF. React with MobX is MVVM-flavored. A Zustand store that a component subscribes to is acting as a ViewModel.</td>
+    </tr>
+    <tr>
+      <td><strong>MVP</strong></td>
+      <td>Model-View-Presenter. The Presenter explicitly tells the View what to render (no data binding). The View is completely passive.</td>
+      <td>Android (before Jetpack Compose), older Java GUIs. Less common in web dev.</td>
+    </tr>
+    <tr>
+      <td><strong>Clean Architecture</strong></td>
+      <td>Dependencies point inward. Business rules at the center, frameworks at the edges. A stricter version of MVC's idea: the Model shouldn't import the Controller, and the Controller shouldn't import the View framework.</td>
+      <td>Enterprise Java, Go services. When someone says "hexagonal architecture" or "ports and adapters," it's the same family. Overkill for most frontend code, but the principle (business logic doesn't depend on framework code) is always sound.</td>
+    </tr>
+    <tr>
+      <td><strong>Flux / Redux</strong></td>
+      <td>Unidirectional data flow: Action → Dispatcher → Store → View. A reaction to MVC's bidirectional wiring getting tangled in complex UIs.</td>
+      <td>React + Redux, Zustand, Jotai. You've used this pattern without the label if you've used <code>useReducer</code>: dispatch an action, the reducer returns new state, the component re-renders.</td>
+    </tr>
+  </table>
+  <p>The common thread: all of these are strategies for keeping business logic, presentation, and orchestration from bleeding into each other. They differ in how they wire the three concerns together (callbacks, data binding, unidirectional flow) and how strict they are about it. In a React/Next.js codebase, you'll naturally blend MVC (server components as controllers, route handlers as API controllers) with Flux-like patterns (client-side state management). That's normal. Nobody implements pure MVC in a React app.</p>
+</div>
+
+<h2 class="doc-nav-target" id="vocab">Interview vocabulary</h2>
+<div class="card">
+  <p>Terms that show up alongside MVC in architecture conversations. Each one is something you already practice; this is the label and the one-line definition so you can respond without hesitating.</p>
+  <table>
+    <tr><th style="min-width: 28%">Term</th><th>What it means</th><th>Your example</th></tr>
+    <tr>
+      <td><strong>Separation of concerns</strong></td>
+      <td>Each module does one thing. The umbrella principle behind MVC.</td>
+      <td><code>filterArtworks</code> doesn't fetch. <code>artFetcher</code> doesn't filter. Components don't query SQL.</td>
+    </tr>
+    <tr>
+      <td><strong>Single responsibility</strong></td>
+      <td>A class or function has one reason to change. From SOLID (the S).</td>
+      <td>The generation counter has one job: tracking request identity. The score threshold has one job: filtering noise. Changing either doesn't affect the other.</td>
+    </tr>
+    <tr>
+      <td><strong>Dependency injection</strong></td>
+      <td>Pass dependencies in rather than importing or constructing them internally.</td>
+      <td><code>filterArtworks(artworks, query, threshold)</code> receives its data as arguments. The 16 tests pass hand-crafted arrays; no API mock needed.</td>
+    </tr>
+    <tr>
+      <td><strong>Pure function</strong></td>
+      <td>Same input, same output, no side effects. Deterministic and testable.</td>
+      <td><code>filterArtworks</code> and <code>calculatePayment</code>. No network calls, no state mutation, no randomness.</td>
+    </tr>
+    <tr>
+      <td><strong>Immutability</strong></td>
+      <td>Don't modify existing data; create new copies with changes.</td>
+      <td><code>[...data].sort()</code> instead of <code>data.sort()</code>. Spread-and-set instead of object mutation.</td>
+    </tr>
+    <tr>
+      <td><strong>Referential equality</strong></td>
+      <td>Comparing identity (<code>===</code>) rather than deep comparing contents. How React detects change.</td>
+      <td>The sort() bug: same reference after mutation, React skips the re-render.</td>
+    </tr>
+    <tr>
+      <td><strong>Discriminated union</strong></td>
+      <td>A type where one field (the "discriminant") determines which other fields exist. Makes invalid states unrepresentable.</td>
+      <td>The <code>Status</code> type: <code>'idle' | 'loading' | 'success' | 'error'</code> replaces boolean flags that could desync.</td>
+    </tr>
+    <tr>
+      <td><strong>Data transfer object (DTO)</strong></td>
+      <td>A plain object that carries data between layers. No behavior, just shape.</td>
+      <td>The structured objects that <code>serviceSetups/route.js</code> returns after transforming raw SQL records. The API response is a DTO; the component receives it and renders it.</td>
+    </tr>
+    <tr>
+      <td><strong>Service layer</strong></td>
+      <td>A module that encapsulates business logic and is called by controllers. The Model's public API.</td>
+      <td><code>artFetcher</code> is a service: it owns URL construction, caching, abort handling. The component calls it without knowing those details.</td>
+    </tr>
+    <tr>
+      <td><strong>Hydration</strong></td>
+      <td>The browser attaching event handlers to server-rendered HTML so it becomes interactive.</td>
+      <td>SSR delivers visible content fast; hydration makes it clickable. The gap between "I can see the offer" and "I can click Apply" is the hydration window.</td>
+    </tr>
+  </table>
+</div>
+
+<p class="footer">Written July 1, 2026.</p>
+</main>
+<script src="doc-nav.js?v=ea01d90e"></script>
+</body>
+</html>

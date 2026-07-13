@@ -36,7 +36,7 @@ def test_render_breakdown_section_matches_ps1_owned_markup() -> None:
         '  <div class="stat-card"><div class="number" id="bd-lost-sup">2</div><div class="label">Lost/Superseded</div></div>\n'
         "</div>\n"
         '<div class="grid grid-summary">\n'
-        '  <div class="stat-card"><div class="number green" id="bd-rate">78%</div><div class="label" id="bd-rate-label">Acceptance (1 superseded, 1 lost)</div></div>\n'
+        '  <div class="stat-card"><div class="number green" id="bd-rate">78%</div><div class="label" id="bd-rate-label">Acceptance rate (1 superseded, 1 lost)</div></div>\n'
         '  <div class="stat-card"><div class="number" id="bd-avg-prs">12.0</div><div class="label">Avg PRs/day</div></div>\n'
         '  <div class="stat-card"><div class="number" id="bd-avg-loc">5.5k</div><div class="label">Avg LOC/day</div></div>\n'
         '  <div class="stat-card"><div class="number blue" id="bd-days">3 days</div><div class="label" id="bd-days-label">Active days from Jul 1 - Jul 3</div></div>\n'

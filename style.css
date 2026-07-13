@@ -1066,6 +1066,7 @@ body.pr .stat-card .label {
   color: var(--pr-dim);
   font-size: 0.8rem;
   margin-top: 0.3rem;
+  line-height: 1.4;
 }
 
 body.pr .dim {

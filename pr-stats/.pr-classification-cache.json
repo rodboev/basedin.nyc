@@ -81064,6 +81064,294 @@
       "viaUrl": "",
       "evidenceKind": "lost",
       "cachedAt": "2026-07-13T05:17:05.975849Z"
+    },
+    "headroomlabs-ai/headroom#2017": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2017",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-13T14:03:22.695602Z"
+    },
+    "stablyai/orca#8443": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-07-13T14:03:22.695602Z"
+    },
+    "headroomlabs-ai/headroom#2001": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2001",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-13T14:31:02.606220Z"
+    },
+    "nesquena/hermes-webui#6042": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/6042",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T00:56:29.725898Z"
+    },
+    "nesquena/hermes-webui#5997": {
+      "classification": "accepted-indirect",
+      "release": "v0.52.63",
+      "viaLabel": "#6032",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/6032",
+      "evidenceKind": "accepted-indirect",
+      "cachedAt": "2026-07-14T00:56:29.725898Z"
+    },
+    "headroomlabs-ai/headroom#2113": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2113",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T00:56:29.725898Z"
+    },
+    "headroomlabs-ai/headroom#2042": {
+      "classification": "lost",
+      "release": "",
+      "viaLabel": "#2077",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2077",
+      "evidenceKind": "lost",
+      "cachedAt": "2026-07-14T00:56:29.725898Z"
+    },
+    "stablyai/orca#7640": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/stablyai/orca/pull/7640",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T00:56:29.725898Z"
+    },
+    "nesquena/hermes-webui#5795": {
+      "classification": "accepted-indirect",
+      "release": "v0.52.67",
+      "viaLabel": "#6049",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/6049",
+      "evidenceKind": "accepted-indirect",
+      "cachedAt": "2026-07-14T01:39:40.377140Z"
+    },
+    "nesquena/hermes-webui#5431": {
+      "classification": "accepted-indirect",
+      "release": "v0.52.67",
+      "viaLabel": "#6049",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/6049",
+      "evidenceKind": "accepted-indirect",
+      "cachedAt": "2026-07-14T01:39:40.377140Z"
+    },
+    "nesquena/hermes-webui#5806": {
+      "classification": "accepted-indirect",
+      "release": "v0.52.68",
+      "viaLabel": "#6050",
+      "viaUrl": "https://github.com/nesquena/hermes-webui/pull/6050",
+      "evidenceKind": "accepted-indirect",
+      "cachedAt": "2026-07-14T04:18:39.393250Z"
+    },
+    "kenn-io/agentsview#1133": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1133",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T04:18:39.393250Z"
+    },
+    "kenn-io/agentsview#1132": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1132",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T04:18:39.393250Z"
+    },
+    "headroomlabs-ai/headroom#1455": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-07-14T04:18:39.393250Z"
+    },
+    "headroomlabs-ai/headroom#2018": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-07-14T04:18:39.393250Z"
+    },
+    "headroomlabs-ai/headroom#2114": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2114",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T04:18:39.393250Z"
+    },
+    "stablyai/orca#8209": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/stablyai/orca/pull/8209",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T13:01:13.595250Z"
+    },
+    "NVIDIA/SkillSpector#249": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/NVIDIA/SkillSpector/pull/249",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T13:01:13.595250Z"
+    },
+    "NVIDIA/SkillSpector#266": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/NVIDIA/SkillSpector/pull/266",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T13:01:13.595250Z"
+    },
+    "NVIDIA/SkillSpector#231": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/NVIDIA/SkillSpector/pull/231",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T13:01:13.595250Z"
+    },
+    "NVIDIA/SkillSpector#247": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/NVIDIA/SkillSpector/pull/247",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T13:01:13.595250Z"
+    },
+    "NVIDIA/SkillSpector#230": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/NVIDIA/SkillSpector/pull/230",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T13:01:13.595250Z"
+    },
+    "kenn-io/agentsview#1135": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1135",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:27:28.741300Z"
+    },
+    "kenn-io/agentsview#1134": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1134",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:27:28.741300Z"
+    },
+    "kenn-io/agentsview#1136": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1136",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:27:28.741300Z"
+    },
+    "headroomlabs-ai/headroom#1773": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/1773",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:27:28.741300Z"
+    },
+    "headroomlabs-ai/headroom#1510": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/1510",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:27:28.741300Z"
+    },
+    "headroomlabs-ai/headroom#2163": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2163",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:27:28.741300Z"
+    },
+    "headroomlabs-ai/headroom#2161": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2161",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:27:28.741300Z"
+    },
+    "headroomlabs-ai/headroom#2044": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2044",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:27:28.741300Z"
+    },
+    "headroomlabs-ai/headroom#2045": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2045",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:27:28.741300Z"
+    },
+    "headroomlabs-ai/headroom#2043": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2043",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:27:28.741300Z"
+    },
+    "headroomlabs-ai/headroom#2016": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2016",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:27:28.741300Z"
+    },
+    "headroomlabs-ai/headroom#2182": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2182",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:27:28.741300Z"
+    },
+    "headroomlabs-ai/headroom#2115": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2115",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:27:28.741300Z"
+    },
+    "headroomlabs-ai/headroom#2162": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2162",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:27:28.741300Z"
     }
   },
   "authorPulls": {
@@ -81484,12 +81772,12 @@
     "stablyai/orca#7640": {
       "repo": "stablyai/orca",
       "number": 7640,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(cli): preserve WSL cwd through the Windows bridge (#6965)",
       "createdAt": "2026-07-07T03:37:16Z",
-      "updatedAt": "2026-07-12T23:28:52Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-13T22:44:32Z",
+      "closedAt": "2026-07-13T22:44:32Z",
+      "mergedAt": "2026-07-13T22:44:32Z",
       "headRefName": "pr/orca-6965-wsl-cli-cwd-bridge",
       "author": {
         "login": "rodboev"
@@ -81595,15 +81883,15 @@
       "state": "OPEN",
       "title": "feat(memory): use native async OpenAI model calls",
       "createdAt": "2026-07-06T23:26:07Z",
-      "updatedAt": "2026-07-06T23:38:21Z",
+      "updatedAt": "2026-07-13T13:26:47Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/async-openai-model-io",
       "author": {
         "login": "rodboev"
       },
-      "additions": 758,
-      "deletions": 137,
+      "additions": 761,
+      "deletions": 138,
       "changedFiles": 14,
       "url": "https://github.com/mem0ai/mem0/pull/6120"
     },
@@ -83050,12 +83338,12 @@
     "headroomlabs-ai/headroom#1773": {
       "repo": "headroomlabs-ai/headroom",
       "number": 1773,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(mcp): add streamable HTTP MCP transport",
       "createdAt": "2026-07-03T21:45:51Z",
-      "updatedAt": "2026-07-13T02:02:51Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-14T17:25:46Z",
+      "closedAt": "2026-07-14T17:25:46Z",
+      "mergedAt": "2026-07-14T17:25:46Z",
       "headRefName": "pr/1346-mcp-http",
       "author": {
         "login": "rodboev"
@@ -83392,11 +83680,11 @@
     "nesquena/hermes-webui#5431": {
       "repo": "nesquena/hermes-webui",
       "number": 5431,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "feat(#2422): add Nix flake package and NixOS module",
       "createdAt": "2026-07-02T18:24:04Z",
-      "updatedAt": "2026-07-10T02:39:08Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-14T01:33:38Z",
+      "closedAt": "2026-07-14T01:33:38Z",
       "mergedAt": null,
       "headRefName": "pr/nixos-flake-module",
       "author": {
@@ -84187,16 +84475,16 @@
       "state": "OPEN",
       "title": "fix(opencode-plugin): use OpenCode project context and publish a Node-safe bundle",
       "createdAt": "2026-06-30T11:31:20Z",
-      "updatedAt": "2026-07-02T14:10:32Z",
+      "updatedAt": "2026-07-14T13:11:40Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/opencode-plugin-desktop-runtime-compat",
       "author": {
         "login": "rodboev"
       },
-      "additions": 194,
-      "deletions": 14,
-      "changedFiles": 5,
+      "additions": 196,
+      "deletions": 56,
+      "changedFiles": 7,
       "url": "https://github.com/mem0ai/mem0/pull/6012"
     },
     "nesquena/hermes-webui#5251": {
@@ -84742,12 +85030,12 @@
     "headroomlabs-ai/headroom#1510": {
       "repo": "headroomlabs-ai/headroom",
       "number": 1510,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(mcp): publish canonical server.json",
       "createdAt": "2026-06-27T21:37:40Z",
-      "updatedAt": "2026-07-13T01:52:13Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-14T17:25:29Z",
+      "closedAt": "2026-07-14T17:25:29Z",
+      "mergedAt": "2026-07-14T17:25:29Z",
       "headRefName": "pr/mcp-server-json",
       "author": {
         "login": "rodboev"
@@ -85285,15 +85573,15 @@
       "state": "OPEN",
       "title": "fix(mcp): hide server-beta-only tools from worker-runtime tools/list (closes #3064)",
       "createdAt": "2026-06-26T05:32:41Z",
-      "updatedAt": "2026-06-26T05:46:44Z",
+      "updatedAt": "2026-07-13T06:04:00Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "fix/3064-mcp-tools-runtime-filter",
       "author": {
         "login": "rodboev"
       },
-      "additions": 420,
-      "deletions": 328,
+      "additions": 538,
+      "deletions": 446,
       "changedFiles": 7,
       "url": "https://github.com/thedotmack/claude-mem/pull/3065"
     },
@@ -85336,11 +85624,11 @@
     "headroomlabs-ai/headroom#1455": {
       "repo": "headroomlabs-ai/headroom",
       "number": 1455,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "feat(wrap): add Grok Build CLI support",
       "createdAt": "2026-06-26T02:48:17Z",
-      "updatedAt": "2026-07-12T21:33:51Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-14T04:16:35Z",
+      "closedAt": "2026-07-14T04:16:35Z",
       "mergedAt": null,
       "headRefName": "pr/1291-wrap-grok-build-cli",
       "author": {
@@ -85789,16 +86077,16 @@
       "state": "OPEN",
       "title": "fix(context): use repo-relative project keys for monorepo subdirectories (closes #2882)",
       "createdAt": "2026-06-25T01:15:20Z",
-      "updatedAt": "2026-06-30T15:43:13Z",
+      "updatedAt": "2026-07-14T04:26:45Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "fix/2882-monorepo-project-detection",
       "author": {
         "login": "rodboev"
       },
-      "additions": 625,
-      "deletions": 342,
-      "changedFiles": 5,
+      "additions": 637,
+      "deletions": 388,
+      "changedFiles": 6,
       "url": "https://github.com/thedotmack/claude-mem/pull/3047"
     },
     "thedotmack/claude-mem#3046": {
@@ -85951,7 +86239,7 @@
       "state": "OPEN",
       "title": "feat(#4817): add terminal rail entry and full-page view",
       "createdAt": "2026-06-24T19:51:20Z",
-      "updatedAt": "2026-06-28T09:31:43Z",
+      "updatedAt": "2026-07-14T05:01:02Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/4817-terminal-full-page-nav",
@@ -86563,15 +86851,15 @@
       "state": "OPEN",
       "title": "feat(notifications): add true Web Push delivery for closed PWAs (#3196)",
       "createdAt": "2026-06-22T05:29:22Z",
-      "updatedAt": "2026-07-11T02:36:32Z",
+      "updatedAt": "2026-07-13T14:37:15Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/web-push-3196",
       "author": {
         "login": "rodboev"
       },
-      "additions": 2061,
-      "deletions": 16,
+      "additions": 2076,
+      "deletions": 18,
       "changedFiles": 20,
       "url": "https://github.com/nesquena/hermes-webui/pull/4664"
     },
@@ -86635,7 +86923,7 @@
       "state": "OPEN",
       "title": "fix(ts-sdk): lazy-load SQLite native bindings",
       "createdAt": "2026-06-21T03:07:29Z",
-      "updatedAt": "2026-07-09T22:32:01Z",
+      "updatedAt": "2026-07-13T13:43:39Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/lazy-sqlite-bindings",
@@ -87913,7 +88201,7 @@
       "state": "OPEN",
       "title": "fix(observer): disable observer transcript persistence for tool-use queries",
       "createdAt": "2026-06-15T19:18:47Z",
-      "updatedAt": "2026-06-22T03:40:44Z",
+      "updatedAt": "2026-07-13T05:51:53Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "fix/2909-observer-no-session-persistence",
@@ -88489,16 +88777,16 @@
       "state": "OPEN",
       "title": "fix(windows): carry windowsHide through the remaining live Windows spawn paths (closes #2900)",
       "createdAt": "2026-06-13T12:22:54Z",
-      "updatedAt": "2026-06-22T03:39:43Z",
+      "updatedAt": "2026-07-13T05:52:51Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "fix/2900-windowshide-remaining-spawns",
       "author": {
         "login": "rodboev"
       },
-      "additions": 57,
-      "deletions": 6,
-      "changedFiles": 8,
+      "additions": 52,
+      "deletions": 4,
+      "changedFiles": 7,
       "url": "https://github.com/thedotmack/claude-mem/pull/2921"
     },
     "thedotmack/claude-mem#2917": {
@@ -88507,16 +88795,16 @@
       "state": "OPEN",
       "title": "fix(context): avoid blocking Claude SessionStart on Windows cold boot (closes #2903)",
       "createdAt": "2026-06-13T12:22:53Z",
-      "updatedAt": "2026-06-22T03:41:00Z",
+      "updatedAt": "2026-07-13T06:10:06Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "fix/2903-vscode-init-deadline",
       "author": {
         "login": "rodboev"
       },
-      "additions": 418,
-      "deletions": 22,
-      "changedFiles": 6,
+      "additions": 339,
+      "deletions": 11,
+      "changedFiles": 5,
       "url": "https://github.com/thedotmack/claude-mem/pull/2917"
     },
     "thedotmack/claude-mem#2920": {
@@ -88975,16 +89263,16 @@
       "state": "OPEN",
       "title": "fix(sqlite): reclaim residual prompt and queue bloat (refs #2793)",
       "createdAt": "2026-06-11T20:48:45Z",
-      "updatedAt": "2026-06-22T03:49:20Z",
+      "updatedAt": "2026-07-13T13:04:28Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "fix/2793-sqlite-bloat-maintenance",
       "author": {
         "login": "rodboev"
       },
-      "additions": 459,
-      "deletions": 5,
-      "changedFiles": 6,
+      "additions": 461,
+      "deletions": 1,
+      "changedFiles": 5,
       "url": "https://github.com/thedotmack/claude-mem/pull/2904"
     },
     "thedotmack/claude-mem#2888": {
@@ -89137,7 +89425,7 @@
       "state": "OPEN",
       "title": "feat(#2316): add Scripts subtab to Tasks panel with backend list/raw endpoints",
       "createdAt": "2026-06-10T16:19:06Z",
-      "updatedAt": "2026-07-06T15:27:13Z",
+      "updatedAt": "2026-07-14T04:55:34Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/scripts-panel",
@@ -89173,15 +89461,15 @@
       "state": "OPEN",
       "title": "fix(sqlite): make cwd-remap reconciliation idempotent to fix orphaned worktree observations (closes #2864)",
       "createdAt": "2026-06-10T15:57:53Z",
-      "updatedAt": "2026-06-19T23:17:27Z",
+      "updatedAt": "2026-07-13T06:05:20Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "fix/2864-idempotent-cwd-remap",
       "author": {
         "login": "rodboev"
       },
-      "additions": 40,
-      "deletions": 47,
+      "additions": 129,
+      "deletions": 49,
       "changedFiles": 2,
       "url": "https://github.com/thedotmack/claude-mem/pull/2883"
     },
@@ -90862,11 +91150,11 @@
     "nesquena/hermes-webui#5795": {
       "repo": "nesquena/hermes-webui",
       "number": 5795,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "feat(#5759): add composer focus shortcut",
       "createdAt": "2026-07-08T21:08:02Z",
-      "updatedAt": "2026-07-09T10:20:36Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-14T01:33:39Z",
+      "closedAt": "2026-07-14T01:33:39Z",
       "mergedAt": null,
       "headRefName": "pr/5759-composer-focus-shortcut",
       "author": {
@@ -90955,15 +91243,15 @@
       "state": "OPEN",
       "title": "fix(observer): evidence-gate modified files before storing observations (closes #3162)",
       "createdAt": "2026-07-08T22:08:21Z",
-      "updatedAt": "2026-07-08T22:58:12Z",
+      "updatedAt": "2026-07-13T05:51:01Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "fix/3162-observation-file-evidence",
       "author": {
         "login": "rodboev"
       },
-      "additions": 771,
-      "deletions": 249,
+      "additions": 764,
+      "deletions": 242,
       "changedFiles": 6,
       "url": "https://github.com/thedotmack/claude-mem/pull/3180"
     },
@@ -90973,7 +91261,7 @@
       "state": "OPEN",
       "title": "feat(vector-stores): add TypeScript FAISS provider",
       "createdAt": "2026-07-08T21:53:12Z",
-      "updatedAt": "2026-07-09T11:30:05Z",
+      "updatedAt": "2026-07-13T13:43:22Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/ts-faiss-vector-store",
@@ -91006,19 +91294,19 @@
     "nesquena/hermes-webui#5806": {
       "repo": "nesquena/hermes-webui",
       "number": 5806,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "feat(#2147): localize profile concept help and add usage examples",
       "createdAt": "2026-07-09T01:11:40Z",
-      "updatedAt": "2026-07-09T06:14:17Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-14T04:09:25Z",
+      "closedAt": "2026-07-14T04:09:25Z",
       "mergedAt": null,
       "headRefName": "pr/2147-profile-concept-i18n",
       "author": {
         "login": "rodboev"
       },
-      "additions": 241,
-      "deletions": 14,
-      "changedFiles": 4,
+      "additions": 158,
+      "deletions": 26,
+      "changedFiles": 14,
       "url": "https://github.com/nesquena/hermes-webui/pull/5806"
     },
     "headroomlabs-ai/headroom#1901": {
@@ -91333,7 +91621,7 @@
       "state": "OPEN",
       "title": "fix(parser): preserve unsupported observation types without misclassifying them (closes #3181)",
       "createdAt": "2026-07-10T04:15:58Z",
-      "updatedAt": "2026-07-10T10:54:57Z",
+      "updatedAt": "2026-07-13T05:52:03Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "fix/3181-preserve-unsupported-observation-types",
@@ -91387,7 +91675,7 @@
       "state": "OPEN",
       "title": "fix(#5853): allow gateway-default MoA sends",
       "createdAt": "2026-07-10T03:00:19Z",
-      "updatedAt": "2026-07-10T11:50:20Z",
+      "updatedAt": "2026-07-14T04:52:48Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/5853-gateway-default-moa",
@@ -91474,12 +91762,12 @@
     "headroomlabs-ai/headroom#2001": {
       "repo": "headroomlabs-ai/headroom",
       "number": 2001,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(proxy): keep Kompress warmup off the startup path",
       "createdAt": "2026-07-10T20:12:10Z",
-      "updatedAt": "2026-07-13T04:48:39Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-13T14:09:46Z",
+      "closedAt": "2026-07-13T14:09:46Z",
+      "mergedAt": "2026-07-13T14:09:45Z",
       "headRefName": "pr/1908-kompress-startup-crash",
       "author": {
         "login": "rodboev"
@@ -91600,12 +91888,12 @@
     "NVIDIA/SkillSpector#249": {
       "repo": "NVIDIA/SkillSpector",
       "number": 249,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(provider): allow scoped LLM provider injection (#243)",
       "createdAt": "2026-07-04T04:02:21Z",
-      "updatedAt": "2026-07-09T18:21:40Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-14T10:21:44Z",
+      "closedAt": "2026-07-14T10:21:44Z",
+      "mergedAt": "2026-07-14T10:21:44Z",
       "headRefName": "pr/provider-injection-243",
       "author": {
         "login": "rodboev"
@@ -91618,12 +91906,12 @@
     "NVIDIA/SkillSpector#247": {
       "repo": "NVIDIA/SkillSpector",
       "number": 247,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(yara): reduce packaged malware-signature false positives (#236)",
       "createdAt": "2026-07-04T04:02:21Z",
-      "updatedAt": "2026-07-10T00:21:58Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-14T10:20:05Z",
+      "closedAt": "2026-07-14T10:20:05Z",
+      "mergedAt": "2026-07-14T10:20:05Z",
       "headRefName": "pr/yara-packaging-236",
       "author": {
         "login": "rodboev"
@@ -91657,27 +91945,27 @@
       "state": "OPEN",
       "title": "fix(analyzer): reduce instructional-prose false positives in static scans (#103)",
       "createdAt": "2026-06-29T18:06:21Z",
-      "updatedAt": "2026-07-10T00:21:58Z",
+      "updatedAt": "2026-07-14T14:03:39Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/static-prose-false-positive-103",
       "author": {
         "login": "rodboev"
       },
-      "additions": 552,
-      "deletions": 17,
+      "additions": 620,
+      "deletions": 16,
       "changedFiles": 4,
       "url": "https://github.com/NVIDIA/SkillSpector/pull/232"
     },
     "NVIDIA/SkillSpector#231": {
       "repo": "NVIDIA/SkillSpector",
       "number": 231,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(cli): preserve full per-skill JSON payload in recursive scans (#228)",
       "createdAt": "2026-06-29T15:42:03Z",
-      "updatedAt": "2026-07-09T18:21:40Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-14T10:20:30Z",
+      "closedAt": "2026-07-14T10:20:30Z",
+      "mergedAt": "2026-07-14T10:20:30Z",
       "headRefName": "pr/recursive-json-full-schema-228",
       "author": {
         "login": "rodboev"
@@ -91690,12 +91978,12 @@
     "NVIDIA/SkillSpector#230": {
       "repo": "NVIDIA/SkillSpector",
       "number": 230,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(report): preserve full finding metadata in SARIF output (#229)",
       "createdAt": "2026-06-29T15:21:43Z",
-      "updatedAt": "2026-07-10T20:25:52Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-14T10:19:15Z",
+      "closedAt": "2026-07-14T10:19:15Z",
+      "mergedAt": "2026-07-14T10:19:15Z",
       "headRefName": "pr/sarif-full-finding-metadata-229",
       "author": {
         "login": "rodboev"
@@ -91711,15 +91999,15 @@
       "state": "OPEN",
       "title": "feat(scan): add opt-in transitive reference scanning",
       "createdAt": "2026-06-29T03:49:14Z",
-      "updatedAt": "2026-07-09T18:21:40Z",
+      "updatedAt": "2026-07-14T14:28:23Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/transitive-external-reference-scanning",
       "author": {
         "login": "rodboev"
       },
-      "additions": 3063,
-      "deletions": 220,
+      "additions": 3305,
+      "deletions": 319,
       "changedFiles": 25,
       "url": "https://github.com/NVIDIA/SkillSpector/pull/225"
     },
@@ -91747,16 +92035,16 @@
       "state": "OPEN",
       "title": "feat(analyzer): add phase-1 structured skill summaries",
       "createdAt": "2026-06-25T12:12:48Z",
-      "updatedAt": "2026-07-10T00:21:58Z",
+      "updatedAt": "2026-07-14T14:12:39Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/structured-skill-role-summary",
       "author": {
         "login": "rodboev"
       },
-      "additions": 945,
-      "deletions": 12,
-      "changedFiles": 14,
+      "additions": 999,
+      "deletions": 19,
+      "changedFiles": 15,
       "url": "https://github.com/NVIDIA/SkillSpector/pull/211"
     },
     "NVIDIA/SkillSpector#209": {
@@ -93526,30 +93814,30 @@
     "headroomlabs-ai/headroom#2018": {
       "repo": "headroomlabs-ai/headroom",
       "number": 2018,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(packaging): keep [all] installable on Intel macOS",
       "createdAt": "2026-07-11T03:33:14Z",
-      "updatedAt": "2026-07-12T22:27:35Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-14T04:16:34Z",
+      "closedAt": "2026-07-14T04:16:34Z",
       "mergedAt": null,
       "headRefName": "pr/1931-macos-intel-install",
       "author": {
         "login": "rodboev"
       },
-      "additions": 117,
-      "deletions": 7,
+      "additions": 116,
+      "deletions": 6,
       "changedFiles": 5,
       "url": "https://github.com/headroomlabs-ai/headroom/pull/2018"
     },
     "headroomlabs-ai/headroom#2017": {
       "repo": "headroomlabs-ai/headroom",
       "number": 2017,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(memory): honor explicit store=false on Responses requests",
       "createdAt": "2026-07-11T03:28:03Z",
-      "updatedAt": "2026-07-12T22:35:46Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-13T15:28:14Z",
+      "closedAt": "2026-07-13T13:47:07Z",
+      "mergedAt": "2026-07-13T13:47:07Z",
       "headRefName": "pr/1944-codex-responses-disconnect",
       "author": {
         "login": "rodboev"
@@ -93562,12 +93850,12 @@
     "headroomlabs-ai/headroom#2016": {
       "repo": "headroomlabs-ai/headroom",
       "number": 2016,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(update): let Windows self-update replace headroom.exe",
       "createdAt": "2026-07-11T03:20:17Z",
-      "updatedAt": "2026-07-12T23:18:10Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-14T15:52:47Z",
+      "closedAt": "2026-07-14T15:52:47Z",
+      "mergedAt": "2026-07-14T15:52:47Z",
       "headRefName": "pr/1941-update-install-break",
       "author": {
         "login": "rodboev"
@@ -93688,30 +93976,30 @@
     "stablyai/orca#8209": {
       "repo": "stablyai/orca",
       "number": 8209,
-      "state": "OPEN",
-      "title": "fix(terminal): normalize ZDOTDIR for WSL zsh",
+      "state": "MERGED",
+      "title": "fix(terminal): derive zsh wrapper ZDOTDIR from %x so non-ASCII WSL logins load .zshrc (#8003)",
       "createdAt": "2026-07-11T04:27:00Z",
-      "updatedAt": "2026-07-11T16:47:25Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-14T08:55:05Z",
+      "closedAt": "2026-07-14T08:55:05Z",
+      "mergedAt": "2026-07-14T08:55:05Z",
       "headRefName": "pr/normalize-zdotdir-for-wsl-zsh",
       "author": {
         "login": "rodboev"
       },
-      "additions": 215,
-      "deletions": 6,
-      "changedFiles": 6,
+      "additions": 71,
+      "deletions": 3,
+      "changedFiles": 2,
       "url": "https://github.com/stablyai/orca/pull/8209"
     },
     "NVIDIA/SkillSpector#266": {
       "repo": "NVIDIA/SkillSpector",
       "number": 266,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(analyzer): gate documentation false positives for PE3/RA1/TM1/AR2",
       "createdAt": "2026-07-11T04:38:01Z",
-      "updatedAt": "2026-07-11T04:38:01Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-14T10:20:55Z",
+      "closedAt": "2026-07-14T10:20:55Z",
+      "mergedAt": "2026-07-14T10:20:55Z",
       "headRefName": "pr/static-doc-fp-gating",
       "author": {
         "login": "rodboev"
@@ -93724,11 +94012,11 @@
     "headroomlabs-ai/headroom#2042": {
       "repo": "headroomlabs-ai/headroom",
       "number": 2042,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "proxy: expose retry backoff delay tuning in the CLI",
       "createdAt": "2026-07-12T01:12:56Z",
-      "updatedAt": "2026-07-12T23:19:21Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T18:41:22Z",
+      "closedAt": "2026-07-13T18:41:22Z",
       "mergedAt": null,
       "headRefName": "pr/2030-retry-backoff-config",
       "author": {
@@ -93742,12 +94030,12 @@
     "headroomlabs-ai/headroom#2044": {
       "repo": "headroomlabs-ai/headroom",
       "number": 2044,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "docs: qualify CCR auto-resolution support for Gemini",
       "createdAt": "2026-07-12T01:12:56Z",
-      "updatedAt": "2026-07-12T18:45:06Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-14T16:19:21Z",
+      "closedAt": "2026-07-14T15:59:08Z",
+      "mergedAt": "2026-07-14T15:59:08Z",
       "headRefName": "pr/2041-gemini-ccr-docs",
       "author": {
         "login": "rodboev"
@@ -93760,17 +94048,17 @@
     "headroomlabs-ai/headroom#2043": {
       "repo": "headroomlabs-ai/headroom",
       "number": 2043,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "install: couple Codex routing to persistent runtime readiness",
       "createdAt": "2026-07-12T01:12:56Z",
-      "updatedAt": "2026-07-12T23:19:51Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-14T15:52:51Z",
+      "closedAt": "2026-07-14T15:52:51Z",
+      "mergedAt": "2026-07-14T15:52:51Z",
       "headRefName": "pr/2038-codex-routing-rollback",
       "author": {
         "login": "rodboev"
       },
-      "additions": 106,
+      "additions": 116,
       "deletions": 21,
       "changedFiles": 3,
       "url": "https://github.com/headroomlabs-ai/headroom/pull/2043"
@@ -93778,12 +94066,12 @@
     "headroomlabs-ai/headroom#2045": {
       "repo": "headroomlabs-ai/headroom",
       "number": 2045,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "docs: document Claude VSCode deferred-tool rendering caveat",
       "createdAt": "2026-07-12T01:12:56Z",
-      "updatedAt": "2026-07-12T18:43:41Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-07-14T15:53:02Z",
+      "closedAt": "2026-07-14T15:53:02Z",
+      "mergedAt": "2026-07-14T15:53:02Z",
       "headRefName": "pr/2028-claude-vscode-tool-search-docs",
       "author": {
         "login": "rodboev"
@@ -93871,7 +94159,7 @@
       "state": "OPEN",
       "title": "fix(search): honor date_from/date_to in worker searches (#3189)",
       "createdAt": "2026-07-12T01:06:06Z",
-      "updatedAt": "2026-07-12T01:09:48Z",
+      "updatedAt": "2026-07-13T05:50:40Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "fix/3189-search-date-filters",
@@ -93961,15 +94249,15 @@
       "state": "OPEN",
       "title": "fix(worker): fail fast on unhealthy listeners that already own the worker port (refs #3171)",
       "createdAt": "2026-07-13T00:48:27Z",
-      "updatedAt": "2026-07-13T01:45:52Z",
+      "updatedAt": "2026-07-13T13:43:52Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "fix/3171-fail-fast-wedged-port",
       "author": {
         "login": "rodboev"
       },
-      "additions": 424,
-      "deletions": 15,
+      "additions": 674,
+      "deletions": 30,
       "changedFiles": 4,
       "url": "https://github.com/thedotmack/claude-mem/pull/3219"
     },
@@ -93979,34 +94267,34 @@
       "state": "OPEN",
       "title": "feat(#4673): add backend-backed recursive workspace search",
       "createdAt": "2026-07-13T00:21:57Z",
-      "updatedAt": "2026-07-13T02:59:10Z",
+      "updatedAt": "2026-07-14T14:17:29Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/4673-recursive-workspace-search",
       "author": {
         "login": "rodboev"
       },
-      "additions": 317,
-      "deletions": 3,
-      "changedFiles": 8,
+      "additions": 1177,
+      "deletions": 55,
+      "changedFiles": 27,
       "url": "https://github.com/nesquena/hermes-webui/pull/5998"
     },
     "nesquena/hermes-webui#5997": {
       "repo": "nesquena/hermes-webui",
       "number": 5997,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(#5989): deduplicate proxy and catalog model rows in the picker",
       "createdAt": "2026-07-13T00:21:56Z",
-      "updatedAt": "2026-07-13T03:45:30Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T19:21:30Z",
+      "closedAt": "2026-07-13T19:21:30Z",
       "mergedAt": null,
       "headRefName": "pr/5989-picker-proxy-model-dedup",
       "author": {
         "login": "rodboev"
       },
-      "additions": 179,
-      "deletions": 15,
-      "changedFiles": 2,
+      "additions": 279,
+      "deletions": 19,
+      "changedFiles": 3,
       "url": "https://github.com/nesquena/hermes-webui/pull/5997"
     },
     "nesquena/hermes-webui#5996": {
@@ -94033,7 +94321,7 @@
       "state": "OPEN",
       "title": "fix(mobile): keep browser tab active during navigation",
       "createdAt": "2026-07-13T01:06:47Z",
-      "updatedAt": "2026-07-13T01:13:28Z",
+      "updatedAt": "2026-07-13T16:47:28Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/mobile-browser-active-tab",
@@ -94051,14 +94339,14 @@
       "state": "OPEN",
       "title": "fix(daemon): reattach live PTY sessions after reconnect",
       "createdAt": "2026-07-13T01:06:47Z",
-      "updatedAt": "2026-07-13T01:14:53Z",
+      "updatedAt": "2026-07-13T16:47:29Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/daemon-reconnect-reattach-live-pty",
       "author": {
         "login": "rodboev"
       },
-      "additions": 196,
+      "additions": 258,
       "deletions": 11,
       "changedFiles": 4,
       "url": "https://github.com/stablyai/orca/pull/8449"
@@ -94069,26 +94357,26 @@
       "state": "OPEN",
       "title": "fix(agents): open the Orca browser from Agents View terminal links (#7813)",
       "createdAt": "2026-07-13T01:06:46Z",
-      "updatedAt": "2026-07-13T01:14:19Z",
+      "updatedAt": "2026-07-13T16:47:30Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/agents-view-browser-routing",
       "author": {
         "login": "rodboev"
       },
-      "additions": 160,
-      "deletions": 10,
+      "additions": 195,
+      "deletions": 12,
       "changedFiles": 5,
       "url": "https://github.com/stablyai/orca/pull/8447"
     },
     "stablyai/orca#8443": {
       "repo": "stablyai/orca",
       "number": 8443,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(codex): debounce auto-resolved approval notifications (#8387)",
       "createdAt": "2026-07-13T00:54:03Z",
-      "updatedAt": "2026-07-13T01:01:13Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-13T13:16:30Z",
+      "closedAt": "2026-07-13T13:16:30Z",
       "mergedAt": null,
       "headRefName": "pr/codex-approve-for-me-notification-debounce",
       "author": {
@@ -94105,7 +94393,7 @@
       "state": "OPEN",
       "title": "fix(terminal): suppress fresh-working false completion notifications (#4375)",
       "createdAt": "2026-07-13T00:54:03Z",
-      "updatedAt": "2026-07-13T00:56:51Z",
+      "updatedAt": "2026-07-13T16:47:31Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/suppress-working-turn-completion-notifications",
@@ -94116,41 +94404,617 @@
       "deletions": 15,
       "changedFiles": 2,
       "url": "https://github.com/stablyai/orca/pull/8442"
+    },
+    "headroomlabs-ai/headroom#2114": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2114,
+      "state": "MERGED",
+      "title": "fix(kompress): fail-open wall-clock guard on single-cache-miss compression",
+      "createdAt": "2026-07-13T13:22:29Z",
+      "updatedAt": "2026-07-14T03:50:50Z",
+      "closedAt": "2026-07-14T03:50:50Z",
+      "mergedAt": "2026-07-14T03:50:50Z",
+      "headRefName": "pr/2046-compression-freeze",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 170,
+      "deletions": 6,
+      "changedFiles": 4,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2114"
+    },
+    "headroomlabs-ai/headroom#2115": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2115,
+      "state": "MERGED",
+      "title": "fix(proxy): protect WebSearch/WebFetch tool results from lossy compression",
+      "createdAt": "2026-07-13T13:22:29Z",
+      "updatedAt": "2026-07-14T15:52:26Z",
+      "closedAt": "2026-07-14T15:52:26Z",
+      "mergedAt": "2026-07-14T15:52:26Z",
+      "headRefName": "pr/1810-websearch-tool-hang",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 337,
+      "deletions": 5,
+      "changedFiles": 6,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2115"
+    },
+    "headroomlabs-ai/headroom#2113": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2113,
+      "state": "MERGED",
+      "title": "fix(codex): rerun memory lookup on every response.create WS frame",
+      "createdAt": "2026-07-13T13:22:28Z",
+      "updatedAt": "2026-07-13T18:42:28Z",
+      "closedAt": "2026-07-13T18:42:28Z",
+      "mergedAt": "2026-07-13T18:42:28Z",
+      "headRefName": "pr/2059-codex-ws-memory-lookup",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 446,
+      "deletions": 34,
+      "changedFiles": 3,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2113"
+    },
+    "nesquena/hermes-webui#6043": {
+      "repo": "nesquena/hermes-webui",
+      "number": 6043,
+      "state": "OPEN",
+      "title": "feat(#6025): add active-run visibility indicators",
+      "createdAt": "2026-07-13T22:03:58Z",
+      "updatedAt": "2026-07-14T08:45:33Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/6025-active-run-visibility",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 420,
+      "deletions": 5,
+      "changedFiles": 8,
+      "url": "https://github.com/nesquena/hermes-webui/pull/6043"
+    },
+    "nesquena/hermes-webui#6041": {
+      "repo": "nesquena/hermes-webui",
+      "number": 6041,
+      "state": "OPEN",
+      "title": "fix(#6027): stabilize sidebar lineage attachment",
+      "createdAt": "2026-07-13T21:56:09Z",
+      "updatedAt": "2026-07-14T00:43:23Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/6027-stable-lineage",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 229,
+      "deletions": 21,
+      "changedFiles": 4,
+      "url": "https://github.com/nesquena/hermes-webui/pull/6041"
+    },
+    "nesquena/hermes-webui#6040": {
+      "repo": "nesquena/hermes-webui",
+      "number": 6040,
+      "state": "OPEN",
+      "title": "fix(#6008): route gateway approvals by run ID",
+      "createdAt": "2026-07-13T21:56:09Z",
+      "updatedAt": "2026-07-14T00:43:24Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/6008-gateway-approval-run-id",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 405,
+      "deletions": 29,
+      "changedFiles": 4,
+      "url": "https://github.com/nesquena/hermes-webui/pull/6040"
+    },
+    "nesquena/hermes-webui#6042": {
+      "repo": "nesquena/hermes-webui",
+      "number": 6042,
+      "state": "MERGED",
+      "title": "feat(#6006): instrument send-to-first-token latency",
+      "createdAt": "2026-07-13T21:56:46Z",
+      "updatedAt": "2026-07-13T22:57:21Z",
+      "closedAt": "2026-07-13T22:56:52Z",
+      "mergedAt": "2026-07-13T22:56:51Z",
+      "headRefName": "pr/6006-ttft-instrumentation",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 147,
+      "deletions": 9,
+      "changedFiles": 3,
+      "url": "https://github.com/nesquena/hermes-webui/pull/6042"
+    },
+    "kenn-io/agentsview#1132": {
+      "repo": "kenn-io/agentsview",
+      "number": 1132,
+      "state": "MERGED",
+      "title": "Assign distinct colors across active attribution series",
+      "createdAt": "2026-07-14T00:46:40Z",
+      "updatedAt": "2026-07-14T02:12:25Z",
+      "closedAt": "2026-07-14T02:12:25Z",
+      "mergedAt": "2026-07-14T02:12:25Z",
+      "headRefName": "pr/1126-usage-attribution-colors",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 257,
+      "deletions": 8,
+      "changedFiles": 6,
+      "url": "https://github.com/kenn-io/agentsview/pull/1132"
+    },
+    "thedotmack/claude-mem#3238": {
+      "repo": "thedotmack/claude-mem",
+      "number": 3238,
+      "state": "OPEN",
+      "title": "fix(worker): wait through cold and concurrent startup readiness (closes #3231)",
+      "createdAt": "2026-07-13T22:46:34Z",
+      "updatedAt": "2026-07-14T00:45:04Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "fix/3231-worker-start-readiness",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 524,
+      "deletions": 335,
+      "changedFiles": 6,
+      "url": "https://github.com/thedotmack/claude-mem/pull/3238"
+    },
+    "thedotmack/claude-mem#3237": {
+      "repo": "thedotmack/claude-mem",
+      "number": 3237,
+      "state": "OPEN",
+      "title": "fix(worker): attribute observations to the current prompt project (closes #3217)",
+      "createdAt": "2026-07-13T22:46:31Z",
+      "updatedAt": "2026-07-14T00:44:55Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "fix/3217-per-prompt-observation-project",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 639,
+      "deletions": 332,
+      "changedFiles": 11,
+      "url": "https://github.com/thedotmack/claude-mem/pull/3237"
+    },
+    "thedotmack/claude-mem#3236": {
+      "repo": "thedotmack/claude-mem",
+      "number": 3236,
+      "state": "OPEN",
+      "title": "fix(worker): preserve claimed batches on auth-failure prose (closes #3207)",
+      "createdAt": "2026-07-13T22:46:28Z",
+      "updatedAt": "2026-07-14T00:44:46Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "fix/3207-preserve-auth-failure-batches",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 529,
+      "deletions": 290,
+      "changedFiles": 7,
+      "url": "https://github.com/thedotmack/claude-mem/pull/3236"
+    },
+    "thedotmack/claude-mem#3235": {
+      "repo": "thedotmack/claude-mem",
+      "number": 3235,
+      "state": "OPEN",
+      "title": "fix(windows): prefer resolved bun.exe from where (closes #3196)",
+      "createdAt": "2026-07-13T22:46:11Z",
+      "updatedAt": "2026-07-14T00:44:37Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "fix/3196-windows-bun-exe",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 169,
+      "deletions": 4,
+      "changedFiles": 3,
+      "url": "https://github.com/thedotmack/claude-mem/pull/3235"
+    },
+    "thedotmack/claude-mem#3234": {
+      "repo": "thedotmack/claude-mem",
+      "number": 3234,
+      "state": "OPEN",
+      "title": "perf(hooks): skip login shell when node already resolves (closes #3186)",
+      "createdAt": "2026-07-13T22:46:08Z",
+      "updatedAt": "2026-07-14T04:26:10Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "fix/3186-node-path-probe",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 134,
+      "deletions": 8,
+      "changedFiles": 3,
+      "url": "https://github.com/thedotmack/claude-mem/pull/3234"
+    },
+    "thedotmack/claude-mem#3233": {
+      "repo": "thedotmack/claude-mem",
+      "number": 3233,
+      "state": "OPEN",
+      "title": "fix(sqlite): keep context generation read-only under concurrent sessions (closes #3179)",
+      "createdAt": "2026-07-13T22:46:05Z",
+      "updatedAt": "2026-07-14T00:44:24Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "fix/3179-context-readonly",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 249,
+      "deletions": 798,
+      "changedFiles": 4,
+      "url": "https://github.com/thedotmack/claude-mem/pull/3233"
+    },
+    "stablyai/orca#8618": {
+      "repo": "stablyai/orca",
+      "number": 8618,
+      "state": "OPEN",
+      "title": "fix(ssh): reap detached relay after failed reconnect",
+      "createdAt": "2026-07-13T22:40:48Z",
+      "updatedAt": "2026-07-14T00:19:22Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/orca-8585-detached-relay-reap",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 221,
+      "deletions": 4,
+      "changedFiles": 4,
+      "url": "https://github.com/stablyai/orca/pull/8618"
+    },
+    "stablyai/orca#8617": {
+      "repo": "stablyai/orca",
+      "number": 8617,
+      "state": "OPEN",
+      "title": "feat(linear): use Linear branch names for worktrees",
+      "createdAt": "2026-07-13T22:40:14Z",
+      "updatedAt": "2026-07-13T22:50:23Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/orca-8572-linear-branch-name",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 87,
+      "deletions": 8,
+      "changedFiles": 12,
+      "url": "https://github.com/stablyai/orca/pull/8617"
+    },
+    "stablyai/orca#8616": {
+      "repo": "stablyai/orca",
+      "number": 8616,
+      "state": "OPEN",
+      "title": "fix(terminal): stop wheel replay when mouse reporting is disabled",
+      "createdAt": "2026-07-13T22:40:13Z",
+      "updatedAt": "2026-07-13T22:42:17Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/orca-8563-wheel-reporting-guard",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 102,
+      "deletions": 5,
+      "changedFiles": 2,
+      "url": "https://github.com/stablyai/orca/pull/8616"
+    },
+    "kenn-io/agentsview#1133": {
+      "repo": "kenn-io/agentsview",
+      "number": 1133,
+      "state": "MERGED",
+      "title": "Fix project selector crash on empty project names",
+      "createdAt": "2026-07-14T00:58:13Z",
+      "updatedAt": "2026-07-14T03:45:31Z",
+      "closedAt": "2026-07-14T03:45:31Z",
+      "mergedAt": "2026-07-14T03:45:31Z",
+      "headRefName": "pr/1123-project-selector-empty-name",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 73,
+      "deletions": 6,
+      "changedFiles": 2,
+      "url": "https://github.com/kenn-io/agentsview/pull/1133"
+    },
+    "headroomlabs-ai/headroom#2164": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2164,
+      "state": "OPEN",
+      "title": "fix(proxy): give each Codex /v1/responses WS turn a unique request_id",
+      "createdAt": "2026-07-14T01:26:31Z",
+      "updatedAt": "2026-07-14T17:21:20Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/310-codex-ws-dashboard-recent-requests",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 147,
+      "deletions": 3,
+      "changedFiles": 3,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2164"
+    },
+    "headroomlabs-ai/headroom#2163": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2163,
+      "state": "MERGED",
+      "title": "fix(litellm): forward chat_template_kwargs and other vendor top-level fields to OpenAI-compatible backends via extra_body (#2128)",
+      "createdAt": "2026-07-14T01:26:26Z",
+      "updatedAt": "2026-07-14T16:27:39Z",
+      "closedAt": "2026-07-14T16:00:19Z",
+      "mergedAt": "2026-07-14T16:00:19Z",
+      "headRefName": "pr/2128-openai-compatible-chat-template-kwargs",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 189,
+      "deletions": 22,
+      "changedFiles": 3,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2163"
+    },
+    "headroomlabs-ai/headroom#2162": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2162,
+      "state": "MERGED",
+      "title": "fix(proxy): isolate image compression in a subprocess so a native SIGSEGV can't take down the proxy (#2107)",
+      "createdAt": "2026-07-14T01:26:19Z",
+      "updatedAt": "2026-07-14T15:52:20Z",
+      "closedAt": "2026-07-14T15:52:20Z",
+      "mergedAt": "2026-07-14T15:52:20Z",
+      "headRefName": "pr/2107-image-compression-segfault",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 296,
+      "deletions": 77,
+      "changedFiles": 6,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2162"
+    },
+    "headroomlabs-ai/headroom#2161": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2161,
+      "state": "MERGED",
+      "title": "fix(cache-aligner): hash the frozen conversation prefix so Claude Code cache invalidation is detected (#2085)",
+      "createdAt": "2026-07-14T01:26:13Z",
+      "updatedAt": "2026-07-14T16:26:07Z",
+      "closedAt": "2026-07-14T15:59:53Z",
+      "mergedAt": "2026-07-14T15:59:53Z",
+      "headRefName": "pr/2085-cachealigner-prefix-stability",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 142,
+      "deletions": 9,
+      "changedFiles": 3,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2161"
+    },
+    "kenn-io/agentsview#1136": {
+      "repo": "kenn-io/agentsview",
+      "number": 1136,
+      "state": "MERGED",
+      "title": "Pin recorded models in resume commands",
+      "createdAt": "2026-07-14T01:48:14Z",
+      "updatedAt": "2026-07-14T19:56:01Z",
+      "closedAt": "2026-07-14T19:56:01Z",
+      "mergedAt": "2026-07-14T19:56:01Z",
+      "headRefName": "pr/1104-resume-command-model-pin",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 1783,
+      "deletions": 968,
+      "changedFiles": 19,
+      "url": "https://github.com/kenn-io/agentsview/pull/1136"
+    },
+    "kenn-io/agentsview#1135": {
+      "repo": "kenn-io/agentsview",
+      "number": 1135,
+      "state": "MERGED",
+      "title": "Preserve Claude session identity metadata",
+      "createdAt": "2026-07-14T01:48:14Z",
+      "updatedAt": "2026-07-14T21:24:24Z",
+      "closedAt": "2026-07-14T21:24:24Z",
+      "mergedAt": "2026-07-14T21:24:24Z",
+      "headRefName": "pr/1089-claude-sdk-session-identity",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 1101,
+      "deletions": 40,
+      "changedFiles": 52,
+      "url": "https://github.com/kenn-io/agentsview/pull/1135"
+    },
+    "kenn-io/agentsview#1134": {
+      "repo": "kenn-io/agentsview",
+      "number": 1134,
+      "state": "MERGED",
+      "title": "fix(parser): classify queued system prompts before single-turn counting (#1131)",
+      "createdAt": "2026-07-14T01:45:02Z",
+      "updatedAt": "2026-07-14T19:56:56Z",
+      "closedAt": "2026-07-14T19:56:55Z",
+      "mergedAt": "2026-07-14T19:56:55Z",
+      "headRefName": "pr/1131-queued-system-message-count",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 898,
+      "deletions": 107,
+      "changedFiles": 17,
+      "url": "https://github.com/kenn-io/agentsview/pull/1134"
+    },
+    "nesquena/hermes-webui#6055": {
+      "repo": "nesquena/hermes-webui",
+      "number": 6055,
+      "state": "OPEN",
+      "title": "feat(#5932): add per-board default workdir",
+      "createdAt": "2026-07-14T07:54:59Z",
+      "updatedAt": "2026-07-14T11:32:40Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/5932-board-default-workdir",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 254,
+      "deletions": 14,
+      "changedFiles": 6,
+      "url": "https://github.com/nesquena/hermes-webui/pull/6055"
+    },
+    "nesquena/hermes-webui#6056": {
+      "repo": "nesquena/hermes-webui",
+      "number": 6056,
+      "state": "OPEN",
+      "title": "feat(#6033): show delegated goal titles for child sessions",
+      "createdAt": "2026-07-14T07:54:59Z",
+      "updatedAt": "2026-07-14T12:58:46Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/6033-subagent-goal-titles",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 250,
+      "deletions": 0,
+      "changedFiles": 2,
+      "url": "https://github.com/nesquena/hermes-webui/pull/6056"
+    },
+    "headroomlabs-ai/headroom#2180": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2180,
+      "state": "OPEN",
+      "title": "feat(dashboard): add dashboard scope selector (#2137)",
+      "createdAt": "2026-07-14T09:18:51Z",
+      "updatedAt": "2026-07-14T13:27:18Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/2137-dashboard-scope-selector",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 2174,
+      "deletions": 91,
+      "changedFiles": 10,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2180"
+    },
+    "headroomlabs-ai/headroom#2182": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2182,
+      "state": "MERGED",
+      "title": "fix(copilot): refresh wrapped subscription tokens (#2156)",
+      "createdAt": "2026-07-14T09:18:51Z",
+      "updatedAt": "2026-07-14T15:52:44Z",
+      "closedAt": "2026-07-14T15:52:43Z",
+      "mergedAt": "2026-07-14T15:52:43Z",
+      "headRefName": "pr/2156-copilot-subscription-reauth",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 470,
+      "deletions": 20,
+      "changedFiles": 6,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2182"
+    },
+    "headroomlabs-ai/headroom#2181": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2181,
+      "state": "OPEN",
+      "title": "feat(proxy): persist dashboard scope aggregates across restarts (#2137)",
+      "createdAt": "2026-07-14T09:18:51Z",
+      "updatedAt": "2026-07-14T13:24:29Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/2137-dashboard-persistent-aggregates",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 1355,
+      "deletions": 26,
+      "changedFiles": 6,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2181"
+    },
+    "mem0ai/mem0#6311": {
+      "repo": "mem0ai/mem0",
+      "number": 6311,
+      "state": "OPEN",
+      "title": "fix(openclaw): make legacy recall timeout configurable",
+      "createdAt": "2026-07-14T08:16:21Z",
+      "updatedAt": "2026-07-14T13:40:18Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/openclaw-recall-timeout",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 815,
+      "deletions": 32,
+      "changedFiles": 12,
+      "url": "https://github.com/mem0ai/mem0/pull/6311"
+    },
+    "stablyai/orca#8717": {
+      "repo": "stablyai/orca",
+      "number": 8717,
+      "state": "OPEN",
+      "title": "fix(rate-limits): show Codex Business usage percentage in the status bar",
+      "createdAt": "2026-07-14T09:39:03Z",
+      "updatedAt": "2026-07-14T09:48:54Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/orca-8664-codex-business-usage",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 559,
+      "deletions": 37,
+      "changedFiles": 5,
+      "url": "https://github.com/stablyai/orca/pull/8717"
     }
   },
   "authorPullScanMeta": {
     "kenn-io/agentsview": {
-      "scannedAt": "2026-07-13T05:17:05.975849Z",
+      "scannedAt": "2026-07-14T21:27:28.741300Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "thedotmack/claude-mem": {
-      "scannedAt": "2026-07-13T05:17:05.975849Z",
+      "scannedAt": "2026-07-14T21:27:28.741300Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "headroomlabs-ai/headroom": {
-      "scannedAt": "2026-07-13T05:17:05.975849Z",
+      "scannedAt": "2026-07-14T21:27:28.741300Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "nesquena/hermes-webui": {
-      "scannedAt": "2026-07-13T05:17:05.975849Z",
+      "scannedAt": "2026-07-14T21:27:28.741300Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "stablyai/orca": {
-      "scannedAt": "2026-07-13T05:17:05.975849Z",
+      "scannedAt": "2026-07-14T21:27:28.741300Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "mem0ai/mem0": {
-      "scannedAt": "2026-07-13T05:17:05.975849Z",
+      "scannedAt": "2026-07-14T21:27:28.741300Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "NVIDIA/SkillSpector": {
-      "scannedAt": "2026-07-13T05:17:05.975849Z",
+      "scannedAt": "2026-07-14T21:27:28.741300Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
@@ -97158,46 +98022,50 @@
       "releaseCreditMeta": null
     },
     "headroomlabs-ai/headroom|community-shipped-v4|all": {
-      "cachedAt": "2026-07-12T06:15:25.100681Z",
-      "refreshedAt": "2026-07-12T06:15:25.100681Z",
+      "cachedAt": "2026-07-14T13:01:13.595250Z",
+      "refreshedAt": "2026-07-14T13:01:13.595250Z",
       "logins": [
         "rodboev",
+        "abhay-codes07",
         "oxura",
         "gglucass",
         "MrAshRhodes",
         "Parideboy",
-        "abhay-codes07",
         "agaonker",
+        "lennney",
         "aivinay",
         "neogenix",
         "peterlodri-sec",
         "inix-x",
+        "Eyalm321",
         "tenderdeve",
-        "lennney",
         "ousamabenyounes",
         "lifeodyssey",
-        "Eyalm321",
         "pratikbin",
+        "khaosdoctor",
         "ashishpatel26",
         "RTCartist",
         "KennethWKZ",
         "jichaowang02-lang",
         "mbachaud",
+        "rudironsoni",
         "shekharcharles",
         "rocker-zhang",
-        "khaosdoctor",
         "Kayzo",
+        "Bortlesboat",
         "Epicism",
         "Lakshya77089",
         "RubenAAA",
         "smartwatermelon",
+        "ingmarkruschHF",
         "dex0shubham",
         "yehsuf",
         "chris-yyau",
-        "rudironsoni",
         "SuperMarioYL",
         "falkoro",
         "pacifio",
+        "thejesh23",
+        "syf2211",
         "dspv",
         "ztkent",
         "orty",
@@ -97209,7 +98077,6 @@
         "panamarob30-jpg",
         "VOCSAP",
         "ipriyaaanshu",
-        "Bortlesboat",
         "Baukebrenninkmeijer",
         "akb4q",
         "felixboenkost-droid",
@@ -97222,6 +98089,9 @@
         "withsivram",
         "longtngo",
         "prakersh",
+        "MattJackson",
+        "superdiaodiao",
+        "nangsontay",
         "JoaoMarcos44",
         "MdHussain121",
         "julienguarino",
@@ -97229,7 +98099,6 @@
         "amcfague",
         "iiroak",
         "machine3at",
-        "syf2211",
         "dyxushuai",
         "weijie321",
         "sfc-gh-nashukla",
@@ -97268,6 +98137,12 @@
         "mbluecoder2",
         "nicolabeghin",
         "pythoninthegrass",
+        "jerviscui",
+        "Connor-Campbell-Code",
+        "eilhamv",
+        "sh8kme",
+        "dosthcpp",
+        "falling-ai",
         "im-khang",
         "abhishek-mittal",
         "agunggnn",
@@ -97275,7 +98150,6 @@
         "dsorensen",
         "wzy-del",
         "alex33d",
-        "orbisai0security",
         "jecacs",
         "27apapa",
         "sogko",
@@ -97344,7 +98218,6 @@
         "gamesoft",
         "albertolinard",
         "archit0",
-        "Sujit-1509",
         "nickvigilante",
         "YOUSSEFELJAYAD",
         "adipu007",
@@ -97473,10 +98346,16 @@
       ],
       "stats": {
         "rodboev": {
-          "total": 65,
-          "open": 12,
-          "recentCount": 28,
-          "lastCreatedAt": "2026-07-12T01:12:56Z"
+          "total": 75,
+          "open": 15,
+          "recentCount": 33,
+          "lastCreatedAt": "2026-07-14T09:18:51Z"
+        },
+        "abhay-codes07": {
+          "total": 69,
+          "open": 15,
+          "recentCount": 56,
+          "lastCreatedAt": "2026-07-14T05:30:36Z"
         },
         "oxura": {
           "total": 57,
@@ -97485,10 +98364,10 @@
           "lastCreatedAt": "2026-06-06T17:40:33Z"
         },
         "gglucass": {
-          "total": 41,
+          "total": 44,
           "open": 2,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-06T09:01:28Z"
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-12T17:52:40Z"
         },
         "MrAshRhodes": {
           "total": 33,
@@ -97499,14 +98378,8 @@
         "Parideboy": {
           "total": 30,
           "open": 1,
-          "recentCount": 4,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T07:57:32Z"
-        },
-        "abhay-codes07": {
-          "total": 25,
-          "open": 8,
-          "recentCount": 12,
-          "lastCreatedAt": "2026-07-11T08:12:57Z"
         },
         "agaonker": {
           "total": 24,
@@ -97514,10 +98387,16 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-07-04T21:39:40Z"
         },
+        "lennney": {
+          "total": 21,
+          "open": 1,
+          "recentCount": 13,
+          "lastCreatedAt": "2026-07-13T08:44:19Z"
+        },
         "aivinay": {
           "total": 21,
-          "open": 2,
-          "recentCount": 8,
+          "open": 1,
+          "recentCount": 5,
           "lastCreatedAt": "2026-07-09T16:27:31Z"
         },
         "neogenix": {
@@ -97534,21 +98413,21 @@
         },
         "inix-x": {
           "total": 15,
-          "open": 1,
-          "recentCount": 1,
+          "open": 0,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-05T17:10:22Z"
+        },
+        "Eyalm321": {
+          "total": 13,
+          "open": 2,
+          "recentCount": 4,
+          "lastCreatedAt": "2026-07-13T02:41:50Z"
         },
         "tenderdeve": {
           "total": 13,
           "open": 5,
           "recentCount": 0,
           "lastCreatedAt": "2026-07-02T12:20:17Z"
-        },
-        "lennney": {
-          "total": 12,
-          "open": 2,
-          "recentCount": 4,
-          "lastCreatedAt": "2026-07-11T15:22:24Z"
         },
         "ousamabenyounes": {
           "total": 11,
@@ -97562,17 +98441,17 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-07-03T13:51:37Z"
         },
-        "Eyalm321": {
-          "total": 9,
-          "open": 1,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-25T06:28:03Z"
-        },
         "pratikbin": {
           "total": 9,
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-02T13:25:01Z"
+        },
+        "khaosdoctor": {
+          "total": 8,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-13T13:05:12Z"
         },
         "ashishpatel26": {
           "total": 8,
@@ -97588,7 +98467,7 @@
         },
         "KennethWKZ": {
           "total": 7,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-07-04T15:10:57Z"
         },
@@ -97604,6 +98483,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-08T04:17:52Z"
         },
+        "rudironsoni": {
+          "total": 6,
+          "open": 1,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-14T00:51:15Z"
+        },
         "shekharcharles": {
           "total": 6,
           "open": 0,
@@ -97616,22 +98501,22 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-07-01T03:37:49Z"
         },
-        "khaosdoctor": {
-          "total": 6,
-          "open": 1,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-23T13:19:48Z"
-        },
         "Kayzo": {
           "total": 6,
           "open": 1,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-05T23:03:35Z"
         },
+        "Bortlesboat": {
+          "total": 5,
+          "open": 0,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-12T20:19:34Z"
+        },
         "Epicism": {
           "total": 5,
           "open": 2,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T15:23:31Z"
         },
         "Lakshya77089": {
@@ -97652,10 +98537,16 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-09T22:15:56Z"
         },
+        "ingmarkruschHF": {
+          "total": 4,
+          "open": 1,
+          "recentCount": 4,
+          "lastCreatedAt": "2026-07-13T20:03:45Z"
+        },
         "dex0shubham": {
           "total": 4,
-          "open": 2,
-          "recentCount": 3,
+          "open": 1,
+          "recentCount": 2,
           "lastCreatedAt": "2026-07-11T20:45:44Z"
         },
         "yehsuf": {
@@ -97669,12 +98560,6 @@
           "open": 2,
           "recentCount": 0,
           "lastCreatedAt": "2026-07-01T15:17:21Z"
-        },
-        "rudironsoni": {
-          "total": 4,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-25T14:50:06Z"
         },
         "SuperMarioYL": {
           "total": 4,
@@ -97694,10 +98579,22 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-06T04:11:12Z"
         },
-        "dspv": {
+        "thejesh23": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-13T17:37:37Z"
+        },
+        "syf2211": {
           "total": 3,
           "open": 1,
-          "recentCount": 3,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T18:09:18Z"
+        },
+        "dspv": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-10T21:13:14Z"
         },
         "ztkent": {
@@ -97715,7 +98612,7 @@
         "mvanhorn": {
           "total": 3,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T07:01:09Z"
         },
         "adryanev": {
@@ -97759,12 +98656,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-23T05:24:25Z"
-        },
-        "Bortlesboat": {
-          "total": 3,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-20T19:29:59Z"
         },
         "Baukebrenninkmeijer": {
           "total": 3,
@@ -97838,6 +98729,24 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-02-02T17:12:57Z"
         },
+        "MattJackson": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-14T02:51:16Z"
+        },
+        "superdiaodiao": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-14T02:37:25Z"
+        },
+        "nangsontay": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-13T10:03:30Z"
+        },
         "JoaoMarcos44": {
           "total": 2,
           "open": 1,
@@ -97859,7 +98768,7 @@
         "eggrollofchaos": {
           "total": 2,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T05:32:50Z"
         },
         "amcfague": {
@@ -97879,12 +98788,6 @@
           "open": 2,
           "recentCount": 0,
           "lastCreatedAt": "2026-07-02T04:42:22Z"
-        },
-        "syf2211": {
-          "total": 2,
-          "open": 2,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-07-01T16:08:00Z"
         },
         "dyxushuai": {
           "total": 2,
@@ -98114,6 +99017,42 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-01-15T02:31:42Z"
         },
+        "jerviscui": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T10:52:42Z"
+        },
+        "Connor-Campbell-Code": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T06:01:03Z"
+        },
+        "eilhamv": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T19:24:42Z"
+        },
+        "sh8kme": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T01:03:47Z"
+        },
+        "dosthcpp": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T00:21:37Z"
+        },
+        "falling-ai": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T08:26:37Z"
+        },
         "im-khang": {
           "total": 1,
           "open": 1,
@@ -98122,7 +99061,7 @@
         },
         "abhishek-mittal": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-11T08:13:58Z"
         },
@@ -98146,25 +99085,19 @@
         },
         "wzy-del": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-10T08:42:52Z"
         },
         "alex33d": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-10T07:11:42Z"
         },
-        "orbisai0security": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-10T01:20:14Z"
-        },
         "jecacs": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-09T21:06:52Z"
         },
@@ -98188,7 +99121,7 @@
         },
         "Ayushraj06-bit": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-08T18:52:46Z"
         },
@@ -98200,7 +99133,7 @@
         },
         "GaryOcean428": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-08T07:18:18Z"
         },
@@ -98213,43 +99146,43 @@
         "exKAZUu": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T11:15:11Z"
         },
         "burkestar": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T08:41:05Z"
         },
         "ninosat00": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T05:47:05Z"
         },
         "roman-t3a": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T04:39:06Z"
         },
         "iotron": {
           "total": 1,
-          "open": 1,
-          "recentCount": 1,
+          "open": 0,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-05T23:42:10Z"
         },
         "x1051445024": {
           "total": 1,
-          "open": 1,
-          "recentCount": 1,
+          "open": 0,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-05T16:08:06Z"
         },
         "LunarECL": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-05T13:12:35Z"
         },
         "warnes": {
@@ -98569,12 +99502,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-22T06:41:32Z"
-        },
-        "Sujit-1509": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-22T04:20:11Z"
         },
         "nickvigilante": {
           "total": 1,
@@ -99329,44 +100256,50 @@
       },
       "shippedCounts": {
         "ketpatil77": 3,
-        "rodboev": 53,
+        "orbisai0security": 1,
+        "Sujit-1509": 1,
+        "rodboev": 57,
+        "abhay-codes07": 46,
         "oxura": 3,
-        "gglucass": 37,
+        "gglucass": 39,
         "MrAshRhodes": 30,
         "Parideboy": 29,
-        "abhay-codes07": 12,
         "agaonker": 19,
-        "aivinay": 14,
+        "lennney": 11,
+        "aivinay": 15,
         "neogenix": 12,
         "peterlodri-sec": 2,
         "inix-x": 13,
+        "Eyalm321": 7,
         "tenderdeve": 7,
-        "lennney": 3,
         "ousamabenyounes": 8,
         "lifeodyssey": 9,
-        "Eyalm321": 7,
         "pratikbin": 6,
+        "khaosdoctor": 5,
         "ashishpatel26": 2,
         "RTCartist": 7,
-        "KennethWKZ": 3,
+        "KennethWKZ": 4,
         "jichaowang02-lang": 4,
         "mbachaud": 7,
+        "rudironsoni": 5,
         "shekharcharles": 4,
         "rocker-zhang": 4,
-        "khaosdoctor": 5,
         "Kayzo": 5,
+        "Bortlesboat": 4,
         "Epicism": 0,
         "Lakshya77089": 5,
         "RubenAAA": 0,
         "smartwatermelon": 5,
-        "dex0shubham": 0,
+        "ingmarkruschHF": 3,
+        "dex0shubham": 1,
         "yehsuf": 4,
         "chris-yyau": 2,
-        "rudironsoni": 4,
         "SuperMarioYL": 4,
         "falkoro": 0,
         "pacifio": 2,
-        "dspv": 2,
+        "thejesh23": 3,
+        "syf2211": 2,
+        "dspv": 3,
         "ztkent": 2,
         "orty": 3,
         "mvanhorn": 3,
@@ -99377,7 +100310,6 @@
         "panamarob30-jpg": 1,
         "VOCSAP": 0,
         "ipriyaaanshu": 2,
-        "Bortlesboat": 2,
         "Baukebrenninkmeijer": 0,
         "akb4q": 2,
         "felixboenkost-droid": 2,
@@ -99390,6 +100322,9 @@
         "withsivram": 0,
         "longtngo": 3,
         "prakersh": 3,
+        "MattJackson": 0,
+        "superdiaodiao": 1,
+        "nangsontay": 0,
         "JoaoMarcos44": 1,
         "MdHussain121": 1,
         "julienguarino": 2,
@@ -99397,7 +100332,6 @@
         "amcfague": 2,
         "iiroak": 0,
         "machine3at": 0,
-        "syf2211": 0,
         "dyxushuai": 0,
         "weijie321": 2,
         "sfc-gh-nashukla": 2,
@@ -99436,28 +100370,33 @@
         "mbluecoder2": 0,
         "nicolabeghin": 2,
         "pythoninthegrass": 2,
+        "jerviscui": 0,
+        "Connor-Campbell-Code": 0,
+        "eilhamv": 0,
+        "sh8kme": 0,
+        "dosthcpp": 0,
+        "falling-ai": 0,
         "im-khang": 0,
-        "abhishek-mittal": 0,
+        "abhishek-mittal": 1,
         "agunggnn": 0,
         "fculpo": 1,
         "dsorensen": 0,
-        "wzy-del": 0,
-        "alex33d": 0,
-        "orbisai0security": 1,
-        "jecacs": 0,
+        "wzy-del": 1,
+        "alex33d": 1,
+        "jecacs": 1,
         "27apapa": 0,
         "sogko": 1,
         "d6zcjnfvhf-hash": 0,
-        "Ayushraj06-bit": 0,
+        "Ayushraj06-bit": 1,
         "hummmmmm122-ui": 0,
-        "GaryOcean428": 0,
+        "GaryOcean428": 1,
         "ski539181": 0,
         "exKAZUu": 1,
         "burkestar": 1,
         "ninosat00": 0,
         "roman-t3a": 0,
-        "iotron": 0,
-        "x1051445024": 0,
+        "iotron": 1,
+        "x1051445024": 1,
         "LunarECL": 0,
         "warnes": 0,
         "goldjg": 0,
@@ -99512,7 +100451,6 @@
         "gamesoft": 0,
         "albertolinard": 0,
         "archit0": 0,
-        "Sujit-1509": 1,
         "nickvigilante": 1,
         "YOUSSEFELJAYAD": 0,
         "adipu007": 0,
@@ -99644,8 +100582,8 @@
       "releaseCreditMeta": null
     },
     "kenn-io/agentsview|community-shipped-v4|all": {
-      "cachedAt": "2026-07-12T06:15:25.100681Z",
-      "refreshedAt": "2026-07-12T06:15:25.100681Z",
+      "cachedAt": "2026-07-14T13:01:13.595250Z",
+      "refreshedAt": "2026-07-14T13:01:13.595250Z",
       "logins": [
         "rodboev",
         "mjacobs",
@@ -99665,6 +100603,7 @@
         "charlieviettq",
         "vikram",
         "zerone0x",
+        "Leuconoe",
         "tomzx",
         "flexiondotorg",
         "jesserobbins",
@@ -99678,11 +100617,11 @@
         "sinnet3000",
         "cdeil",
         "thellert",
+        "randomradio",
         "k0zmo",
         "statik",
         "Mr-Koala",
         "RobSchilderr",
-        "Leuconoe",
         "leejuhanKr",
         "Playgrand-by-linus",
         "LeonidasLux",
@@ -99746,16 +100685,16 @@
       ],
       "stats": {
         "rodboev": {
-          "total": 69,
-          "open": 2,
-          "recentCount": 17,
-          "lastCreatedAt": "2026-07-12T01:30:08Z"
+          "total": 74,
+          "open": 3,
+          "recentCount": 19,
+          "lastCreatedAt": "2026-07-14T01:48:14Z"
         },
         "mjacobs": {
-          "total": 47,
-          "open": 0,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-09T03:46:52Z"
+          "total": 48,
+          "open": 1,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-13T22:26:21Z"
         },
         "userFRM": {
           "total": 14,
@@ -99807,7 +100746,7 @@
         },
         "arbing": {
           "total": 4,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-12T06:08:10Z"
         },
@@ -99852,6 +100791,12 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-01T02:50:34Z"
+        },
+        "Leuconoe": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T01:58:52Z"
         },
         "tomzx": {
           "total": 2,
@@ -99931,6 +100876,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-02-28T19:42:26Z"
         },
+        "randomradio": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T06:54:06Z"
+        },
         "k0zmo": {
           "total": 1,
           "open": 0,
@@ -99946,20 +100897,14 @@
         "Mr-Koala": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T14:48:26Z"
         },
         "RobSchilderr": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T14:21:33Z"
-        },
-        "Leuconoe": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-06T09:16:30Z"
         },
         "leejuhanKr": {
           "total": 1,
@@ -100323,7 +101268,7 @@
         }
       },
       "shippedCounts": {
-        "rodboev": 63,
+        "rodboev": 67,
         "mjacobs": 47,
         "userFRM": 12,
         "tpn": 12,
@@ -100333,7 +101278,7 @@
         "icatw": 7,
         "aaronflorey": 5,
         "tlmaloney": 5,
-        "arbing": 3,
+        "arbing": 4,
         "asotov-zen": 1,
         "Junt184": 2,
         "maphew": 2,
@@ -100341,6 +101286,7 @@
         "charlieviettq": 3,
         "vikram": 2,
         "zerone0x": 3,
+        "Leuconoe": 2,
         "tomzx": 0,
         "flexiondotorg": 2,
         "jesserobbins": 2,
@@ -100354,11 +101300,11 @@
         "sinnet3000": 2,
         "cdeil": 2,
         "thellert": 2,
+        "randomradio": 1,
         "k0zmo": 1,
         "statik": 1,
         "Mr-Koala": 1,
         "RobSchilderr": 1,
-        "Leuconoe": 1,
         "leejuhanKr": 1,
         "Playgrand-by-linus": 1,
         "LeonidasLux": 1,
@@ -102472,8 +103418,8 @@
       "releaseCreditMeta": null
     },
     "mem0ai/mem0|community-shipped-v4|all": {
-      "cachedAt": "2026-07-13T00:00:28.382839Z",
-      "refreshedAt": "2026-07-13T00:00:28.382839Z",
+      "cachedAt": "2026-07-14T00:56:29.725898Z",
+      "refreshedAt": "2026-07-14T00:56:29.725898Z",
       "logins": [
         "Dev-Khant",
         "whysosaket",
@@ -102488,13 +103434,13 @@
         "utkarsh240799",
         "ly-wang19",
         "Itz-Antaripa",
+        "abhay-codes07",
         "spike-spiegel-21",
         "rodboev",
         "harshgupta-mem0",
         "yashs33244",
         "PHclaw",
         "tao-to-python",
-        "abhay-codes07",
         "MgeeeeK",
         "PranavPuranik",
         "aaishikdutta",
@@ -102510,6 +103456,7 @@
         "misrasaurabh1",
         "DivyamTalwar",
         "johnwlockwood",
+        "Krishnachaitanyakc",
         "shafdev",
         "NIK-TIGER-BILL",
         "Anandesh-Sharma",
@@ -102524,15 +103471,14 @@
         "ron-42",
         "NavyaAlapati13",
         "subhajit20",
+        "octo-patch",
         "Ghraven",
         "sjsjsjjs534",
         "KushagraB424",
-        "Krishnachaitanyakc",
         "rakheesingh",
         "thecaptain789",
         "Prikshit7766",
         "rupeshbansal",
-        "octo-patch",
         "soumil-rathi",
         "fengjikui",
         "jfeng18",
@@ -102566,7 +103512,6 @@
         "adarshprabhu03",
         "rafid001",
         "AjaasMk",
-        "orbisai0security",
         "Highlander37",
         "kk2211",
         "PratikRai0101",
@@ -102675,6 +103620,8 @@
         "SerSamgy",
         "KapilM26",
         "aalmuarik",
+        "OfficialAbhinavSingh",
+        "okaditya84",
         "QunBB",
         "hedging8563",
         "JackCloudman",
@@ -102835,9 +103782,14 @@
         "jonasiwnl",
         "amjadraza",
         "Rayhanpatel",
+        "pratikgajjar",
+        "supersonictw",
+        "seven7763",
+        "tennisonchan",
+        "Luc1ferase",
+        "umi008",
         "ChimeraElixir",
         "ajaykrish-uns",
-        "OfficialAbhinavSingh",
         "JainamShah-22",
         "SteinX",
         "PVidyadhar",
@@ -102852,7 +103804,6 @@
         "oldnicke",
         "basnijholt",
         "iroiro147",
-        "okaditya84",
         "sahithreddy05",
         "magicashu",
         "asif786ka",
@@ -103100,7 +104051,6 @@
         "wenkang-xie",
         "ztorchan",
         "mudrii",
-        "hiSandog",
         "chy979",
         "Alex-yang00",
         "AutomatosAI",
@@ -103627,10 +104577,10 @@
           "lastCreatedAt": "2025-11-13T18:38:45Z"
         },
         "Bartok9": {
-          "total": 65,
-          "open": 41,
-          "recentCount": 15,
-          "lastCreatedAt": "2026-07-12T07:34:33Z"
+          "total": 67,
+          "open": 42,
+          "recentCount": 16,
+          "lastCreatedAt": "2026-07-13T07:07:17Z"
         },
         "HrushiYadav": {
           "total": 53,
@@ -103662,6 +104612,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2025-07-31T21:46:48Z"
         },
+        "abhay-codes07": {
+          "total": 23,
+          "open": 16,
+          "recentCount": 15,
+          "lastCreatedAt": "2026-07-13T14:35:09Z"
+        },
         "spike-spiegel-21": {
           "total": 23,
           "open": 0,
@@ -103671,13 +104627,13 @@
         "rodboev": {
           "total": 22,
           "open": 7,
-          "recentCount": 2,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-08T21:53:12Z"
         },
         "harshgupta-mem0": {
           "total": 20,
           "open": 0,
-          "recentCount": 2,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-08T12:43:14Z"
         },
         "yashs33244": {
@@ -103698,12 +104654,6 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-03-23T13:04:20Z"
         },
-        "abhay-codes07": {
-          "total": 19,
-          "open": 12,
-          "recentCount": 11,
-          "lastCreatedAt": "2026-07-12T17:32:46Z"
-        },
         "MgeeeeK": {
           "total": 19,
           "open": 2,
@@ -103723,10 +104673,10 @@
           "lastCreatedAt": "2023-07-28T07:39:46Z"
         },
         "jaythehardcoder": {
-          "total": 17,
-          "open": 11,
-          "recentCount": 12,
-          "lastCreatedAt": "2026-07-12T00:01:38Z"
+          "total": 18,
+          "open": 12,
+          "recentCount": 13,
+          "lastCreatedAt": "2026-07-14T00:00:38Z"
         },
         "akshat1423": {
           "total": 17,
@@ -103793,6 +104743,12 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2025-05-30T03:34:00Z"
+        },
+        "Krishnachaitanyakc": {
+          "total": 10,
+          "open": 6,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-13T13:34:52Z"
         },
         "shafdev": {
           "total": 10,
@@ -103878,6 +104834,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2023-09-28T03:50:09Z"
         },
+        "octo-patch": {
+          "total": 8,
+          "open": 3,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-13T06:49:12Z"
+        },
         "Ghraven": {
           "total": 8,
           "open": 6,
@@ -103893,14 +104855,8 @@
         "KushagraB424": {
           "total": 8,
           "open": 7,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T20:36:57Z"
-        },
-        "Krishnachaitanyakc": {
-          "total": 8,
-          "open": 4,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-06T15:48:57Z"
         },
         "rakheesingh": {
           "total": 8,
@@ -103925,12 +104881,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2023-10-24T11:32:12Z"
-        },
-        "octo-patch": {
-          "total": 7,
-          "open": 3,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-09T06:16:35Z"
         },
         "soumil-rathi": {
           "total": 7,
@@ -104130,12 +105080,6 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-07T15:24:56Z"
         },
-        "orbisai0security": {
-          "total": 5,
-          "open": 3,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-05-30T12:55:23Z"
-        },
         "Highlander37": {
           "total": 5,
           "open": 0,
@@ -104223,7 +105167,7 @@
         "huveewomg": {
           "total": 4,
           "open": 2,
-          "recentCount": 2,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-10T09:24:30Z"
         },
         "freya0926": {
@@ -104252,7 +105196,7 @@
         },
         "axelray-dev": {
           "total": 4,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-24T07:56:43Z"
         },
@@ -104783,6 +105727,18 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2023-09-24T18:44:59Z"
+        },
+        "OfficialAbhinavSingh": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-13T20:34:38Z"
+        },
+        "okaditya84": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-13T09:12:42Z"
         },
         "QunBB": {
           "total": 2,
@@ -105744,6 +106700,42 @@
           "recentCount": 0,
           "lastCreatedAt": "2023-07-15T06:25:23Z"
         },
+        "pratikgajjar": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T00:28:10Z"
+        },
+        "supersonictw": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T17:52:23Z"
+        },
+        "seven7763": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T13:50:20Z"
+        },
+        "tennisonchan": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T11:20:26Z"
+        },
+        "Luc1ferase": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T07:43:01Z"
+        },
+        "umi008": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T03:01:52Z"
+        },
         "ChimeraElixir": {
           "total": 1,
           "open": 1,
@@ -105755,12 +106747,6 @@
           "open": 1,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-12T18:12:33Z"
-        },
-        "OfficialAbhinavSingh": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-12T14:40:48Z"
         },
         "JainamShah-22": {
           "total": 1,
@@ -105846,12 +106832,6 @@
           "recentCount": 1,
           "lastCreatedAt": "2026-07-08T09:02:04Z"
         },
-        "okaditya84": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-08T08:01:30Z"
-        },
         "sahithreddy05": {
           "total": 1,
           "open": 0,
@@ -105903,7 +106883,7 @@
         "abhi-0203": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T04:44:15Z"
         },
         "letainc": {
@@ -105956,7 +106936,7 @@
         },
         "CyrusAurora": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-07-01T07:31:55Z"
         },
@@ -107333,12 +108313,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-03-10T16:03:14Z"
-        },
-        "hiSandog": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-03-10T03:51:30Z"
         },
         "chy979": {
           "total": 1,
@@ -110230,6 +111204,8 @@
       "shippedCounts": {
         "a-rybnikov": 0,
         "lazakrisz": 1,
+        "orbisai0security": 0,
+        "hiSandog": 0,
         "Dev-Khant": 414,
         "whysosaket": 166,
         "cachho": 98,
@@ -110243,13 +111219,13 @@
         "utkarsh240799": 36,
         "ly-wang19": 6,
         "Itz-Antaripa": 25,
+        "abhay-codes07": 4,
         "spike-spiegel-21": 15,
         "rodboev": 14,
         "harshgupta-mem0": 15,
         "yashs33244": 15,
         "PHclaw": 4,
         "tao-to-python": 0,
-        "abhay-codes07": 4,
         "MgeeeeK": 11,
         "PranavPuranik": 16,
         "aaishikdutta": 16,
@@ -110265,6 +111241,7 @@
         "misrasaurabh1": 5,
         "DivyamTalwar": 0,
         "johnwlockwood": 5,
+        "Krishnachaitanyakc": 2,
         "shafdev": 3,
         "NIK-TIGER-BILL": 0,
         "Anandesh-Sharma": 0,
@@ -110279,15 +111256,14 @@
         "ron-42": 2,
         "NavyaAlapati13": 8,
         "subhajit20": 7,
+        "octo-patch": 0,
         "Ghraven": 0,
         "sjsjsjjs534": 1,
         "KushagraB424": 1,
-        "Krishnachaitanyakc": 2,
         "rakheesingh": 4,
         "thecaptain789": 0,
         "Prikshit7766": 6,
         "rupeshbansal": 7,
-        "octo-patch": 0,
         "soumil-rathi": 6,
         "fengjikui": 2,
         "jfeng18": 1,
@@ -110321,7 +111297,6 @@
         "adarshprabhu03": 0,
         "rafid001": 1,
         "AjaasMk": 0,
-        "orbisai0security": 0,
         "Highlander37": 0,
         "kk2211": 5,
         "PratikRai0101": 1,
@@ -110430,6 +111405,8 @@
         "SerSamgy": 2,
         "KapilM26": 2,
         "aalmuarik": 0,
+        "OfficialAbhinavSingh": 0,
+        "okaditya84": 1,
         "QunBB": 1,
         "hedging8563": 0,
         "JackCloudman": 0,
@@ -110590,9 +111567,14 @@
         "jonasiwnl": 2,
         "amjadraza": 1,
         "Rayhanpatel": 2,
+        "pratikgajjar": 0,
+        "supersonictw": 0,
+        "seven7763": 0,
+        "tennisonchan": 0,
+        "Luc1ferase": 0,
+        "umi008": 0,
         "ChimeraElixir": 0,
         "ajaykrish-uns": 0,
-        "OfficialAbhinavSingh": 0,
         "JainamShah-22": 0,
         "SteinX": 0,
         "PVidyadhar": 0,
@@ -110607,7 +111589,6 @@
         "oldnicke": 0,
         "basnijholt": 0,
         "iroiro147": 0,
-        "okaditya84": 1,
         "sahithreddy05": 1,
         "magicashu": 0,
         "asif786ka": 0,
@@ -110855,7 +111836,6 @@
         "wenkang-xie": 0,
         "ztorchan": 0,
         "mudrii": 0,
-        "hiSandog": 0,
         "chy979": 0,
         "Alex-yang00": 0,
         "AutomatosAI": 0,
@@ -115958,8 +116938,8 @@
       "releaseCreditMeta": null
     },
     "nesquena/hermes-webui|community-shipped-v4|all": {
-      "cachedAt": "2026-07-12T06:15:25.100681Z",
-      "refreshedAt": "2026-07-12T06:15:25.100681Z",
+      "cachedAt": "2026-07-14T13:01:13.595250Z",
+      "refreshedAt": "2026-07-14T13:01:13.595250Z",
       "logins": [
         "rodboev",
         "franksong2702",
@@ -115980,10 +116960,11 @@
         "luandnh",
         "pamnard",
         "JKJameson",
+        "ruizanthony",
         "LumenYoung",
         "Jordan-SkyLF",
-        "ruizanthony",
         "aronprins",
+        "Isla-Liu",
         "zapabob",
         "mysoul12138",
         "bsgdigital",
@@ -115991,12 +116972,12 @@
         "AlexeyDsov",
         "Koraji95-coder",
         "ccqqlo",
-        "Isla-Liu",
+        "Stacey2911",
+        "happy5318",
         "claw-io",
         "mccxj",
-        "Stacey2911",
+        "webtecnica",
         "akrhin",
-        "happy5318",
         "v2psv",
         "mibrohimsulaeman-a11y",
         "george-andraws",
@@ -116004,6 +116985,7 @@
         "luperrypf",
         "24601",
         "NocGeek",
+        "Kopamed",
         "mvanhorn",
         "silent-reader-cn",
         "mo7al876any",
@@ -116012,8 +116994,7 @@
         "Charanis",
         "espokaos-ops",
         "armorbreak001",
-        "Kopamed",
-        "webtecnica",
+        "akay64",
         "kaishi00",
         "wirtsi",
         "KingBoyAndGirl",
@@ -116031,7 +117012,9 @@
         "fecolinhares",
         "EdwardWason",
         "renheqiang",
-        "akay64",
+        "igorroncevic",
+        "sheldon-im",
+        "jbbottoms",
         "leszek3737",
         "b-yelverton",
         "tomas-forgac",
@@ -116044,14 +117027,13 @@
         "frap129",
         "pavolbiely",
         "TaraTheStar",
-        "jbbottoms",
+        "Loukky",
+        "soria-clawd-bot",
         "psanger",
         "DrMaks22",
         "NextDoorLaoHuang-HF",
-        "igorroncevic",
         "octo-patch",
         "sbe27",
-        "sheldon-im",
         "Pythonming2020",
         "jkobject",
         "jcarvine",
@@ -116078,11 +117060,11 @@
         "renatomott",
         "Bobby9228",
         "deboste",
+        "rudidev08",
+        "ayxuerui",
         "tkuhlengel",
-        "soria-clawd-bot",
         "CharlesMcquade",
         "rumotoshino",
-        "Loukky",
         "promptclickrun",
         "ahmedhabibo",
         "neaucode-bot",
@@ -116138,6 +117120,16 @@
         "gabogabucho",
         "DavidSchuchert",
         "thadreber-web",
+        "raulanatol",
+        "imcrobot",
+        "AXEG0",
+        "ontop01970",
+        "sNyteXx",
+        "SeanWit",
+        "Zaradacht",
+        "bc-hermes",
+        "kertisalex",
+        "jtstothard",
         "DRanger666",
         "tahabakhit",
         "Kahotik",
@@ -116415,16 +117407,16 @@
       ],
       "stats": {
         "rodboev": {
-          "total": 360,
-          "open": 12,
-          "recentCount": 34,
-          "lastCreatedAt": "2026-07-12T01:16:36Z"
+          "total": 369,
+          "open": 14,
+          "recentCount": 26,
+          "lastCreatedAt": "2026-07-14T07:54:59Z"
         },
         "franksong2702": {
-          "total": 335,
-          "open": 0,
-          "recentCount": 4,
-          "lastCreatedAt": "2026-07-07T03:49:16Z"
+          "total": 338,
+          "open": 2,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-14T12:37:28Z"
         },
         "Michaelyklam": {
           "total": 200,
@@ -116433,10 +117425,10 @@
           "lastCreatedAt": "2026-06-01T11:07:51Z"
         },
         "ai-ag2026": {
-          "total": 187,
-          "open": 7,
-          "recentCount": 31,
-          "lastCreatedAt": "2026-07-11T18:53:13Z"
+          "total": 188,
+          "open": 8,
+          "recentCount": 30,
+          "lastCreatedAt": "2026-07-13T08:11:47Z"
         },
         "bergeouss": {
           "total": 99,
@@ -116463,10 +117455,10 @@
           "lastCreatedAt": "2026-06-21T09:57:11Z"
         },
         "allenliang2022": {
-          "total": 33,
-          "open": 1,
-          "recentCount": 10,
-          "lastCreatedAt": "2026-07-12T03:15:55Z"
+          "total": 34,
+          "open": 2,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-13T13:33:33Z"
         },
         "jasonjcwu": {
           "total": 27,
@@ -116495,7 +117487,7 @@
         "b3nw": {
           "total": 22,
           "open": 0,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T02:27:44Z"
         },
         "dobby-d-elf": {
@@ -116507,13 +117499,13 @@
         "nankingjing": {
           "total": 16,
           "open": 0,
-          "recentCount": 7,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-11T12:21:09Z"
         },
         "luandnh": {
           "total": 16,
-          "open": 3,
-          "recentCount": 6,
+          "open": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T13:49:33Z"
         },
         "pamnard": {
@@ -116528,6 +117520,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-11T10:27:22Z"
         },
+        "ruizanthony": {
+          "total": 15,
+          "open": 1,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-13T12:05:46Z"
+        },
         "LumenYoung": {
           "total": 15,
           "open": 0,
@@ -116540,17 +117538,17 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-15T08:05:16Z"
         },
-        "ruizanthony": {
-          "total": 14,
-          "open": 0,
-          "recentCount": 3,
-          "lastCreatedAt": "2026-07-08T20:36:42Z"
-        },
         "aronprins": {
           "total": 14,
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-04-27T09:27:29Z"
+        },
+        "Isla-Liu": {
+          "total": 13,
+          "open": 2,
+          "recentCount": 5,
+          "lastCreatedAt": "2026-07-13T10:24:46Z"
         },
         "zapabob": {
           "total": 13,
@@ -116594,16 +117592,22 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-30T08:06:28Z"
         },
-        "Isla-Liu": {
+        "Stacey2911": {
           "total": 10,
-          "open": 0,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-08T03:51:00Z"
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T20:32:53Z"
+        },
+        "happy5318": {
+          "total": 10,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T04:11:11Z"
         },
         "claw-io": {
           "total": 10,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T23:32:39Z"
         },
         "mccxj": {
@@ -116612,23 +117616,17 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-27T06:47:15Z"
         },
-        "Stacey2911": {
+        "webtecnica": {
           "total": 9,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-07-03T09:04:37Z"
+          "open": 4,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-14T12:36:39Z"
         },
         "akrhin": {
           "total": 9,
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-24T06:54:48Z"
-        },
-        "happy5318": {
-          "total": 9,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-08T14:24:17Z"
         },
         "v2psv": {
           "total": 9,
@@ -116651,7 +117649,7 @@
         "bschmidy10": {
           "total": 8,
           "open": 7,
-          "recentCount": 7,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T23:47:52Z"
         },
         "luperrypf": {
@@ -116672,6 +117670,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-01T01:28:31Z"
         },
+        "Kopamed": {
+          "total": 7,
+          "open": 3,
+          "recentCount": 6,
+          "lastCreatedAt": "2026-07-13T21:10:59Z"
+        },
         "mvanhorn": {
           "total": 7,
           "open": 0,
@@ -116680,7 +117684,7 @@
         },
         "silent-reader-cn": {
           "total": 7,
-          "open": 2,
+          "open": 1,
           "recentCount": 3,
           "lastCreatedAt": "2026-07-11T02:37:30Z"
         },
@@ -116720,17 +117724,11 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-15T08:51:10Z"
         },
-        "Kopamed": {
+        "akay64": {
           "total": 6,
-          "open": 2,
-          "recentCount": 6,
-          "lastCreatedAt": "2026-07-10T19:59:07Z"
-        },
-        "webtecnica": {
-          "total": 6,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-05T22:53:41Z"
+          "open": 3,
+          "recentCount": 5,
+          "lastCreatedAt": "2026-07-12T15:17:34Z"
         },
         "kaishi00": {
           "total": 6,
@@ -116834,11 +117832,23 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-17T07:58:44Z"
         },
-        "akay64": {
+        "igorroncevic": {
           "total": 4,
-          "open": 1,
-          "recentCount": 3,
-          "lastCreatedAt": "2026-07-11T07:38:17Z"
+          "open": 3,
+          "recentCount": 4,
+          "lastCreatedAt": "2026-07-13T13:30:11Z"
+        },
+        "sheldon-im": {
+          "total": 4,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T12:41:41Z"
+        },
+        "jbbottoms": {
+          "total": 4,
+          "open": 2,
+          "recentCount": 4,
+          "lastCreatedAt": "2026-07-12T16:28:07Z"
         },
         "leszek3737": {
           "total": 4,
@@ -116912,11 +117922,17 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-08T16:52:09Z"
         },
-        "jbbottoms": {
+        "Loukky": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T15:55:30Z"
+        },
+        "soria-clawd-bot": {
           "total": 3,
           "open": 3,
           "recentCount": 3,
-          "lastCreatedAt": "2026-07-12T02:50:43Z"
+          "lastCreatedAt": "2026-07-13T02:37:44Z"
         },
         "psanger": {
           "total": 3,
@@ -116936,12 +117952,6 @@
           "recentCount": 2,
           "lastCreatedAt": "2026-07-11T12:44:37Z"
         },
-        "igorroncevic": {
-          "total": 3,
-          "open": 2,
-          "recentCount": 3,
-          "lastCreatedAt": "2026-07-10T15:20:36Z"
-        },
         "octo-patch": {
           "total": 3,
           "open": 1,
@@ -116951,14 +117961,8 @@
         "sbe27": {
           "total": 3,
           "open": 1,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-08T00:08:32Z"
-        },
-        "sheldon-im": {
-          "total": 3,
-          "open": 0,
           "recentCount": 1,
-          "lastCreatedAt": "2026-07-07T01:00:41Z"
+          "lastCreatedAt": "2026-07-08T00:08:32Z"
         },
         "Pythonming2020": {
           "total": 3,
@@ -117116,17 +118120,23 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-03-31T15:06:53Z"
         },
+        "rudidev08": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-13T21:42:55Z"
+        },
+        "ayxuerui": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-13T17:58:41Z"
+        },
         "tkuhlengel": {
           "total": 2,
           "open": 1,
           "recentCount": 2,
           "lastCreatedAt": "2026-07-11T00:13:16Z"
-        },
-        "soria-clawd-bot": {
-          "total": 2,
-          "open": 2,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-10T20:21:38Z"
         },
         "CharlesMcquade": {
           "total": 2,
@@ -117140,12 +118150,6 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-07-04T20:07:40Z"
         },
-        "Loukky": {
-          "total": 2,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-07-01T09:48:45Z"
-        },
         "promptclickrun": {
           "total": 2,
           "open": 0,
@@ -117154,7 +118158,7 @@
         },
         "ahmedhabibo": {
           "total": 2,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-29T12:37:31Z"
         },
@@ -117476,6 +118480,66 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-04T03:26:35Z"
         },
+        "raulanatol": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T12:16:02Z"
+        },
+        "imcrobot": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T09:38:10Z"
+        },
+        "AXEG0": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T04:13:33Z"
+        },
+        "ontop01970": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T00:36:53Z"
+        },
+        "sNyteXx": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T17:29:29Z"
+        },
+        "SeanWit": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T09:25:00Z"
+        },
+        "Zaradacht": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T07:24:37Z"
+        },
+        "bc-hermes": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T21:44:52Z"
+        },
+        "kertisalex": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T19:41:53Z"
+        },
+        "jtstothard": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T16:53:43Z"
+        },
         "DRanger666": {
           "total": 1,
           "open": 1,
@@ -117484,7 +118548,7 @@
         },
         "tahabakhit": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-12T01:35:13Z"
         },
@@ -117551,13 +118615,13 @@
         "Swanzb": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T04:16:41Z"
         },
         "jin89ho": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T17:33:36Z"
         },
         "ugrank": {
@@ -119143,10 +120207,11 @@
         "luandnh": 2,
         "pamnard": 12,
         "JKJameson": 4,
+        "ruizanthony": 3,
         "LumenYoung": 8,
         "Jordan-SkyLF": 11,
-        "ruizanthony": 3,
         "aronprins": 4,
+        "Isla-Liu": 4,
         "zapabob": 3,
         "mysoul12138": 10,
         "bsgdigital": 3,
@@ -119154,12 +120219,12 @@
         "AlexeyDsov": 6,
         "Koraji95-coder": 1,
         "ccqqlo": 2,
-        "Isla-Liu": 4,
+        "Stacey2911": 4,
+        "happy5318": 4,
         "claw-io": 5,
         "mccxj": 6,
-        "Stacey2911": 4,
+        "webtecnica": 1,
         "akrhin": 4,
-        "happy5318": 4,
         "v2psv": 3,
         "mibrohimsulaeman-a11y": 0,
         "george-andraws": 7,
@@ -119167,6 +120232,7 @@
         "luperrypf": 0,
         "24601": 6,
         "NocGeek": 6,
+        "Kopamed": 0,
         "mvanhorn": 3,
         "silent-reader-cn": 1,
         "mo7al876any": 3,
@@ -119175,8 +120241,7 @@
         "Charanis": 1,
         "espokaos-ops": 3,
         "armorbreak001": 7,
-        "Kopamed": 0,
-        "webtecnica": 1,
+        "akay64": 1,
         "kaishi00": 3,
         "wirtsi": 3,
         "KingBoyAndGirl": 3,
@@ -119194,7 +120259,9 @@
         "fecolinhares": 1,
         "EdwardWason": 0,
         "renheqiang": 3,
-        "akay64": 1,
+        "igorroncevic": 1,
+        "sheldon-im": 1,
+        "jbbottoms": 0,
         "leszek3737": 1,
         "b-yelverton": 3,
         "tomas-forgac": 1,
@@ -119207,14 +120274,13 @@
         "frap129": 3,
         "pavolbiely": 2,
         "TaraTheStar": 0,
-        "jbbottoms": 0,
+        "Loukky": 2,
+        "soria-clawd-bot": 0,
         "psanger": 1,
         "DrMaks22": 0,
         "NextDoorLaoHuang-HF": 0,
-        "igorroncevic": 1,
         "octo-patch": 0,
         "sbe27": 1,
-        "sheldon-im": 1,
         "Pythonming2020": 2,
         "jkobject": 1,
         "jcarvine": 2,
@@ -119241,11 +120307,11 @@
         "renatomott": 0,
         "Bobby9228": 0,
         "deboste": 3,
+        "rudidev08": 1,
+        "ayxuerui": 1,
         "tkuhlengel": 0,
-        "soria-clawd-bot": 0,
         "CharlesMcquade": 1,
         "rumotoshino": 0,
-        "Loukky": 2,
         "promptclickrun": 1,
         "ahmedhabibo": 0,
         "neaucode-bot": 0,
@@ -119301,6 +120367,16 @@
         "gabogabucho": 0,
         "DavidSchuchert": 1,
         "thadreber-web": 1,
+        "raulanatol": 0,
+        "imcrobot": 0,
+        "AXEG0": 0,
+        "ontop01970": 0,
+        "sNyteXx": 0,
+        "SeanWit": 0,
+        "Zaradacht": 0,
+        "bc-hermes": 0,
+        "kertisalex": 0,
+        "jtstothard": 1,
         "DRanger666": 0,
         "tahabakhit": 0,
         "Kahotik": 0,
@@ -136558,8 +137634,8 @@
       "releaseCreditMeta": null
     },
     "NVIDIA/SkillSpector|community-shipped-v4|all": {
-      "cachedAt": "2026-07-13T00:00:28.382839Z",
-      "refreshedAt": "2026-07-13T00:00:28.382839Z",
+      "cachedAt": "2026-07-14T00:56:29.725898Z",
+      "refreshedAt": "2026-07-14T00:56:29.725898Z",
       "logins": [
         "mimran-khan",
         "rodboev",
@@ -136573,6 +137649,7 @@
         "zhenliemao",
         "zied-jlassi",
         "asadbekXodjayev",
+        "will-exaforce",
         "WhereIs38",
         "Dxboy266",
         "assinchu",
@@ -136594,7 +137671,6 @@
         "alenjosesr",
         "Bortlesboat",
         "jichaowang02-lang",
-        "will-exaforce",
         "Akshatmish",
         "yonatangross",
         "matt-appno",
@@ -136666,7 +137742,7 @@
         "koriyoshi2041": {
           "total": 4,
           "open": 3,
-          "recentCount": 4,
+          "recentCount": 3,
           "lastCreatedAt": "2026-07-10T05:03:30Z"
         },
         "smoy": {
@@ -136692,6 +137768,12 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-23T06:58:30Z"
+        },
+        "will-exaforce": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T11:16:54Z"
         },
         "WhereIs38": {
           "total": 2,
@@ -136756,7 +137838,7 @@
         "Ruanyuxi1337": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T14:28:03Z"
         },
         "HexSleeves": {
@@ -136818,12 +137900,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-20T03:48:53Z"
-        },
-        "will-exaforce": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-19T21:21:48Z"
         },
         "Akshatmish": {
           "total": 1,
@@ -136984,6 +138060,7 @@
         "zhenliemao": 0,
         "zied-jlassi": 2,
         "asadbekXodjayev": 2,
+        "will-exaforce": 0,
         "WhereIs38": 2,
         "Dxboy266": 0,
         "assinchu": 2,
@@ -137005,7 +138082,6 @@
         "alenjosesr": 1,
         "Bortlesboat": 1,
         "jichaowang02-lang": 1,
-        "will-exaforce": 0,
         "Akshatmish": 1,
         "yonatangross": 1,
         "matt-appno": 1,
@@ -137036,38 +138112,40 @@
       "releaseCreditMeta": null
     },
     "stablyai/orca|community-shipped-v4|all": {
-      "cachedAt": "2026-07-12T06:15:25.100681Z",
-      "refreshedAt": "2026-07-12T06:15:25.100681Z",
+      "cachedAt": "2026-07-14T13:01:13.595250Z",
+      "refreshedAt": "2026-07-14T13:01:13.595250Z",
       "logins": [
         "gatsby74",
-        "bbingz",
         "rodboev",
+        "bbingz",
         "wolfiesch",
+        "OrcaWin",
         "gsxdsm",
         "heyramzi",
-        "OrcaWin",
+        "sudoeren",
         "slashdevcorpse",
         "leynier",
-        "sudoeren",
         "BorjaLL",
-        "siddqamar",
-        "AnddyAgudelo",
-        "Nikolatesla-lj",
-        "LesleyMurfin",
-        "mvanhorn",
         "xianjianlf2",
+        "AnddyAgudelo",
+        "siddqamar",
+        "LesleyMurfin",
+        "Nikolatesla-lj",
         "huhuhulululu",
+        "mvanhorn",
         "mathnogueira",
+        "kaynansc",
         "sdhilip200",
         "devajmeireles",
         "mturac",
         "prateek",
         "carlosbaraza",
         "colinchambachan",
+        "doanbactam",
         "RubinCarter",
         "Jingyue-Wu",
         "zaridan",
-        "doanbactam",
+        "moseoh",
         "KayleeWilliams",
         "Prethish-Kumar",
         "riverpilot",
@@ -137075,10 +138153,12 @@
         "timothyjlaurent",
         "muddlebee",
         "AmoabaKelvin",
+        "fsdwen",
         "lvfen",
         "s546126",
         "nexusjuniorai",
         "jtalborough",
+        "branben",
         "CleonSuo",
         "ppw-stack",
         "mantaroh",
@@ -137088,20 +138168,25 @@
         "P-de-Jong",
         "sasha-id",
         "ypatel2022",
+        "preschian",
+        "audichuang",
+        "KMGeon",
         "sonhyrd",
-        "kaynansc",
-        "branben",
         "amondnet",
         "ParkerRex",
         "omarshahine",
         "jonavila",
         "SSwser",
         "drakontia",
+        "dbachko",
+        "daniel-rudaev",
+        "Zaradacht",
+        "SiteupAgencia",
+        "whyjp",
         "beiyonder",
         "ryushione",
         "alpiyev99",
         "vincent-lxc",
-        "fsdwen",
         "Dvitash",
         "hmrserver",
         "kenfdev",
@@ -137116,9 +138201,7 @@
         "jweingardt12",
         "andrewroxby",
         "bennewell35",
-        "audichuang",
         "zhangqinzhong",
-        "KMGeon",
         "igasmi",
         "thomaszdxsn",
         "Gaurab4",
@@ -137134,8 +138217,15 @@
         "shamounY",
         "mralexsaavedra",
         "xiaolai",
+        "leomleao",
+        "jae-heo",
+        "Eridanus117",
+        "iridite",
+        "jellychoco",
+        "jborkowski",
+        "haroldfabla2-hue",
+        "timsuchanek",
         "reopard007",
-        "whyjp",
         "yuqi1991",
         "Vitus213",
         "Cainiaooo",
@@ -137146,7 +138236,6 @@
         "hu-qi",
         "eviannaive",
         "wquintal",
-        "dbachko",
         "ruttybob",
         "Daily-AC",
         "suiramdev",
@@ -137163,14 +138252,12 @@
         "NicholasZolton",
         "matheuscoelhomalta",
         "artile",
-        "Zaradacht",
         "lovewave02",
         "dvic",
         "1shiharat",
         "jorge-huxley",
         "thekvn",
         "noahkhomer18",
-        "daniel-rudaev",
         "beatkapo",
         "shoryan09",
         "Prethish-Complyance",
@@ -137187,24 +138274,50 @@
         "crilofer",
         "zerone0x",
         "aparusel",
+        "nasagong",
+        "ousugo",
+        "haohlin",
+        "valentingoulier",
+        "BlockedPath",
+        "geelen",
+        "ySsio",
+        "tleo19",
+        "joni-codes",
+        "m-a-king",
+        "RickyPark",
+        "stasmarkin",
+        "PeaceTis",
+        "Zoeille",
+        "VitorRibeiroCustodio",
+        "itisbryan",
+        "spandios",
+        "yuzhichang",
+        "yejinh",
+        "zpdldhkdl",
+        "Jaemmeong",
+        "chang-in",
+        "Momentum96",
+        "neicras",
+        "henrynguyeninfo1",
+        "nikg24",
+        "frvnkliu",
+        "leoschooltennis",
+        "Birditch",
+        "jjongsta",
+        "Dirtywater97",
         "taresky",
         "handlecusion",
         "ryush00",
         "anishekkamal",
         "choiwjun",
-        "iridite",
         "myungjuice",
         "ghee-yeh",
         "MaxZarev",
         "sbkim",
-        "leomleao",
         "TaeSungLee96",
         "lucasdaniellopes",
         "westkite1201",
-        "preschian",
-        "timsuchanek",
         "NGdust",
-        "SiteupAgencia",
         "eusoucarlosmedeiros",
         "Jonezzyboy",
         "TopGrd",
@@ -137240,7 +138353,6 @@
         "guihirsch",
         "palbrecht1",
         "tebayoso",
-        "jborkowski",
         "haozhenfei",
         "handsomeXZ",
         "Naxon",
@@ -137372,28 +138484,34 @@
       ],
       "stats": {
         "gatsby74": {
-          "total": 53,
-          "open": 35,
-          "recentCount": 24,
-          "lastCreatedAt": "2026-07-11T18:40:56Z"
-        },
-        "bbingz": {
-          "total": 47,
-          "open": 31,
-          "recentCount": 47,
-          "lastCreatedAt": "2026-07-11T22:56:34Z"
+          "total": 64,
+          "open": 43,
+          "recentCount": 29,
+          "lastCreatedAt": "2026-07-13T18:41:35Z"
         },
         "rodboev": {
-          "total": 47,
-          "open": 16,
-          "recentCount": 25,
-          "lastCreatedAt": "2026-07-11T05:13:59Z"
+          "total": 56,
+          "open": 21,
+          "recentCount": 27,
+          "lastCreatedAt": "2026-07-14T09:39:03Z"
+        },
+        "bbingz": {
+          "total": 56,
+          "open": 35,
+          "recentCount": 56,
+          "lastCreatedAt": "2026-07-14T00:44:30Z"
         },
         "wolfiesch": {
           "total": 37,
           "open": 13,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-29T09:44:00Z"
+        },
+        "OrcaWin": {
+          "total": 26,
+          "open": 7,
+          "recentCount": 13,
+          "lastCreatedAt": "2026-07-14T12:12:53Z"
         },
         "gsxdsm": {
           "total": 26,
@@ -137407,11 +138525,11 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-21T11:39:27Z"
         },
-        "OrcaWin": {
+        "sudoeren": {
           "total": 20,
-          "open": 5,
-          "recentCount": 7,
-          "lastCreatedAt": "2026-07-11T06:53:03Z"
+          "open": 3,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-12T10:15:26Z"
         },
         "slashdevcorpse": {
           "total": 20,
@@ -137425,29 +138543,35 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-07-04T06:36:35Z"
         },
-        "sudoeren": {
-          "total": 18,
-          "open": 6,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-07-03T22:32:42Z"
-        },
         "BorjaLL": {
           "total": 17,
           "open": 5,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-16T15:59:06Z"
         },
+        "xianjianlf2": {
+          "total": 16,
+          "open": 11,
+          "recentCount": 6,
+          "lastCreatedAt": "2026-07-14T12:50:55Z"
+        },
+        "AnddyAgudelo": {
+          "total": 16,
+          "open": 10,
+          "recentCount": 7,
+          "lastCreatedAt": "2026-07-13T04:09:30Z"
+        },
         "siddqamar": {
           "total": 16,
           "open": 3,
-          "recentCount": 4,
+          "recentCount": 2,
           "lastCreatedAt": "2026-07-09T19:47:11Z"
         },
-        "AnddyAgudelo": {
-          "total": 14,
-          "open": 8,
-          "recentCount": 5,
-          "lastCreatedAt": "2026-07-11T20:02:28Z"
+        "LesleyMurfin": {
+          "total": 15,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-13T19:50:36Z"
         },
         "Nikolatesla-lj": {
           "total": 13,
@@ -137455,11 +138579,11 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-29T17:02:13Z"
         },
-        "LesleyMurfin": {
-          "total": 13,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-25T08:49:32Z"
+        "huhuhulululu": {
+          "total": 12,
+          "open": 5,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T22:32:18Z"
         },
         "mvanhorn": {
           "total": 12,
@@ -137467,28 +138591,22 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-06T14:08:43Z"
         },
-        "xianjianlf2": {
-          "total": 11,
-          "open": 8,
-          "recentCount": 7,
-          "lastCreatedAt": "2026-07-08T13:26:33Z"
-        },
-        "huhuhulululu": {
-          "total": 11,
-          "open": 4,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-07-04T03:12:42Z"
-        },
         "mathnogueira": {
           "total": 11,
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-04-08T21:41:16Z"
         },
+        "kaynansc": {
+          "total": 10,
+          "open": 5,
+          "recentCount": 9,
+          "lastCreatedAt": "2026-07-13T04:02:05Z"
+        },
         "sdhilip200": {
           "total": 10,
-          "open": 7,
-          "recentCount": 6,
+          "open": 6,
+          "recentCount": 4,
           "lastCreatedAt": "2026-07-12T01:16:58Z"
         },
         "devajmeireles": {
@@ -137521,10 +138639,16 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-30T12:49:03Z"
         },
+        "doanbactam": {
+          "total": 8,
+          "open": 2,
+          "recentCount": 5,
+          "lastCreatedAt": "2026-07-13T16:24:33Z"
+        },
         "RubinCarter": {
           "total": 8,
           "open": 4,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T08:42:12Z"
         },
         "Jingyue-Wu": {
@@ -137539,11 +138663,11 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-24T21:08:35Z"
         },
-        "doanbactam": {
+        "moseoh": {
           "total": 7,
-          "open": 2,
-          "recentCount": 4,
-          "lastCreatedAt": "2026-07-11T07:45:35Z"
+          "open": 4,
+          "recentCount": 7,
+          "lastCreatedAt": "2026-07-14T12:13:43Z"
         },
         "KayleeWilliams": {
           "total": 7,
@@ -137587,6 +138711,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-05-05T18:04:38Z"
         },
+        "fsdwen": {
+          "total": 6,
+          "open": 2,
+          "recentCount": 4,
+          "lastCreatedAt": "2026-07-14T07:29:30Z"
+        },
         "lvfen": {
           "total": 6,
           "open": 0,
@@ -137596,7 +138726,7 @@
         "s546126": {
           "total": 6,
           "open": 5,
-          "recentCount": 3,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-08T04:36:05Z"
         },
         "nexusjuniorai": {
@@ -137610,6 +138740,12 @@
           "open": 6,
           "recentCount": 0,
           "lastCreatedAt": "2026-07-01T13:45:58Z"
+        },
+        "branben": {
+          "total": 5,
+          "open": 3,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-13T21:02:19Z"
         },
         "CleonSuo": {
           "total": 5,
@@ -137665,23 +138801,29 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-19T23:48:54Z"
         },
+        "preschian": {
+          "total": 4,
+          "open": 4,
+          "recentCount": 4,
+          "lastCreatedAt": "2026-07-14T05:01:21Z"
+        },
+        "audichuang": {
+          "total": 4,
+          "open": 3,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T14:36:30Z"
+        },
+        "KMGeon": {
+          "total": 4,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T01:42:04Z"
+        },
         "sonhyrd": {
           "total": 4,
-          "open": 2,
+          "open": 1,
           "recentCount": 3,
           "lastCreatedAt": "2026-07-11T06:43:24Z"
-        },
-        "kaynansc": {
-          "total": 4,
-          "open": 3,
-          "recentCount": 3,
-          "lastCreatedAt": "2026-07-10T18:22:36Z"
-        },
-        "branben": {
-          "total": 4,
-          "open": 3,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-09T14:27:26Z"
         },
         "amondnet": {
           "total": 4,
@@ -137719,9 +138861,39 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-20T18:51:30Z"
         },
-        "beiyonder": {
+        "dbachko": {
+          "total": 3,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T23:34:50Z"
+        },
+        "daniel-rudaev": {
+          "total": 3,
+          "open": 2,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T10:33:12Z"
+        },
+        "Zaradacht": {
           "total": 3,
           "open": 3,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T18:52:15Z"
+        },
+        "SiteupAgencia": {
+          "total": 3,
+          "open": 3,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-12T15:19:02Z"
+        },
+        "whyjp": {
+          "total": 3,
+          "open": 3,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-12T09:35:56Z"
+        },
+        "beiyonder": {
+          "total": 3,
+          "open": 1,
           "recentCount": 3,
           "lastCreatedAt": "2026-07-12T05:57:11Z"
         },
@@ -137740,31 +138912,25 @@
         "vincent-lxc": {
           "total": 3,
           "open": 2,
-          "recentCount": 3,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-08T08:14:13Z"
-        },
-        "fsdwen": {
-          "total": 3,
-          "open": 2,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-08T01:23:14Z"
         },
         "Dvitash": {
           "total": 3,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T02:13:51Z"
         },
         "hmrserver": {
           "total": 3,
           "open": 1,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-05T20:35:14Z"
         },
         "kenfdev": {
           "total": 3,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-05T08:59:58Z"
         },
         "AvichalDwivedi2205": {
@@ -137833,23 +138999,11 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-25T13:09:58Z"
         },
-        "audichuang": {
-          "total": 3,
-          "open": 2,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-24T08:59:20Z"
-        },
         "zhangqinzhong": {
           "total": 3,
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-21T14:50:06Z"
-        },
-        "KMGeon": {
-          "total": 3,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-21T14:39:59Z"
         },
         "igasmi": {
           "total": 3,
@@ -137941,21 +139095,63 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-23T06:44:27Z"
         },
+        "leomleao": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-14T12:00:04Z"
+        },
+        "jae-heo": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-14T06:31:46Z"
+        },
+        "Eridanus117": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-14T04:32:16Z"
+        },
+        "iridite": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-14T02:46:12Z"
+        },
+        "jellychoco": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-13T21:08:36Z"
+        },
+        "jborkowski": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T10:52:28Z"
+        },
+        "haroldfabla2-hue": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-12T19:37:40Z"
+        },
+        "timsuchanek": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-12T17:04:59Z"
+        },
         "reopard007": {
           "total": 2,
           "open": 2,
           "recentCount": 2,
           "lastCreatedAt": "2026-07-12T00:44:14Z"
         },
-        "whyjp": {
-          "total": 2,
-          "open": 2,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-11T13:38:45Z"
-        },
         "yuqi1991": {
           "total": 2,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-11T06:52:32Z"
         },
@@ -137967,7 +139163,7 @@
         },
         "Cainiaooo": {
           "total": 2,
-          "open": 2,
+          "open": 0,
           "recentCount": 2,
           "lastCreatedAt": "2026-07-10T08:16:02Z"
         },
@@ -138013,52 +139209,46 @@
           "recentCount": 2,
           "lastCreatedAt": "2026-07-07T18:00:58Z"
         },
-        "dbachko": {
-          "total": 2,
-          "open": 1,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-06T22:44:53Z"
-        },
         "ruttybob": {
           "total": 2,
           "open": 2,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T15:52:53Z"
         },
         "Daily-AC": {
           "total": 2,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T15:33:31Z"
         },
         "suiramdev": {
           "total": 2,
           "open": 1,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T15:05:25Z"
         },
         "zenos876": {
           "total": 2,
           "open": 1,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T08:14:07Z"
         },
         "tomdebres": {
           "total": 2,
           "open": 0,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-05T22:59:59Z"
         },
         "mattemusacchio": {
           "total": 2,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-05T15:11:09Z"
         },
         "LuisUrrutia": {
           "total": 2,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-05T10:51:34Z"
         },
         "soichisumi": {
@@ -138115,12 +139305,6 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-26T21:52:23Z"
         },
-        "Zaradacht": {
-          "total": 2,
-          "open": 2,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-26T14:21:43Z"
-        },
         "lovewave02": {
           "total": 2,
           "open": 0,
@@ -138156,12 +139340,6 @@
           "open": 1,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-21T15:42:34Z"
-        },
-        "daniel-rudaev": {
-          "total": 2,
-          "open": 1,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-19T07:40:52Z"
         },
         "beatkapo": {
           "total": 2,
@@ -138259,9 +139437,195 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-04-19T11:43:25Z"
         },
-        "taresky": {
+        "nasagong": {
           "total": 1,
           "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T11:11:31Z"
+        },
+        "ousugo": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T10:26:38Z"
+        },
+        "haohlin": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T09:10:09Z"
+        },
+        "valentingoulier": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T08:44:19Z"
+        },
+        "BlockedPath": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T07:31:26Z"
+        },
+        "geelen": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T06:36:38Z"
+        },
+        "ySsio": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T02:50:27Z"
+        },
+        "tleo19": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T22:36:58Z"
+        },
+        "joni-codes": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T17:41:53Z"
+        },
+        "m-a-king": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T15:47:02Z"
+        },
+        "RickyPark": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T15:46:35Z"
+        },
+        "stasmarkin": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T14:58:08Z"
+        },
+        "PeaceTis": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T14:56:38Z"
+        },
+        "Zoeille": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T14:47:20Z"
+        },
+        "VitorRibeiroCustodio": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T13:02:28Z"
+        },
+        "itisbryan": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T10:30:39Z"
+        },
+        "spandios": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T09:52:00Z"
+        },
+        "yuzhichang": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T09:50:45Z"
+        },
+        "yejinh": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T07:37:02Z"
+        },
+        "zpdldhkdl": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T05:42:56Z"
+        },
+        "Jaemmeong": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T05:30:37Z"
+        },
+        "chang-in": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T04:39:16Z"
+        },
+        "Momentum96": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T03:47:16Z"
+        },
+        "neicras": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T02:11:24Z"
+        },
+        "henrynguyeninfo1": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T23:58:56Z"
+        },
+        "nikg24": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T23:54:52Z"
+        },
+        "frvnkliu": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T21:43:42Z"
+        },
+        "leoschooltennis": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T18:24:42Z"
+        },
+        "Birditch": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T17:57:42Z"
+        },
+        "jjongsta": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T12:26:46Z"
+        },
+        "Dirtywater97": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T10:49:09Z"
+        },
+        "taresky": {
+          "total": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-12T05:32:48Z"
         },
@@ -138273,7 +139637,7 @@
         },
         "ryush00": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-12T01:28:35Z"
         },
@@ -138289,15 +139653,9 @@
           "recentCount": 1,
           "lastCreatedAt": "2026-07-11T15:09:49Z"
         },
-        "iridite": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-11T12:50:12Z"
-        },
         "myungjuice": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-11T10:02:58Z"
         },
@@ -138319,12 +139677,6 @@
           "recentCount": 1,
           "lastCreatedAt": "2026-07-11T05:27:32Z"
         },
-        "leomleao": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-10T18:08:28Z"
-        },
         "TaeSungLee96": {
           "total": 1,
           "open": 1,
@@ -138343,29 +139695,11 @@
           "recentCount": 1,
           "lastCreatedAt": "2026-07-10T04:22:19Z"
         },
-        "preschian": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-10T04:02:58Z"
-        },
-        "timsuchanek": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-10T01:47:53Z"
-        },
         "NGdust": {
           "total": 1,
           "open": 1,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-10T00:00:57Z"
-        },
-        "SiteupAgencia": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-09T21:37:41Z"
         },
         "eusoucarlosmedeiros": {
           "total": 1,
@@ -138381,7 +139715,7 @@
         },
         "TopGrd": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-09T09:24:38Z"
         },
@@ -138472,73 +139806,73 @@
         "kiyeonjeon21": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T07:11:51Z"
         },
         "omnificate": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T07:06:59Z"
         },
         "mattehlol": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T03:24:41Z"
         },
         "lotgood": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T16:02:36Z"
         },
         "3499623985": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T13:45:30Z"
         },
         "YehonaOnyx": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T12:35:39Z"
         },
         "Syfyivan": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T09:34:40Z"
         },
         "KrE80r": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T09:28:00Z"
         },
         "ivankqw": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T04:37:36Z"
         },
         "MichaelHoughtonDeBox": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-05T17:25:09Z"
         },
         "xsacdw": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-05T15:14:39Z"
         },
         "Daption-ciray": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-05T12:41:38Z"
         },
         "Fartown": {
@@ -138576,12 +139910,6 @@
           "open": 1,
           "recentCount": 0,
           "lastCreatedAt": "2026-07-04T21:21:13Z"
-        },
-        "jborkowski": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-07-04T14:47:40Z"
         },
         "haozhenfei": {
           "total": 1,
@@ -138663,7 +139991,7 @@
         },
         "ShutovKS": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-07-01T21:37:14Z"
         },
@@ -139354,35 +140682,37 @@
       },
       "shippedCounts": {
         "shiva24082": 0,
-        "gatsby74": 13,
-        "bbingz": 7,
-        "rodboev": 24,
+        "gatsby74": 16,
+        "rodboev": 27,
+        "bbingz": 9,
         "wolfiesch": 17,
+        "OrcaWin": 18,
         "gsxdsm": 16,
         "heyramzi": 11,
-        "OrcaWin": 15,
+        "sudoeren": 6,
         "slashdevcorpse": 6,
         "leynier": 15,
-        "sudoeren": 6,
         "BorjaLL": 9,
-        "siddqamar": 9,
+        "xianjianlf2": 3,
         "AnddyAgudelo": 3,
-        "Nikolatesla-lj": 4,
+        "siddqamar": 9,
         "LesleyMurfin": 11,
-        "mvanhorn": 7,
-        "xianjianlf2": 2,
+        "Nikolatesla-lj": 4,
         "huhuhulululu": 7,
+        "mvanhorn": 7,
         "mathnogueira": 11,
-        "sdhilip200": 2,
+        "kaynansc": 5,
+        "sdhilip200": 3,
         "devajmeireles": 8,
         "mturac": 8,
         "prateek": 5,
         "carlosbaraza": 6,
         "colinchambachan": 8,
+        "doanbactam": 3,
         "RubinCarter": 2,
         "Jingyue-Wu": 8,
         "zaridan": 2,
-        "doanbactam": 3,
+        "moseoh": 2,
         "KayleeWilliams": 6,
         "Prethish-Kumar": 4,
         "riverpilot": 1,
@@ -139390,10 +140720,12 @@
         "timothyjlaurent": 1,
         "muddlebee": 4,
         "AmoabaKelvin": 6,
+        "fsdwen": 4,
         "lvfen": 4,
         "s546126": 1,
         "nexusjuniorai": 2,
         "jtalborough": 0,
+        "branben": 1,
         "CleonSuo": 0,
         "ppw-stack": 1,
         "mantaroh": 3,
@@ -139403,20 +140735,25 @@
         "P-de-Jong": 5,
         "sasha-id": 2,
         "ypatel2022": 5,
-        "sonhyrd": 1,
-        "kaynansc": 1,
-        "branben": 1,
+        "preschian": 0,
+        "audichuang": 1,
+        "KMGeon": 1,
+        "sonhyrd": 2,
         "amondnet": 2,
         "ParkerRex": 4,
         "omarshahine": 3,
         "jonavila": 4,
         "SSwser": 2,
         "drakontia": 4,
-        "beiyonder": 0,
+        "dbachko": 2,
+        "daniel-rudaev": 0,
+        "Zaradacht": 0,
+        "SiteupAgencia": 0,
+        "whyjp": 0,
+        "beiyonder": 2,
         "ryushione": 1,
         "alpiyev99": 0,
         "vincent-lxc": 0,
-        "fsdwen": 1,
         "Dvitash": 3,
         "hmrserver": 2,
         "kenfdev": 1,
@@ -139431,9 +140768,7 @@
         "jweingardt12": 3,
         "andrewroxby": 1,
         "bennewell35": 1,
-        "audichuang": 1,
         "zhangqinzhong": 1,
-        "KMGeon": 1,
         "igasmi": 0,
         "thomaszdxsn": 3,
         "Gaurab4": 0,
@@ -139449,11 +140784,18 @@
         "shamounY": 2,
         "mralexsaavedra": 3,
         "xiaolai": 1,
+        "leomleao": 0,
+        "jae-heo": 0,
+        "Eridanus117": 0,
+        "iridite": 0,
+        "jellychoco": 0,
+        "jborkowski": 0,
+        "haroldfabla2-hue": 0,
+        "timsuchanek": 1,
         "reopard007": 0,
-        "whyjp": 0,
-        "yuqi1991": 1,
+        "yuqi1991": 2,
         "Vitus213": 2,
-        "Cainiaooo": 0,
+        "Cainiaooo": 1,
         "andrecristodev": 1,
         "andres-vr": 2,
         "saurabh": 0,
@@ -139461,7 +140803,6 @@
         "hu-qi": 1,
         "eviannaive": 0,
         "wquintal": 0,
-        "dbachko": 1,
         "ruttybob": 0,
         "Daily-AC": 1,
         "suiramdev": 1,
@@ -139478,14 +140819,12 @@
         "NicholasZolton": 1,
         "matheuscoelhomalta": 1,
         "artile": 1,
-        "Zaradacht": 0,
         "lovewave02": 1,
         "dvic": 2,
         "1shiharat": 0,
         "jorge-huxley": 1,
         "thekvn": 1,
         "noahkhomer18": 1,
-        "daniel-rudaev": 0,
         "beatkapo": 0,
         "shoryan09": 2,
         "Prethish-Complyance": 0,
@@ -139502,27 +140841,53 @@
         "crilofer": 2,
         "zerone0x": 2,
         "aparusel": 1,
+        "nasagong": 0,
+        "ousugo": 0,
+        "haohlin": 0,
+        "valentingoulier": 0,
+        "BlockedPath": 0,
+        "geelen": 0,
+        "ySsio": 0,
+        "tleo19": 0,
+        "joni-codes": 0,
+        "m-a-king": 0,
+        "RickyPark": 0,
+        "stasmarkin": 0,
+        "PeaceTis": 0,
+        "Zoeille": 0,
+        "VitorRibeiroCustodio": 0,
+        "itisbryan": 0,
+        "spandios": 0,
+        "yuzhichang": 0,
+        "yejinh": 0,
+        "zpdldhkdl": 0,
+        "Jaemmeong": 0,
+        "chang-in": 0,
+        "Momentum96": 0,
+        "neicras": 0,
+        "henrynguyeninfo1": 0,
+        "nikg24": 1,
+        "frvnkliu": 0,
+        "leoschooltennis": 0,
+        "Birditch": 0,
+        "jjongsta": 0,
+        "Dirtywater97": 0,
         "taresky": 0,
         "handlecusion": 0,
-        "ryush00": 0,
+        "ryush00": 1,
         "anishekkamal": 0,
         "choiwjun": 0,
-        "iridite": 0,
-        "myungjuice": 0,
+        "myungjuice": 1,
         "ghee-yeh": 0,
         "MaxZarev": 0,
         "sbkim": 0,
-        "leomleao": 0,
         "TaeSungLee96": 0,
         "lucasdaniellopes": 0,
         "westkite1201": 0,
-        "preschian": 0,
-        "timsuchanek": 1,
         "NGdust": 0,
-        "SiteupAgencia": 0,
         "eusoucarlosmedeiros": 0,
         "Jonezzyboy": 0,
-        "TopGrd": 0,
+        "TopGrd": 1,
         "MeGaurav4": 0,
         "itsXuSt": 0,
         "shady2k": 0,
@@ -139555,7 +140920,6 @@
         "guihirsch": 1,
         "palbrecht1": 1,
         "tebayoso": 0,
-        "jborkowski": 0,
         "haozhenfei": 1,
         "handsomeXZ": 0,
         "Naxon": 1,
@@ -145525,8 +146889,8 @@
       "releaseCreditMeta": null
     },
     "thedotmack/claude-mem|community-shipped-v4|all": {
-      "cachedAt": "2026-07-12T06:15:25.100681Z",
-      "refreshedAt": "2026-07-12T06:15:25.100681Z",
+      "cachedAt": "2026-07-14T13:01:13.595250Z",
+      "refreshedAt": "2026-07-14T13:01:13.595250Z",
       "logins": [
         "rodboev",
         "ousamabenyounes",
@@ -145539,7 +146903,6 @@
         "laihenyi",
         "jayvenn21",
         "rajivsinclair",
-        "orbisai0security",
         "michelhelsdingen",
         "ixnaswang",
         "pg-adm1n",
@@ -145559,6 +146922,7 @@
         "faustbrian",
         "ToxMox",
         "basher83",
+        "Steaeavean",
         "Retengart",
         "ChenglinWei97",
         "antfleet-ops",
@@ -145571,6 +146935,8 @@
         "MrSaneApps",
         "JiehoonKwak",
         "7Sageer",
+        "derrickchwong",
+        "XX888QM",
         "eralpozcan",
         "DNA",
         "ruddro-roy",
@@ -145626,6 +146992,13 @@
         "iefnaf",
         "trevwilson",
         "dreamiurg",
+        "SaadSharif4",
+        "SejiL",
+        "percy-raskova",
+        "ShiroKSH",
+        "remten341",
+        "rapidtackgithub",
+        "SamuelZ12",
         "danscMax",
         "girish-kanjiyani7",
         "tiagogbarbosa",
@@ -145647,7 +147020,6 @@
         "bennyyuan1008",
         "funrun11",
         "Kurama2d",
-        "Steaeavean",
         "amellman",
         "pillumina",
         "Neclode",
@@ -145925,10 +147297,10 @@
       ],
       "stats": {
         "rodboev": {
-          "total": 48,
-          "open": 22,
-          "recentCount": 4,
-          "lastCreatedAt": "2026-07-12T01:06:06Z"
+          "total": 55,
+          "open": 17,
+          "recentCount": 11,
+          "lastCreatedAt": "2026-07-13T22:46:34Z"
         },
         "ousamabenyounes": {
           "total": 45,
@@ -145962,7 +147334,7 @@
         },
         "YOMXXX": {
           "total": 17,
-          "open": 6,
+          "open": 3,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-07T03:15:59Z"
         },
@@ -145990,12 +147362,6 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-24T04:18:58Z"
         },
-        "orbisai0security": {
-          "total": 8,
-          "open": 2,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-20T00:35:27Z"
-        },
         "michelhelsdingen": {
           "total": 7,
           "open": 0,
@@ -146010,19 +147376,19 @@
         },
         "pg-adm1n": {
           "total": 6,
-          "open": 3,
+          "open": 2,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-23T14:14:27Z"
         },
         "darion-yaphet": {
           "total": 6,
-          "open": 2,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-18T09:30:28Z"
         },
         "surfingdoggo": {
           "total": 6,
-          "open": 5,
+          "open": 4,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-08T06:03:32Z"
         },
@@ -146110,6 +147476,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2025-11-16T08:59:22Z"
         },
+        "Steaeavean": {
+          "total": 3,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-14T10:41:56Z"
+        },
         "Retengart": {
           "total": 3,
           "open": 1,
@@ -146130,7 +147502,7 @@
         },
         "Soundman-Coder": {
           "total": 3,
-          "open": 2,
+          "open": 1,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-13T13:16:48Z"
         },
@@ -146142,7 +147514,7 @@
         },
         "mohitpatell": {
           "total": 3,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-23T08:50:07Z"
         },
@@ -146182,6 +147554,18 @@
           "recentCount": 0,
           "lastCreatedAt": "2025-12-15T10:51:54Z"
         },
+        "derrickchwong": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-13T12:21:48Z"
+        },
+        "XX888QM": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-13T06:52:33Z"
+        },
         "eralpozcan": {
           "total": 2,
           "open": 2,
@@ -146197,18 +147581,18 @@
         "ruddro-roy": {
           "total": 2,
           "open": 2,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T03:44:06Z"
         },
         "joao-oliveira-softtor": {
           "total": 2,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-05T22:26:06Z"
         },
         "bionicbutterfly13": {
           "total": 2,
-          "open": 2,
+          "open": 1,
           "recentCount": 0,
           "lastCreatedAt": "2026-07-01T20:37:34Z"
         },
@@ -146220,7 +147604,7 @@
         },
         "DRCOMPUTER60290": {
           "total": 2,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-20T19:13:31Z"
         },
@@ -146238,7 +147622,7 @@
         },
         "Kirchlive": {
           "total": 2,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-31T03:03:38Z"
         },
@@ -146256,7 +147640,7 @@
         },
         "m16khb": {
           "total": 2,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-21T16:27:17Z"
         },
@@ -146512,6 +147896,48 @@
           "recentCount": 0,
           "lastCreatedAt": "2025-11-26T21:30:54Z"
         },
+        "SaadSharif4": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T11:50:53Z"
+        },
+        "SejiL": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T11:21:46Z"
+        },
+        "percy-raskova": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T21:24:20Z"
+        },
+        "ShiroKSH": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T18:47:46Z"
+        },
+        "remten341": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T09:03:10Z"
+        },
+        "rapidtackgithub": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T04:26:30Z"
+        },
+        "SamuelZ12": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T13:49:48Z"
+        },
         "danscMax": {
           "total": 1,
           "open": 1,
@@ -146563,19 +147989,19 @@
         "Markoblogline": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T20:54:06Z"
         },
         "Dandi007": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T16:27:51Z"
         },
         "dane11stanisic-a11y": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-06T07:40:31Z"
         },
         "Hactory": {
@@ -146610,7 +148036,7 @@
         },
         "lilhawk7077": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-07-01T11:11:12Z"
         },
@@ -146638,12 +148064,6 @@
           "recentCount": 0,
           "lastCreatedAt": "2026-06-25T19:29:17Z"
         },
-        "Steaeavean": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-25T05:35:13Z"
-        },
         "amellman": {
           "total": 1,
           "open": 1,
@@ -146658,7 +148078,7 @@
         },
         "Neclode": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-22T20:08:43Z"
         },
@@ -146688,7 +148108,7 @@
         },
         "mseep-ai": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-19T06:10:28Z"
         },
@@ -146706,7 +148126,7 @@
         },
         "cccsaber": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-17T05:14:22Z"
         },
@@ -146730,7 +148150,7 @@
         },
         "lifeihu1982": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-16T11:54:44Z"
         },
@@ -146748,25 +148168,25 @@
         },
         "Dmtrch": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-15T20:13:39Z"
         },
         "chengzhuo5": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-15T13:30:15Z"
         },
         "Goro2030": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-15T09:17:49Z"
         },
         "rovencap": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-13T21:14:55Z"
         },
@@ -146790,19 +148210,19 @@
         },
         "NRCP-HarrisonBooth": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-11T14:54:36Z"
         },
         "emilzo": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-11T02:57:43Z"
         },
         "husniadil": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-10T12:12:15Z"
         },
@@ -146868,7 +148288,7 @@
         },
         "tbui17": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-01T06:08:25Z"
         },
@@ -146922,7 +148342,7 @@
         },
         "nexio-jurgen": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-27T14:42:59Z"
         },
@@ -146940,7 +148360,7 @@
         },
         "a1573595": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-27T00:29:06Z"
         },
@@ -146952,7 +148372,7 @@
         },
         "qyjqio": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-22T22:11:20Z"
         },
@@ -146982,13 +148402,13 @@
         },
         "captainpete": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-22T00:49:59Z"
         },
         "PhoenixCPH": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-21T18:50:09Z"
         },
@@ -147018,13 +148438,13 @@
         },
         "kmanan": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-18T18:24:32Z"
         },
         "seilk": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-05-18T14:57:44Z"
         },
@@ -148290,6 +149710,7 @@
         }
       },
       "shippedCounts": {
+        "orbisai0security": 0,
         "rodboev": 12,
         "ousamabenyounes": 24,
         "Glucksberg": 13,
@@ -148301,7 +149722,6 @@
         "laihenyi": 1,
         "jayvenn21": 3,
         "rajivsinclair": 3,
-        "orbisai0security": 0,
         "michelhelsdingen": 2,
         "ixnaswang": 1,
         "pg-adm1n": 0,
@@ -148321,6 +149741,7 @@
         "faustbrian": 0,
         "ToxMox": 2,
         "basher83": 1,
+        "Steaeavean": 0,
         "Retengart": 0,
         "ChenglinWei97": 3,
         "antfleet-ops": 0,
@@ -148333,6 +149754,8 @@
         "MrSaneApps": 1,
         "JiehoonKwak": 0,
         "7Sageer": 1,
+        "derrickchwong": 0,
+        "XX888QM": 0,
         "eralpozcan": 0,
         "DNA": 0,
         "ruddro-roy": 0,
@@ -148388,6 +149811,13 @@
         "iefnaf": 0,
         "trevwilson": 1,
         "dreamiurg": 2,
+        "SaadSharif4": 0,
+        "SejiL": 0,
+        "percy-raskova": 0,
+        "ShiroKSH": 0,
+        "remten341": 0,
+        "rapidtackgithub": 0,
+        "SamuelZ12": 0,
         "danscMax": 0,
         "girish-kanjiyani7": 0,
         "tiagogbarbosa": 0,
@@ -148409,7 +149839,6 @@
         "bennyyuan1008": 0,
         "funrun11": 0,
         "Kurama2d": 0,
-        "Steaeavean": 0,
         "amellman": 0,
         "pillumina": 0,
         "Neclode": 0,
@@ -230565,8 +231994,22 @@
   },
   "releaseData": {
     "kenn-io/agentsview": {
-      "cachedAt": "2026-07-13T00:00:28.382839Z",
+      "cachedAt": "2026-07-14T00:56:29.725898Z",
       "releases": [
+        {
+          "tagName": "v0.38.1",
+          "htmlUrl": "https://github.com/kenn-io/agentsview/releases/tag/v0.38.1",
+          "publishedAt": "2026-07-13T20:11:47Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v0.38.0",
+          "htmlUrl": "https://github.com/kenn-io/agentsview/releases/tag/v0.38.0",
+          "publishedAt": "2026-07-13T15:44:33Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
         {
           "tagName": "v0.37.5",
           "htmlUrl": "https://github.com/kenn-io/agentsview/releases/tag/v0.37.5",
@@ -231054,8 +232497,15 @@
       "prToRelease": {}
     },
     "thedotmack/claude-mem": {
-      "cachedAt": "2026-07-13T00:00:28.382839Z",
+      "cachedAt": "2026-07-14T00:56:29.725898Z",
       "releases": [
+        {
+          "tagName": "v13.11.0",
+          "htmlUrl": "https://github.com/thedotmack/claude-mem/releases/tag/v13.11.0",
+          "publishedAt": "2026-07-13T04:01:10Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
         {
           "tagName": "v13.10.3-community-edge.0",
           "htmlUrl": "https://github.com/thedotmack/claude-mem/releases/tag/v13.10.3-community-edge.0",
@@ -233162,7 +234612,7 @@
       }
     },
     "headroomlabs-ai/headroom": {
-      "cachedAt": "2026-07-13T00:00:28.382839Z",
+      "cachedAt": "2026-07-14T00:56:29.725898Z",
       "releases": [
         {
           "tagName": "v0.31.0",
@@ -235121,8 +236571,36 @@
       }
     },
     "mem0ai/mem0": {
-      "cachedAt": "2026-07-13T00:00:28.382839Z",
+      "cachedAt": "2026-07-14T00:56:29.725898Z",
       "releases": [
+        {
+          "tagName": "v2.0.12",
+          "htmlUrl": "https://github.com/mem0ai/mem0/releases/tag/v2.0.12",
+          "publishedAt": "2026-07-13T16:49:01Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "ts-v3.1.0",
+          "htmlUrl": "https://github.com/mem0ai/mem0/releases/tag/ts-v3.1.0",
+          "publishedAt": "2026-07-13T16:49:08Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "cli-v0.2.10",
+          "htmlUrl": "https://github.com/mem0ai/mem0/releases/tag/cli-v0.2.10",
+          "publishedAt": "2026-07-13T16:49:13Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "cli-node-v0.2.11",
+          "htmlUrl": "https://github.com/mem0ai/mem0/releases/tag/cli-node-v0.2.11",
+          "publishedAt": "2026-07-13T16:49:17Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
         {
           "tagName": "v2.0.11",
           "htmlUrl": "https://github.com/mem0ai/mem0/releases/tag/v2.0.11",
@@ -247518,8 +248996,296 @@
       }
     },
     "stablyai/orca": {
-      "cachedAt": "2026-07-13T00:00:28.382839Z",
+      "cachedAt": "2026-07-14T00:56:29.725898Z",
       "releases": [
+        {
+          "tagName": "v1.4.139-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.0",
+          "publishedAt": "2026-07-13T20:58:04Z",
+          "credits": {
+            "fsdwen": [
+              8554
+            ],
+            "brennanb2025": [
+              8505,
+              8522
+            ],
+            "AmethystLiang": [
+              8524,
+              8567,
+              8568,
+              8569
+            ],
+            "kaynansc": [
+              8418
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.138",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138",
+          "publishedAt": "2026-07-13T19:27:28Z",
+          "credits": {
+            "AmethystLiang": [
+              6159,
+              8030,
+              8331,
+              8333,
+              8343,
+              8348,
+              8349,
+              8351,
+              8352,
+              8354,
+              8355,
+              8357,
+              8370,
+              8434,
+              8435,
+              8445,
+              8463,
+              8471,
+              8473,
+              8474,
+              8483,
+              8486,
+              8487,
+              8494,
+              8495,
+              8504,
+              8556,
+              8558,
+              8559,
+              8561
+            ],
+            "wolfiesch": [
+              6060
+            ],
+            "nwparker": [
+              8328,
+              8346,
+              8347,
+              8374,
+              8427,
+              8437,
+              8439
+            ],
+            "bbingz": [
+              7994,
+              8058,
+              8065,
+              8392
+            ],
+            "rodboev": [
+              7881,
+              7892
+            ],
+            "z116123123x": [
+              7788
+            ],
+            "gatsby74": [
+              7804,
+              8423
+            ],
+            "TopGrd": [
+              7927
+            ],
+            "myungjuice": [
+              8265
+            ],
+            "Jinwoo-H": [
+              8262
+            ],
+            "brennanb2025": [
+              5286,
+              6668,
+              7511,
+              8045,
+              8429,
+              8431,
+              8432,
+              8446,
+              8488,
+              8500
+            ],
+            "dbachko": [
+              7598
+            ],
+            "fsdwen": [
+              7542
+            ],
+            "xianjianlf2": [
+              7656
+            ],
+            "sonhyrd": [
+              8240
+            ],
+            "yuqi1991": [
+              8241
+            ],
+            "nikg24": [
+              8436
+            ],
+            "OrcaWin": [
+              8433
+            ],
+            "beiyonder": [
+              8358,
+              8361
+            ],
+            "ryush00": [
+              8339
+            ],
+            "Cainiaooo": [
+              8053
+            ],
+            "tmchow": [
+              8420
+            ],
+            "kaynansc": [
+              8430
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.138-rc.7",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.7",
+          "publishedAt": "2026-07-13T13:47:35Z",
+          "credits": {
+            "AmethystLiang": [
+              8495,
+              8556,
+              8558,
+              8559,
+              8561
+            ],
+            "brennanb2025": [
+              7511
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6",
+          "publishedAt": "2026-07-13T08:03:43Z",
+          "credits": {
+            "AmethystLiang": [
+              8445,
+              8463,
+              8471,
+              8473,
+              8474,
+              8483,
+              8486,
+              8487,
+              8494,
+              8504
+            ],
+            "beiyonder": [
+              8358,
+              8361
+            ],
+            "ryush00": [
+              8339
+            ],
+            "bbingz": [
+              8392
+            ],
+            "Cainiaooo": [
+              8053
+            ],
+            "brennanb2025": [
+              8431,
+              8488,
+              8500
+            ],
+            "tmchow": [
+              8420
+            ],
+            "kaynansc": [
+              8430
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.138-rc.4",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.4",
+          "publishedAt": "2026-07-13T01:40:32Z",
+          "credits": {
+            "AmethystLiang": [
+              8370,
+              8434
+            ],
+            "bbingz": [
+              8065
+            ],
+            "nwparker": [
+              8437,
+              8439
+            ],
+            "brennanb2025": [
+              5286,
+              8429,
+              8432,
+              8446
+            ],
+            "nikg24": [
+              8436
+            ],
+            "OrcaWin": [
+              8433
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3",
+          "publishedAt": "2026-07-13T00:31:47Z",
+          "credits": {
+            "myungjuice": [
+              8265
+            ],
+            "nwparker": [
+              8374,
+              8427
+            ],
+            "AmethystLiang": [
+              8030,
+              8435
+            ],
+            "Jinwoo-H": [
+              8262
+            ],
+            "brennanb2025": [
+              6668,
+              8045
+            ],
+            "dbachko": [
+              7598
+            ],
+            "fsdwen": [
+              7542
+            ],
+            "xianjianlf2": [
+              7656
+            ],
+            "gatsby74": [
+              8423
+            ],
+            "sonhyrd": [
+              8240
+            ],
+            "yuqi1991": [
+              8241
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
         {
           "tagName": "v1.4.138-rc.2",
           "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.2",
@@ -290774,11 +292540,247 @@
         "7927": {
           "tagName": "v1.4.138-rc.2",
           "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.2"
+        },
+        "8265": {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3"
+        },
+        "8374": {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3"
+        },
+        "8427": {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3"
+        },
+        "8030": {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3"
+        },
+        "8435": {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3"
+        },
+        "8262": {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3"
+        },
+        "6668": {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3"
+        },
+        "8045": {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3"
+        },
+        "7598": {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3"
+        },
+        "7542": {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3"
+        },
+        "7656": {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3"
+        },
+        "8423": {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3"
+        },
+        "8240": {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3"
+        },
+        "8241": {
+          "tagName": "v1.4.138-rc.3",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.3"
+        },
+        "8370": {
+          "tagName": "v1.4.138-rc.4",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.4"
+        },
+        "8434": {
+          "tagName": "v1.4.138-rc.4",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.4"
+        },
+        "8065": {
+          "tagName": "v1.4.138-rc.4",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.4"
+        },
+        "8437": {
+          "tagName": "v1.4.138-rc.4",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.4"
+        },
+        "8439": {
+          "tagName": "v1.4.138-rc.4",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.4"
+        },
+        "5286": {
+          "tagName": "v1.4.138-rc.4",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.4"
+        },
+        "8429": {
+          "tagName": "v1.4.138-rc.4",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.4"
+        },
+        "8432": {
+          "tagName": "v1.4.138-rc.4",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.4"
+        },
+        "8446": {
+          "tagName": "v1.4.138-rc.4",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.4"
+        },
+        "8436": {
+          "tagName": "v1.4.138-rc.4",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.4"
+        },
+        "8433": {
+          "tagName": "v1.4.138-rc.4",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.4"
+        },
+        "8445": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8463": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8471": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8473": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8474": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8483": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8486": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8487": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8494": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8504": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8358": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8361": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8339": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8392": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8053": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8431": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8488": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8500": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8420": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8430": {
+          "tagName": "v1.4.138-rc.6",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.6"
+        },
+        "8495": {
+          "tagName": "v1.4.138-rc.7",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.7"
+        },
+        "8556": {
+          "tagName": "v1.4.138-rc.7",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.7"
+        },
+        "8558": {
+          "tagName": "v1.4.138-rc.7",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.7"
+        },
+        "8559": {
+          "tagName": "v1.4.138-rc.7",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.7"
+        },
+        "8561": {
+          "tagName": "v1.4.138-rc.7",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.7"
+        },
+        "7511": {
+          "tagName": "v1.4.138-rc.7",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.138-rc.7"
+        },
+        "8554": {
+          "tagName": "v1.4.139-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.0"
+        },
+        "8505": {
+          "tagName": "v1.4.139-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.0"
+        },
+        "8522": {
+          "tagName": "v1.4.139-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.0"
+        },
+        "8524": {
+          "tagName": "v1.4.139-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.0"
+        },
+        "8567": {
+          "tagName": "v1.4.139-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.0"
+        },
+        "8568": {
+          "tagName": "v1.4.139-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.0"
+        },
+        "8569": {
+          "tagName": "v1.4.139-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.0"
+        },
+        "8418": {
+          "tagName": "v1.4.139-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.0"
         }
       }
     },
     "NVIDIA/SkillSpector": {
-      "cachedAt": "2026-07-13T00:00:28.382839Z",
+      "cachedAt": "2026-07-14T00:56:29.725898Z",
       "releases": [],
       "prToRelease": {}
     },

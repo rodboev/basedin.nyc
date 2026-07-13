@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="darkreader-lock" />
+<meta name="color-scheme" content="light dark" />
+<title>SimpleClosure: Project Structure</title>
+<link rel="stylesheet" href="../style.css?v=52940991">
+</head>
+<body class="pr">
+<div class="top-row">
+  <h1><a class="back-link" href="../docs/"><svg viewBox="0 0 16 16" width="1em" height="1em"><path d="M10 2L4 8l6 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>SimpleClosure: Project Structure</h1>
+</div>
+
+<main class="doc-page">
+<p class="subtitle">Architecture, PR history, and file-by-file breakdown of the TMDB take-home at <a href="https://github.com/rodboev/simpleclosure">github.com/rodboev/simpleclosure</a>.</p>
+
+<div class="landscape-row" data-doc-nav>
+  <h2>Sections</h2>
+  <div class="sort-pills">
+    <button class="sort-pill active" data-target="overview" type="button">Overview</button>
+    <button class="sort-pill" data-target="layers" type="button">Layers</button>
+    <button class="sort-pill" data-target="prs" type="button">PRs</button>
+    <button class="sort-pill" data-target="files" type="button">Files</button>
+    <button class="sort-pill" data-target="tests" type="button">Tests</button>
+    <button class="sort-pill" data-target="config" type="button">Config</button>
+  </div>
+</div>
+
+<h2 class="doc-nav-target" id="overview">How the app works</h2>
+<div class="card">
+  <p>A movie discovery app built on Next.js 16. The server fetches 20 movies from TMDB's <code>/discover/movie</code> endpoint, normalizes them into app types, and sends rendered HTML to the browser. The client shows a responsive poster grid with genre filtering (round-trips to the server) and sort controls (reorders locally, no network). A hover/focus overlay reveals each movie's overview. The whole thing runs dark because poster art is composed for dark backgrounds.</p>
+</div>
+<div class="card">
+  <h3>Request lifecycle</h3>
+  <ol>
+    <li>Browser requests <code>/?genre=science-fiction</code></li>
+    <li><code>page.tsx</code> (server component) resolves the slug to a TMDB genre id</li>
+    <li><code>tmdb.ts</code> fetches <code>/discover/movie?with_genres=878&amp;api_key=...</code> and maps raw results to <code>Movie[]</code></li>
+    <li><code>page.tsx</code> passes normalized movies, genres, and the selected slug to <code>DiscoverView</code></li>
+    <li><code>DiscoverView</code> (client component) sorts the array in state and renders through <code>MovieGrid</code> → <code>MovieCard</code></li>
+    <li>Genre change: <code>router.push</code> inside <code>startTransition</code>, server refetches, grid dims during the wait</li>
+    <li>Sort change: local <code>useState</code> flip, array re-sorted from props, zero network</li>
+  </ol>
+</div>
+<div class="card">
+  <h3>Data flow in MVC terms</h3>
+  <table>
+    <tr><td><strong>Model</strong></td><td><code>tmdb.ts</code></td><td>Owns all data access and normalization. Talks to the external API, maps responses into <code>Movie</code> and <code>Genre</code> types. The only file that knows TMDB's field names.</td></tr>
+    <tr><td><strong>Controller</strong></td><td><code>page.tsx</code></td><td>Receives the request (URL search params), calls the model, resolves and redirects non-canonical URLs, passes clean data to the view.</td></tr>
+    <tr><td><strong>View</strong></td><td><code>DiscoverView</code>, <code>MovieGrid</code>, <code>MovieCard</code></td><td>Receives typed props and renders. <code>DiscoverView</code> owns the sort state and genre navigation; the grid and cards are stateless.</td></tr>
+  </table>
+</div>
+
+<h2 class="doc-nav-target" id="layers">Architectural layers</h2>
+<div class="card">
+  <h3>Data layer: <code>src/lib/tmdb.ts</code></h3>
+  <p>Server-only. Imports <code>server-only</code> on line 1, which makes any client-side import a build error. Contains:</p>
+  <ul>
+    <li><strong>Type definitions:</strong> <code>Movie</code> (the app's normalized shape), <code>Genre</code> (id + name + slug), <code>RawMovie</code> (what TMDB actually sends, all fields optional except id)</li>
+    <li><strong><code>tmdbFetch&lt;T&gt;</code>:</strong> generic fetcher that reads the API key from <code>process.env</code>, constructs the URL, throws on missing key or non-OK response</li>
+    <li><strong><code>mapMovie</code>:</strong> normalizes one raw TMDB result into a <code>Movie</code>. Defaults absent titles to "Untitled", absent ratings/vote counts to 0, empty strings and nulls are distinguished (<code>releaseDate: raw.release_date || null</code>)</li>
+    <li><strong><code>posterUrl</code>:</strong> builds a full image URL from a poster path, returns null for missing posters. Exported because tests use it</li>
+    <li><strong><code>fetchDiscover</code>:</strong> fetches one page of movies, optionally filtered by genre id</li>
+    <li><strong><code>fetchGenres</code>:</strong> fetches the genre list, slugifies each name, deduplicates collisions by appending the genre id. Caches for 24 hours via <code>{ next: { revalidate: 86400 } }</code></li>
+    <li><strong><code>slugify</code>:</strong> lowercases, replaces non-alphanumeric runs with hyphens, trims leading/trailing hyphens</li>
+  </ul>
+  <p>The boundary is greppable: searching <code>src</code> for <code>poster_path</code>, <code>vote_average</code>, or <code>image.tmdb.org</code> hits only this file, its tests, and the captured fixtures.</p>
+</div>
+<div class="card">
+  <h3>Logic layer: <code>src/lib/sort.ts</code></h3>
+  <p>A pure function. Takes <code>Movie[]</code>, a sort key (<code>"rating"</code> or <code>"releaseDate"</code>), and a direction. Returns a new sorted array. Fourteen lines. Three behaviors beyond basic sorting:</p>
+  <ul>
+    <li>Copies before sorting: <code>[...movies].sort()</code>. In-place sort returns the same reference; React skips the re-render.</li>
+    <li>Ties break by vote count descending. Two movies rated 6.4: the one with 4,000 votes ranks above the one with 900.</li>
+    <li>Null release dates sink to the bottom regardless of sort direction.</li>
+  </ul>
+</div>
+<div class="card">
+  <h3>Page layer: <code>src/app/page.tsx</code></h3>
+  <p>An async server component. Does three things:</p>
+  <ol>
+    <li>Reads <code>searchParams.genre</code> from the URL</li>
+    <li>Resolves it through <code>resolveGenre</code>: matches a slug against the fetched genre list, falls back to the default genre (sci-fi, id 878), and redirects anything non-canonical (numeric ids, case variants, repeated params, bare <code>/</code>) to the canonical slug URL</li>
+    <li>Fetches movies for the resolved genre and renders <code>DiscoverView</code></li>
+  </ol>
+</div>
+<div class="card">
+  <h3>Component layer</h3>
+  <p><strong><code>DiscoverView.tsx</code></strong> is the only <code>"use client"</code> component in the app besides <code>error.tsx</code>. It owns:</p>
+  <ul>
+    <li>Genre <code>&lt;select&gt;</code> that navigates via <code>router.push</code> inside a <code>useTransition</code></li>
+    <li>Sort key <code>&lt;select&gt;</code> and direction toggle button, both in <code>useState</code></li>
+    <li>Pending state: dims the grid to 50% opacity with <code>aria-busy</code> during genre refetch</li>
+    <li>Calls <code>sortMovies</code> on every render with the current key/direction</li>
+  </ul>
+
+  <p><strong><code>MovieGrid.tsx</code></strong> is stateless. Renders an <code>&lt;ul&gt;</code> of <code>MovieCard</code>s, or an empty-state message if the array is empty. Grid layout: 2 columns below 500px, 3 columns at 500px, <code>auto-fill</code> with 9rem minimum above 640px.</p>
+
+  <p><strong><code>MovieCard.tsx</code></strong> is stateless. One <code>&lt;li&gt;</code> per movie:</p>
+  <ul>
+    <li>Poster via <code>next/image</code> with responsive <code>sizes</code>, or a styled placeholder for null posters (<code>role="img"</code> with <code>aria-label</code>)</li>
+    <li>Color-coded rating badge: emerald at 7+, amber 5-6.9, red below 5. Hidden when <code>voteCount === 0</code>.</li>
+    <li>Hover/focus overlay with blurred scrim showing the overview, clamped to 9 lines</li>
+    <li>Lift animation on hover/focus, respects <code>prefers-reduced-motion</code></li>
+    <li>Title (never truncated) and release year below the poster</li>
+  </ul>
+</div>
+<div class="card">
+  <h3>Shell</h3>
+  <ul>
+    <li><strong><code>layout.tsx</code>:</strong> Geist Sans and Geist Mono fonts, dark body (<code>bg-zinc-950 text-zinc-100</code>), antialiased</li>
+    <li><strong><code>globals.css</code>:</strong> Tailwind v4 import, dark <code>color-scheme</code>, font-family set to the Geist variable</li>
+    <li><strong><code>loading.tsx</code>:</strong> pulse-animated skeleton matching the grid layout. Shows on initial cold load only; genre switches keep the current page visible.</li>
+    <li><strong><code>error.tsx</code>:</strong> client component with a retry button. <code>tmdbFetch</code> throws on non-OK responses; Next's error boundary catches it here.</li>
+  </ul>
+</div>
+
+<h2 class="doc-nav-target" id="prs">PR-by-PR breakdown</h2>
+<div class="card">
+  <p>Six PRs, each merged independently to <code>main</code>. Two commits landed directly on main after the last merge (README tightening and an iPhone overlay fix). Everything was built on July 1, 2026.</p>
+</div>
+<div class="card">
+  <h3>PR #6: Scaffold and run contract</h3>
+  <p>4 commits. <code>create-next-app</code> with strict TypeScript and Tailwind, stripped to an empty shell. The key decision: <code>npm start</code> is remapped to <code>next dev</code> because the brief's contract is <code>npm i && npm start</code>, and the default <code>next start</code> errors without a prior <code>next build</code>. The TMDB API key is committed to <code>.env</code> with a comment explaining why (free-tier key, arrived in plaintext, zero-setup contract). README decision log starts here.</p>
+  <table>
+    <tr><td><code>9f14ad2</code></td><td>Scaffold Next.js app with strict TypeScript and Tailwind, stripped to an app shell</td></tr>
+    <tr><td><code>e29db64</code></td><td>Remap npm start to next dev so the brief's literal run contract succeeds</td></tr>
+    <tr><td><code>de5e14e</code></td><td>Commit the TMDB key so a fresh clone runs with zero setup</td></tr>
+    <tr><td><code>438810e</code></td><td>Start the README decision log with the run-contract and key decisions</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h3>PR #7: TMDB data layer</h3>
+  <p>6 commits. Builds <code>tmdb.ts</code>: the generic fetcher, the <code>mapMovie</code> normalizer, <code>fetchDiscover</code>, <code>fetchGenres</code>. Adds <code>server-only</code> as a direct dependency (not leaning on Next's internal alias). Renders discover results through the data layer with <code>error.tsx</code> as the error boundary. Captures three test fixtures from live TMDB responses and writes <code>tmdb.test.ts</code>. Adds dev fetch logging so filter params are inspectable in the terminal.</p>
+  <table>
+    <tr><td><code>c9d7dfa</code></td><td>Add a TMDB data layer that owns the external contract end to end</td></tr>
+    <tr><td><code>569e4cc</code></td><td>Render discover results through the data layer with a retryable error boundary</td></tr>
+    <tr><td><code>6f0da84</code></td><td>Log outgoing fetches in dev so the filter params are inspectable</td></tr>
+    <tr><td><code>7afcb5c</code></td><td>Test the data layer against fixtures captured from live TMDB responses</td></tr>
+    <tr><td><code>3bb6320</code></td><td>Record the data-layer ownership decision in the README</td></tr>
+    <tr><td><code>fa449c1</code></td><td>Declare server-only as a direct dependency instead of leaning on Next's internal alias</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h3>PR #8: Grid and cards</h3>
+  <p>10 commits. The longest PR, covering the visual layer. Builds <code>MovieCard</code> with poster, rating badge, title, year, and the hover overlay. Iterates on the overlay scrim three times: first a blur, then a solid scrim (backdrop-filter caused halos at rounded corners), then back to blur with <code>-inset-1</code> to extend past the rounding. Migrates the gradient from Tailwind v3's <code>bg-gradient-to-t</code> to v4's <code>bg-linear-to-t</code>. Lets card titles wrap instead of truncating. Hides the rating badge when vote count is zero. Adds <code>MovieCard.test.tsx</code> and <code>MovieGrid.test.tsx</code>. Configures <code>next/image</code> to allow TMDB poster hosts.</p>
+  <table>
+    <tr><td><code>2540e47</code></td><td>Allow TMDB poster hosts through the image optimizer</td></tr>
+    <tr><td><code>54d3525</code></td><td>Commit the shell to a dark baseline suited to poster art</td></tr>
+    <tr><td><code>9f5f740</code></td><td>Render discover results as a grid of rating-badged poster cards</td></tr>
+    <tr><td><code>b961f72</code></td><td>Cover the card and grid rendering paths with component tests</td></tr>
+    <tr><td><code>54862a2</code></td><td>Record the card design decisions in the README</td></tr>
+    <tr><td><code>488cd7b</code></td><td>Blur the overview scrim so light posters can't wash out the text</td></tr>
+    <tr><td><code>1f97e4f</code></td><td>Replace the blurred scrim with a solid one; backdrop-filter halos at rounded corners</td></tr>
+    <tr><td><code>0c571fa</code></td><td>Rebuild the overlay scrim on Tailwind 4's gradient utility with blur behind it</td></tr>
+    <tr><td><code>5fd9ae7</code></td><td>Hide the rating badge on zero-vote titles; 0.0 is an absence, not a score</td></tr>
+    <tr><td><code>a16da7a</code></td><td>Let card titles wrap in full; truncation hides the thing being browsed</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h3>PR #9: Filter and sort controls</h3>
+  <p>4 commits. Adds <code>sort.ts</code> with the comparator, <code>DiscoverView.tsx</code> with genre select and sort controls, and their tests. The key design decision: genre filter goes to the API (changes which 20 movies you get), sort stays client-side (reorders the 20 you have). Client-side sort over TMDB's <code>sort_by</code> was deliberate: <code>vote_average.desc</code> across the full catalog surfaces movies with 3 votes rated 10.0.</p>
+  <table>
+    <tr><td><code>6364e5e</code></td><td>Sort client-side over the fetched page; catalog-wide sort_by surfaces junk</td></tr>
+    <tr><td><code>56d84a8</code></td><td>Add genre and sort controls; filter refetches through the URL, sort reorders locally</td></tr>
+    <tr><td><code>7c6fb27</code></td><td>Cover the control behaviors with component tests</td></tr>
+    <tr><td><code>2176c9c</code></td><td>Record the filter/sort asymmetry decision in the README</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h3>PR #10: Polish and proof</h3>
+  <p>6 commits. Accessibility and UX fixes: steps the grid to fixed 2/3-column tracks on phones (auto-fill lets cards balloon past 220px), adds an empty-state message, dims the grid during genre refetch via <code>useTransition</code>, lifts text to zinc-400 for AA contrast compliance (zinc-500 and zinc-600 miss 4.5:1 on this surface). Completes the README with the requirements trace table, non-goals, verification section, and next steps.</p>
+  <table>
+    <tr><td><code>1bc9237</code></td><td>Step the grid to fixed 2- and 3-column tracks below 640px</td></tr>
+    <tr><td><code>ef0b9d8</code></td><td>Show an empty state when a filter returns nothing</td></tr>
+    <tr><td><code>9a978f5</code></td><td>Dim the stale grid while a genre refetch is in flight</td></tr>
+    <tr><td><code>c8af542</code></td><td>Lift the year and placeholder text to zinc-400 for AA contrast</td></tr>
+    <tr><td><code>e3754c1</code></td><td>Complete the README as the decision log</td></tr>
+    <tr><td><code>eca9010</code></td><td>State the grep boundary precisely</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h3>PR #12: Genre slugs</h3>
+  <p>3 commits. Replaces numeric genre ids in the URL with human-readable slugs. <code>?genre=science-fiction</code> instead of <code>?genre=878</code>. The data layer generates slugs from genre names; <code>page.tsx</code> resolves slugs back to ids server-side. Any non-canonical URL (numeric id, case variant, repeated params, bare <code>/</code>) redirects to the canonical slug with a history replacement so Back works. Handles slug collisions (two names that slugify the same) by appending the genre id, and names with no alphanumeric characters by using the id as the slug.</p>
+  <table>
+    <tr><td><code>44e1345</code></td><td>Put genre slugs in the URL and redirect everything else to canonical</td></tr>
+    <tr><td><code>55f5295</code></td><td>Record the slug decision</td></tr>
+    <tr><td><code>981cf4b</code></td><td>Survive repeated genre params and colliding names</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h3>Post-merge commits on main</h3>
+  <table>
+    <tr><td><code>813a927</code></td><td>Tighten the decision log: state each choice directly and cut the rhetorical contrasts</td></tr>
+    <tr><td><code>dadb5ab</code></td><td>Show overlay on click so it also shows on iPhone when tapping</td></tr>
+  </table>
+</div>
+
+<h2 class="doc-nav-target" id="files">File-by-file details</h2>
+<div class="card">
+  <h3><code>src/lib/tmdb.ts</code> (102 lines)</h3>
+  <p>The model. Every TMDB interaction goes through this file.</p>
+  <ul>
+    <li><strong>Lines 1:</strong> <code>import "server-only"</code>. A build-time constraint: if a client component imports this file, the build fails. Without it, <code>process.env.TMDB_API_KEY</code> would be <code>undefined</code> on the client (env vars without the <code>NEXT_PUBLIC_</code> prefix aren't exposed), and the fetch would fail with a confusing runtime error. This makes it a compile error instead.</li>
+    <li><strong>Lines 7-21:</strong> Three type definitions. <code>Movie</code> is the app's type; all seven fields have explicit types (no optional fields, nulls are explicit). <code>Genre</code> adds a <code>slug</code> field that TMDB doesn't have. <code>RawMovie</code> mirrors TMDB's response shape with everything optional except <code>id</code>.</li>
+    <li><strong>Lines 33-35:</strong> <code>posterUrl()</code>. Builds <code>https://image.tmdb.org/t/p/w342/path.jpg</code> from a poster path, or returns null. Exported for testing.</li>
+    <li><strong>Lines 37-47:</strong> <code>mapMovie()</code>. The normalization function. Uses <code>??</code> for null/undefined defaults and <code>||</code> for empty-string-to-null conversion on <code>releaseDate</code>. The distinction matters: <code>overview ?? ""</code> keeps an empty string as-is but catches undefined; <code>release_date || null</code> treats both empty string and absent as null.</li>
+    <li><strong>Lines 49-68:</strong> <code>tmdbFetch&lt;T&gt;()</code>. Generic fetcher. Throws before the request if the API key is empty, and after if the response is non-OK. Accepts <code>RequestInit</code> for passing cache directives.</li>
+    <li><strong>Lines 70-77:</strong> <code>fetchDiscover()</code>. Adds <code>with_genres</code> only when a genre id is provided (null means "all genres"). Returns mapped <code>Movie[]</code>.</li>
+    <li><strong>Lines 79-84:</strong> <code>slugify()</code>. Private. Lowercases, replaces non-alphanumeric runs with hyphens, trims edge hyphens.</li>
+    <li><strong>Lines 86-102:</strong> <code>fetchGenres()</code>. Fetches the genre list, slugifies each name, deduplicates collisions with a <code>Set</code>. Falls back to the numeric id for names with no alphanumeric characters. The <code>revalidate: 86400</code> caches the genre list for a day.</li>
+  </ul>
+</div>
+<div class="card">
+  <h3><code>src/lib/sort.ts</code> (18 lines)</h3>
+  <p>A pure function with no imports beyond the <code>Movie</code> type.</p>
+  <ul>
+    <li>Exports <code>SortKey</code> (<code>"rating" | "releaseDate"</code>) and <code>SortDir</code> (<code>"asc" | "desc"</code>) as types so the view doesn't hardcode string literals.</li>
+    <li>The comparator handles rating sort and date sort in one function via a <code>key</code> parameter. A <code>flip</code> multiplier reverses direction.</li>
+    <li>Rating ties break by <code>b.voteCount - a.voteCount</code> (higher confidence first, regardless of sort direction).</li>
+    <li>Date sort: null dates go last via explicit null checks. Equal dates break by vote count. String comparison (<code>&lt;</code>) works because TMDB dates are ISO format (<code>YYYY-MM-DD</code>).</li>
+    <li>Returns <code>[...movies].sort()</code>: the spread copy is the entire reason this is its own function rather than an inline sort in the component.</li>
+  </ul>
+</div>
+<div class="card">
+  <h3><code>src/app/page.tsx</code> (45 lines)</h3>
+  <p>The controller. An <code>async</code> server component.</p>
+  <ul>
+    <li><strong><code>resolveGenre()</code>:</strong> takes the raw <code>searchParams.genre</code> (could be a string, an array, or undefined) and returns a <code>Genre | null</code>. Handles every degenerate input: arrays (takes the first element), numeric ids (looks up by id and redirects to the slug), case variants (lowercases before matching), <code>"all"</code> (returns null, meaning no genre filter), bare <code>/</code> or unknown values (redirects to the default genre). Every non-canonical path ends in a <code>redirect()</code> call.</li>
+    <li><strong><code>Home()</code>:</strong> awaits <code>searchParams</code> (a Promise in Next 16), fetches genres and movies, renders the heading and <code>DiscoverView</code>. The <code>await searchParams</code> is new in Next 16; previous versions passed params as a plain object.</li>
+  </ul>
+</div>
+<div class="card">
+  <h3><code>src/components/DiscoverView.tsx</code> (62 lines)</h3>
+  <p>The only interactive client component. Receives <code>movies</code>, <code>genres</code>, and <code>selectedGenre</code> as props from the server.</p>
+  <ul>
+    <li><strong>Genre select:</strong> controlled by the <code>selectedGenre</code> prop from the URL. <code>onChange</code> calls <code>router.push</code> inside <code>startTransition</code>. This triggers a server re-render; the grid dims to 50% via <code>isPending</code>.</li>
+    <li><strong>Sort controls:</strong> <code>sortKey</code> and <code>sortDir</code> in <code>useState</code>. Changing the sort property resets direction to descending. The direction button toggles asc/desc with an arrow character and a descriptive <code>aria-label</code>.</li>
+    <li><strong>Render:</strong> calls <code>sortMovies(movies, sortKey, sortDir)</code> on every render (no memoization; sorting 20 items is sub-millisecond). Passes the result to <code>MovieGrid</code>.</li>
+  </ul>
+</div>
+<div class="card">
+  <h3><code>src/components/MovieGrid.tsx</code> (16 lines)</h3>
+  <p>Stateless. If <code>movies.length === 0</code>, renders "No movies matched this filter." Otherwise renders a <code>&lt;ul&gt;</code> with responsive grid classes: <code>grid-cols-2</code> → <code>grid-cols-3</code> at 500px → <code>auto-fill minmax(9rem)</code> at 640px.</p>
+</div>
+<div class="card">
+  <h3><code>src/components/MovieCard.tsx</code> (68 lines)</h3>
+  <p>Stateless. Each card is an <code>&lt;li&gt;</code> with <code>tabIndex={0}</code> for keyboard focus.</p>
+  <ul>
+    <li><strong>Poster:</strong> <code>next/image</code> with <code>fill</code> layout and responsive <code>sizes</code> (<code>45vw</code> on phones, <code>30vw</code> on tablets, <code>220px</code> on desktop). Null posters render a <code>&lt;div role="img"&gt;</code> with the movie title as placeholder text.</li>
+    <li><strong>Rating badge:</strong> positioned top-right with <code>absolute</code>. Color set by <code>ratingTone()</code>: <code>&gt;= 7</code> is emerald, <code>&gt;= 5</code> is amber, below 5 is red. Uses Tailwind color classes, not inline styles. Hidden entirely when <code>voteCount</code> is 0. A <code>data-tone</code> attribute makes the threshold testable.</li>
+    <li><strong>Overlay:</strong> <code>absolute -inset-1</code> (extends 1px past the card to avoid rounding gaps). <code>bg-linear-to-t</code> gradient from 85% opacity to 50% with <code>backdrop-blur-sm</code>. Opacity transitions on hover and focus. <code>motion-safe:</code> prefix respects reduced motion. Overview text clamped to 9 lines.</li>
+    <li><strong>Title/year:</strong> title is an <code>&lt;h2&gt;</code> (never truncated). Year extracted with <code>releaseDate?.slice(0, 4)</code>; omitted when null.</li>
+    <li><strong>Lift:</strong> <code>-translate-y-1</code> on hover/focus. Also <code>motion-safe:</code> gated.</li>
+    <li><strong>Touch:</strong> <code>touch-manipulation</code> removes the 300ms delay on mobile. Post-merge commit <code>dadb5ab</code> added click-to-show for the overlay on iPhone (no hover event on touch devices).</li>
+  </ul>
+</div>
+<div class="card">
+  <h3><code>src/app/error.tsx</code> (15 lines)</h3>
+  <p>Client component (required for error boundaries). Shows "Something went wrong" with a retry button that calls <code>reset()</code>. Catches throws from <code>tmdbFetch</code>: missing API key, non-OK response, network failure.</p>
+</div>
+<div class="card">
+  <h3><code>src/app/loading.tsx</code> (17 lines)</h3>
+  <p>Route-level Suspense boundary. Renders pulse-animated skeleton cards matching the grid layout (20 placeholder cards). Shows on initial cold load only; once the page is hydrated, genre switches go through <code>useTransition</code> and the skeleton never re-appears.</p>
+</div>
+<div class="card">
+  <h3><code>src/app/layout.tsx</code> (16 lines)</h3>
+  <p>Root layout. Loads Geist Sans and Geist Mono via <code>next/font/google</code>. Sets the body to <code>bg-zinc-950 text-zinc-100</code> with <code>min-h-full flex flex-col</code> so the error/loading states can center vertically. Metadata: "Movie Discovery" title, description for Open Graph.</p>
+</div>
+<div class="card">
+  <h3><code>src/app/globals.css</code> (12 lines)</h3>
+  <p>Tailwind v4 setup: <code>@import "tailwindcss"</code> and an <code>@theme inline</code> block mapping <code>--font-sans</code> and <code>--font-mono</code> to the Geist CSS variables. Sets <code>color-scheme: dark</code> on <code>html</code>.</p>
+</div>
+
+<h2 class="doc-nav-target" id="tests">Test infrastructure</h2>
+<div class="card">
+  <h3>Stack</h3>
+  <p>Vitest as the runner, Testing Library for component rendering, jsdom for the DOM environment. No Playwright, no E2E. Visual behaviors (grid columns, overlay compositing, focus rings, reduced motion, refetch dimming) were verified manually in a real browser.</p>
+</div>
+<div class="card">
+  <h3>Test files</h3>
+  <table>
+    <tr><td><code>tmdb.test.ts</code></td><td>150 lines</td><td>4 describe blocks: request building (4 tests), response mapping (4 tests), posterUrl (2 tests), fetchGenres (3 tests). Runs in Node (no jsdom).</td></tr>
+    <tr><td><code>sort.test.ts</code></td><td>45 lines</td><td>7 tests. Four hand-built movies with deliberate ratings, dates, and vote counts. Tests full ordering, tie-breaking, null handling, immutability.</td></tr>
+    <tr><td><code>MovieCard.test.tsx</code></td><td>65 lines</td><td>6 tests. Renders through the real mapping layer. Covers poster/placeholder, badge thresholds, badge hiding, year omission, overlay CSS classes.</td></tr>
+    <tr><td><code>MovieGrid.test.tsx</code></td><td>20 lines</td><td>2 tests. 20 cards from fixture, empty-state message.</td></tr>
+    <tr><td><code>DiscoverView.test.tsx</code></td><td>60 lines</td><td>5 tests. Mocks <code>next/navigation</code>. Verifies genre navigation, sort ordering, zero-network sort, direction reset.</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h3>Fixtures</h3>
+  <table>
+    <tr><td><code>discover.json</code></td><td>A full 20-movie page of sci-fi results captured from the live TMDB API</td></tr>
+    <tr><td><code>discover-sparse.json</code></td><td>A page with null posters, empty release dates, zero votes, empty overviews, and non-Latin titles</td></tr>
+    <tr><td><code>genres.json</code></td><td>The full 19-genre list</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h3>Test helpers</h3>
+  <p><strong><code>src/test/data.ts</code>:</strong> a <code>throughDataLayer</code> function that stubs <code>fetch</code> with a fixture, runs it through the real <code>fetchDiscover</code>/<code>fetchGenres</code>, and unstubs. This means component tests consume movies that have been through <code>mapMovie</code>, not hand-built objects. If the mapper changes, every component test picks up the new shape automatically.</p>
+  <p><strong><code>src/test/server-only.ts</code>:</strong> a no-op module that Vitest aliases in place of the real <code>server-only</code> package. The real package throws outside a React Server environment, which is correct in the app build and wrong in a test runner.</p>
+  <p><strong><code>src/test/setup.ts</code>:</strong> imports <code>@testing-library/jest-dom/vitest</code> for matchers like <code>toBeInTheDocument()</code> and <code>toHaveAttribute()</code>.</p>
+</div>
+<div class="card">
+  <h3>Mocking strategy</h3>
+  <p><code>fetch</code> is replaced globally via <code>vi.stubGlobal("fetch", mock)</code> with a <code>vi.fn()</code> that returns the fixture. <code>afterEach</code> calls <code>vi.unstubAllGlobals()</code> to restore it. Mocking is at the network boundary; everything above (<code>tmdbFetch</code>, <code>mapMovie</code>, <code>fetchDiscover</code>) runs for real. <code>DiscoverView.test.tsx</code> mocks <code>next/navigation</code> via <code>vi.mock</code> to capture <code>router.push</code> calls.</p>
+</div>
+
+<h2 class="doc-nav-target" id="config">Configuration</h2>
+<div class="card">
+  <h3><code>next.config.ts</code></h3>
+  <p>Two settings: <code>images.remotePatterns</code> allows <code>image.tmdb.org/t/p/**</code> through the image optimizer, and <code>logging.fetches.fullUrl</code> prints full fetch URLs in the dev server terminal (helpful for verifying that <code>with_genres</code> and <code>api_key</code> params are set correctly).</p>
+</div>
+<div class="card">
+  <h3><code>vitest.config.ts</code></h3>
+  <p>Three important settings: <code>@vitejs/plugin-react</code> for JSX transforms in tests, a <code>resolve.alias</code> that maps <code>server-only</code> to the no-op stub and <code>@</code> to <code>src/</code>, and <code>test.environment: "node"</code> as the default (component tests override with <code>// @vitest-environment jsdom</code> per-file).</p>
+</div>
+<div class="card">
+  <h3><code>tsconfig.json</code></h3>
+  <p><code>strict: true</code>, <code>jsx: "react-jsx"</code>, <code>moduleResolution: "bundler"</code>. Path alias <code>@/*</code> maps to <code>./src/*</code>. Targets ES2017.</p>
+</div>
+<div class="card">
+  <h3><code>.env</code></h3>
+  <p>Contains the TMDB API key in plaintext. Committed intentionally: the key came in plaintext with the assignment, it's free-tier, and requiring manual env setup would break the zero-setup contract. No <code>NEXT_PUBLIC_</code> prefix, so it stays server-side.</p>
+</div>
+<div class="card">
+  <h3><code>package.json</code> scripts</h3>
+  <table>
+    <tr><td><code>dev</code></td><td><code>next dev</code></td><td>Standard dev server</td></tr>
+    <tr><td><code>build</code></td><td><code>next build</code></td><td>Production build</td></tr>
+    <tr><td><code>start</code></td><td><code>next dev</code></td><td>Remapped to dev for zero-setup run contract</td></tr>
+    <tr><td><code>start:prod</code></td><td><code>next build && next start</code></td><td>Full production mode</td></tr>
+    <tr><td><code>lint</code></td><td><code>eslint</code></td><td>ESLint with Next.js core web vitals + TypeScript rules</td></tr>
+    <tr><td><code>test</code></td><td><code>vitest run</code></td><td>Runs all tests once (no watch mode)</td></tr>
+  </table>
+</div>
+<div class="card">
+  <h3>Dependencies</h3>
+  <p><strong>Runtime (4):</strong> <code>next</code> 16.2.10, <code>react</code> 19.2.4, <code>react-dom</code> 19.2.4, <code>server-only</code> 0.0.1.</p>
+  <p><strong>Dev (10):</strong> Tailwind v4 (<code>@tailwindcss/postcss</code>), Testing Library (<code>@testing-library/jest-dom</code>, <code>@testing-library/react</code>), Vitest (<code>vitest</code>, <code>@vitejs/plugin-react</code>, <code>jsdom</code>), TypeScript 5, ESLint 9 with <code>eslint-config-next</code>, and type packages for Node/React.</p>
+  <p>No state management library, no routing library beyond Next's built-in, no CSS-in-JS, no component library. The entire app is four runtime dependencies.</p>
+</div>
+
+<p class="footer">Written July 5, 2026.</p>
+</main>
+<script src="doc-nav.js"></script>
+<script src="../assets/script.js?v=20260609u"></script>
+</body>
+</html>

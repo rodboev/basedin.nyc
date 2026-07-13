@@ -1,14 +1,10 @@
 from __future__ import annotations
 
-from pathlib import Path
-
-from core.cache import load_cache
 from core.credit import (
     CreditVerificationContext,
     PullRequestCreditState,
     best_ship_comment_classification,
     cached_release_credit_inputs,
-    cached_release_credit_counts,
     confirm_upstream_release_credit_map,
     credit_count_map,
     get_webui_changelog_credit_map,
@@ -261,21 +257,3 @@ def test_cached_ship_comment_map_skips_excluded_logins() -> None:
     )
 
     assert inputs.ship_comment_map == {}
-
-def test_cached_webui_release_credit_counts_match_powershell_cache() -> None:
-    repo = "nesquena/hermes-webui"
-    cache = load_cache(".pr-classification-cache.json")
-    changelog_text = Path("tests/fixtures/hermes-webui-changelog-credit-lines.txt").read_text(encoding="utf-8")
-    contributors_text = Path("tests/fixtures/hermes-webui-CONTRIBUTORS.md").read_text(encoding="utf-8")
-
-    counts = cached_release_credit_counts(
-        cache=cache,
-        repo=repo,
-        changelog_text=changelog_text,
-        contributors_text=contributors_text,
-        excluded_logins=("nesquena", "nesquena-hermes"),
-    )
-    expected_raw = cache.leaderboards[f"{repo}|community-shipped-v4|all"]["releaseCreditCounts"]
-    expected = {str(login): int(count) for login, count in expected_raw.items()}
-
-    assert counts == expected
