@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 
 from core.classify import ClassificationResult
 from core.github import GhPullRequestView
+from core.repos import canonical_repo
 
 EASTERN = ZoneInfo("America/New_York")
 CLASSIFICATION_STATUS_META: dict[str, tuple[str, str, str]] = {
@@ -103,14 +104,6 @@ class ReportBarItem:
 
 
 @dataclass(frozen=True)
-class ReportStatusRow:
-    label: str
-    tag_class: str
-    count: int
-    details: str
-
-
-@dataclass(frozen=True)
 class RepresentativeItem:
     number: int
     url: str
@@ -158,7 +151,7 @@ def parse_representative_readme(readme_text: str) -> list[RepresentativeItem]:
             desc = _REPRESENTATIVE_RELEASE_SUFFIX.sub("", desc)
         desc = _MARKDOWN_LINK.sub(r'<a href="\2">\1</a>', desc).rstrip()
         repo_match = _PULL_URL_REPO.search(url)
-        repo = repo_match.group(1) if repo_match else ""
+        repo = canonical_repo(repo_match.group(1)) if repo_match else ""
         items.append(
             RepresentativeItem(
                 number=number,
@@ -490,23 +483,6 @@ def default_status_filter_dicts(counts: ReportCounts) -> list[dict[str, object]]
     ]
 
 
-def repo_status_rows(items: Iterable[PrReportItem]) -> list[ReportStatusRow]:
-    item_list = list(items)
-    counts = Counter(item.classification for item in item_list)
-    has_cherry_pick = any(item.evidenceKind == "timeline" for item in item_list)
-    has_indirect = any(item.evidenceKind == "accepted-indirect" or item.classification == "accepted-indirect" for item in item_list)
-    shipped_desc = _shipped_details(has_cherry_pick=has_cherry_pick, has_indirect=has_indirect)
-
-    rows: list[ReportStatusRow] = []
-    for status in ("shipped", "open", "superseded", "lost"):
-        count = counts["shipped"] + counts["accepted-indirect"] if status == "shipped" else counts[status]
-        if count == 0 and status not in {"shipped", "open"}:
-            continue
-        label, tag, desc = CLASSIFICATION_STATUS_META[status]
-        rows.append(ReportStatusRow(label=label, tag_class=tag, count=count, details=shipped_desc if status == "shipped" else desc))
-    return rows
-
-
 def _parse_datetime(value: str) -> datetime | None:
     if not value:
         return None
@@ -522,16 +498,6 @@ def _parse_datetime(value: str) -> datetime | None:
 
 def _format_month_day(value: datetime) -> str:
     return f"{value.strftime('%b')} {value.day}"
-
-
-def _shipped_details(*, has_cherry_pick: bool, has_indirect: bool) -> str:
-    if has_cherry_pick and has_indirect:
-        return "Merged, cherry-picked, and release-credited"
-    if has_cherry_pick:
-        return "Merged and cherry-picked"
-    if has_indirect:
-        return "Merged and release-credited"
-    return "Merged"
 
 
 def _report_item_sort_datetime(item: PrReportItem) -> datetime:

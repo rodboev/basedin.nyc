@@ -12,7 +12,6 @@ from core.html import (
     ReportSanityInput,
     SortPill,
     StatCard,
-    StatusRow,
     collapse_caret,
     compact_script_json,
     generated_report_sanity_issues,
@@ -24,7 +23,6 @@ from core.html import (
     render_legend_items,
     render_pr_bootstrap_script,
     render_pr_table_shell,
-    render_repo_status_section,
     render_sort_pills,
     render_stat_grid,
     render_status_tag,
@@ -159,19 +157,6 @@ def test_bar_and_legend_render_existing_ids_and_data_attributes() -> None:
     )
     assert render_legend_items([LegendItem(key="alpha", label="Alpha", count=3)]) == (
         '  <div class="legend-item" id="bd-leg-alpha"><div class="legend-dot legend-dot-alpha"></div> Alpha (3)</div>\n'
-    )
-
-
-def test_repo_status_section_renders_existing_table_shape() -> None:
-    assert render_repo_status_section(
-        title="repo (2 PRs)",
-        rows=[StatusRow(label="Alpha", tag_class="tag-alpha", count=2, details="Merged")],
-    ) == (
-        "<h2>repo (2 PRs)</h2>\n"
-        '<table class="repo-status">\n'
-        "  <tr><th>Status</th><th>Count</th><th>Details</th></tr>\n"
-        '  <tr><td><span class="tag tag-alpha">Alpha</span></td><td>2</td><td>Merged</td></tr>\n'
-        "</table>\n"
     )
 
 

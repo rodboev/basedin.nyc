@@ -58,14 +58,6 @@ class LegendItem:
     count: int
 
 
-@dataclass(frozen=True)
-class StatusRow:
-    label: str
-    tag_class: str
-    count: int
-    details: str
-
-
 def generated_report_sanity_issues(report: ReportSanityInput, *, existing_output: str = "") -> list[str]:
     issues: list[str] = []
     if report.fetched_count == 0:
@@ -160,20 +152,6 @@ def render_legend_items(items: list[LegendItem]) -> str:
         for item in items
     ]
     return "\n".join(lines) + ("\n" if lines else "")
-
-
-def render_repo_status_section(*, title: str, rows: list[StatusRow]) -> str:
-    row_html = "".join(
-        f"  <tr><td>{render_tag(label=row.label, tag_class=row.tag_class)}</td>"
-        f"<td>{row.count}</td><td>{escape(row.details)}</td></tr>\n"
-        for row in rows
-    )
-    return (
-        f"<h2>{escape(title)}</h2>\n"
-        '<table class="repo-status">\n'
-        "  <tr><th>Status</th><th>Count</th><th>Details</th></tr>\n"
-        f"{row_html}</table>\n"
-    )
 
 
 def collapse_caret(*, up: bool) -> str:

@@ -7,14 +7,20 @@ Public contribution stats page for Rod Boev. Hosted at `basedin.nyc/pr-stats/`.
 `generate.py` is the single entry point. It fetches PR data from the GitHub API via the `gh` CLI, classifies closed PRs by reading maintainer comments and timelines (`core/classify.py`), builds per-repo community leaderboards with catch-up projections, and renders `index.html` from the Jinja2 shell in `template.html`. Does not open the output file.
 
 Supporting files:
-- `repos.txt`: active repo list, one `owner/repo` per line; `#` comments deactivate entries.
-- `core/`: typed modules. `classify.py` owns the classification ladder and every pattern; `credit.py` is the hermes-webui release-credit pipeline (CHANGELOG, Co-authored-by trailers, absorb-commit scan, ship-comment classifier); `leaderboard.py`, `report.py`, `page.py`, `timeline.py`, `cache.py`, `github.py`, `classification_rebuild.py`.
+- `repos.txt`: active repo list, one `owner/repo` per line; `#` comments deactivate entries. Entries may name a repo by a pre-transfer owner (`microsoft/presidio`); see Repo names below.
+- `core/`: typed modules. `classify.py` owns the classification ladder and every pattern; `credit.py` is the hermes-webui release-credit pipeline (CHANGELOG, Co-authored-by trailers, absorb-commit scan, ship-comment classifier); `repos.py` resolves repos.txt entries to canonical names and holds the display map; `leaderboard.py`, `report.py`, `page.py`, `timeline.py`, `cache.py`, `github.py`, `classification_rebuild.py`.
 - `.pr-classification-cache.json`: persistent cache of PR state, classifications, leaderboard stats, and release-credit metadata. Keyed by `repo#number` for PRs and `repo:leaderboard:*` for boards.
 - `template.html`: Jinja2 shell with nine slots; `render_report_page` validates the slot set in both directions.
 - `index.html`: generated output. Hand-edits are allowed for layout/style; backport to `template.html`/`core/page.py` only when explicitly asked.
 - `tests/`: pytest suite (offline by default; `-m live` selects live verifications such as `test_classification_parity_live.py`).
 
 Run `python -m pytest -q` and `C:\Apps\Python313\Scripts\mypy.exe --strict core generate.py` before calling work done.
+
+## Repo names
+
+`generate_report` resolves every repos.txt entry through `resolve_canonical_repos` (`gh api repos/<slug> --jq .full_name`) before any fetching, because GitHub's two APIs disagree about transfers: `gh api repos/...` and GraphQL `repository()` follow the redirect, but the search API's `repo:` qualifier does not and silently matches nothing. A transferred repo therefore built a full leaderboard while reporting zero author PRs (presidio, moved from `microsoft` to `data-privacy-stack`, 2026-07-14). An entry GitHub cannot resolve is a hard error, and two entries resolving to one repo is a hard error; a transient `gh` failure falls back to the name as written.
+
+Everything behind the page keys on the canonical name: cache keys, leaderboard entries, release data, classification. The page keys on the name as written in repos.txt, since the leaderboard trades on name recognition and the old owner is often the recognizable one. `core/repos.py` holds both directions: `display_repo` (canonical to as-written, used by `render_repo_link`) and `canonical_repo` (as-written to canonical, used when parsing repo names out of the representative README). Rename a repos.txt entry and its cache entries orphan; that is the intended cost of making repos.txt the display source.
 
 ## Classification (closed PRs for Rod's repos)
 

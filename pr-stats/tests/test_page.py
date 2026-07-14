@@ -9,14 +9,16 @@ from core.page import (
     leaderboard_idle_status,
     render_breakdown_section,
     render_leaderboard_section,
+    render_leaderboard_sections,
     render_pr_bootstrap,
     render_pr_controls_and_table,
     render_report_page,
-    render_repo_status_sections,
+    render_repo_matrix_section,
     render_representative_section,
     render_timeline_bootstrap,
 )
 from core.report import PrReportItem, ReportActivitySummary, ReportCounts, RepresentativeItem
+from core.repos import set_repo_display_names
 
 NOW = datetime(2026, 7, 2, 12, 0, tzinfo=timezone.utc)
 
@@ -76,17 +78,146 @@ def test_render_timeline_bootstrap_matches_injected_script_shape() -> None:
     )
 
 
-def test_render_repo_status_sections_orders_by_display_repos_and_skips_empty() -> None:
+def test_render_repo_matrix_orders_by_display_repos_and_skips_empty() -> None:
     items = [
         _item(number=1, repo="owner/alpha", classification="shipped", statusKey="shipped"),
         _item(number=2, repo="owner/beta", classification="open", statusKey="open"),
     ]
 
-    html = render_repo_status_sections(repos=["owner/beta", "owner/alpha", "owner/empty"], items=items)
+    html = render_repo_matrix_section(
+        repos=["owner/beta", "owner/alpha", "owner/empty"],
+        items=items,
+        cache=Cache(),
+        now=NOW,
+        author="rodboev",
+    )
 
-    assert html.index('<h2><a class="plain-link" href="https://github.com/owner/beta">owner/beta</a> (1 PRs)</h2>') < html.index('<h2><a class="plain-link" href="https://github.com/owner/alpha">owner/alpha</a> (1 PRs)</h2>')
+    assert '<table class="repo-matrix"' in html
+    assert html.index("owner/beta") < html.index("owner/alpha")
     assert "empty" not in html
-    assert '<table class="repo-status">' in html
+
+
+def test_render_repo_matrix_counts_totals_both_axes_and_dims_zero_cells() -> None:
+    items = [
+        _item(number=1, repo="owner/alpha", classification="shipped", statusKey="shipped"),
+        _item(number=2, repo="owner/alpha", classification="accepted-indirect", statusKey="shipped"),
+        _item(number=3, repo="owner/alpha", classification="lost", statusKey="lost"),
+        _item(number=4, repo="owner/beta", classification="open", statusKey="open"),
+    ]
+
+    html = render_repo_matrix_section(
+        repos=["owner/alpha", "owner/beta"],
+        items=items,
+        cache=Cache(),
+        now=NOW,
+        author="rodboev",
+    )
+
+    # alpha: 2 shipped (direct + indirect roll up), 0 open, 0 superseded, 1 lost, 3 total
+    assert '<td>2</td><td class="dim">0</td><td class="dim">0</td><td>1</td><td>3</td>' in html
+    # beta: 0 shipped, 1 open, 1 total
+    assert '<td class="dim">0</td><td>1</td><td class="dim">0</td><td class="dim">0</td><td>1</td>' in html
+    # Two repo rows, so the total lands on row 3 and keeps the odd-row stripe going.
+    assert (
+        '<tfoot><tr class="stripe"><td>Total</td><td>2</td><td>1</td><td>0</td><td>1</td>'
+        "<td>4</td><td></td><td></td></tr></tfoot>"
+    ) in html
+
+
+def test_render_repo_matrix_drops_total_stripe_when_it_lands_on_an_even_row() -> None:
+    items = [_item(number=1, repo="owner/alpha", classification="shipped", statusKey="shipped")]
+
+    html = render_repo_matrix_section(
+        repos=["owner/alpha"], items=items, cache=Cache(), now=NOW, author="rodboev",
+    )
+
+    # One repo row, so the total is row 2: even, and the zebra sequence skips it.
+    assert "<tfoot><tr><td>Total</td>" in html
+    assert 'class="stripe"' not in html
+
+
+def test_render_repo_matrix_heads_status_columns_with_two_tone_pills() -> None:
+    items = [_item(number=1, repo="owner/repo", classification="shipped", statusKey="shipped")]
+
+    html = render_repo_matrix_section(
+        repos=["owner/repo"], items=items, cache=Cache(), now=NOW, author="rodboev",
+    )
+
+    assert '<th><span class="tag tag-shipped">Shipped</span></th>' in html
+    assert '<th><span class="tag tag-open">Open</span></th>' in html
+    assert '<th><span class="tag tag-superseded">Superseded</span></th>' in html
+    assert '<th><span class="tag tag-lost">Lost</span></th>' in html
+    assert "<h2>Repos</h2>" not in html
+
+
+def test_render_repo_matrix_joins_rank_over_field_with_rate_last() -> None:
+    cache = _leaderboard_cache(
+        {
+            "alice": {"total": 30, "open": 0, "recentCount": 0, "lastCreatedAt": ""},
+            "rodboev": {"total": 5, "open": 0, "recentCount": 14, "lastCreatedAt": "2026-07-02T00:00:00Z"},
+        },
+        shipped_counts={"alice": 30, "rodboev": 1},
+    )
+    items = [_item(number=1, repo="owner/repo", classification="shipped", statusKey="shipped")]
+
+    html = render_repo_matrix_section(
+        repos=["owner/repo"], items=items, cache=cache, now=NOW, author="rodboev",
+    )
+
+    assert "<th>Total</th><th>Rank</th><th>Rate (7d)</th>" in html
+    # Rank reads "2/2" with no pound sign; the slash is its own span so its gap is CSS-tunable.
+    assert (
+        '<td>1</td><td><span class="rank-place">2</span><span class="rank-sep">/</span>'
+        '<span class="rank-field">2</span></td><td>2/d</td>'
+    ) in html
+
+
+def test_render_repo_matrix_sizes_rank_halves_to_the_widest_values() -> None:
+    boards = {}
+    for short, peers, mine in (("alpha", 4, 1), ("beta", 1111, 900)):
+        stats = {f"u{n}": {"total": 500 - n, "open": 0, "recentCount": 0, "lastCreatedAt": ""} for n in range(peers - 1)}
+        stats["rodboev"] = {"total": 500 - mine, "open": 0, "recentCount": 0, "lastCreatedAt": ""}
+        boards[f"owner/{short}|community-shipped-v4|all"] = {"stats": stats}
+    items = [
+        _item(number=1, repo="owner/alpha", classification="shipped", statusKey="shipped"),
+        _item(number=2, repo="owner/beta", classification="shipped", statusKey="shipped"),
+    ]
+
+    html = render_repo_matrix_section(
+        repos=["owner/alpha", "owner/beta"], items=items, cache=Cache(leaderboards=boards), now=NOW, author="rodboev",
+    )
+
+    # Widest rank is 3 digits, widest field is 4, so both halves reserve that many characters.
+    assert 'style="--rank-digits:3;--peer-digits:4"' in html
+
+
+def test_render_repo_matrix_leaves_standing_blank_without_cached_board() -> None:
+    items = [_item(number=1, repo="owner/repo", classification="shipped", statusKey="shipped")]
+
+    html = render_repo_matrix_section(
+        repos=["owner/repo"], items=items, cache=Cache(), now=NOW, author="rodboev",
+    )
+
+    # Total still renders; rank and rate stay empty.
+    assert "<td>1</td><td></td><td></td></tr>" in html
+
+
+def test_render_repo_matrix_labels_a_renamed_repo_as_written_in_repos_txt() -> None:
+    set_repo_display_names({"data-privacy-stack/presidio": "microsoft/presidio"})
+    items = [_item(number=1, repo="data-privacy-stack/presidio", classification="shipped", statusKey="shipped")]
+
+    html = render_repo_matrix_section(
+        repos=["data-privacy-stack/presidio"],
+        items=items,
+        cache=Cache(),
+        now=NOW,
+        author="rodboev",
+    )
+
+    assert '<a class="plain-link" href="https://github.com/microsoft/presidio">' in html
+    assert '<span class="repo-full">microsoft/presidio</span>' in html
+    assert '<span class="repo-short">presidio</span>' in html
+    assert "data-privacy-stack" not in html
 
 
 def test_leaderboard_idle_status_uses_ps1_ladder() -> None:
@@ -97,7 +228,7 @@ def test_leaderboard_idle_status_uses_ps1_ladder() -> None:
     assert leaderboard_idle_status(999) == ("dim", "Gone")
 
 
-def test_render_leaderboard_section_top_mode_statuses_and_projections() -> None:
+def test_render_leaderboard_section_top_mode_rows_and_projections() -> None:
     cache = _leaderboard_cache(
         {
             "alice": {"total": 30, "open": 0, "recentCount": 0, "lastCreatedAt": ""},
@@ -108,16 +239,22 @@ def test_render_leaderboard_section_top_mode_statuses_and_projections() -> None:
     )
     items = [_item(number=index, repo="owner/repo", classification="shipped", statusKey="shipped") for index in range(5)]
 
-    html = render_leaderboard_section(repo="owner/repo", items=items, cache=cache, now=NOW, author="rodboev")
+    html = render_leaderboard_section(
+        repo="owner/repo", items=items, cache=cache, now=NOW, author="rodboev", visible_entries=10,
+    )
 
-    assert '<h2><a class="plain-link" href="https://github.com/owner/repo">owner/repo</a> Community Leaderboard</h2>' in html
+    # The repo name is a plain h3 now; the "Community Leaderboards" h2 spans the whole grid.
+    assert '<h3><a class="plain-link" href="https://github.com/owner/repo">owner/repo</a></h3>' in html
+    assert "<h2>" not in html
     assert 'id="lb-repo" data-collapse-mode="top" data-visible-items="10" data-rows-per-item="1"' in html
     assert ' collapsed' not in html
     assert "expand-row" not in html
+    # Status returns as the sixth column; the two-column grid hides it in CSS, stacked shows it.
+    assert "<th>Rank</th><th>Contributor</th><th>Shipped</th><th>Open</th><th>Rate</th><th>Status</th></tr>" in html
     assert '  <tr data-rank="1"><td>#1</td><td><a href="https://github.com/alice">alice</a></td><td>30</td><td>0</td><td>0/d</td><td><span class="dim">Gone</span></td></tr>' in html
     assert '<td>2/d</td><td><span class="green">Active</span></td>' in html
     assert '<tr class="is-self" data-rank="3">' in html
-    assert "<summary>Projections (rodboev @ 1/day Rate (7d), rank #3)</summary>" in html
+    assert "<summary>Projections (rodboev @ 1/day Rate, rank #3)</summary>" in html
     assert "  <tr><td>alice</td><td>30 (+25)</td><td>0/d</td><td>25d (Jul 27)</td></tr>" in html
     assert '  <tr><td>bob</td><td>10 (+5)</td><td>2/d</td><td class="red">not at current rates</td></tr>' in html
 
@@ -131,7 +268,9 @@ def test_render_leaderboard_section_context_mode_centers_author_window() -> None
     cache = _leaderboard_cache(stats)
     items = [_item(number=1, repo="owner/repo", classification="shipped", statusKey="shipped")]
 
-    html = render_leaderboard_section(repo="owner/repo", items=items, cache=cache, now=NOW, author="rodboev")
+    html = render_leaderboard_section(
+        repo="owner/repo", items=items, cache=cache, now=NOW, author="rodboev", visible_entries=10,
+    )
 
     assert 'data-collapse-mode="context"' in html
     assert "data-visible-items" not in html
@@ -143,6 +282,21 @@ def test_render_leaderboard_section_context_mode_centers_author_window() -> None
     assert '<tr class="is-self" data-rank="15">' in html
     # Expand row lands after the last visible row of the context window.
     assert html.index('data-rank="15"') < html.index("expand-row")
+
+
+def test_render_leaderboard_section_shows_ten_rows_before_expanding_by_default() -> None:
+    stats = {
+        f"user{index:02d}": {"total": 40 - index, "open": 0, "recentCount": 0, "lastCreatedAt": ""}
+        for index in range(1, 16)
+    }
+    cache = _leaderboard_cache(stats)
+    items = [_item(number=1, repo="owner/repo", classification="shipped", statusKey="shipped")]
+
+    html = render_leaderboard_section(repo="owner/repo", items=items, cache=cache, now=NOW, author="rodboev")
+
+    assert 'data-visible-items="10" data-rows-per-item="1"' in html
+    # The expand row lands after rank 10, so ranks 11 and beyond start collapsed.
+    assert html.index('data-rank="10"') < html.index("expand-row") < html.index('data-rank="11"')
 
 
 def test_render_leaderboard_section_caps_display_and_labels_top_50() -> None:
@@ -159,6 +313,38 @@ def test_render_leaderboard_section_caps_display_and_labels_top_50() -> None:
     assert "Show top 50" in html
     assert 'data-rank="50"' in html
     assert 'data-rank="51"' not in html
+
+
+def test_render_leaderboard_sections_heads_the_grid_once_and_cells_each_board() -> None:
+    cache = Cache(
+        leaderboards={
+            f"owner/{short}|community-shipped-v4|all": {
+                "stats": {"alice": {"total": 30, "open": 0, "recentCount": 0, "lastCreatedAt": ""}},
+            }
+            for short in ("alpha", "beta")
+        },
+    )
+    items = [
+        _item(number=1, repo="owner/alpha", classification="shipped", statusKey="shipped"),
+        _item(number=2, repo="owner/beta", classification="shipped", statusKey="shipped"),
+    ]
+
+    html = render_leaderboard_sections(
+        repos=["owner/alpha", "owner/beta"], items=items, cache=cache, now=NOW, author="rodboev",
+    )
+
+    assert html.startswith('<h2>Community Leaderboards</h2>\n<div class="leaderboard-grid">')
+    assert html.count("<h2>") == 1
+    assert html.count('<div class="leaderboard-cell">') == 2
+    assert html.count("<h3>") == 2
+
+
+def test_render_leaderboard_sections_returns_empty_without_any_board() -> None:
+    items = [_item(number=1, repo="owner/repo", classification="shipped", statusKey="shipped")]
+
+    assert render_leaderboard_sections(
+        repos=["owner/repo"], items=items, cache=Cache(), now=NOW, author="rodboev",
+    ) == ""
 
 
 def test_render_leaderboard_section_returns_empty_without_cached_board() -> None:

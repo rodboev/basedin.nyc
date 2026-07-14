@@ -6,6 +6,7 @@ from pathlib import Path
 
 from core.classify import ClassificationResult
 from core.github import GhPullRequestView
+from core.repos import set_repo_display_names
 from core.report import (
     PrReportItem,
     RepresentativeItem,
@@ -26,7 +27,6 @@ from core.report import (
     report_item_from_pull_request_view,
     report_items_from_script_dicts,
     report_items_to_script_dicts,
-    repo_status_rows,
     scalar_value,
     sort_report_items_by_effective_date,
     sort_repos_by_accepted_count,
@@ -59,6 +59,18 @@ def test_parse_representative_readme_matches_ps1_block_parsing() -> None:
     assert first.releaseUrl == "https://github.com/nesquena/hermes-webui/releases/tag/v0.51.338"
     assert items[1].desc == "surfaces Copilot AI-credit estimates"
     assert items[1].release == ""
+
+
+def test_parse_representative_readme_folds_a_renamed_repo_url_onto_the_canonical_name() -> None:
+    set_repo_display_names({"data-privacy-stack/presidio": "microsoft/presidio"})
+    readme = (
+        "Representative merged PRs:\n"
+        "- [#2116](https://github.com/microsoft/presidio/pull/2116) — adds recognizer-level thresholds\n"
+    )
+
+    items = parse_representative_readme(readme)
+
+    assert items[0].repo == "data-privacy-stack/presidio"
 
 
 def test_enrich_representative_items_pulls_classification_release_and_via() -> None:
@@ -398,28 +410,6 @@ def test_report_bar_items_match_ps1_width_title_and_content_rules() -> None:
         ("lost", "Lost", 1, 12.5, "", "1"),
         ("open", "Open", 1, 12.5, "1", "1"),
     ]
-
-
-def test_repo_status_rows_match_ps1_rollup_and_details() -> None:
-    rows = repo_status_rows(
-        [
-            _item(number=1, classification="shipped", evidenceKind="direct-merge"),
-            _item(number=2, classification="accepted-indirect", evidenceKind="accepted-indirect"),
-            _item(number=3, classification="shipped", evidenceKind="timeline"),
-            _item(number=4, classification="open"),
-            _item(number=5, classification="lost"),
-        ],
-    )
-
-    assert [(row.label, row.tag_class, row.count, row.details) for row in rows] == [
-        ("Shipped", "tag-shipped", 3, "Merged, cherry-picked, and release-credited"),
-        ("Open", "tag-open", 1, "Pending review"),
-        ("Lost", "tag-lost", 1, "Maintainer-closed without acceptance"),
-    ]
-
-
-def test_repo_status_rows_keep_zero_shipped_and_open_rows() -> None:
-    assert [(row.label, row.count) for row in repo_status_rows([])] == [("Shipped", 0), ("Open", 0)]
 
 
 def test_report_breakdown_helpers_match_current_generated_index(repo_root: Path) -> None:

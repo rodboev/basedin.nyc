@@ -21,7 +21,6 @@ from core.leaderboard import (
 )
 from core.models import Cache
 from core.report import repo_label
-from core.timeline import load_active_repos_from_text
 
 
 def test_leaderboard_bot_detection() -> None:
@@ -385,7 +384,9 @@ def test_cached_leaderboard_rows_match_all_rendered_ps1_boards(repo_root: Path) 
     html_path = repo_root / "index.html"
     cache = load_cache(cache_path)
     html = html_path.read_text(encoding="utf-8")
-    repos = load_active_repos_from_text((repo_root / "repos.txt").read_text(encoding="utf-8"))
+    # Boards key on the canonical repo name, which repos.txt need not spell (it may name a
+    # repo by its pre-transfer owner), so take the names the page itself rendered from.
+    repos = sorted({str(item["repo"]) for item in _pr_data(html)})
     repo_by_label = {repo_label(repo): repo for repo in repos}
     repo_by_label.update({repo.rsplit("/", 1)[-1]: repo for repo in repos})
 
@@ -442,10 +443,15 @@ def _tie_groups(rows: list[tuple[str, int, int]]) -> list[tuple[int, int, frozen
         groups.append((credited, open_count, frozenset(logins)))
     return groups
 
-def _author_repo_counts_from_html(html: str, repo: str) -> tuple[int, int]:
+def _pr_data(html: str) -> list[dict[str, object]]:
     match = re.search(r"var PR_DATA = (\[.*?\]);", html, re.S)
     assert match is not None
-    items = json.loads(match.group(1))
+    items: list[dict[str, object]] = json.loads(match.group(1))
+    return items
+
+
+def _author_repo_counts_from_html(html: str, repo: str) -> tuple[int, int]:
+    items = _pr_data(html)
     credited = sum(1 for item in items if item.get("repo") == repo and item.get("statusKey") == "shipped")
     open_count = sum(1 for item in items if item.get("repo") == repo and item.get("statusKey") == "open")
     return credited, open_count

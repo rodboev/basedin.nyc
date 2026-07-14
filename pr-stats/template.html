@@ -5,9 +5,9 @@
     <title>GitHub Contributions</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="darkreader-lock" />
-    <meta name="description" content="150+ PRs across OSS AI projects: provider infrastructure, agent UX, reliability, streaming, and release-linked production work." />
+    <meta name="description" content="650+ PRs across OSS AI projects: provider infrastructure, agent UX, reliability, streaming, and release-linked production work." />
     <meta property="og:title" content="GitHub Contributions">
-    <meta property="og:description" content="150+ PRs across OSS AI projects: provider infrastructure, agent UX, reliability, streaming, and release-linked production work.">
+    <meta property="og:description" content="650+ PRs across OSS AI projects: provider infrastructure, agent UX, reliability, streaming, and release-linked production work.">
     <meta property="og:image" content="https://basedin.nyc/pr-stats/thumb.jpg">
     <meta property="og:url" content="https://basedin.nyc/pr-stats">
     <meta property="og:type" content="website">
@@ -65,7 +65,7 @@
 <script src="timeline.js?v={{ today }}"></script>
 <!-- timeline-chart -->
 
-{{ repo_status_sections }}
+{{ repo_matrix }}
 
 {{ leaderboard_sections }}
 
@@ -77,7 +77,7 @@
 <div class="section methodology-section">
   <p><strong>Shipped</strong> means maintainer-accepted work: a direct merge, timeline evidence such as a release PR or cherry-pick reference, or an indirect landing credited back to the original PR. GitHub's <code>mergedAt</code> flag alone is not sufficient because some repos land contributor work outside the merge button.</p>
   <p><strong>Withdrawn</strong>, <strong>superseded</strong>, and <strong>lost</strong> separate author pullbacks, maintainer replacements, and competing outcomes. The PR table is sorted newest-first using close time for closed PRs and creation time for open PRs.</p>
-  <p><strong>Community leaderboards</strong> rank third-party contributors only. Repo owners, org employees, collaborators with write access, integration bots, and other automated accounts are excluded. Each board shows the top 50 contributors. Contributor discovery unions recent repo activity, prior cache entries, and (for hermes-webui) names from upstream <code>CONTRIBUTORS.md</code>. <strong>hermes-webui Credited</strong> counts distinct release-attributed PRs from <code>CHANGELOG.md</code> (including <code>(#123, @user)</code> lines), filtered contributor merges, and release-commit <code>Co-authored-by</code> trailers (rebuilt when the changelog changes). Other repos use evidence-based shipped classification for the top 10 contributors and merged-PR totals as a proxy below that. <strong>Rate (7d)</strong> is PRs opened in the rolling last 7 days divided by 7 (a recent per-day opening rate, not merge velocity).</p>
+  <p><strong>Community leaderboards</strong> rank third-party contributors only. Repo owners, org employees, collaborators with write access, integration bots, and other automated accounts are excluded. Each board shows the top 50 contributors. Contributor discovery unions recent repo activity, prior cache entries, and (for hermes-webui) names from upstream <code>CONTRIBUTORS.md</code>. <strong>hermes-webui Credited</strong> counts distinct release-attributed PRs from <code>CHANGELOG.md</code> (including <code>(#123, @user)</code> lines), filtered contributor merges, and release-commit <code>Co-authored-by</code> trailers (rebuilt when the changelog changes). Other repos use evidence-based shipped classification for the top 10 contributors and merged-PR totals as a proxy below that. <strong>Rate</strong> is PRs opened in the rolling last 7 days divided by 7 (a recent per-day opening rate, not merge velocity).</p>
 </div>
 
 <p class="footer">Generated {{ generated_date }} from GitHub API. Source: <a href="https://github.com/rodboev/pr-sweep">rodboev/pr-sweep</a></p>
@@ -120,6 +120,35 @@ function updateCollapsedOverlays() {
   document.querySelectorAll('.collapsible-table').forEach(function(block) {
     syncTopCollapsedRows(block);
     syncBottomCollapsedRows(block);
+  });
+}
+// Boards sitting side by side expand and collapse together so a row keeps a flat bottom edge.
+// Once the grid stacks to one column there is no row to keep level, so they act independently.
+function leaderboardGridIsPaired(grid) {
+  return getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length > 1;
+}
+function syncLeaderboardPair(cell) {
+  var grid = cell.parentElement;
+  if (!leaderboardGridIsPaired(grid)) return;
+  var cells = Array.prototype.slice.call(grid.children);
+  var index = cells.indexOf(cell);
+  var partner = cells[index % 2 === 0 ? index + 1 : index - 1];
+  if (!partner) return;
+  var block = cell.querySelector('.collapsible-table');
+  var partnerBlock = partner.querySelector('.collapsible-table');
+  // A partner with nothing to expand stays as it is rather than collapsing rows it never hid.
+  if (!block || !partnerBlock || !partnerBlock.querySelector('.expand-row')) return;
+  setCollapsibleCollapsed(partnerBlock, block.classList.contains('collapsed'));
+}
+function bindLeaderboardPairs() {
+  var grid = document.querySelector('.leaderboard-grid');
+  if (!grid) return;
+  // The inline onclick has already toggled the clicked block by the time this bubbles up.
+  grid.addEventListener('click', function(event) {
+    var trigger = event.target.closest('.expand-row, .overlay-row');
+    if (!trigger) return;
+    var cell = trigger.closest('.leaderboard-cell');
+    if (cell) syncLeaderboardPair(cell);
   });
 }
 function prMatchesStatus(item, statusKey) {
@@ -199,6 +228,7 @@ function bindPillGroup(containerId, attr, filterKey) {
 }
 bindPillGroup('pr-filter-pills', 'data-status', 'statusKey');
 bindPillGroup('pr-repo-pills', 'data-repo', 'repoKey');
+bindLeaderboardPairs();
 setBarWidths();
 syncLandscapeStickyOffset();
 if (typeof ResizeObserver !== 'undefined') {

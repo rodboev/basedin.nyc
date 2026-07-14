@@ -17,6 +17,7 @@ from core.leaderboard import CHANGELOG_RELEASE_PROFILE, DEFAULT_OVERLAY_CONFIG_D
 from core.classify import ClassificationResult, classify_closed_pr
 from core.classification_rebuild import CacheRebuildInterrupted, live_evidence, rebuild_classification_cache, write_pr_classification_progress
 from core.models import Cache, PullRequest, UserRef, int_value
+from core.repos import resolve_canonical_repos, set_repo_display_names
 from core.credit import cached_release_credit_counts
 from core.releases import refresh_release_cache, release_for_pr
 from core.github import GhError, GhPullRequestView, GhRetryExhausted, run_gh
@@ -27,7 +28,7 @@ from core.page import (
     render_pr_bootstrap,
     render_pr_controls_and_table,
     render_report_page,
-    render_repo_status_sections,
+    render_repo_matrix_section,
     render_representative_section,
     render_timeline_bootstrap,
 )
@@ -208,7 +209,14 @@ def generate_report(
 
     try:
         template_text = template_file.read_text(encoding="utf-8")
-        repos = load_active_repos_from_text(repos_file.read_text(encoding="utf-8"))
+        # The page keeps showing each repo as written in repos.txt; everything behind it
+        # (fetches, cache keys, leaderboards) keys on the repo's canonical name.
+        canonical_by_entry = resolve_canonical_repos(
+            load_active_repos_from_text(repos_file.read_text(encoding="utf-8")),
+            workers=workers,
+        )
+        set_repo_display_names({canonical: entry for entry, canonical in canonical_by_entry.items()})
+        repos = list(canonical_by_entry.values())
         cache = load_cache(cache_file)
         now = datetime.now(timezone.utc)
         log(f"Fetching PRs for {len(repos)} repos...")
@@ -291,7 +299,13 @@ def generate_report(
             ),
             "timeline_bootstrap": render_timeline_bootstrap(chart_json, repo_json, names_json, today_label),
             "today": today_label,
-            "repo_status_sections": render_repo_status_sections(repos=display_repos, items=typed_items),
+            "repo_matrix": render_repo_matrix_section(
+                repos=display_repos,
+                items=typed_items,
+                cache=cache,
+                now=now,
+                author=author,
+            ),
             "leaderboard_sections": render_leaderboard_sections(
                 repos=display_repos,
                 items=typed_items,

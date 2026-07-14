@@ -19,8 +19,10 @@ from core.html import (
     render_pr_table_shell,
     render_sort_pills,
     render_stat_grid,
+    render_tag,
 )
 from core.leaderboard import CachedLeaderboardRow, cached_leaderboard_rows, configured_repo_leaderboard_exclusions
+from core.repos import display_repo
 from core.models import Cache
 from core.report import (
     EASTERN,
@@ -34,7 +36,6 @@ from core.report import (
     report_bar_items,
     report_counts,
     report_items_to_script_dicts,
-    repo_status_rows,
 )
 
 REPORT_TEMPLATE_SLOTS = frozenset(
@@ -42,7 +43,7 @@ REPORT_TEMPLATE_SLOTS = frozenset(
         "breakdown",
         "timeline_bootstrap",
         "today",
-        "repo_status_sections",
+        "repo_matrix",
         "leaderboard_sections",
         "representative_section",
         "pr_controls",
@@ -122,36 +123,117 @@ def render_timeline_bootstrap(chart_json: str, repo_json: str, names_json: str, 
     )
 
 
-def render_repo_status_sections(*, repos: Iterable[str], items: Iterable[PrReportItem]) -> str:
-    item_list = list(items)
-    sections = []
-    for repo in repos:
-        repo_items = [item for item in item_list if item.repo == repo]
-        if repo_items:
-            sections.append(render_repo_status_section(repo, repo_items))
-    return "\n".join(sections)
+def render_repo_link(repo: str) -> str:
+    label = display_repo(repo)
+    return f'<a class="plain-link" href="https://github.com/{escape(label, quote=True)}">{escape(label)}</a>'
 
 
-def render_repo_status_section(repo: str, items: list[PrReportItem]) -> str:
-    rows = repo_status_rows(items)
-    row_html = "".join(
-        f'  <tr><td><span class="tag {escape(row.tag_class, quote=True)}">{escape(row.label)}</span></td>'
-        f"<td>{row.count}</td><td>{escape(row.details)}</td></tr>\n"
-        for row in rows
+def render_repo_matrix_link(repo: str) -> str:
+    label = display_repo(repo)
+    short = label.rsplit("/", 1)[-1]
+    return (
+        f'<a class="plain-link" href="https://github.com/{escape(label, quote=True)}">'
+        f'<span class="repo-full">{escape(label)}</span>'
+        f'<span class="repo-short">{escape(short)}</span></a>'
     )
-    counts = report_counts(
+
+
+def _repo_counts(items: Iterable[PrReportItem]) -> ReportCounts:
+    return report_counts(
         items,
         accepted_classifications=("shipped", "accepted-indirect"),
         open_status="open",
         superseded_status="superseded",
         lost_status="lost",
     )
-    repo_link = f'<a class="plain-link" href="https://github.com/{escape(repo, quote=True)}">{escape(repo)}</a>'
+
+
+def _matrix_cell(count: int) -> str:
+    return '<td class="dim">0</td>' if count == 0 else f"<td>{count}</td>"
+
+
+def render_repo_matrix_section(
+    *,
+    repos: Iterable[str],
+    items: Iterable[PrReportItem],
+    cache: Cache,
+    now: datetime,
+    author: str,
+) -> str:
+    item_list = list(items)
+    rows: list[str] = []
+    totals = [0, 0, 0, 0, 0]
+    rank_digits = 1
+    peer_digits = 1
+    for repo in repos:
+        repo_items = [item for item in item_list if item.repo == repo]
+        if not repo_items:
+            continue
+        counts = _repo_counts(repo_items)
+        for index, value in enumerate(
+            (counts.accepted, counts.open, counts.superseded, counts.lost, counts.total),
+        ):
+            totals[index] += value
+        board = author_leaderboard_rows(cache=cache, repo=repo, items=repo_items, now=now, author=author)
+        me = next((row for row in board if row.login.lower() == author.lower()), None)
+        if me is None:
+            standing = "<td></td><td></td>"
+        else:
+            rank_digits = max(rank_digits, len(str(me.rank)))
+            peer_digits = max(peer_digits, len(str(len(board))))
+            standing = (
+                f'<td><span class="rank-place">{me.rank}</span>'
+                f'<span class="rank-sep">/</span>'
+                f'<span class="rank-field">{len(board)}</span></td>'
+                f"<td>{me.rate:g}/d</td>"
+            )
+        rows.append(
+            f"  <tr><td>{render_repo_matrix_link(repo)}</td>"
+            f"{_matrix_cell(counts.accepted)}{_matrix_cell(counts.open)}"
+            f"{_matrix_cell(counts.superseded)}{_matrix_cell(counts.lost)}"
+            f"<td>{counts.total}</td>{standing}</tr>\n",
+        )
+    if not rows:
+        return ""
+    shipped, opened, superseded, lost, total = totals
+    # The total row is the next row in the zebra sequence, so it stripes when it lands on an odd one.
+    foot_class = ' class="stripe"' if len(rows) % 2 == 0 else ""
+    # Widest rank and field size drive the two halves of the rank cell so the slashes line up.
     return (
-        f"<h2>{repo_link} ({counts.total} PRs)</h2>\n"
-        '<table class="repo-status">\n'
-        "  <tr><th>Status</th><th>Count</th><th>Details</th></tr>\n"
-        f"{row_html}</table>"
+        f'<table class="repo-matrix" style="--rank-digits:{rank_digits};--peer-digits:{peer_digits}">\n'
+        "  <thead><tr><th>Repo</th>"
+        f"<th>{render_tag(label='Shipped', tag_class='tag-shipped')}</th>"
+        f"<th>{render_tag(label='Open', tag_class='tag-open')}</th>"
+        f"<th>{render_tag(label='Superseded', tag_class='tag-superseded')}</th>"
+        f"<th>{render_tag(label='Lost', tag_class='tag-lost')}</th>"
+        "<th>Total</th><th>Rank</th><th>Rate (7d)</th></tr></thead>\n"
+        "  <tbody>\n"
+        f"{''.join(rows)}  </tbody>\n"
+        f"  <tfoot><tr{foot_class}><td>Total</td>"
+        f"<td>{shipped}</td><td>{opened}</td><td>{superseded}</td><td>{lost}</td>"
+        f"<td>{total}</td><td></td><td></td></tr></tfoot>\n"
+        "</table>"
+    )
+
+
+def author_leaderboard_rows(
+    *,
+    cache: Cache,
+    repo: str,
+    items: list[PrReportItem],
+    now: datetime,
+    author: str,
+) -> list[CachedLeaderboardRow]:
+    return cached_leaderboard_rows(
+        cache=cache,
+        repo=repo,
+        exclusions=configured_repo_leaderboard_exclusions(repo),
+        now=now,
+        rate_window_days=7,
+        author_login=author,
+        author_credited=sum(1 for item in items if item.statusKey == "shipped"),
+        author_open=sum(1 for item in items if item.statusKey == "open"),
+        max_entries=None,
     )
 
 
@@ -181,8 +263,11 @@ def render_leaderboard_sections(
             max_entries=max_entries,
         )
         if section:
-            sections.append(section)
-    return "\n".join(sections)
+            sections.append(f'<div class="leaderboard-cell">\n{section}</div>')
+    if not sections:
+        return ""
+    cells = "\n".join(sections)
+    return f'<h2>Community Leaderboards</h2>\n<div class="leaderboard-grid">\n{cells}\n</div>'
 
 
 def render_leaderboard_section(
@@ -195,19 +280,7 @@ def render_leaderboard_section(
     visible_entries: int = 10,
     max_entries: int = 50,
 ) -> str:
-    author_credited = sum(1 for item in items if item.statusKey == "shipped")
-    author_open = sum(1 for item in items if item.statusKey == "open")
-    rows = cached_leaderboard_rows(
-        cache=cache,
-        repo=repo,
-        exclusions=configured_repo_leaderboard_exclusions(repo),
-        now=now,
-        rate_window_days=7,
-        author_login=author,
-        author_credited=author_credited,
-        author_open=author_open,
-        max_entries=None,
-    )
+    rows = author_leaderboard_rows(cache=cache, repo=repo, items=items, now=now, author=author)
     if not rows:
         return ""
     total_community = len(rows)
@@ -252,7 +325,7 @@ def render_leaderboard_section(
             f'<td><span class="{status_class}">{status_label}</span></td></tr>\n',
         )
         if row.rank == expand_after_rank and total_contributors > visible_entries:
-            row_html.append(render_expand_row(block_id=block_id, label=expand_label))
+            row_html.append(render_expand_row(block_id=block_id, label=expand_label, colspan=6))
 
     collapsed_class = " collapsed" if total_contributors > visible_entries else ""
     overlay = render_collapse_overlay(block_id=block_id) if total_contributors > visible_entries else ""
@@ -260,13 +333,13 @@ def render_leaderboard_section(
         f' data-visible-items="{visible_entries}" data-rows-per-item="1"' if collapse_mode == "top" else ""
     )
     projections = render_leaderboard_projections(rows=rows, author=author, my_rank=my_rank, now=now)
-    repo_link = f'<a class="plain-link" href="https://github.com/{escape(repo, quote=True)}">{escape(repo)}</a>'
     return (
-        f"<h2>{repo_link} Community Leaderboard</h2>\n"
+        f"<h3>{render_repo_link(repo)}</h3>\n"
         f'<div class="collapsible-table leaderboard{collapsed_class}" id="{escape(block_id, quote=True)}" '
         f'data-collapse-mode="{collapse_mode}"{top_attrs}>\n'
         "<table>\n"
-        "  <thead><tr><th>Rank</th><th>Contributor</th><th>Shipped</th><th>Open</th><th>Rate (7d)</th><th>Status</th></tr></thead>\n"
+        "  <thead><tr><th>Rank</th><th>Contributor</th><th>Shipped</th><th>Open</th><th>Rate</th>"
+        "<th>Status</th></tr></thead>\n"
         "  <tbody>\n"
         f"{''.join(row_html)}  </tbody>\n"
         "</table>\n"
@@ -320,9 +393,9 @@ def render_leaderboard_projections(
         )
     return (
         '<details class="projections">\n'
-        f"<summary>Projections ({escape(author)} @ {my_rate:g}/day Rate (7d), rank #{my_rank})</summary>\n"
+        f"<summary>Projections ({escape(author)} @ {my_rate:g}/day Rate, rank #{my_rank})</summary>\n"
         "<table>\n"
-        "  <tr><th>Contributor</th><th>Shipped</th><th>Rate (7d)</th><th>Catch-up</th></tr>\n"
+        "  <tr><th>Contributor</th><th>Shipped</th><th>Rate</th><th>Catch-up</th></tr>\n"
         f"{''.join(proj_rows)}</table>\n"
         "</details>\n"
     )
@@ -383,13 +456,7 @@ def render_pr_controls_and_table(
     default_repo_key: str = "all",
 ) -> str:
     item_list = list(items)
-    counts = report_counts(
-        item_list,
-        accepted_classifications=("shipped", "accepted-indirect"),
-        open_status="open",
-        superseded_status="superseded",
-        lost_status="lost",
-    )
+    counts = _repo_counts(item_list)
     status_filters = default_status_filter_dicts(counts)
     repo_filters = repo_filter_dicts(display_repos)
     repo_pills = [SortPill(key=entry["key"], label=entry["label"]) for entry in repo_filters]
@@ -422,13 +489,7 @@ def render_pr_bootstrap(
     default_repo_key: str = "all",
 ) -> str:
     item_list = list(items)
-    counts = report_counts(
-        item_list,
-        accepted_classifications=("shipped", "accepted-indirect"),
-        open_status="open",
-        superseded_status="superseded",
-        lost_status="lost",
-    )
+    counts = _repo_counts(item_list)
     filters: list[Mapping[str, object]] = [entry for entry in default_status_filter_dicts(counts)]
     script_items: list[Mapping[str, object]] = [entry for entry in report_items_to_script_dicts(item_list)]
     return render_pr_bootstrap_script(

@@ -692,6 +692,7 @@ body.pr {
   --pr-bg: #fff;
   --pr-card: #fff;
   --pr-border: rgba(0, 0, 0, 0.08);
+  --pr-stripe: rgb(0 0 0 / 3%);
   --pr-text: #1a1a1a;
   --pr-dim: #888;
   --pr-sep: #b6b6b6;
@@ -734,6 +735,7 @@ body.pr {
     --pr-bg: #0d1117;
     --pr-card: #161b22;
     --pr-border: #30363d;
+    --pr-stripe: rgb(255 255 255 / 3%);
     --pr-text: #e6edf3;
     --pr-dim: #8b949e;
     --pr-sep: #5f6770;
@@ -772,7 +774,7 @@ body.pr h2 {
   font-size: 1.1rem;
   font-weight: 600;
   margin: 2rem 0 0.75rem;
-  padding-bottom: 0.4rem;
+  padding-bottom: 0.28rem;
   border-bottom: 1px solid var(--pr-border);
 }
 
@@ -1081,13 +1083,102 @@ body.pr table {
   margin-bottom: 1.25rem;
 }
 
-body.pr .repo-status { table-layout: fixed; }
-body.pr .repo-status tr > :nth-child(1) { width: 15%; }
-body.pr .repo-status tr > :nth-child(2) { width: 12%; }
+body.pr .repo-matrix th:not(:first-child),
+body.pr .repo-matrix td:not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The four status columns share one width so Superseded does not read as bigger than Open.
+   Only applied at >=1067px, where the container is pinned at its 960px max and these shares
+   resolve to widths that fit every header; narrower containers fall back to natural sizing,
+   and by then Superseded and Lost are folded away anyway. */
+@media (min-width: 1067px) {
+  body.pr .repo-matrix tr > :nth-child(n + 2):nth-child(-n + 5) { width: 12%; }
+  body.pr .repo-matrix tr > :nth-child(6) { width: 8%; }
+  body.pr .repo-matrix tr > :nth-child(7) { width: 12%; }
+  body.pr .repo-matrix tr > :nth-child(8) { width: 10%; }
+}
+
+/* Status pills carry their own casing and color; the gray-caps th treatment would fight both */
+body.pr .repo-matrix th .tag {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+body.pr .repo-matrix .rank-place,
+body.pr .repo-matrix .rank-field {
+  display: inline-block;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+body.pr .repo-matrix .rank-place { width: calc(var(--rank-digits, 2) * 1ch); }
+body.pr .repo-matrix .rank-field { width: calc(var(--peer-digits, 4) * 1ch); }
+
+body.pr .repo-matrix .rank-sep {
+  display: inline-block;
+  padding: 0 0.75ch 0 1ch;
+  color: var(--pr-border);
+}
+
+/* Zebra striping; tweak --pr-stripe (set per color scheme alongside --pr-border) to taste.
+   The total row keeps the alternation going, so it carries .stripe when the repo count makes
+   it land on an odd row. */
+body.pr .repo-matrix tbody tr:nth-child(odd) td,
+body.pr .repo-matrix tfoot tr.stripe td {
+  background: var(--pr-stripe);
+}
+
+/* Restates the same border every other row gets: the lone tfoot row also matches the generic
+   `tr:first-child td` reset, which would otherwise drop its separator entirely. */
+body.pr .repo-matrix tfoot tr td {
+  font-weight: 600;
+  border-top: 1px solid var(--pr-border);
+}
+
+body.pr .repo-matrix .repo-short { display: none; }
+
+/* All eight columns only fit at the full 960px container, so shed the derived ones as it narrows:
+   Superseded and Lost fold into Total, then Rate. */
+@media (max-width: 1066px) {
+  body.pr .repo-matrix tr > :nth-child(4),
+  body.pr .repo-matrix tr > :nth-child(5) {
+    display: none;
+  }
+}
+
+@media (max-width: 820px) {
+  body.pr .repo-matrix tr > :nth-child(8) {
+    display: none;
+  }
+}
+
+@media (max-width: 600px) {
+  body.pr .repo-matrix .repo-full { display: none; }
+  body.pr .repo-matrix .repo-short { display: inline; }
+
+  body.pr .repo-matrix th,
+  body.pr .repo-matrix td {
+    padding: 0.4rem 0.5rem;
+  }
+}
+
+/* Total is the last derived column to go; Shipped, Open, and Rank carry the story on a phone */
+@media (max-width: 420px) {
+  body.pr .repo-matrix tr > :nth-child(6) {
+    display: none;
+  }
+
+  body.pr .repo-matrix th,
+  body.pr .repo-matrix td {
+    padding: 0.4rem 0.3rem;
+  }
+}
 
 body.pr th {
   text-align: left;
-  padding: 0.55rem 0.9rem;
+  padding: 0.55rem 0.84rem;
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -1592,6 +1683,42 @@ body.pr .pr-title-text {
   overflow-wrap: anywhere;
   word-break: break-word;
   min-width: 0;
+}
+
+/* Rank and Contributor stay left; the three number columns right-align. The expand row is a
+   single colspan cell, so nth-child(n + 3) never touches it. */
+body.pr .leaderboard th:nth-child(n + 3),
+body.pr .leaderboard td:nth-child(n + 3) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* One rule under the spanning "Community Leaderboards" h2; the per-repo h3 above each table
+   carries no border of its own so the columns do not read as two separate sections. */
+body.pr .leaderboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 1.75rem;
+  align-items: start;
+}
+
+body.pr .leaderboard-cell > h3:first-child {
+  margin-top: 1rem;
+  border-bottom: none;
+}
+
+/* Two boards per row need ~420px each before long contributor names wrap; 1000px viewport gives
+   each column 436px. Status is the column the pair can spare, so it only shows once the grid
+   stacks and every board has the full container width to itself. */
+@media (min-width: 1000px) {
+  body.pr .leaderboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  body.pr .leaderboard-grid .leaderboard th:nth-child(6),
+  body.pr .leaderboard-grid .leaderboard td:nth-child(6) {
+    display: none;
+  }
 }
 
 body.pr .projections {
@@ -2160,9 +2287,6 @@ body.pr .separator-row td {
   body.pr .tgt-landscape .tier-short {
     display: inline;
   }
-
-  body.pr .repo-status tr > :nth-child(1) { width: 22%; }
-  body.pr .repo-status tr > :nth-child(2) { width: 14%; }
 
   body.pr .two-col {
     grid-template-columns: 1fr;

@@ -100,6 +100,44 @@ def test_non_author_close_is_not_withdrawn(
     assert result.classification == "superseded"
 
 
+def test_silent_author_close_over_maintainer_comment_is_withdrawn(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # hermes-webui#4866: the author closed his own PR without commenting, leaving a
+    # maintainer review that names no competitor and no replacement. Nothing lost.
+    pr = make_pr()
+    evidence = make_evidence(
+        comments=[make_comment(body="Full suite green, no regression risks found. Rebase onto master before landing.", author={"login": "maintainer"}, authorAssociation="COLLABORATOR")],
+        timeline_items=[make_event(actor={"login": "rodboev"})],
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "withdrawn"
+    assert result.evidence_kind == "author-withdrawn"
+
+
+def test_third_party_competitor_still_beats_author_close(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # Closing your own PR after a competitor's landed is still a loss, not a withdrawal.
+    pr = make_pr()
+    evidence = make_evidence(
+        comments=[make_comment(body="Duplicate of the work already merged", author={"login": "maintainer"}, authorAssociation="COLLABORATOR")],
+        timeline_items=[make_event(actor={"login": "rodboev"})],
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "lost"
+
+
 def test_accepted_sibling_branch(
     make_pr: Callable[..., PullRequest],
     make_ref: Callable[..., PullRequestRef],

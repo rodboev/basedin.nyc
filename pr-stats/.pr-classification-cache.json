@@ -78025,14 +78025,6 @@
       "evidenceKind": "direct-merge",
       "cachedAt": "2026-07-03T00:47:20.333856Z"
     },
-    "thedotmack/claude-mem#2919": {
-      "classification": "lost",
-      "release": "",
-      "viaLabel": "",
-      "viaUrl": "",
-      "evidenceKind": "lost",
-      "cachedAt": "2026-07-03T00:47:20.333856Z"
-    },
     "thedotmack/claude-mem#294": {
       "classification": "lost",
       "release": "",
@@ -80121,14 +80113,6 @@
       "evidenceKind": "direct-merge",
       "cachedAt": "2026-07-09T18:45:26.801357Z"
     },
-    "stablyai/orca#7390": {
-      "classification": "lost",
-      "release": "",
-      "viaLabel": "",
-      "viaUrl": "",
-      "evidenceKind": "lost",
-      "cachedAt": "2026-07-08T06:33:16.350890Z"
-    },
     "stablyai/orca#7642": {
       "classification": "shipped",
       "release": "v1.4.129-rc.1",
@@ -81001,14 +80985,6 @@
       "evidenceKind": "superseded",
       "cachedAt": "2026-07-13T04:51:23.859426Z"
     },
-    "thedotmack/claude-mem#3060": {
-      "classification": "lost",
-      "release": "",
-      "viaLabel": "",
-      "viaUrl": "",
-      "evidenceKind": "lost",
-      "cachedAt": "2026-07-13T04:51:23.859426Z"
-    },
     "thedotmack/claude-mem#3011": {
       "classification": "withdrawn",
       "release": "",
@@ -81055,14 +81031,6 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-07-13T05:17:05.975849Z"
-    },
-    "thedotmack/claude-mem#2849": {
-      "classification": "lost",
-      "release": "",
-      "viaLabel": "",
-      "viaUrl": "",
-      "evidenceKind": "lost",
       "cachedAt": "2026-07-13T05:17:05.975849Z"
     },
     "headroomlabs-ai/headroom#2017": {
@@ -81123,11 +81091,11 @@
     },
     "stablyai/orca#7640": {
       "classification": "shipped",
-      "release": "",
+      "release": "v1.4.139-rc.2",
       "viaLabel": "direct",
       "viaUrl": "https://github.com/stablyai/orca/pull/7640",
       "evidenceKind": "direct-merge",
-      "cachedAt": "2026-07-14T00:56:29.725898Z"
+      "cachedAt": "2026-07-15T01:29:56.549381Z"
     },
     "nesquena/hermes-webui#5795": {
       "classification": "accepted-indirect",
@@ -81195,11 +81163,11 @@
     },
     "stablyai/orca#8209": {
       "classification": "shipped",
-      "release": "",
+      "release": "v1.4.141",
       "viaLabel": "direct",
       "viaUrl": "https://github.com/stablyai/orca/pull/8209",
       "evidenceKind": "direct-merge",
-      "cachedAt": "2026-07-14T13:01:13.595250Z"
+      "cachedAt": "2026-07-15T01:29:56.549381Z"
     },
     "NVIDIA/SkillSpector#249": {
       "classification": "shipped",
@@ -81352,6 +81320,86 @@
       "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2162",
       "evidenceKind": "direct-merge",
       "cachedAt": "2026-07-14T21:27:28.741300Z"
+    },
+    "data-privacy-stack/presidio#2116": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/data-privacy-stack/presidio/pull/2116",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:44:34.287089Z"
+    },
+    "data-privacy-stack/presidio#2115": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/data-privacy-stack/presidio/pull/2115",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:44:34.287089Z"
+    },
+    "data-privacy-stack/presidio#2114": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/data-privacy-stack/presidio/pull/2114",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-14T21:44:34.287089Z"
+    },
+    "headroomlabs-ai/headroom#2202": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2202",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-15T03:42:06.898737Z"
+    },
+    "headroomlabs-ai/headroom#2204": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/headroomlabs-ai/headroom/pull/2204",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-07-15T03:42:06.898737Z"
+    },
+    "nesquena/hermes-webui#4866": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-07-15T08:19:15.804998Z"
+    },
+    "thedotmack/claude-mem#2849": {
+      "classification": "lost",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "lost",
+      "cachedAt": "2026-07-15T08:20:19.506342Z"
+    },
+    "thedotmack/claude-mem#3060": {
+      "classification": "lost",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "lost",
+      "cachedAt": "2026-07-15T08:20:19.506342Z"
+    },
+    "thedotmack/claude-mem#2919": {
+      "classification": "lost",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "lost",
+      "cachedAt": "2026-07-15T08:20:19.506342Z"
+    },
+    "stablyai/orca#7390": {
+      "classification": "lost",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "lost",
+      "cachedAt": "2026-07-15T08:20:19.506342Z"
     }
   },
   "authorPulls": {
@@ -86236,11 +86284,11 @@
     "nesquena/hermes-webui#4866": {
       "repo": "nesquena/hermes-webui",
       "number": 4866,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "feat(#4817): add terminal rail entry and full-page view",
       "createdAt": "2026-06-24T19:51:20Z",
-      "updatedAt": "2026-07-14T05:01:02Z",
-      "closedAt": null,
+      "updatedAt": "2026-07-15T05:08:07Z",
+      "closedAt": "2026-07-15T05:08:07Z",
       "mergedAt": null,
       "headRefName": "pr/4817-terminal-full-page-nav",
       "author": {
@@ -89425,14 +89473,14 @@
       "state": "OPEN",
       "title": "feat(#2316): add Scripts subtab to Tasks panel with backend list/raw endpoints",
       "createdAt": "2026-06-10T16:19:06Z",
-      "updatedAt": "2026-07-14T04:55:34Z",
+      "updatedAt": "2026-07-15T05:37:10Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/scripts-panel",
       "author": {
         "login": "rodboev"
       },
-      "additions": 852,
+      "additions": 856,
       "deletions": 6,
       "changedFiles": 8,
       "url": "https://github.com/nesquena/hermes-webui/pull/3935"
@@ -91693,7 +91741,7 @@
       "state": "CLOSED",
       "title": "feat(sessions): show read progress",
       "createdAt": "2026-07-10T06:29:08Z",
-      "updatedAt": "2026-07-11T19:40:48Z",
+      "updatedAt": "2026-07-15T05:43:26Z",
       "closedAt": "2026-07-11T19:40:47Z",
       "mergedAt": null,
       "headRefName": "pr/1057-read-progress",
@@ -94735,16 +94783,16 @@
       "state": "OPEN",
       "title": "fix(proxy): give each Codex /v1/responses WS turn a unique request_id",
       "createdAt": "2026-07-14T01:26:31Z",
-      "updatedAt": "2026-07-14T17:21:20Z",
+      "updatedAt": "2026-07-15T05:56:10Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/310-codex-ws-dashboard-recent-requests",
       "author": {
         "login": "rodboev"
       },
-      "additions": 147,
-      "deletions": 3,
-      "changedFiles": 3,
+      "additions": 154,
+      "deletions": 6,
+      "changedFiles": 7,
       "url": "https://github.com/headroomlabs-ai/headroom/pull/2164"
     },
     "headroomlabs-ai/headroom#2163": {
@@ -94980,46 +95028,375 @@
       "deletions": 37,
       "changedFiles": 5,
       "url": "https://github.com/stablyai/orca/pull/8717"
+    },
+    "data-privacy-stack/presidio#2116": {
+      "repo": "data-privacy-stack/presidio",
+      "number": 2116,
+      "state": "MERGED",
+      "title": "feat(analyzer): add recognizer-level threshold config",
+      "createdAt": "2026-06-28T04:08:46Z",
+      "updatedAt": "2026-07-14T13:15:53Z",
+      "closedAt": "2026-07-14T13:15:53Z",
+      "mergedAt": "2026-07-14T13:15:53Z",
+      "headRefName": "pr/recognizer-threshold-config",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 1069,
+      "deletions": 64,
+      "changedFiles": 23,
+      "url": "https://github.com/data-privacy-stack/presidio/pull/2116"
+    },
+    "data-privacy-stack/presidio#2115": {
+      "repo": "data-privacy-stack/presidio",
+      "number": 2115,
+      "state": "MERGED",
+      "title": "feat(anonymizer): add batch deanonymization support",
+      "createdAt": "2026-06-28T03:13:48Z",
+      "updatedAt": "2026-07-13T12:05:45Z",
+      "closedAt": "2026-07-13T12:05:44Z",
+      "mergedAt": "2026-07-13T12:05:44Z",
+      "headRefName": "pr/batch-deanonymization",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 330,
+      "deletions": 2,
+      "changedFiles": 6,
+      "url": "https://github.com/data-privacy-stack/presidio/pull/2115"
+    },
+    "data-privacy-stack/presidio#2114": {
+      "repo": "data-privacy-stack/presidio",
+      "number": 2114,
+      "state": "MERGED",
+      "title": "feat(cli): add threshold flag override",
+      "createdAt": "2026-06-28T03:13:47Z",
+      "updatedAt": "2026-06-30T07:26:26Z",
+      "closedAt": "2026-06-30T07:26:26Z",
+      "mergedAt": "2026-06-30T07:26:26Z",
+      "headRefName": "pr/cli-threshold-override",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 160,
+      "deletions": 4,
+      "changedFiles": 4,
+      "url": "https://github.com/data-privacy-stack/presidio/pull/2114"
+    },
+    "headroomlabs-ai/headroom#2203": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2203,
+      "state": "OPEN",
+      "title": "fix(proxy): accept Codex websocket before upstream retries",
+      "createdAt": "2026-07-15T01:02:07Z",
+      "updatedAt": "2026-07-15T05:56:06Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/2184-codex-ws-handshake",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 133,
+      "deletions": 63,
+      "changedFiles": 6,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2203"
+    },
+    "headroomlabs-ai/headroom#2204": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2204,
+      "state": "MERGED",
+      "title": "fix(code): quarantine Perl parser from code-aware compression",
+      "createdAt": "2026-07-15T01:02:07Z",
+      "updatedAt": "2026-07-15T03:19:19Z",
+      "closedAt": "2026-07-15T03:18:51Z",
+      "mergedAt": "2026-07-15T03:18:51Z",
+      "headRefName": "pr/2185-perl-scanner-gil",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 209,
+      "deletions": 4,
+      "changedFiles": 6,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2204"
+    },
+    "headroomlabs-ai/headroom#2202": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 2202,
+      "state": "MERGED",
+      "title": "fix(code-compressor): recover valid Python rewrites after local syntax rejection",
+      "createdAt": "2026-07-15T01:02:06Z",
+      "updatedAt": "2026-07-15T03:22:52Z",
+      "closedAt": "2026-07-15T03:19:46Z",
+      "mergedAt": "2026-07-15T03:19:46Z",
+      "headRefName": "pr/1233-code-compressor-syntax",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 200,
+      "deletions": 12,
+      "changedFiles": 6,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/2202"
+    },
+    "nesquena/hermes-webui#6078": {
+      "repo": "nesquena/hermes-webui",
+      "number": 6078,
+      "state": "OPEN",
+      "title": "fix(#6067): keep artifact file names visible",
+      "createdAt": "2026-07-15T01:56:41Z",
+      "updatedAt": "2026-07-15T07:07:02Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/6067-artifact-filenames",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 261,
+      "deletions": 3,
+      "changedFiles": 4,
+      "url": "https://github.com/nesquena/hermes-webui/pull/6078"
+    },
+    "thedotmack/claude-mem#3255": {
+      "repo": "thedotmack/claude-mem",
+      "number": 3255,
+      "state": "OPEN",
+      "title": "fix(worker): keep healthy workers serving until version-mismatch recovery is possible (refs #3100)",
+      "createdAt": "2026-07-15T02:58:26Z",
+      "updatedAt": "2026-07-15T03:01:52Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "fix/3100-version-recycle-recoverability",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 431,
+      "deletions": 331,
+      "changedFiles": 7,
+      "url": "https://github.com/thedotmack/claude-mem/pull/3255"
+    },
+    "thedotmack/claude-mem#3256": {
+      "repo": "thedotmack/claude-mem",
+      "number": 3256,
+      "state": "OPEN",
+      "title": "fix(observer): disable observer thinking so thinking-only skips stop triggering harness re-prompts (closes #3245)",
+      "createdAt": "2026-07-15T02:58:26Z",
+      "updatedAt": "2026-07-15T03:01:56Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "fix/3245-observer-thinking-disabled",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 372,
+      "deletions": 313,
+      "changedFiles": 5,
+      "url": "https://github.com/thedotmack/claude-mem/pull/3256"
+    },
+    "thedotmack/claude-mem#3257": {
+      "repo": "thedotmack/claude-mem",
+      "number": 3257,
+      "state": "OPEN",
+      "title": "fix(worker): route OpenAI-compatible summarize turns to CLAUDE_MEM_TIER_SUMMARY_MODEL (closes #3240)",
+      "createdAt": "2026-07-15T02:58:26Z",
+      "updatedAt": "2026-07-15T03:01:36Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "fix/3240-summary-tier-openai-compatible",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 504,
+      "deletions": 316,
+      "changedFiles": 7,
+      "url": "https://github.com/thedotmack/claude-mem/pull/3257"
+    },
+    "thedotmack/claude-mem#3254": {
+      "repo": "thedotmack/claude-mem",
+      "number": 3254,
+      "state": "OPEN",
+      "title": "fix(installer): provision tree-sitter-cli past script suppression and resolve tree-sitter.exe on Windows (refs #2910)",
+      "createdAt": "2026-07-15T02:46:52Z",
+      "updatedAt": "2026-07-15T02:49:43Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "fix/2910-tree-sitter-cli-provisioning",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 640,
+      "deletions": 354,
+      "changedFiles": 10,
+      "url": "https://github.com/thedotmack/claude-mem/pull/3254"
+    },
+    "NVIDIA/SkillSpector#276": {
+      "repo": "NVIDIA/SkillSpector",
+      "number": 276,
+      "state": "OPEN",
+      "title": "fix(analyzer): retain fenced SKILL.md findings",
+      "createdAt": "2026-07-15T02:57:11Z",
+      "updatedAt": "2026-07-15T03:40:37Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/skill-md-fenced-example-filtering",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 86,
+      "deletions": 11,
+      "changedFiles": 3,
+      "url": "https://github.com/NVIDIA/SkillSpector/pull/276"
+    },
+    "stablyai/orca#8830": {
+      "repo": "stablyai/orca",
+      "number": 8830,
+      "state": "OPEN",
+      "title": "feat(browser): keep annotations across page navigation",
+      "createdAt": "2026-07-15T06:39:23Z",
+      "updatedAt": "2026-07-15T09:11:34Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/keep-browser-annotations-across-navigation",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 794,
+      "deletions": 81,
+      "changedFiles": 11,
+      "url": "https://github.com/stablyai/orca/pull/8830"
+    },
+    "stablyai/orca#8827": {
+      "repo": "stablyai/orca",
+      "number": 8827,
+      "state": "OPEN",
+      "title": "feat(cli): add orca account list and account use",
+      "createdAt": "2026-07-15T06:19:34Z",
+      "updatedAt": "2026-07-15T09:11:59Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/cli-claude-account-selection",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 436,
+      "deletions": 11,
+      "changedFiles": 15,
+      "url": "https://github.com/stablyai/orca/pull/8827"
+    },
+    "stablyai/orca#8824": {
+      "repo": "stablyai/orca",
+      "number": 8824,
+      "state": "OPEN",
+      "title": "fix(terminal): honor an explicit Option as Alt Off in kitty keyboard panes",
+      "createdAt": "2026-07-15T06:10:00Z",
+      "updatedAt": "2026-07-15T06:13:16Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/terminal-explicit-option-as-alt-kitty",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 108,
+      "deletions": 26,
+      "changedFiles": 4,
+      "url": "https://github.com/stablyai/orca/pull/8824"
+    },
+    "mem0ai/mem0#6333": {
+      "repo": "mem0ai/mem0",
+      "number": 6333,
+      "state": "OPEN",
+      "title": "test(ts-oss): enforce canonical vector-store result payloads",
+      "createdAt": "2026-07-15T09:27:58Z",
+      "updatedAt": "2026-07-15T09:27:58Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/ts-oss-vector-store-result-contract",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 195,
+      "deletions": 0,
+      "changedFiles": 1,
+      "url": "https://github.com/mem0ai/mem0/pull/6333"
+    },
+    "stablyai/orca#8854": {
+      "repo": "stablyai/orca",
+      "number": 8854,
+      "state": "OPEN",
+      "title": "fix(runtime): surface visible TUI output in terminal read and show",
+      "createdAt": "2026-07-15T09:16:49Z",
+      "updatedAt": "2026-07-15T09:31:53Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/terminal-visible-snapshot-fallback",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 462,
+      "deletions": 53,
+      "changedFiles": 2,
+      "url": "https://github.com/stablyai/orca/pull/8854"
+    },
+    "thedotmack/claude-mem#3260": {
+      "repo": "thedotmack/claude-mem",
+      "number": 3260,
+      "state": "OPEN",
+      "title": "fix(worker): recover hooks from stranded Windows worker ports (closes #3204)",
+      "createdAt": "2026-07-15T09:42:57Z",
+      "updatedAt": "2026-07-15T09:46:00Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "fix/3204-windows-worker-port-recovery",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 699,
+      "deletions": 339,
+      "changedFiles": 11,
+      "url": "https://github.com/thedotmack/claude-mem/pull/3260"
     }
   },
   "authorPullScanMeta": {
     "kenn-io/agentsview": {
-      "scannedAt": "2026-07-14T21:27:28.741300Z",
+      "scannedAt": "2026-07-15T09:56:36.518724Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "thedotmack/claude-mem": {
-      "scannedAt": "2026-07-14T21:27:28.741300Z",
+      "scannedAt": "2026-07-15T09:56:36.518724Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "headroomlabs-ai/headroom": {
-      "scannedAt": "2026-07-14T21:27:28.741300Z",
+      "scannedAt": "2026-07-15T09:56:36.518724Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "nesquena/hermes-webui": {
-      "scannedAt": "2026-07-14T21:27:28.741300Z",
+      "scannedAt": "2026-07-15T09:56:36.518724Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "stablyai/orca": {
-      "scannedAt": "2026-07-14T21:27:28.741300Z",
+      "scannedAt": "2026-07-15T09:56:36.518724Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "mem0ai/mem0": {
-      "scannedAt": "2026-07-14T21:27:28.741300Z",
+      "scannedAt": "2026-07-15T09:56:36.518724Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "NVIDIA/SkillSpector": {
-      "scannedAt": "2026-07-14T21:27:28.741300Z",
+      "scannedAt": "2026-07-15T09:56:36.518724Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "NousResearch/hermes-agent": {
       "scannedAt": "2026-07-10T21:55:11.487756Z",
+      "source": "graphql-search",
+      "lookbackHours": 48
+    },
+    "data-privacy-stack/presidio": {
+      "scannedAt": "2026-07-15T09:56:36.518724Z",
       "source": "graphql-search",
       "lookbackHours": 48
     }
@@ -103418,8 +103795,8 @@
       "releaseCreditMeta": null
     },
     "mem0ai/mem0|community-shipped-v4|all": {
-      "cachedAt": "2026-07-14T00:56:29.725898Z",
-      "refreshedAt": "2026-07-14T00:56:29.725898Z",
+      "cachedAt": "2026-07-15T01:29:56.549381Z",
+      "refreshedAt": "2026-07-15T01:29:56.549381Z",
       "logins": [
         "Dev-Khant",
         "whysosaket",
@@ -103434,9 +103811,10 @@
         "utkarsh240799",
         "ly-wang19",
         "Itz-Antaripa",
+        "rodboev",
         "abhay-codes07",
         "spike-spiegel-21",
-        "rodboev",
+        "jaythehardcoder",
         "harshgupta-mem0",
         "yashs33244",
         "PHclaw",
@@ -103444,7 +103822,6 @@
         "MgeeeeK",
         "PranavPuranik",
         "aaishikdutta",
-        "jaythehardcoder",
         "akshat1423",
         "themavik",
         "haosenwang1018",
@@ -103454,9 +103831,9 @@
         "gabrielstein-mem0",
         "haroldfabla2-hue",
         "misrasaurabh1",
+        "Krishnachaitanyakc",
         "DivyamTalwar",
         "johnwlockwood",
-        "Krishnachaitanyakc",
         "shafdev",
         "NIK-TIGER-BILL",
         "Anandesh-Sharma",
@@ -103620,6 +103997,9 @@
         "SerSamgy",
         "KapilM26",
         "aalmuarik",
+        "Jupiter363",
+        "abhay23-AI",
+        "mukktinaadh",
         "OfficialAbhinavSingh",
         "okaditya84",
         "QunBB",
@@ -103782,6 +104162,10 @@
         "jonasiwnl",
         "amjadraza",
         "Rayhanpatel",
+        "jiuyige",
+        "JiaXtian",
+        "saitejabandaru-in",
+        "EchoTouch-moon",
         "pratikgajjar",
         "supersonictw",
         "seven7763",
@@ -103823,7 +104207,6 @@
         "ferhimedamine",
         "CyrusAurora",
         "syf2211",
-        "mukktinaadh",
         "chaochaoweb3",
         "ritsth",
         "Jaco-Ren",
@@ -103860,7 +104243,6 @@
         "Whning0513",
         "krnomad",
         "hcsum",
-        "abhay23-AI",
         "2830500285",
         "100hard",
         "rforgeon",
@@ -104577,10 +104959,10 @@
           "lastCreatedAt": "2025-11-13T18:38:45Z"
         },
         "Bartok9": {
-          "total": 67,
-          "open": 42,
-          "recentCount": 16,
-          "lastCreatedAt": "2026-07-13T07:07:17Z"
+          "total": 68,
+          "open": 43,
+          "recentCount": 15,
+          "lastCreatedAt": "2026-07-14T07:09:24Z"
         },
         "HrushiYadav": {
           "total": 53,
@@ -104612,6 +104994,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2025-07-31T21:46:48Z"
         },
+        "rodboev": {
+          "total": 23,
+          "open": 8,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-14T08:16:21Z"
+        },
         "abhay-codes07": {
           "total": 23,
           "open": 16,
@@ -104624,11 +105012,11 @@
           "recentCount": 0,
           "lastCreatedAt": "2025-01-14T12:06:38Z"
         },
-        "rodboev": {
-          "total": 22,
-          "open": 7,
-          "recentCount": 1,
-          "lastCreatedAt": "2026-07-08T21:53:12Z"
+        "jaythehardcoder": {
+          "total": 21,
+          "open": 15,
+          "recentCount": 16,
+          "lastCreatedAt": "2026-07-15T00:01:14Z"
         },
         "harshgupta-mem0": {
           "total": 20,
@@ -104639,7 +105027,7 @@
         "yashs33244": {
           "total": 20,
           "open": 5,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T10:00:36Z"
         },
         "PHclaw": {
@@ -104671,12 +105059,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2023-07-28T07:39:46Z"
-        },
-        "jaythehardcoder": {
-          "total": 18,
-          "open": 12,
-          "recentCount": 13,
-          "lastCreatedAt": "2026-07-14T00:00:38Z"
         },
         "akshat1423": {
           "total": 17,
@@ -104732,6 +105114,12 @@
           "recentCount": 0,
           "lastCreatedAt": "2024-06-11T22:19:58Z"
         },
+        "Krishnachaitanyakc": {
+          "total": 11,
+          "open": 7,
+          "recentCount": 3,
+          "lastCreatedAt": "2026-07-14T19:01:01Z"
+        },
         "DivyamTalwar": {
           "total": 11,
           "open": 9,
@@ -104743,12 +105131,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2025-05-30T03:34:00Z"
-        },
-        "Krishnachaitanyakc": {
-          "total": 10,
-          "open": 6,
-          "recentCount": 2,
-          "lastCreatedAt": "2026-07-13T13:34:52Z"
         },
         "shafdev": {
           "total": 10,
@@ -104789,7 +105171,7 @@
         "RobinALG87": {
           "total": 9,
           "open": 6,
-          "recentCount": 9,
+          "recentCount": 8,
           "lastCreatedAt": "2026-07-08T22:45:44Z"
         },
         "ChiragArora31": {
@@ -105173,13 +105555,13 @@
         "freya0926": {
           "total": 4,
           "open": 3,
-          "recentCount": 4,
+          "recentCount": 1,
           "lastCreatedAt": "2026-07-09T02:10:23Z"
         },
         "VectorPeak": {
           "total": 4,
           "open": 2,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T14:20:44Z"
         },
         "rudrajmehta-mem0": {
@@ -105728,6 +106110,24 @@
           "recentCount": 0,
           "lastCreatedAt": "2023-09-24T18:44:59Z"
         },
+        "Jupiter363": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2,
+          "lastCreatedAt": "2026-07-14T18:21:17Z"
+        },
+        "abhay23-AI": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T15:31:39Z"
+        },
+        "mukktinaadh": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T10:04:51Z"
+        },
         "OfficialAbhinavSingh": {
           "total": 2,
           "open": 2,
@@ -105755,13 +106155,13 @@
         "JackCloudman": {
           "total": 2,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T15:44:11Z"
         },
         "anxkhn": {
           "total": 2,
           "open": 2,
-          "recentCount": 2,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T08:11:40Z"
         },
         "kmishra1204": {
@@ -106700,6 +107100,30 @@
           "recentCount": 0,
           "lastCreatedAt": "2023-07-15T06:25:23Z"
         },
+        "jiuyige": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T15:20:39Z"
+        },
+        "JiaXtian": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T12:39:45Z"
+        },
+        "saitejabandaru-in": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T10:22:21Z"
+        },
+        "EchoTouch-moon": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T06:09:51Z"
+        },
         "pratikgajjar": {
           "total": 1,
           "open": 0,
@@ -106841,43 +107265,43 @@
         "magicashu": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T16:33:47Z"
         },
         "asif786ka": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T16:19:18Z"
         },
         "Kedar1021": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T14:55:17Z"
         },
         "Vivekpatil200320": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T14:51:52Z"
         },
         "jinhaosong-source": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T11:10:59Z"
         },
         "Real5K": {
           "total": 1,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T09:51:34Z"
         },
         "xuatpham-aidi": {
           "total": 1,
           "open": 1,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T09:08:41Z"
         },
         "abhi-0203": {
@@ -106945,12 +107369,6 @@
           "open": 1,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-30T20:05:14Z"
-        },
-        "mukktinaadh": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-30T18:21:05Z"
         },
         "chaochaoweb3": {
           "total": 1,
@@ -107167,12 +107585,6 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-18T17:17:06Z"
-        },
-        "abhay23-AI": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 0,
-          "lastCreatedAt": "2026-06-17T18:23:14Z"
         },
         "2830500285": {
           "total": 1,
@@ -111219,9 +111631,10 @@
         "utkarsh240799": 36,
         "ly-wang19": 6,
         "Itz-Antaripa": 25,
+        "rodboev": 14,
         "abhay-codes07": 4,
         "spike-spiegel-21": 15,
-        "rodboev": 14,
+        "jaythehardcoder": 0,
         "harshgupta-mem0": 15,
         "yashs33244": 15,
         "PHclaw": 4,
@@ -111229,7 +111642,6 @@
         "MgeeeeK": 11,
         "PranavPuranik": 16,
         "aaishikdutta": 16,
-        "jaythehardcoder": 0,
         "akshat1423": 12,
         "themavik": 0,
         "haosenwang1018": 2,
@@ -111239,9 +111651,9 @@
         "gabrielstein-mem0": 12,
         "haroldfabla2-hue": 0,
         "misrasaurabh1": 5,
+        "Krishnachaitanyakc": 2,
         "DivyamTalwar": 0,
         "johnwlockwood": 5,
-        "Krishnachaitanyakc": 2,
         "shafdev": 3,
         "NIK-TIGER-BILL": 0,
         "Anandesh-Sharma": 0,
@@ -111405,6 +111817,9 @@
         "SerSamgy": 2,
         "KapilM26": 2,
         "aalmuarik": 0,
+        "Jupiter363": 0,
+        "abhay23-AI": 0,
+        "mukktinaadh": 0,
         "OfficialAbhinavSingh": 0,
         "okaditya84": 1,
         "QunBB": 1,
@@ -111567,6 +111982,10 @@
         "jonasiwnl": 2,
         "amjadraza": 1,
         "Rayhanpatel": 2,
+        "jiuyige": 0,
+        "JiaXtian": 0,
+        "saitejabandaru-in": 0,
+        "EchoTouch-moon": 0,
         "pratikgajjar": 0,
         "supersonictw": 0,
         "seven7763": 0,
@@ -111608,7 +112027,6 @@
         "ferhimedamine": 0,
         "CyrusAurora": 0,
         "syf2211": 0,
-        "mukktinaadh": 0,
         "chaochaoweb3": 0,
         "ritsth": 0,
         "Jaco-Ren": 1,
@@ -111645,7 +112063,6 @@
         "Whning0513": 0,
         "krnomad": 0,
         "hcsum": 1,
-        "abhay23-AI": 0,
         "2830500285": 0,
         "100hard": 0,
         "rforgeon": 0,
@@ -137634,8 +138051,8 @@
       "releaseCreditMeta": null
     },
     "NVIDIA/SkillSpector|community-shipped-v4|all": {
-      "cachedAt": "2026-07-14T00:56:29.725898Z",
-      "refreshedAt": "2026-07-14T00:56:29.725898Z",
+      "cachedAt": "2026-07-15T01:29:56.549381Z",
+      "refreshedAt": "2026-07-15T01:29:56.549381Z",
       "logins": [
         "mimran-khan",
         "rodboev",
@@ -137656,6 +138073,7 @@
         "tuanaiseo",
         "rcha0s",
         "nyxst4ck",
+        "KodeCharya",
         "YanCheng-go",
         "Root-Aamir",
         "major-security",
@@ -137705,13 +138123,13 @@
         },
         "rodboev": {
           "total": 14,
-          "open": 10,
+          "open": 5,
           "recentCount": 1,
           "lastCreatedAt": "2026-07-11T04:38:01Z"
         },
         "CharmingGroot": {
           "total": 14,
-          "open": 2,
+          "open": 1,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-30T13:40:43Z"
         },
@@ -137741,7 +138159,7 @@
         },
         "koriyoshi2041": {
           "total": 4,
-          "open": 3,
+          "open": 2,
           "recentCount": 3,
           "lastCreatedAt": "2026-07-10T05:03:30Z"
         },
@@ -137753,7 +138171,7 @@
         },
         "zhenliemao": {
           "total": 3,
-          "open": 1,
+          "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-28T10:07:39Z"
         },
@@ -137778,7 +138196,7 @@
         "WhereIs38": {
           "total": 2,
           "open": 0,
-          "recentCount": 1,
+          "recentCount": 0,
           "lastCreatedAt": "2026-07-07T11:19:25Z"
         },
         "Dxboy266": {
@@ -137810,6 +138228,12 @@
           "open": 0,
           "recentCount": 0,
           "lastCreatedAt": "2026-06-19T05:37:07Z"
+        },
+        "KodeCharya": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T07:28:01Z"
         },
         "YanCheng-go": {
           "total": 1,
@@ -138049,15 +138473,15 @@
       "shippedCounts": {
         "keshprad": 9,
         "mimran-khan": 15,
-        "rodboev": 4,
-        "CharmingGroot": 10,
+        "rodboev": 9,
+        "CharmingGroot": 11,
         "AbhiramDwivedi": 6,
         "tcconnally": 7,
         "wernerkasselman-au": 2,
         "Shrotriya-lalit": 5,
-        "koriyoshi2041": 1,
+        "koriyoshi2041": 2,
         "smoy": 2,
-        "zhenliemao": 0,
+        "zhenliemao": 1,
         "zied-jlassi": 2,
         "asadbekXodjayev": 2,
         "will-exaforce": 0,
@@ -138067,6 +138491,7 @@
         "tuanaiseo": 2,
         "rcha0s": 1,
         "nyxst4ck": 1,
+        "KodeCharya": 0,
         "YanCheng-go": 0,
         "Root-Aamir": 0,
         "major-security": 0,
@@ -154995,6 +155420,2120 @@
         "kno10": 0,
         "atgctg": 0,
         "rowan-walshe": 0
+      }
+    },
+    "data-privacy-stack/presidio|community-shipped-v4|all": {
+      "cachedAt": "2026-07-14T21:44:34.287089Z",
+      "refreshedAt": "2026-07-14T21:44:34.287089Z",
+      "logins": [
+        "omri374",
+        "RonShakutai",
+        "niwilso",
+        "tamirkamara",
+        "Ilanak",
+        "jichaowang02-lang",
+        "roeybc",
+        "limorl",
+        "dorlugasigal",
+        "markvantilburg",
+        "ynachiket",
+        "kyoungbinkim",
+        "siwoo-jung",
+        "ultramancode",
+        "uwezkhan",
+        "yuriihavrylko",
+        "AlexanderSanin",
+        "AUTHENSOR",
+        "devopam",
+        "tee-jagz",
+        "MRADULTRIPATHI",
+        "StefH",
+        "VMD7",
+        "miltonsim",
+        "rodboev",
+        "thatomokoena",
+        "jacobArquiza",
+        "mrcuren",
+        "MvdB",
+        "stevenelliottjr",
+        "andyjessen",
+        "telackey",
+        "RektPunk",
+        "K3y5tr0ke",
+        "gerardduch-contentsquare",
+        "jenny-hm-lee",
+        "ebotiab",
+        "nikhilwadhwa84",
+        "erann1987",
+        "guybartal",
+        "rakan41",
+        "dhpollack",
+        "diwu1989",
+        "ammills01",
+        "rabee333",
+        "TianchengYangTR",
+        "mturac",
+        "Dashtid",
+        "ArjunPakhan",
+        "Jah-yee",
+        "sriram687",
+        "Surya-5555",
+        "TheSabari07",
+        "kennionblack",
+        "goveebee",
+        "Br1an67",
+        "Kassymkhan919",
+        "shokrydev",
+        "Jakob-98",
+        "joelbyler",
+        "rsiusr",
+        "kilavvy",
+        "leopardracer",
+        "mkh1991",
+        "rgupta2508",
+        "kumar-amit307",
+        "hhobson",
+        "afogel",
+        "areyesfalcon",
+        "aroffe99",
+        "bckamil",
+        "bwagner",
+        "LizaShak",
+        "paulo-raca",
+        "melmatlis",
+        "aperezfals",
+        "andygonzalez2010",
+        "Idomingog",
+        "PuspenduBanerjee",
+        "hkarakose",
+        "akrock",
+        "darindf",
+        "lordlinus",
+        "shailshouryya",
+        "CodeRunRepeat",
+        "fedeoliv",
+        "HenryVarro666",
+        "Joey239716",
+        "hexsm",
+        "bhargavikalicheti",
+        "bglglzd",
+        "santiagotri",
+        "hiro-nikaitou",
+        "thomas-lauer",
+        "MohamedAklamaash",
+        "matteobachini-vianova",
+        "cobypeled",
+        "Coshea46",
+        "michaelgiraldo",
+        "tuanaiseo",
+        "nyxst4ck",
+        "matheme-justyn",
+        "binhnguyenduc",
+        "kshvg",
+        "ded-furby",
+        "Lawson-Darrow",
+        "shauryaraghav",
+        "Mirza-Samad-Ahmed-Baig",
+        "BelizSertcan",
+        "Idan-Or",
+        "vabalass",
+        "Q1ufeng",
+        "Manas103",
+        "msg555",
+        "HammadSiddiqui",
+        "Bhavan790",
+        "aaronaco",
+        "max-tarlov-infinitusai",
+        "akk0rd",
+        "asensionacher",
+        "sienioApius",
+        "lsternlicht",
+        "extrasmall0",
+        "harishkernel",
+        "rraj45022",
+        "benogeorge",
+        "negruber1",
+        "Jitenndra03",
+        "haroldfabla2-hue",
+        "haosenwang1018",
+        "akios-ai",
+        "demisx",
+        "aramikm",
+        "Mr-Neutr0n",
+        "ravi-jindal",
+        "dilshad-aee",
+        "chrisvoncsefalvay",
+        "eveningcafe",
+        "WenwenHLF",
+        "jedheaj314",
+        "Ray0907",
+        "SAIRAMSSSS",
+        "ghaziahamat",
+        "Mehrsary",
+        "AyushAggarwal1",
+        "heesng-jung",
+        "jks-liu",
+        "atinm",
+        "pangchewe",
+        "BhargavDT",
+        "aliyss",
+        "krikera",
+        "zeevick10",
+        "HarikrishnanK9",
+        "Vruddhi18",
+        "eagle-p",
+        "EfratLe1",
+        "AvinandanBandyopadhyay",
+        "omahs",
+        "phromo",
+        "alan-insam",
+        "spacedragonx",
+        "BlaiseCz",
+        "rz1027",
+        "eltociear",
+        "RKapadia01",
+        "kshitijcode",
+        "andrewisplinghoff",
+        "hdw868",
+        "akshaykarle",
+        "artfuldev",
+        "claesmk",
+        "roel4ez",
+        "fuhengwu2021",
+        "MWest2020",
+        "ethanknights",
+        "kauabh",
+        "saulbein",
+        "ranjandsingh",
+        "andreas-repp",
+        "ungana",
+        "NuiMrme",
+        "NarekAra",
+        "Hiten-98",
+        "honderr",
+        "kjdeveloper8",
+        "Nweaver412",
+        "Edward-Upton",
+        "usr-ein",
+        "villo021",
+        "AndreasThinks",
+        "rob-nn",
+        "aivarasbaranauskas",
+        "TSunny007",
+        "andy-clapson",
+        "dinigo",
+        "JosephSBoyle",
+        "karthiksmanian",
+        "ksjogo",
+        "etiennellipse",
+        "iukea1",
+        "Ashhar-24",
+        "TheIndra55",
+        "gordl",
+        "bl4ckwind",
+        "ChenghaoMou",
+        "ayabel",
+        "eicca",
+        "zizhong",
+        "Nitrino",
+        "feynmanliang",
+        "alex-ber",
+        "gokullan",
+        "emmanuel-ferdman",
+        "marvinbuss",
+        "vpvpvpvp",
+        "andrwca",
+        "qc2105",
+        "mheguy",
+        "ducquangkstn",
+        "darella",
+        "antocommi",
+        "DocLM",
+        "samirabu",
+        "walkowif",
+        "janelletavares",
+        "evgri243",
+        "alexpotv",
+        "akshara-ih",
+        "lsmith77",
+        "tokestermw",
+        "Smankusors",
+        "anatbal",
+        "vtols",
+        "tipabu",
+        "lalitpagaria",
+        "jiankebe",
+        "msebragge",
+        "Shima84",
+        "kubistika",
+        "zhangabner",
+        "m0canu1",
+        "biancafbmd",
+        "NiallRees",
+        "acatlla",
+        "tpb1962",
+        "zmarouf",
+        "adrianolaselva",
+        "germanramos",
+        "Nilanjan96",
+        "itay",
+        "AlexanderTyan",
+        "willsthompson",
+        "akazemis",
+        "gitcarbs",
+        "johnewing1",
+        "stevehaigh",
+        "Cherchercher",
+        "eliperkins",
+        "louim",
+        "arschles",
+        "kant",
+        "barak-nagar"
+      ],
+      "stats": {
+        "omri374": {
+          "total": 249,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-28T10:18:00Z"
+        },
+        "RonShakutai": {
+          "total": 30,
+          "open": 0,
+          "recentCount": 6,
+          "lastCreatedAt": "2026-07-12T20:26:48Z"
+        },
+        "niwilso": {
+          "total": 29,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-09-07T13:23:55Z"
+        },
+        "tamirkamara": {
+          "total": 22,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-11-19T07:21:52Z"
+        },
+        "Ilanak": {
+          "total": 21,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2019-02-13T12:16:29Z"
+        },
+        "jichaowang02-lang": {
+          "total": 11,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-07-02T01:04:27Z"
+        },
+        "roeybc": {
+          "total": 10,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-09-09T21:39:21Z"
+        },
+        "limorl": {
+          "total": 9,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2019-03-02T19:06:47Z"
+        },
+        "dorlugasigal": {
+          "total": 7,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-12-01T09:56:01Z"
+        },
+        "markvantilburg": {
+          "total": 7,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-09-12T11:49:51Z"
+        },
+        "ynachiket": {
+          "total": 6,
+          "open": 2,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-25T12:01:56Z"
+        },
+        "kyoungbinkim": {
+          "total": 6,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-02-12T07:53:35Z"
+        },
+        "siwoo-jung": {
+          "total": 6,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-11-06T11:15:09Z"
+        },
+        "ultramancode": {
+          "total": 5,
+          "open": 3,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-10T16:31:04Z"
+        },
+        "uwezkhan": {
+          "total": 5,
+          "open": 2,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-07-04T14:13:10Z"
+        },
+        "yuriihavrylko": {
+          "total": 5,
+          "open": 4,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-20T13:59:38Z"
+        },
+        "AlexanderSanin": {
+          "total": 5,
+          "open": 2,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-18T09:09:31Z"
+        },
+        "AUTHENSOR": {
+          "total": 5,
+          "open": 1,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-18T07:05:08Z"
+        },
+        "devopam": {
+          "total": 5,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-03-04T18:00:36Z"
+        },
+        "tee-jagz": {
+          "total": 4,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-02-15T23:15:38Z"
+        },
+        "MRADULTRIPATHI": {
+          "total": 4,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-09-26T22:39:13Z"
+        },
+        "StefH": {
+          "total": 4,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-06-05T08:49:06Z"
+        },
+        "VMD7": {
+          "total": 4,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-03-03T14:37:55Z"
+        },
+        "miltonsim": {
+          "total": 4,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-02-29T03:25:23Z"
+        },
+        "rodboev": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-28T04:08:46Z"
+        },
+        "thatomokoena": {
+          "total": 3,
+          "open": 2,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-17T14:02:09Z"
+        },
+        "jacobArquiza": {
+          "total": 3,
+          "open": 3,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-30T08:27:56Z"
+        },
+        "mrcuren": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-04-26T13:35:30Z"
+        },
+        "MvdB": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-04-19T18:44:58Z"
+        },
+        "stevenelliottjr": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-02-17T03:33:48Z"
+        },
+        "andyjessen": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-02-13T19:18:09Z"
+        },
+        "telackey": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-01-26T23:31:34Z"
+        },
+        "RektPunk": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-01-01T12:37:38Z"
+        },
+        "K3y5tr0ke": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-07-31T02:37:06Z"
+        },
+        "gerardduch-contentsquare": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-07-22T14:42:15Z"
+        },
+        "jenny-hm-lee": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-03-07T22:30:51Z"
+        },
+        "ebotiab": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-02-13T09:19:01Z"
+        },
+        "nikhilwadhwa84": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-07-06T15:17:59Z"
+        },
+        "erann1987": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-07-19T07:59:34Z"
+        },
+        "guybartal": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-03-03T14:06:59Z"
+        },
+        "rakan41": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2021-08-16T02:02:04Z"
+        },
+        "dhpollack": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-07-25T17:06:06Z"
+        },
+        "diwu1989": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-07-23T05:21:35Z"
+        },
+        "ammills01": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-05-04T20:57:26Z"
+        },
+        "rabee333": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-02-02T09:35:33Z"
+        },
+        "TianchengYangTR": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2019-12-17T23:51:08Z"
+        },
+        "mturac": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-29T05:35:28Z"
+        },
+        "Dashtid": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-23T18:30:40Z"
+        },
+        "ArjunPakhan": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-19T15:37:46Z"
+        },
+        "Jah-yee": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-16T05:24:21Z"
+        },
+        "sriram687": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-31T13:47:06Z"
+        },
+        "Surya-5555": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-29T08:53:33Z"
+        },
+        "TheSabari07": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-04-12T14:33:42Z"
+        },
+        "kennionblack": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-04-09T04:39:47Z"
+        },
+        "goveebee": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-03-23T11:45:48Z"
+        },
+        "Br1an67": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-03-09T02:46:35Z"
+        },
+        "Kassymkhan919": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-02-12T23:24:44Z"
+        },
+        "shokrydev": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-01-14T00:36:31Z"
+        },
+        "Jakob-98": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-12-29T12:32:58Z"
+        },
+        "joelbyler": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-09-23T12:44:47Z"
+        },
+        "rsiusr": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-07-24T18:40:09Z"
+        },
+        "kilavvy": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-06-20T22:26:22Z"
+        },
+        "leopardracer": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-06-19T19:01:25Z"
+        },
+        "mkh1991": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-05-11T09:20:07Z"
+        },
+        "rgupta2508": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-02-05T11:16:39Z"
+        },
+        "kumar-amit307": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-10-10T05:33:46Z"
+        },
+        "hhobson": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-09-01T12:58:01Z"
+        },
+        "afogel": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-06-06T11:18:50Z"
+        },
+        "areyesfalcon": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-04-18T19:50:38Z"
+        },
+        "aroffe99": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-12-17T04:11:13Z"
+        },
+        "bckamil": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-11-20T19:54:45Z"
+        },
+        "bwagner": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-10-16T14:29:45Z"
+        },
+        "LizaShak": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-09-13T18:17:57Z"
+        },
+        "paulo-raca": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-04-26T13:47:15Z"
+        },
+        "melmatlis": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-12-28T14:21:59Z"
+        },
+        "aperezfals": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-12-01T12:33:54Z"
+        },
+        "andygonzalez2010": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-10-07T08:15:31Z"
+        },
+        "Idomingog": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-01-20T11:56:28Z"
+        },
+        "PuspenduBanerjee": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2021-09-19T05:29:01Z"
+        },
+        "hkarakose": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2021-03-14T12:49:49Z"
+        },
+        "akrock": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-08-03T03:39:49Z"
+        },
+        "darindf": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-03-16T15:35:48Z"
+        },
+        "lordlinus": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2019-10-17T10:11:58Z"
+        },
+        "shailshouryya": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2019-09-16T16:35:13Z"
+        },
+        "CodeRunRepeat": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2019-09-09T08:00:12Z"
+        },
+        "fedeoliv": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2019-09-01T15:24:58Z"
+        },
+        "HenryVarro666": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-14T00:25:34Z"
+        },
+        "Joey239716": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T19:34:47Z"
+        },
+        "hexsm": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-13T07:48:30Z"
+        },
+        "bhargavikalicheti": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T22:29:14Z"
+        },
+        "bglglzd": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-12T19:23:56Z"
+        },
+        "santiagotri": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-11T11:47:10Z"
+        },
+        "hiro-nikaitou": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1,
+          "lastCreatedAt": "2026-07-08T01:41:40Z"
+        },
+        "thomas-lauer": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-07-07T21:10:10Z"
+        },
+        "MohamedAklamaash": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-07-06T17:07:36Z"
+        },
+        "matteobachini-vianova": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-30T12:02:59Z"
+        },
+        "cobypeled": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-29T21:21:11Z"
+        },
+        "Coshea46": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-29T18:56:42Z"
+        },
+        "michaelgiraldo": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-26T06:06:24Z"
+        },
+        "tuanaiseo": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-23T23:14:28Z"
+        },
+        "nyxst4ck": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-23T17:29:00Z"
+        },
+        "matheme-justyn": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-18T06:02:42Z"
+        },
+        "binhnguyenduc": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-17T07:52:46Z"
+        },
+        "kshvg": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-07T14:27:02Z"
+        },
+        "ded-furby": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-06-05T22:09:49Z"
+        },
+        "Lawson-Darrow": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-29T06:06:54Z"
+        },
+        "shauryaraghav": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-24T06:10:35Z"
+        },
+        "Mirza-Samad-Ahmed-Baig": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-22T12:12:47Z"
+        },
+        "BelizSertcan": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-21T11:28:47Z"
+        },
+        "Idan-Or": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-19T14:15:04Z"
+        },
+        "vabalass": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-19T08:49:26Z"
+        },
+        "Q1ufeng": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-18T11:37:51Z"
+        },
+        "Manas103": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-17T21:01:03Z"
+        },
+        "msg555": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-15T18:54:17Z"
+        },
+        "HammadSiddiqui": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-15T11:42:27Z"
+        },
+        "Bhavan790": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-15T06:10:06Z"
+        },
+        "aaronaco": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-02T15:26:31Z"
+        },
+        "max-tarlov-infinitusai": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-05-01T18:00:05Z"
+        },
+        "akk0rd": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-04-30T20:59:09Z"
+        },
+        "asensionacher": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-04-30T09:07:59Z"
+        },
+        "sienioApius": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-04-23T12:01:58Z"
+        },
+        "lsternlicht": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-04-10T20:24:49Z"
+        },
+        "extrasmall0": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-04-08T22:56:48Z"
+        },
+        "harishkernel": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-04-04T02:42:17Z"
+        },
+        "rraj45022": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-03-31T12:09:09Z"
+        },
+        "benogeorge": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-03-23T16:44:56Z"
+        },
+        "negruber1": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-03-12T09:51:12Z"
+        },
+        "Jitenndra03": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-03-09T16:54:35Z"
+        },
+        "haroldfabla2-hue": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-03-06T05:39:12Z"
+        },
+        "haosenwang1018": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-02-27T01:05:16Z"
+        },
+        "akios-ai": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-02-22T13:42:26Z"
+        },
+        "demisx": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-02-19T04:14:01Z"
+        },
+        "aramikm": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-02-17T22:25:17Z"
+        },
+        "Mr-Neutr0n": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-02-13T02:04:28Z"
+        },
+        "ravi-jindal": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-01-04T00:30:02Z"
+        },
+        "dilshad-aee": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2026-01-02T22:53:12Z"
+        },
+        "chrisvoncsefalvay": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-12-25T01:30:14Z"
+        },
+        "eveningcafe": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-12-12T03:58:30Z"
+        },
+        "WenwenHLF": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-12-04T07:01:42Z"
+        },
+        "jedheaj314": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-12-02T16:56:55Z"
+        },
+        "Ray0907": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-11-29T11:54:12Z"
+        },
+        "SAIRAMSSSS": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-11-21T15:24:17Z"
+        },
+        "ghaziahamat": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-11-05T11:23:06Z"
+        },
+        "Mehrsary": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-10-22T16:13:52Z"
+        },
+        "AyushAggarwal1": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-10-12T16:36:06Z"
+        },
+        "heesng-jung": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-10-05T12:23:04Z"
+        },
+        "jks-liu": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-09-22T13:40:57Z"
+        },
+        "atinm": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-09-11T17:04:47Z"
+        },
+        "pangchewe": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-09-05T22:20:34Z"
+        },
+        "BhargavDT": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-08-17T17:46:28Z"
+        },
+        "aliyss": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-07-18T14:27:06Z"
+        },
+        "krikera": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-06-22T10:27:25Z"
+        },
+        "zeevick10": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-06-14T18:52:41Z"
+        },
+        "HarikrishnanK9": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-06-03T08:09:49Z"
+        },
+        "Vruddhi18": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-05-31T18:50:22Z"
+        },
+        "eagle-p": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-05-31T11:58:14Z"
+        },
+        "EfratLe1": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-05-22T12:31:51Z"
+        },
+        "AvinandanBandyopadhyay": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-05-14T16:04:09Z"
+        },
+        "omahs": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-05-09T16:40:44Z"
+        },
+        "phromo": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-05-05T13:32:26Z"
+        },
+        "alan-insam": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-03-26T14:39:54Z"
+        },
+        "spacedragonx": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-02-27T08:25:45Z"
+        },
+        "BlaiseCz": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-01-31T11:29:43Z"
+        },
+        "rz1027": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-01-21T16:32:22Z"
+        },
+        "eltociear": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2025-01-13T07:12:36Z"
+        },
+        "RKapadia01": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-12-12T05:06:40Z"
+        },
+        "kshitijcode": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-12-10T08:57:08Z"
+        },
+        "andrewisplinghoff": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-11-26T10:44:05Z"
+        },
+        "hdw868": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-10-30T09:43:18Z"
+        },
+        "akshaykarle": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-10-14T11:42:37Z"
+        },
+        "artfuldev": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-10-01T12:45:35Z"
+        },
+        "claesmk": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-09-28T21:30:11Z"
+        },
+        "roel4ez": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-09-16T18:34:12Z"
+        },
+        "fuhengwu2021": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-09-06T16:49:15Z"
+        },
+        "MWest2020": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-08-18T11:47:06Z"
+        },
+        "ethanknights": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-08-14T12:32:23Z"
+        },
+        "kauabh": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-08-01T18:28:11Z"
+        },
+        "saulbein": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-07-24T09:02:24Z"
+        },
+        "ranjandsingh": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-07-21T20:00:35Z"
+        },
+        "andreas-repp": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-06-27T09:11:18Z"
+        },
+        "ungana": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-05-07T22:53:30Z"
+        },
+        "NuiMrme": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-04-26T12:29:17Z"
+        },
+        "NarekAra": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-04-13T22:05:44Z"
+        },
+        "Hiten-98": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-04-02T18:22:47Z"
+        },
+        "honderr": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-03-31T16:47:47Z"
+        },
+        "kjdeveloper8": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-03-27T09:35:07Z"
+        },
+        "Nweaver412": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-03-20T16:57:07Z"
+        },
+        "Edward-Upton": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-03-15T16:45:29Z"
+        },
+        "usr-ein": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-03-15T13:51:12Z"
+        },
+        "villo021": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-03-14T18:41:12Z"
+        },
+        "AndreasThinks": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-03-07T13:33:47Z"
+        },
+        "rob-nn": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-02-06T02:46:35Z"
+        },
+        "aivarasbaranauskas": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-02-01T14:47:13Z"
+        },
+        "TSunny007": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-01-29T21:06:57Z"
+        },
+        "andy-clapson": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-01-24T17:32:59Z"
+        },
+        "dinigo": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-01-12T13:09:31Z"
+        },
+        "JosephSBoyle": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2024-01-08T14:10:17Z"
+        },
+        "karthiksmanian": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-12-18T02:45:11Z"
+        },
+        "ksjogo": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-12-18T01:00:04Z"
+        },
+        "etiennellipse": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-11-29T15:06:35Z"
+        },
+        "iukea1": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-11-26T10:59:40Z"
+        },
+        "Ashhar-24": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-10-31T14:20:38Z"
+        },
+        "TheIndra55": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-10-25T14:51:36Z"
+        },
+        "gordl": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-10-07T00:34:40Z"
+        },
+        "bl4ckwind": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-09-19T08:35:38Z"
+        },
+        "ChenghaoMou": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-09-15T13:41:11Z"
+        },
+        "ayabel": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-09-05T09:32:12Z"
+        },
+        "eicca": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-08-14T13:25:27Z"
+        },
+        "zizhong": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-07-28T22:44:48Z"
+        },
+        "Nitrino": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-07-28T15:34:09Z"
+        },
+        "feynmanliang": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-07-04T18:37:37Z"
+        },
+        "alex-ber": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-06-20T15:15:39Z"
+        },
+        "gokullan": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-06-15T18:52:40Z"
+        },
+        "emmanuel-ferdman": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-06-04T10:40:29Z"
+        },
+        "marvinbuss": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-04-01T16:44:58Z"
+        },
+        "vpvpvpvp": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-02-17T18:49:42Z"
+        },
+        "andrwca": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-01-27T14:03:58Z"
+        },
+        "qc2105": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2023-01-05T07:03:35Z"
+        },
+        "mheguy": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-11-14T01:20:02Z"
+        },
+        "ducquangkstn": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-10-16T07:29:04Z"
+        },
+        "darella": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-10-03T11:09:14Z"
+        },
+        "antocommi": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-10-03T09:59:14Z"
+        },
+        "DocLM": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-10-02T06:38:04Z"
+        },
+        "samirabu": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-09-21T19:48:06Z"
+        },
+        "walkowif": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-09-20T12:55:13Z"
+        },
+        "janelletavares": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-09-13T00:34:43Z"
+        },
+        "evgri243": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-06-23T13:22:56Z"
+        },
+        "alexpotv": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-05-26T15:52:07Z"
+        },
+        "akshara-ih": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-05-17T21:17:58Z"
+        },
+        "lsmith77": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-04-22T15:26:42Z"
+        },
+        "tokestermw": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-03-18T19:25:44Z"
+        },
+        "Smankusors": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-02-27T03:57:59Z"
+        },
+        "anatbal": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2022-02-15T15:39:35Z"
+        },
+        "vtols": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2021-11-30T09:55:20Z"
+        },
+        "tipabu": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2021-10-21T05:36:40Z"
+        },
+        "lalitpagaria": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2021-10-04T11:48:30Z"
+        },
+        "jiankebe": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2021-07-20T08:39:41Z"
+        },
+        "msebragge": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2021-05-20T12:45:58Z"
+        },
+        "Shima84": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2021-05-10T11:11:17Z"
+        },
+        "kubistika": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2021-04-03T19:53:57Z"
+        },
+        "zhangabner": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2021-03-26T22:31:06Z"
+        },
+        "m0canu1": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2021-03-03T10:40:10Z"
+        },
+        "biancafbmd": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2021-01-29T21:57:03Z"
+        },
+        "NiallRees": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2021-01-27T14:16:12Z"
+        },
+        "acatlla": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-09-28T14:21:09Z"
+        },
+        "tpb1962": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-09-25T16:29:46Z"
+        },
+        "zmarouf": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-09-07T05:00:26Z"
+        },
+        "adrianolaselva": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-08-03T19:12:21Z"
+        },
+        "germanramos": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-07-30T15:39:17Z"
+        },
+        "Nilanjan96": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-07-07T03:52:24Z"
+        },
+        "itay": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-06-17T23:15:39Z"
+        },
+        "AlexanderTyan": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-05-28T17:09:20Z"
+        },
+        "willsthompson": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-04-30T17:12:01Z"
+        },
+        "akazemis": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-04-23T04:56:39Z"
+        },
+        "gitcarbs": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2020-04-20T20:16:57Z"
+        },
+        "johnewing1": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2019-12-10T17:33:20Z"
+        },
+        "stevehaigh": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2019-11-22T14:27:06Z"
+        },
+        "Cherchercher": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2019-10-09T23:10:53Z"
+        },
+        "eliperkins": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2019-08-28T14:49:41Z"
+        },
+        "louim": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2019-08-27T17:44:09Z"
+        },
+        "arschles": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2019-05-07T23:56:43Z"
+        },
+        "kant": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2019-03-10T14:15:18Z"
+        },
+        "barak-nagar": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 0,
+          "lastCreatedAt": "2018-07-24T09:24:06Z"
+        }
+      },
+      "shippedCounts": {
+        "omri374": 212,
+        "RonShakutai": 22,
+        "niwilso": 28,
+        "tamirkamara": 19,
+        "Ilanak": 18,
+        "jichaowang02-lang": 11,
+        "roeybc": 8,
+        "limorl": 9,
+        "dorlugasigal": 6,
+        "markvantilburg": 4,
+        "ynachiket": 3,
+        "kyoungbinkim": 3,
+        "siwoo-jung": 6,
+        "ultramancode": 2,
+        "uwezkhan": 3,
+        "yuriihavrylko": 1,
+        "AlexanderSanin": 3,
+        "AUTHENSOR": 4,
+        "devopam": 3,
+        "tee-jagz": 4,
+        "MRADULTRIPATHI": 1,
+        "StefH": 4,
+        "VMD7": 4,
+        "miltonsim": 4,
+        "rodboev": 3,
+        "thatomokoena": 1,
+        "jacobArquiza": 0,
+        "mrcuren": 3,
+        "MvdB": 2,
+        "stevenelliottjr": 2,
+        "andyjessen": 3,
+        "telackey": 2,
+        "RektPunk": 3,
+        "K3y5tr0ke": 2,
+        "gerardduch-contentsquare": 0,
+        "jenny-hm-lee": 2,
+        "ebotiab": 2,
+        "nikhilwadhwa84": 0,
+        "erann1987": 3,
+        "guybartal": 3,
+        "rakan41": 3,
+        "dhpollack": 3,
+        "diwu1989": 3,
+        "ammills01": 3,
+        "rabee333": 3,
+        "TianchengYangTR": 0,
+        "mturac": 1,
+        "Dashtid": 1,
+        "ArjunPakhan": 1,
+        "Jah-yee": 0,
+        "sriram687": 0,
+        "Surya-5555": 2,
+        "TheSabari07": 1,
+        "kennionblack": 2,
+        "goveebee": 2,
+        "Br1an67": 1,
+        "Kassymkhan919": 0,
+        "shokrydev": 0,
+        "Jakob-98": 2,
+        "joelbyler": 0,
+        "rsiusr": 2,
+        "kilavvy": 2,
+        "leopardracer": 2,
+        "mkh1991": 1,
+        "rgupta2508": 0,
+        "kumar-amit307": 0,
+        "hhobson": 2,
+        "afogel": 1,
+        "areyesfalcon": 1,
+        "aroffe99": 2,
+        "bckamil": 1,
+        "bwagner": 2,
+        "LizaShak": 1,
+        "paulo-raca": 2,
+        "melmatlis": 2,
+        "aperezfals": 1,
+        "andygonzalez2010": 2,
+        "Idomingog": 2,
+        "PuspenduBanerjee": 0,
+        "hkarakose": 2,
+        "akrock": 1,
+        "darindf": 1,
+        "lordlinus": 1,
+        "shailshouryya": 1,
+        "CodeRunRepeat": 1,
+        "fedeoliv": 0,
+        "HenryVarro666": 0,
+        "Joey239716": 0,
+        "hexsm": 0,
+        "bhargavikalicheti": 0,
+        "bglglzd": 0,
+        "santiagotri": 0,
+        "hiro-nikaitou": 1,
+        "thomas-lauer": 0,
+        "MohamedAklamaash": 1,
+        "matteobachini-vianova": 1,
+        "cobypeled": 1,
+        "Coshea46": 1,
+        "michaelgiraldo": 1,
+        "tuanaiseo": 0,
+        "nyxst4ck": 0,
+        "matheme-justyn": 0,
+        "binhnguyenduc": 0,
+        "kshvg": 0,
+        "ded-furby": 0,
+        "Lawson-Darrow": 0,
+        "shauryaraghav": 0,
+        "Mirza-Samad-Ahmed-Baig": 0,
+        "BelizSertcan": 1,
+        "Idan-Or": 0,
+        "vabalass": 0,
+        "Q1ufeng": 0,
+        "Manas103": 0,
+        "msg555": 0,
+        "HammadSiddiqui": 1,
+        "Bhavan790": 0,
+        "aaronaco": 1,
+        "max-tarlov-infinitusai": 1,
+        "akk0rd": 0,
+        "asensionacher": 1,
+        "sienioApius": 1,
+        "lsternlicht": 0,
+        "extrasmall0": 1,
+        "harishkernel": 1,
+        "rraj45022": 0,
+        "benogeorge": 0,
+        "negruber1": 0,
+        "Jitenndra03": 0,
+        "haroldfabla2-hue": 0,
+        "haosenwang1018": 1,
+        "akios-ai": 1,
+        "demisx": 0,
+        "aramikm": 0,
+        "Mr-Neutr0n": 1,
+        "ravi-jindal": 1,
+        "dilshad-aee": 1,
+        "chrisvoncsefalvay": 1,
+        "eveningcafe": 1,
+        "WenwenHLF": 1,
+        "jedheaj314": 1,
+        "Ray0907": 0,
+        "SAIRAMSSSS": 0,
+        "ghaziahamat": 0,
+        "Mehrsary": 0,
+        "AyushAggarwal1": 1,
+        "heesng-jung": 1,
+        "jks-liu": 1,
+        "atinm": 1,
+        "pangchewe": 1,
+        "BhargavDT": 1,
+        "aliyss": 1,
+        "krikera": 0,
+        "zeevick10": 1,
+        "HarikrishnanK9": 0,
+        "Vruddhi18": 1,
+        "eagle-p": 1,
+        "EfratLe1": 0,
+        "AvinandanBandyopadhyay": 1,
+        "omahs": 1,
+        "phromo": 0,
+        "alan-insam": 1,
+        "spacedragonx": 1,
+        "BlaiseCz": 0,
+        "rz1027": 0,
+        "eltociear": 1,
+        "RKapadia01": 1,
+        "kshitijcode": 1,
+        "andrewisplinghoff": 1,
+        "hdw868": 1,
+        "akshaykarle": 1,
+        "artfuldev": 1,
+        "claesmk": 1,
+        "roel4ez": 1,
+        "fuhengwu2021": 0,
+        "MWest2020": 1,
+        "ethanknights": 0,
+        "kauabh": 1,
+        "saulbein": 1,
+        "ranjandsingh": 1,
+        "andreas-repp": 1,
+        "ungana": 1,
+        "NuiMrme": 0,
+        "NarekAra": 1,
+        "Hiten-98": 1,
+        "honderr": 1,
+        "kjdeveloper8": 1,
+        "Nweaver412": 0,
+        "Edward-Upton": 1,
+        "usr-ein": 1,
+        "villo021": 1,
+        "AndreasThinks": 1,
+        "rob-nn": 1,
+        "aivarasbaranauskas": 1,
+        "TSunny007": 1,
+        "andy-clapson": 1,
+        "dinigo": 1,
+        "JosephSBoyle": 1,
+        "karthiksmanian": 0,
+        "ksjogo": 1,
+        "etiennellipse": 1,
+        "iukea1": 0,
+        "Ashhar-24": 1,
+        "TheIndra55": 1,
+        "gordl": 1,
+        "bl4ckwind": 1,
+        "ChenghaoMou": 1,
+        "ayabel": 1,
+        "eicca": 1,
+        "zizhong": 0,
+        "Nitrino": 1,
+        "feynmanliang": 0,
+        "alex-ber": 0,
+        "gokullan": 1,
+        "emmanuel-ferdman": 1,
+        "marvinbuss": 0,
+        "vpvpvpvp": 0,
+        "andrwca": 1,
+        "qc2105": 1,
+        "mheguy": 1,
+        "ducquangkstn": 1,
+        "darella": 1,
+        "antocommi": 1,
+        "DocLM": 1,
+        "samirabu": 1,
+        "walkowif": 1,
+        "janelletavares": 0,
+        "evgri243": 0,
+        "alexpotv": 1,
+        "akshara-ih": 1,
+        "lsmith77": 1,
+        "tokestermw": 1,
+        "Smankusors": 1,
+        "anatbal": 1,
+        "vtols": 1,
+        "tipabu": 1,
+        "lalitpagaria": 1,
+        "jiankebe": 0,
+        "msebragge": 1,
+        "Shima84": 1,
+        "kubistika": 1,
+        "zhangabner": 1,
+        "m0canu1": 0,
+        "biancafbmd": 1,
+        "NiallRees": 0,
+        "acatlla": 1,
+        "tpb1962": 0,
+        "zmarouf": 1,
+        "adrianolaselva": 0,
+        "germanramos": 1,
+        "Nilanjan96": 0,
+        "itay": 0,
+        "AlexanderTyan": 1,
+        "willsthompson": 1,
+        "akazemis": 1,
+        "gitcarbs": 1,
+        "johnewing1": 1,
+        "stevehaigh": 1,
+        "Cherchercher": 0,
+        "eliperkins": 0,
+        "louim": 1,
+        "arschles": 0,
+        "kant": 1,
+        "barak-nagar": 1
       }
     }
   },
@@ -231994,7 +234533,7 @@
   },
   "releaseData": {
     "kenn-io/agentsview": {
-      "cachedAt": "2026-07-14T00:56:29.725898Z",
+      "cachedAt": "2026-07-15T01:29:56.549381Z",
       "releases": [
         {
           "tagName": "v0.38.1",
@@ -232497,7 +235036,7 @@
       "prToRelease": {}
     },
     "thedotmack/claude-mem": {
-      "cachedAt": "2026-07-14T00:56:29.725898Z",
+      "cachedAt": "2026-07-15T01:29:56.549381Z",
       "releases": [
         {
           "tagName": "v13.11.0",
@@ -234612,7 +237151,7 @@
       }
     },
     "headroomlabs-ai/headroom": {
-      "cachedAt": "2026-07-14T00:56:29.725898Z",
+      "cachedAt": "2026-07-15T01:29:56.549381Z",
       "releases": [
         {
           "tagName": "v0.31.0",
@@ -236571,7 +239110,7 @@
       }
     },
     "mem0ai/mem0": {
-      "cachedAt": "2026-07-14T00:56:29.725898Z",
+      "cachedAt": "2026-07-15T01:29:56.549381Z",
       "releases": [
         {
           "tagName": "v2.0.12",
@@ -248996,8 +251535,258 @@
       }
     },
     "stablyai/orca": {
-      "cachedAt": "2026-07-14T00:56:29.725898Z",
+      "cachedAt": "2026-07-15T01:29:56.549381Z",
       "releases": [
+        {
+          "tagName": "v1.4.142-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.2",
+          "publishedAt": "2026-07-15T01:14:22Z",
+          "credits": {
+            "OrcaWin": [
+              8688
+            ],
+            "brennanb2025": [
+              7986,
+              8650,
+              8672,
+              8765,
+              8767,
+              8769,
+              8772,
+              8775
+            ],
+            "nwparker": [
+              8773
+            ],
+            "Jinwoo-H": [
+              8768,
+              8779
+            ],
+            "1shiharat": [
+              6335
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.142-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.1",
+          "publishedAt": "2026-07-14T21:32:41Z",
+          "credits": {
+            "brennanb2025": [
+              8691
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.142-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.0",
+          "publishedAt": "2026-07-14T19:03:35Z",
+          "credits": {
+            "Jinwoo-H": [
+              8536
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.141",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.141",
+          "publishedAt": "2026-07-14T18:41:17Z",
+          "credits": {
+            "brennanb2025": [
+              8597,
+              8624,
+              8628,
+              8647,
+              8673,
+              8676,
+              8707
+            ],
+            "moseoh": [
+              8658
+            ],
+            "nwparker": [
+              8671,
+              8677,
+              8678,
+              8679,
+              8690,
+              8697
+            ],
+            "OrcaWin": [
+              8683,
+              8737
+            ],
+            "fsdwen": [
+              8693
+            ],
+            "rodboev": [
+              8209
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.140-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.140-rc.0",
+          "publishedAt": "2026-07-14T07:32:16Z",
+          "credits": {
+            "brennanb2025": [
+              8628,
+              8673,
+              8676
+            ],
+            "moseoh": [
+              8658
+            ],
+            "nwparker": [
+              8671,
+              8677,
+              8678,
+              8679
+            ],
+            "OrcaWin": [
+              8683
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.139",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139",
+          "publishedAt": "2026-07-14T05:27:13Z",
+          "credits": {
+            "fsdwen": [
+              8554
+            ],
+            "brennanb2025": [
+              7985,
+              8502,
+              8505,
+              8522,
+              8603,
+              8630,
+              8642,
+              8660,
+              8663
+            ],
+            "AmethystLiang": [
+              8524,
+              8562,
+              8567,
+              8568,
+              8569,
+              8621,
+              8636,
+              8638,
+              8639,
+              8640,
+              8641,
+              8644,
+              8646,
+              8648,
+              8651,
+              8654
+            ],
+            "kaynansc": [
+              7954,
+              8418,
+              8425
+            ],
+            "rodboev": [
+              7640
+            ],
+            "sdhilip200": [
+              8326
+            ],
+            "nwparker": [
+              8508,
+              8509,
+              8510,
+              8511,
+              8513,
+              8514,
+              8519,
+              8525,
+              8527,
+              8528,
+              8623,
+              8653
+            ],
+            "Jinwoo-H": [
+              8625,
+              8659
+            ],
+            "moseoh": [
+              8570
+            ],
+            "gatsby74": [
+              8142
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2",
+          "publishedAt": "2026-07-14T03:26:39Z",
+          "credits": {
+            "brennanb2025": [
+              7985,
+              8502,
+              8603
+            ],
+            "AmethystLiang": [
+              8562,
+              8621,
+              8636,
+              8638,
+              8639,
+              8640,
+              8641,
+              8644,
+              8646,
+              8648,
+              8651
+            ],
+            "rodboev": [
+              7640
+            ],
+            "sdhilip200": [
+              8326
+            ],
+            "nwparker": [
+              8508,
+              8509,
+              8510,
+              8511,
+              8513,
+              8514,
+              8519,
+              8525,
+              8527,
+              8528,
+              8623,
+              8653
+            ],
+            "Jinwoo-H": [
+              8625
+            ],
+            "kaynansc": [
+              7954,
+              8425
+            ],
+            "moseoh": [
+              8570
+            ],
+            "gatsby74": [
+              8142
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
         {
           "tagName": "v1.4.139-rc.0",
           "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.0",
@@ -292776,11 +295565,299 @@
         "8418": {
           "tagName": "v1.4.139-rc.0",
           "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.0"
+        },
+        "7985": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8502": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8603": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8562": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8621": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8636": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8638": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8639": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8640": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8641": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8644": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8646": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8648": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8651": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "7640": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8326": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8508": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8509": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8510": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8511": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8513": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8514": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8519": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8525": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8527": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8528": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8623": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8653": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8625": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "7954": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8425": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8570": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8142": {
+          "tagName": "v1.4.139-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139-rc.2"
+        },
+        "8630": {
+          "tagName": "v1.4.139",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139"
+        },
+        "8642": {
+          "tagName": "v1.4.139",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139"
+        },
+        "8660": {
+          "tagName": "v1.4.139",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139"
+        },
+        "8663": {
+          "tagName": "v1.4.139",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139"
+        },
+        "8654": {
+          "tagName": "v1.4.139",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139"
+        },
+        "8659": {
+          "tagName": "v1.4.139",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.139"
+        },
+        "8628": {
+          "tagName": "v1.4.140-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.140-rc.0"
+        },
+        "8673": {
+          "tagName": "v1.4.140-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.140-rc.0"
+        },
+        "8676": {
+          "tagName": "v1.4.140-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.140-rc.0"
+        },
+        "8658": {
+          "tagName": "v1.4.140-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.140-rc.0"
+        },
+        "8671": {
+          "tagName": "v1.4.140-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.140-rc.0"
+        },
+        "8677": {
+          "tagName": "v1.4.140-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.140-rc.0"
+        },
+        "8678": {
+          "tagName": "v1.4.140-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.140-rc.0"
+        },
+        "8679": {
+          "tagName": "v1.4.140-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.140-rc.0"
+        },
+        "8683": {
+          "tagName": "v1.4.140-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.140-rc.0"
+        },
+        "8597": {
+          "tagName": "v1.4.141",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.141"
+        },
+        "8624": {
+          "tagName": "v1.4.141",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.141"
+        },
+        "8647": {
+          "tagName": "v1.4.141",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.141"
+        },
+        "8707": {
+          "tagName": "v1.4.141",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.141"
+        },
+        "8690": {
+          "tagName": "v1.4.141",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.141"
+        },
+        "8697": {
+          "tagName": "v1.4.141",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.141"
+        },
+        "8737": {
+          "tagName": "v1.4.141",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.141"
+        },
+        "8693": {
+          "tagName": "v1.4.141",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.141"
+        },
+        "8209": {
+          "tagName": "v1.4.141",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.141"
+        },
+        "8536": {
+          "tagName": "v1.4.142-rc.0",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.0"
+        },
+        "8691": {
+          "tagName": "v1.4.142-rc.1",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.1"
+        },
+        "8688": {
+          "tagName": "v1.4.142-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.2"
+        },
+        "7986": {
+          "tagName": "v1.4.142-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.2"
+        },
+        "8650": {
+          "tagName": "v1.4.142-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.2"
+        },
+        "8672": {
+          "tagName": "v1.4.142-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.2"
+        },
+        "8765": {
+          "tagName": "v1.4.142-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.2"
+        },
+        "8767": {
+          "tagName": "v1.4.142-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.2"
+        },
+        "8769": {
+          "tagName": "v1.4.142-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.2"
+        },
+        "8772": {
+          "tagName": "v1.4.142-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.2"
+        },
+        "8775": {
+          "tagName": "v1.4.142-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.2"
+        },
+        "8773": {
+          "tagName": "v1.4.142-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.2"
+        },
+        "8768": {
+          "tagName": "v1.4.142-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.2"
+        },
+        "8779": {
+          "tagName": "v1.4.142-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.2"
+        },
+        "6335": {
+          "tagName": "v1.4.142-rc.2",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.142-rc.2"
         }
       }
     },
     "NVIDIA/SkillSpector": {
-      "cachedAt": "2026-07-14T00:56:29.725898Z",
+      "cachedAt": "2026-07-15T01:29:56.549381Z",
       "releases": [],
       "prToRelease": {}
     },
@@ -292936,6 +296013,1204 @@
         }
       ],
       "prToRelease": {}
+    },
+    "data-privacy-stack/presidio": {
+      "cachedAt": "2026-07-14T21:44:34.287089Z",
+      "releases": [
+        {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363",
+          "publishedAt": "2026-06-28T16:21:00Z",
+          "credits": {
+            "MvdB": [
+              1909,
+              1990
+            ],
+            "RonShakutai": [
+              1917
+            ],
+            "goveebee": [
+              1912,
+              1918
+            ],
+            "TheSabari07": [
+              1930
+            ],
+            "kennionblack": [
+              1934,
+              1941
+            ],
+            "SharonHart": [
+              1916,
+              1984,
+              2092,
+              2100,
+              2102,
+              2103,
+              2120,
+              2125,
+              2126
+            ],
+            "omri374": [
+              1866,
+              2097,
+              2098,
+              2104,
+              2117,
+              2118,
+              2119,
+              2121,
+              2122
+            ],
+            "tee-jagz": [
+              1857
+            ],
+            "harishkernel": [
+              1932
+            ],
+            "extrasmall0": [
+              1940
+            ],
+            "mrcuren": [
+              1995,
+              1999,
+              2006
+            ],
+            "sienioApius": [
+              1998
+            ],
+            "ynachiket": [
+              2000,
+              2017,
+              2027
+            ],
+            "asensionacher": [
+              2011
+            ],
+            "max-tarlov-infinitusai": [
+              2014
+            ],
+            "yuriihavrylko": [
+              2007
+            ],
+            "HammadSiddiqui": [
+              2025
+            ],
+            "BelizSertcan": [
+              2034
+            ],
+            "Surya-5555": [
+              2038
+            ],
+            "AlexanderSanin": [
+              2040,
+              2062,
+              2079
+            ],
+            "uwezkhan": [
+              2061,
+              2063
+            ],
+            "thatomokoena": [
+              2064
+            ],
+            "aaronaco": [
+              2016
+            ],
+            "mturac": [
+              2085
+            ],
+            "ArjunPakhan": [
+              2084
+            ],
+            "jichaowang02-lang": [
+              2087,
+              2088
+            ],
+            "ultramancode": [
+              2081
+            ],
+            "Dashtid": [
+              2089
+            ],
+            "AUTHENSOR": [
+              2077,
+              2078
+            ],
+            "michaelgiraldo": [
+              2105
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362",
+          "publishedAt": "2026-03-18T05:32:57Z",
+          "credits": {
+            "RonShakutai": [
+              1844
+            ],
+            "ultramancode": [
+              1834
+            ],
+            "andyjessen": [
+              1856
+            ],
+            "Copilot": [
+              1861,
+              1864,
+              1884,
+              1889,
+              1903,
+              1904,
+              1907
+            ],
+            "SharonHart": [
+              1859,
+              1860,
+              1908
+            ],
+            "ravi-jindal": [
+              1827
+            ],
+            "Mr-Neutr0n": [
+              1855
+            ],
+            "tee-jagz": [
+              1858,
+              1862,
+              1863
+            ],
+            "stevenelliottjr": [
+              1847,
+              1853
+            ],
+            "akios-ai": [
+              1869
+            ],
+            "haosenwang1018": [
+              1881
+            ],
+            "Br1an67": [
+              1899
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361",
+          "publishedAt": "2026-02-12T09:58:33Z",
+          "credits": {
+            "tamirkamara": [
+              1718,
+              1719,
+              1722,
+              1729,
+              1734,
+              1736,
+              1748,
+              1749,
+              1758,
+              1762,
+              1764,
+              1784,
+              1785,
+              1787,
+              1789
+            ],
+            "omri374": [
+              1720,
+              1774,
+              1780
+            ],
+            "pangchewe": [
+              1713
+            ],
+            "atinm": [
+              1723
+            ],
+            "andyjessen": [
+              1727,
+              1835
+            ],
+            "jks-liu": [
+              1730
+            ],
+            "heesng-jung": [
+              1742
+            ],
+            "AyushAggarwal1": [
+              1744
+            ],
+            "Copilot": [
+              1741,
+              1743,
+              1818,
+              1840,
+              1841,
+              1846,
+              1851
+            ],
+            "SharonHart": [
+              1752,
+              1757,
+              1767,
+              1796,
+              1848
+            ],
+            "dorlugasigal": [
+              1751,
+              1755,
+              1759,
+              1763,
+              1788,
+              1801
+            ],
+            "siwoo-jung": [
+              1777
+            ],
+            "RonShakutai": [
+              1775,
+              1778,
+              1794,
+              1798,
+              1799,
+              1800,
+              1811,
+              1812,
+              1819,
+              1831
+            ],
+            "kyoungbinkim": [
+              1807,
+              1814,
+              1829
+            ],
+            "eveningcafe": [
+              1813
+            ],
+            "WenwenHLF": [
+              1808
+            ],
+            "RektPunk": [
+              1820,
+              1822,
+              1825
+            ],
+            "Jakob-98": [
+              1824
+            ],
+            "dilshad-aee": [
+              1826
+            ],
+            "jedheaj314": [
+              1805
+            ],
+            "chrisvoncsefalvay": [
+              1821
+            ],
+            "telackey": [
+              1806,
+              1815
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.360",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.360",
+          "publishedAt": "2025-09-09T09:32:39Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.359",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.359",
+          "publishedAt": "2025-07-13T07:22:32Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.358",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.358",
+          "publishedAt": "2025-03-18T09:38:24Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.357",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.357",
+          "publishedAt": "2025-01-13T13:01:42Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.356",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.356",
+          "publishedAt": "2024-12-15T11:57:36Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.355",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.355",
+          "publishedAt": "2024-07-22T09:09:05Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.354",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.354",
+          "publishedAt": "2024-03-29T13:48:04Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.353",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.353",
+          "publishedAt": "2024-02-12T15:44:37Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.352",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.352",
+          "publishedAt": "2024-01-22T08:50:11Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.351",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.351",
+          "publishedAt": "2023-11-08T21:11:18Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.350",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.350",
+          "publishedAt": "2023-11-02T09:46:13Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.35",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.35",
+          "publishedAt": "2023-10-31T21:58:58Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.34",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.34",
+          "publishedAt": "2023-10-30T19:43:32Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.33",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.33",
+          "publishedAt": "2023-06-04T10:03:18Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.32",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.32",
+          "publishedAt": "2023-01-31T19:53:14Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.31",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.31",
+          "publishedAt": "2022-12-14T17:50:57Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.30",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.30",
+          "publishedAt": "2022-10-25T12:36:14Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.29",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.29",
+          "publishedAt": "2022-07-12T11:24:53Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.28",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.28",
+          "publishedAt": "2022-05-08T11:48:47Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.27",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.27",
+          "publishedAt": "2022-03-09T13:23:06Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.26",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.26",
+          "publishedAt": "2022-02-24T12:08:31Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.25",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.25",
+          "publishedAt": "2022-02-22T11:08:11Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.24",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.24",
+          "publishedAt": "2022-01-26T08:59:38Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.23",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.23",
+          "publishedAt": "2021-11-16T12:15:33Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.22'",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.22'",
+          "publishedAt": "2021-10-03T09:32:27Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.21",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.21",
+          "publishedAt": "2021-06-14T07:24:46Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.2",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.2",
+          "publishedAt": "2021-06-09T11:06:32Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.1",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.1",
+          "publishedAt": "2021-05-10T12:50:20Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.2.0",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.0",
+          "publishedAt": "2021-04-12T09:31:53Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.1.0",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.1.0",
+          "publishedAt": "2021-03-25T10:54:18Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.0.2",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.0.2",
+          "publishedAt": "2021-03-25T09:43:01Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.0.1",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.0.1",
+          "publishedAt": "2021-03-04T08:09:41Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "2.0.0",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.0.0",
+          "publishedAt": "2021-03-02T13:47:51Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v0.95",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/v0.95",
+          "publishedAt": "2021-02-28T16:25:15Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v0.85",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/v0.85",
+          "publishedAt": "2020-08-09T08:17:47Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v0.6",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/v0.6",
+          "publishedAt": "2020-04-13T06:15:36Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v0.5",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/v0.5",
+          "publishedAt": "2020-01-02T09:47:52Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v0.4",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/v0.4",
+          "publishedAt": "2019-09-23T11:59:52Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v0.3",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/v0.3",
+          "publishedAt": "2019-06-02T10:12:15Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v0.2",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/v0.2",
+          "publishedAt": "2019-05-01T12:13:05Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v0.1.3",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/v0.1.3",
+          "publishedAt": "2019-01-08T12:30:26Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v0.1.0",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/v0.1.0",
+          "publishedAt": "2018-12-18T09:33:35Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        }
+      ],
+      "prToRelease": {
+        "1718": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1719": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1722": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1729": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1734": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1736": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1748": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1749": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1758": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1762": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1764": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1784": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1785": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1787": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1789": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1720": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1774": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1780": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1713": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1723": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1727": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1835": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1730": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1742": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1744": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1741": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1743": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1818": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1840": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1841": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1846": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1851": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1752": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1757": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1767": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1796": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1848": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1751": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1755": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1759": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1763": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1788": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1801": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1777": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1775": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1778": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1794": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1798": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1799": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1800": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1811": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1812": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1819": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1831": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1807": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1814": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1829": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1813": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1808": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1820": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1822": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1825": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1824": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1826": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1805": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1821": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1806": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1815": {
+          "tagName": "2.2.361",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.361"
+        },
+        "1844": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1834": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1856": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1861": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1864": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1884": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1889": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1903": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1904": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1907": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1859": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1860": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1908": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1827": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1855": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1858": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1862": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1863": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1847": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1853": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1869": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1881": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1899": {
+          "tagName": "2.2.362",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.362"
+        },
+        "1909": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1990": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1917": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1912": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1918": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1930": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1934": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1941": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1916": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1984": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2092": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2100": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2102": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2103": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2120": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2125": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2126": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1866": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2097": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2098": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2104": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2117": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2118": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2119": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2121": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2122": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1857": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1932": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1940": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1995": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1999": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2006": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "1998": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2000": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2017": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2027": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2011": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2014": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2007": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2025": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2034": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2038": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2040": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2062": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2079": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2061": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2063": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2064": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2016": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2085": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2084": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2087": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2088": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2081": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2089": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2077": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2078": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        },
+        "2105": {
+          "tagName": "2.2.363",
+          "htmlUrl": "https://github.com/data-privacy-stack/presidio/releases/tag/2.2.363"
+        }
+      }
     }
   }
 }

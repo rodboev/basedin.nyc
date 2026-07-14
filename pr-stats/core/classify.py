@@ -262,6 +262,10 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
         return ClassificationResult(classification="lost", release=release, evidence_kind="lost", log_label="lost (superseded without maintainer credit)")
     if not comments or not comments.strip():
         return ClassificationResult(classification="withdrawn", release=release, evidence_kind="withdrawn", log_label="withdrawn (no maintainer interaction)")
+    if is_author_closed(pr, evidence):
+        # Nothing above found a competitor, a replacement, or a maintainer verdict, so
+        # the only decision on record is the author's own close: a withdrawal, not a loss.
+        return ClassificationResult(classification="withdrawn", release=release, evidence_kind="author-withdrawn", log_label="withdrawn (author closed it)")
     return ClassificationResult(classification="lost", release=release, evidence_kind="lost", log_label="lost")
 
 
@@ -374,6 +378,12 @@ def pr_closer_login(evidence: Evidence) -> str:
         if item.typename == "ClosedEvent" and item.actor is not None and item.actor.login:
             return item.actor.login
     return ""
+
+
+def is_author_closed(pr: PullRequest, evidence: Evidence) -> bool:
+    author_login = author_login_for_classification(pr, evidence)
+    closer_login = pr_closer_login(evidence)
+    return bool(author_login) and closer_login.casefold() == author_login.casefold()
 
 
 def is_author_withdrawn(pr: PullRequest, evidence: Evidence) -> bool:

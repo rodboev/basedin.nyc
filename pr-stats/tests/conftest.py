@@ -5,7 +5,16 @@ from pathlib import Path
 
 import pytest
 
+import core.repos as repos_mod
 from core.models import Cache, Comment, Evidence, PullRequest, PullRequestRef, TimelineEvent, UserRef
+
+
+@pytest.fixture(autouse=True)
+def no_repo_name_resolution(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Resolve every repo to itself so the offline suite never calls gh to check for renames."""
+    monkeypatch.setattr(repos_mod, "_canonical_repo_name", lambda repo: repo)
+    monkeypatch.setattr(repos_mod, "_display_names", {})
+    monkeypatch.setattr(repos_mod, "_canonical_names", {})
 
 
 @pytest.fixture
