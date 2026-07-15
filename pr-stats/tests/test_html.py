@@ -153,7 +153,7 @@ def test_generic_tag_and_stat_grid_render_existing_structure() -> None:
 
 def test_bar_and_legend_render_existing_ids_and_data_attributes() -> None:
     assert render_bar_segments([BarSegment(key="alpha", width=12.5, title="3", content="3")]) == (
-        '  <div class="bar-segment bar-alpha" id="bd-bar-alpha" data-width="12.5" title="3">3</div>\n'
+        '  <div class="bar-segment bar-alpha" id="bd-bar-alpha" style="width:12.5%" title="3">3</div>\n'
     )
     assert render_legend_items([LegendItem(key="alpha", label="Alpha", count=3)]) == (
         '  <div class="legend-item" id="bd-leg-alpha"><div class="legend-dot legend-dot-alpha"></div> Alpha (3)</div>\n'

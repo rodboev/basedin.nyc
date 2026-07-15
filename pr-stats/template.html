@@ -86,11 +86,6 @@
 <script>
 {{ pr_bootstrap }}
 
-function setBarWidths() {
-  document.querySelectorAll('.bar-segment[data-width]').forEach(function(segment) {
-    segment.style.width = segment.getAttribute('data-width') + '%';
-  });
-}
 function escapeHtml(text) {
   return String(text)
     .replace(/&/g, '&amp;')
@@ -229,7 +224,6 @@ function bindPillGroup(containerId, attr, filterKey) {
 bindPillGroup('pr-filter-pills', 'data-status', 'statusKey');
 bindPillGroup('pr-repo-pills', 'data-repo', 'repoKey');
 bindLeaderboardPairs();
-setBarWidths();
 syncLandscapeStickyOffset();
 if (typeof ResizeObserver !== 'undefined') {
   var landscapeRow = document.getElementById('pr-landscape-row');

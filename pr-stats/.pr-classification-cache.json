@@ -95305,16 +95305,16 @@
       "state": "OPEN",
       "title": "test(ts-oss): enforce canonical vector-store result payloads",
       "createdAt": "2026-07-15T09:27:58Z",
-      "updatedAt": "2026-07-15T09:27:58Z",
+      "updatedAt": "2026-07-15T10:18:04Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/ts-oss-vector-store-result-contract",
       "author": {
         "login": "rodboev"
       },
-      "additions": 195,
+      "additions": 236,
       "deletions": 0,
-      "changedFiles": 1,
+      "changedFiles": 2,
       "url": "https://github.com/mem0ai/mem0/pull/6333"
     },
     "stablyai/orca#8854": {
@@ -95323,7 +95323,7 @@
       "state": "OPEN",
       "title": "fix(runtime): surface visible TUI output in terminal read and show",
       "createdAt": "2026-07-15T09:16:49Z",
-      "updatedAt": "2026-07-15T09:31:53Z",
+      "updatedAt": "2026-07-15T10:20:08Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/terminal-visible-snapshot-fallback",
@@ -95352,41 +95352,59 @@
       "deletions": 339,
       "changedFiles": 11,
       "url": "https://github.com/thedotmack/claude-mem/pull/3260"
+    },
+    "nesquena/hermes-webui#6091": {
+      "repo": "nesquena/hermes-webui",
+      "number": 6091,
+      "state": "OPEN",
+      "title": "feat(workspace): sort selector in file-tree kebab menu (#6066)",
+      "createdAt": "2026-07-15T12:00:55Z",
+      "updatedAt": "2026-07-15T12:18:51Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/workspace-sort-6066",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 757,
+      "deletions": 16,
+      "changedFiles": 9,
+      "url": "https://github.com/nesquena/hermes-webui/pull/6091"
     }
   },
   "authorPullScanMeta": {
     "kenn-io/agentsview": {
-      "scannedAt": "2026-07-15T09:56:36.518724Z",
+      "scannedAt": "2026-07-15T12:19:20.978725Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "thedotmack/claude-mem": {
-      "scannedAt": "2026-07-15T09:56:36.518724Z",
+      "scannedAt": "2026-07-15T12:19:20.978725Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "headroomlabs-ai/headroom": {
-      "scannedAt": "2026-07-15T09:56:36.518724Z",
+      "scannedAt": "2026-07-15T12:19:20.978725Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "nesquena/hermes-webui": {
-      "scannedAt": "2026-07-15T09:56:36.518724Z",
+      "scannedAt": "2026-07-15T12:19:20.978725Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "stablyai/orca": {
-      "scannedAt": "2026-07-15T09:56:36.518724Z",
+      "scannedAt": "2026-07-15T12:19:20.978725Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "mem0ai/mem0": {
-      "scannedAt": "2026-07-15T09:56:36.518724Z",
+      "scannedAt": "2026-07-15T12:19:20.978725Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "NVIDIA/SkillSpector": {
-      "scannedAt": "2026-07-15T09:56:36.518724Z",
+      "scannedAt": "2026-07-15T12:19:20.978725Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
@@ -95396,7 +95414,7 @@
       "lookbackHours": 48
     },
     "data-privacy-stack/presidio": {
-      "scannedAt": "2026-07-15T09:56:36.518724Z",
+      "scannedAt": "2026-07-15T12:19:20.978725Z",
       "source": "graphql-search",
       "lookbackHours": 48
     }

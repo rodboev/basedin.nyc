@@ -136,9 +136,11 @@ def render_bar_segments(segments: list[BarSegment]) -> str:
     lines: list[str] = []
     for segment in segments:
         title = f' title="{escape(segment.title, quote=True)}"' if segment.title else ""
+        # Inline, not data-width applied by a script: the segments are flex items with no width of
+        # their own, so anything deferred leaves the bar collapsed to its labels until first paint.
         lines.append(
             f'  <div class="bar-segment bar-{escape(segment.key, quote=True)}" '
-            f'id="bd-bar-{escape(segment.key, quote=True)}" data-width="{segment.width:g}"{title}>'
+            f'id="bd-bar-{escape(segment.key, quote=True)}" style="width:{segment.width:g}%"{title}>'
             f"{escape(segment.content)}</div>",
         )
     return "\n".join(lines) + ("\n" if lines else "")

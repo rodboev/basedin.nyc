@@ -267,6 +267,20 @@ function setXLabelTransition(chart, starts, targets, factor) {
   chart._xLabelTargetCenters = targets || null;
   chart._xLabelTargetFactor = factor;
 }
+// A center map only holds the labels the scale actually drew, so autoSkip's verdict reads off it.
+function labelVisibility(labs, centers) {
+  return labs.map(function(l) { return centers && Object.prototype.hasOwnProperty.call(centers, l) ? 1 : 0; });
+}
+// Tweens run with autoSkip off so every label can be placed, but the charts on either end have it
+// on and thin the labels once the axis crowds. Fading over vis0 -> vis1 lands the tween on the set
+// the rebuilt chart will draw; without it a label the new chart skips stays lit and then vanishes.
+function xTickColor(sc, vis0, vis1, et) {
+  return function(ctx) {
+    var i = ctx.index;
+    var a = Math.min(sc[i], vis0[i] + et * (vis1[i] - vis0[i]));
+    return a > 0.99 ? C.text : a < 0.01 ? 'transparent' : textAlpha(a);
+  };
+}
 function lerpFading(data, sc, len, keep) {
   var out = data.slice();
   for (var i = 0; i < len; i++) {
@@ -294,14 +308,102 @@ function sliceData(days) {
   var cs = cut.toISOString().slice(0,10);
   return src.filter(function(d) { return d.date >= cs; });
 }
+// The repos table joins to TL_REPOS on the .repo-short text, and resolves its columns from the
+// thead labels so a column reorder in core/page.py can't silently retarget the wrong cells.
+var RM_KEYS = ['clsShipped', 'clsOpen', 'clsSuperseded', 'clsLost'];
+var rmRows = [], rmFoot = null, rmRankHead = null, rmTotalHead = null, rmIndexed = false;
+// Lazy: this script tag sits above the table in the page, so the DOM isn't there at load.
+function rmIndex() {
+  if (rmIndexed) return;
+  var table = document.querySelector('.repo-matrix');
+  if (!table) return;
+  rmIndexed = true;
+  var cols = {};
+  // Read the .tag label, not the th: tagged headings also carry a hidden matrix-heading-width
+  // span holding the all-time count, which would otherwise land in textContent.
+  [].forEach.call(table.querySelectorAll('thead th'), function(th, i) {
+    var label = (th.querySelector('.tag') || th).textContent;
+    cols[label.trim().split(' ')[0].toLowerCase()] = i;
+  });
+  var order = ['shipped', 'open', 'superseded', 'lost', 'total'];
+  for (var i = 0; i < order.length; i++) if (cols[order[i]] == null) return;
+  var idx = order.map(function(k) { return cols[k]; });
+  var ths = table.querySelectorAll('thead th');
+  rmRankHead = cols.rank == null ? null : ths[cols.rank];
+  rmTotalHead = ths[cols.total];
+  var pick = function(tr) { return idx.map(function(i) { return tr.children[i]; }); };
+  [].forEach.call(table.querySelectorAll('tbody tr'), function(tr) {
+    var short = tr.querySelector('.repo-short');
+    if (short && TL_REPOS[short.textContent]) rmRows.push({name: short.textContent, cells: pick(tr)});
+  });
+  var foot = table.querySelector('tfoot tr');
+  if (foot) rmFoot = pick(foot);
+}
+// Anchored to TL_ALL rather than activeTL(): each repo's series ends on its own last active day,
+// so a per-repo anchor would give every row a different window.
+function rmCut(days) {
+  if (!days || !TL_ALL.length) return '';
+  var p = TL_ALL[TL_ALL.length-1].date.split('-');
+  var cut = new Date(p[0], p[1]-1, p[2]);
+  cut.setDate(cut.getDate() - days);
+  return cut.toISOString().slice(0,10);
+}
+function rmStats(r) {
+  rmIndex();
+  var cs = rmCut(r), out = {}, tot = [0,0,0,0,0];
+  for (var n = 0; n < rmRows.length; n++) {
+    var src = TL_REPOS[rmRows[n].name] || [], v = [0,0,0,0,0];
+    for (var i = 0; i < src.length; i++) {
+      var d = src[i];
+      if (cs && d.date < cs) continue;
+      for (var k = 0; k < 4; k++) v[k] += (d[RM_KEYS[k]] || 0);
+    }
+    v[4] = v[0] + v[1] + v[2] + v[3];
+    for (var j = 0; j < 5; j++) tot[j] += v[j];
+    out[rmRows[n].name] = v;
+  }
+  out.__total = tot;
+  return out;
+}
+function rmPaint(cells, vals, dim) {
+  for (var i = 0; i < 5; i++) {
+    if (!cells[i]) continue;
+    cells[i].textContent = vals[i];
+    // Mirrors _matrix_cell in core/page.py, which dims a zero; the total row is never dimmed.
+    if (dim) cells[i].classList.toggle('dim', vals[i] === 0);
+  }
+}
+function renderRmFrame(oS, nS, et) {
+  var lerp = function(o, n) {
+    return [0,1,2,3,4].map(function(i) { return Math.round(o[i] + et * (n[i] - o[i])); });
+  };
+  for (var i = 0; i < rmRows.length; i++) {
+    var o = oS[rmRows[i].name], n = nS[rmRows[i].name];
+    if (o && n) rmPaint(rmRows[i].cells, lerp(o, n), true);
+  }
+  if (rmFoot) rmPaint(rmFoot, lerp(oS.__total, nS.__total), false);
+}
+function updateRepoMatrix(r) {
+  var st = rmStats(r);
+  for (var i = 0; i < rmRows.length; i++) rmPaint(rmRows[i].cells, st[rmRows[i].name], true);
+  if (rmFoot) rmPaint(rmFoot, st.__total, false);
+}
+// Both headers name their own window, the way Rate (7d) always has. Rank is all-time in every
+// window because the leaderboard cache keeps no per-PR dates for other contributors, so it can't
+// be rewindowed; Total does follow the chips, so it names the window it is counting.
+function syncRangeLabels(r) {
+  rmIndex();
+  if (rmRankHead) rmRankHead.textContent = r ? 'Rank (all)' : 'Rank';
+  if (rmTotalHead) rmTotalHead.textContent = r ? 'Total (' + r + 'd)' : 'Total';
+}
 function updateBreakdown(r) {
   var sl = sliceData(r);
-  var total = 0, shipped = 0, open = 0, superseded = 0, lost = 0;
+  var opened = 0, shipped = 0, open = 0, superseded = 0, lost = 0;
   var totalLoc = 0, activeDays = 0;
   var firstDate = null, lastDate = null, prevDate = null;
   for (var i = 0; i < sl.length; i++) {
     var d = sl[i];
-    total += d.prsOpened;
+    opened += d.prsOpened;
     shipped += (d.clsShipped || 0);
     open += (d.clsOpen || 0);
     superseded += (d.clsSuperseded || 0);
@@ -321,6 +423,7 @@ function updateBreakdown(r) {
   }
   var lostSup = lost + superseded;
   var closedDenom = shipped + lost + superseded;
+  var total = shipped + open + superseded + lost;
   var rate = acceptanceRate(shipped, closedDenom);
   var el;
   if (el = document.getElementById('bd-total')) el.textContent = total;
@@ -339,7 +442,7 @@ function updateBreakdown(r) {
   } else {
     if (el = document.getElementById('bd-days-label')) el.textContent = 'No active days in range';
   }
-  var avgPrs = activeDays > 0 ? String(Math.round(total / activeDays)) : '0';
+  var avgPrs = activeDays > 0 ? String(Math.round(opened / activeDays)) : '0';
   var rawAvgLoc = activeDays > 0 ? Math.round(totalLoc / activeDays) : 0;
   var avgLoc = rawAvgLoc >= 1000 ? (rawAvgLoc / 1000).toFixed(1) + 'k' : String(rawAvgLoc);
   if (el = document.getElementById('bd-avg-prs')) el.textContent = avgPrs;
@@ -353,7 +456,6 @@ function updateBreakdown(r) {
     var el = document.getElementById(s[0]);
     if (!el) return;
     var pct = (s[1] / barTotal * 100).toFixed(1);
-    el.setAttribute('data-width', pct);
     el.style.width = pct + '%';
     var wide = parseFloat(pct) > 4;
     if (el.classList.contains('bar-open')) { el.textContent = s[1]; el.title = String(s[1]); }
@@ -371,6 +473,8 @@ function updateBreakdown(r) {
     lel.appendChild(dot);
     lel.appendChild(document.createTextNode(' ' + legs[lid][0] + ' (' + legs[lid][1] + ')'));
   }
+  updateRepoMatrix(r);
+  syncRangeLabels(r);
 }
 
 var range = 0, dChart, cChart, animId = 0, transId = 0;
@@ -483,22 +587,27 @@ function build(r) {
     },
   });
 }
+// Load animation walks these ranges in order; the first is the frame the static markup is built at.
+var BD_LOAD_RANGES = [1, 7, 14, 30, 0];
 function bdStats(r) {
   var sl = sliceData(r);
-  var t = 0, s = 0, o = 0, sp = 0, l = 0, loc = 0, ad = 0, todayActive = false;
+  var op = 0, s = 0, o = 0, sp = 0, l = 0, loc = 0, ad = 0, todayActive = false;
   for (var i = 0; i < sl.length; i++) {
-    var d = sl[i]; t += d.prsOpened; s += (d.clsShipped||0); o += (d.clsOpen||0);
+    var d = sl[i]; op += d.prsOpened; s += (d.clsShipped||0); o += (d.clsOpen||0);
     sp += (d.clsSuperseded||0); l += (d.clsLost||0); loc += d.loc;
     if (d.prsOpened > 0) { ad++; if (d.date === TL_TODAY) todayActive = true; }
   }
   var dd = todayActive ? Math.max(0, ad - 1) : ad;
-  return {total:t, shipped:s, open:o, sup:sp, lost:l, loc:loc, activeDays:ad, displayDays:dd};
+  // total counts the classes, not prsOpened: outcomes are dated by when they landed, so a
+  // window holds outcomes for PRs opened before it. Only opened/loc stay opened-dated, since
+  // Avg PRs/day and Avg LOC/day are about what was written per active day.
+  return {total:s+o+sp+l, opened:op, shipped:s, open:o, sup:sp, lost:l, loc:loc, activeDays:ad, displayDays:dd};
 }
 function bdDisplay(b) {
   var ls = b.lost + b.sup, cd = b.shipped + b.lost + b.sup;
   var rate = acceptanceRate(b.shipped, cd) || 0;
   var ad = Math.max(1, b.activeDays);
-  var avgPrs = b.total / ad, avgLoc = b.loc / ad;
+  var avgPrs = b.opened / ad, avgLoc = b.loc / ad;
   var bT = b.total || 1;
   return {total:b.total, shipped:b.shipped, open:b.open, sup:b.sup, lost:b.lost, lostSup:ls,
     rate:rate, activeDays:ad, displayDays:b.displayDays, avgPrs:avgPrs, avgLoc:avgLoc,
@@ -543,10 +652,14 @@ function renderBdFrame(oD, nD, et) {
 }
 function transitionRange(newR) {
   if (transId) { cancelAnimationFrame(transId); transId = 0; cleanupAnim(); build(range); }
+  // Returning to All drops the window labels up front; any other switch relabels once the tween
+  // lands, so a header never names a window the numbers have not reached yet.
+  if (!newR) syncRangeLabels(0);
   var oldSl = sliceData(range);
   var newSl = sliceData(newR);
   var oldN = oldSl.length, newN = newSl.length;
   var oB = bdStats(range), nB = bdStats(newR);
+  var oRm = rmStats(range), nRm = rmStats(newR);
   range = newR;
   if (oldN === newN) { build(newR); updateBreakdown(newR); return; }
   var sup = oldN > newN ? oldSl : newSl;
@@ -591,6 +704,8 @@ function transitionRange(newR) {
   var dXrot1 = dChart.scales.x.labelRotation, dYLrot1 = dChart.scales.yL.labelRotation, dYProt1 = dChart.scales.yP.labelRotation;
   var cXrot1 = cChart.scales.x.labelRotation, cYLrot1 = cChart.scales.yL.labelRotation, cYProt1 = cChart.scales.yP.labelRotation;
   var dXTargets = labelVisualCenters(dChart), cXTargets = labelVisualCenters(cChart);
+  var dVis0 = labelVisibility(supLabs, dXStarts), dVis1 = labelVisibility(supLabs, dXTargets);
+  var cVis0 = labelVisibility(supLabs, cXStarts), cVis1 = labelVisibility(supLabs, cXTargets);
   var dXhCur = dXh0, cXhCur = cXh0;
   var dXrotCur = dXrot0, cXrotCur = cXrot0;
   var dYLwCur = dYLw0, dYPwCur = dYPw0, cYLwCur = cYLw0, cYPwCur = cYPw0;
@@ -624,7 +739,7 @@ function transitionRange(newR) {
   setXLabelTransition(dChart, dXStarts, dXTargets, 0);
   dChart._clipEdges = true;
   dChart.options.scales.x.ticks.autoSkip = false;
-  dChart.config._config.options.scales.x.ticks.color = function(ctx) { return initSc[ctx.index] > 0.99 ? C.text : 'transparent'; };
+  dChart.config._config.options.scales.x.ticks.color = xTickColor(initSc, dVis0, dVis1, 0);
   if (!dYLslide) dChart.options.scales.yL.ticks.color = textAlpha(0);
   if (!dYPslide) dChart.options.scales.yP.ticks.color = textAlpha(0);
   dChart.data.datasets[1].spanGaps = true; dChart.data.datasets[3].spanGaps = true;
@@ -634,7 +749,7 @@ function transitionRange(newR) {
   setXLabelTransition(cChart, cXStarts, cXTargets, 0);
   cChart._clipEdges = true;
   cChart.options.scales.x.ticks.autoSkip = false;
-  cChart.config._config.options.scales.x.ticks.color = function(ctx) { return initSc[ctx.index] > 0.99 ? C.text : 'transparent'; };
+  cChart.config._config.options.scales.x.ticks.color = xTickColor(initSc, cVis0, cVis1, 0);
   if (!cYLslide) cChart.options.scales.yL.ticks.color = textAlpha(0);
   if (!cYPslide) cChart.options.scales.yP.ticks.color = textAlpha(0);
   cChart.data.datasets[0].spanGaps = true; cChart.data.datasets[1].spanGaps = true; cChart.data.datasets[2].spanGaps = true;
@@ -673,12 +788,8 @@ function transitionRange(newR) {
     cChart.options.scales.yP.max = Math.round(startCP+et*(endCP-startCP));
     var labelA = et<0.15 ? 1-et/0.15 : et>0.85 ? (et-0.85)/0.15 : 0;
     var labelC = labelA<0.01 ? 'transparent' : textAlpha(labelA);
-    dChart.config._config.options.scales.x.ticks.color = function(ctx) {
-      var s = sc[ctx.index]; return s > 0.99 ? C.text : s < 0.01 ? 'transparent' : textAlpha(s);
-    };
-    cChart.config._config.options.scales.x.ticks.color = function(ctx) {
-      var s = sc[ctx.index]; return s > 0.99 ? C.text : s < 0.01 ? 'transparent' : textAlpha(s);
-    };
+    dChart.config._config.options.scales.x.ticks.color = xTickColor(sc, dVis0, dVis1, et);
+    cChart.config._config.options.scales.x.ticks.color = xTickColor(sc, cVis0, cVis1, et);
     if (!dYLslide) dChart.options.scales.yL.ticks.color = labelC;
     if (!dYPslide) dChart.options.scales.yP.ticks.color = labelC;
     if (!cYLslide) cChart.options.scales.yL.ticks.color = labelC;
@@ -700,8 +811,12 @@ function transitionRange(newR) {
     var vc = dVis ? dChart : cChart;
     if (window._animLog) window._animLog.push({f:window._animLog.length, ms:Math.round(elapsed), et:+et.toFixed(3), effN:+nExact.toFixed(1), area:[Math.round(vc.chartArea.left),Math.round(vc.chartArea.right)], ticks:vc.scales.x.ticks?vc.scales.x.ticks.length:0, xRot:+vc.scales.x.labelRotation.toFixed(1), xH:Math.round(vc.scales.x.height), sc:sc.map(function(v){return +v.toFixed(2)})});
     renderBdFrame(oD, nD, et);
+    renderRmFrame(oRm, nRm, et);
     if (!done) { transId = requestAnimationFrame(tick); }
     else {
+      // On the last frame, not in the deferred rebuild below: build() is slow enough that the
+      // labels would otherwise drift in well after the numbers have landed.
+      syncRangeLabels(newR);
       if (window._animLog) { window._lastAnimLog = window._animLog; window._animLog = null; }
       transId = requestAnimationFrame(function() {
         cleanupAnim();
@@ -713,42 +828,15 @@ function transitionRange(newR) {
 build(range);
 
 (function animateOnLoad() {
-  var all = TL_ALL;
-  var total = 0, shipped = 0, opn = 0, sup = 0, lost = 0, totalLoc = 0, activeDays = 0;
-  var todayActive = false;
-  for (var i = 0; i < all.length; i++) {
-    var d = all[i];
-    total += d.prsOpened; shipped += (d.clsShipped || 0); opn += (d.clsOpen || 0);
-    sup += (d.clsSuperseded || 0); lost += (d.clsLost || 0); totalLoc += d.loc;
-    if (d.prsOpened > 0) { activeDays++; if (d.date === TL_TODAY) todayActive = true; }
-  }
-  var displayDays = todayActive ? Math.max(0, activeDays - 1) : activeDays;
+  // Steps through the real range states. Scaling the all-time totals by a fraction instead would
+  // show outcome counts and an acceptance rate that never existed, and bottom out at a 0/0 rate.
+  // BD_LOAD_RANGES[0] is the seed core/timeline.py bakes into the static markup; keep them in sync.
+  var states = [];
+  for (var i = 0; i < BD_LOAD_RANGES.length; i++) states.push(bdDisplay(bdStats(BD_LOAD_RANGES[i])));
   var phases = [];
-  var prev = 0;
-  [7, 14, 30].forEach(function(days) {
-    var s = sliceData(days), t = 0;
-    for (var j = 0; j < s.length; j++) t += s[j].prsOpened;
-    phases.push({pill: String(days), from: prev, to: t});
-    prev = t;
-  });
-  phases.push({pill: '0', from: prev, to: total});
-  function dispAt(f) {
-    var t = Math.round(f * total), sh = Math.round(f * shipped);
-    var o = Math.round(f * opn), sp = Math.round(f * sup), l = Math.round(f * lost);
-    var cd = sh + l + sp, rate = acceptanceRate(sh, cd) || 0;
-    var ad = Math.max(1, Math.round(f * activeDays)), loc = Math.round(f * totalLoc);
-    var dd = Math.max(0, Math.round(f * displayDays));
-    var bT = t || 1;
-    return {total:t, shipped:sh, open:o, sup:sp, lost:l, lostSup:l+sp,
-      rate:rate, activeDays:ad, displayDays:dd, avgPrs:t/ad, avgLoc:loc/ad,
-      barSh:sh/bT*100, barSp:sp/bT*100, barL:l/bT*100, barO:o/bT*100};
+  for (var i = 1; i < BD_LOAD_RANGES.length; i++) {
+    phases.push({pill: String(BD_LOAD_RANGES[i]), startD: states[i-1], endD: states[i]});
   }
-  phases.forEach(function(ph) {
-    ph.startD = dispAt(ph.from / total);
-    ph.endD = dispAt(ph.to / total);
-  });
-  var p0s = phases[0].startD, p0e = phases[0].endD;
-  p0s.barSh = 66.7; p0s.barSp = 0; p0s.barL = 0; p0s.barO = 33.3;
   var dur = 1000, phaseDur = dur / phases.length, start = null;
   var pills = document.querySelectorAll('#bd-range-pills .sort-pill');
   var dLabsFull = dChart.data.labels.slice();
@@ -780,8 +868,6 @@ build(range);
     var phase = phases[pi];
     var et = done ? 1 : ease(Math.min((elapsed - pi * phaseDur) / phaseDur, 1));
     var sD = phase.startD, eD = phase.endD;
-    var cT = Math.round(sD.total+et*(eD.total-sD.total));
-    if (cT < 1) { animId = requestAnimationFrame(tick); return; }
     var activePill = phase.pill;
     pills.forEach(function(p) { p.classList.toggle('active', p.getAttribute('data-range') === activePill); });
     renderBdFrame(sD, eD, et);
@@ -877,6 +963,8 @@ pillsEl.addEventListener('click', function(e) {
   var dXrot1 = dChart.scales.x.labelRotation, dYLrot1 = dChart.scales.yL.labelRotation, dYProt1 = dChart.scales.yP.labelRotation;
   var cXrot1 = cChart.scales.x.labelRotation, cYLrot1 = cChart.scales.yL.labelRotation, cYProt1 = cChart.scales.yP.labelRotation;
   var dXTargets = labelVisualCenters(dChart), cXTargets = labelVisualCenters(cChart);
+  var dVis0 = labelVisibility(uLabs, dXStarts), dVis1 = labelVisibility(uLabs, dXTargets);
+  var cVis0 = labelVisibility(uLabs, cXStarts), cVis1 = labelVisibility(uLabs, cXTargets);
   var dXhCur = dXh0, cXhCur = cXh0;
   var dXrotCur = dXrot0, cXrotCur = cXrot0;
   var dYLwCur = dYLw0, dYPwCur = dYPw0, cYLwCur = cYLw0, cYPwCur = cYPw0;
@@ -913,7 +1001,7 @@ pillsEl.addEventListener('click', function(e) {
   dChart._barScales = initSc;
   setXLabelTransition(dChart, dXStarts, dXTargets, 0);
   dChart.options.scales.x.ticks.autoSkip = false;
-  dChart.config._config.options.scales.x.ticks.color = function(ctx) { return initSc[ctx.index] > 0.99 ? C.text : 'transparent'; };
+  dChart.config._config.options.scales.x.ticks.color = xTickColor(initSc, dVis0, dVis1, 0);
   if (!dYLslide) dChart.options.scales.yL.ticks.color = textAlpha(0);
   if (!dYPslide) dChart.options.scales.yP.ticks.color = textAlpha(0);
   dChart.data.datasets[1].spanGaps = true; dChart.data.datasets[3].spanGaps = true;
@@ -926,7 +1014,7 @@ pillsEl.addEventListener('click', function(e) {
   cChart._barScales = initSc;
   setXLabelTransition(cChart, cXStarts, cXTargets, 0);
   cChart.options.scales.x.ticks.autoSkip = false;
-  cChart.config._config.options.scales.x.ticks.color = function(ctx) { return initSc[ctx.index] > 0.99 ? C.text : 'transparent'; };
+  cChart.config._config.options.scales.x.ticks.color = xTickColor(initSc, cVis0, cVis1, 0);
   if (!cYLslide) cChart.options.scales.yL.ticks.color = textAlpha(0);
   if (!cYPslide) cChart.options.scales.yP.ticks.color = textAlpha(0);
   cChart.data.datasets[0].spanGaps = true; cChart.data.datasets[1].spanGaps = true; cChart.data.datasets[2].spanGaps = true;
@@ -984,12 +1072,8 @@ pillsEl.addEventListener('click', function(e) {
     dChart.data.datasets[4].data = tSa;
     var labelA = et<0.15 ? 1-et/0.15 : et>0.85 ? (et-0.85)/0.15 : 0;
     var labelC = labelA<0.01 ? 'transparent' : textAlpha(labelA);
-    dChart.config._config.options.scales.x.ticks.color = function(ctx) {
-      var s = sc[ctx.index]; return s > 0.99 ? C.text : s < 0.01 ? 'transparent' : textAlpha(s);
-    };
-    cChart.config._config.options.scales.x.ticks.color = function(ctx) {
-      var s = sc[ctx.index]; return s > 0.99 ? C.text : s < 0.01 ? 'transparent' : textAlpha(s);
-    };
+    dChart.config._config.options.scales.x.ticks.color = xTickColor(sc, dVis0, dVis1, et);
+    cChart.config._config.options.scales.x.ticks.color = xTickColor(sc, cVis0, cVis1, et);
     if (!dYLslide) dChart.options.scales.yL.ticks.color = labelC;
     if (!dYPslide) dChart.options.scales.yP.ticks.color = labelC;
     if (!cYLslide) cChart.options.scales.yL.ticks.color = labelC;

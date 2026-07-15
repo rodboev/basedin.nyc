@@ -5,7 +5,7 @@ import re
 import sys
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from core.github import run_gh
@@ -208,6 +208,7 @@ def cached_leaderboard_rows(
     author_login: str = "",
     author_credited: int = 0,
     author_open: int = 0,
+    author_recent_created: Iterable[str] | None = None,
     credit_profile: str | None = None,
 ) -> list[CachedLeaderboardRow]:
     entry = cache.leaderboards.get(leaderboard_cache_key(repo, start_date))
@@ -216,6 +217,11 @@ def cached_leaderboard_rows(
     raw_stats = entry.get("stats")
     if not isinstance(raw_stats, dict):
         return []
+    author_recent = _author_recent_count(
+        entry,
+        author_recent_created,
+        window_days=rate_window_days,
+    )
     profile = credit_profile if credit_profile is not None else repo_credit_profile(repo)
     credited_counts = _credited_counts_for_cached_board(entry, credit_profile=profile)
     rows: list[tuple[str, LeaderboardStat]] = []
@@ -224,10 +230,18 @@ def cached_leaderboard_rows(
             continue
         if not isinstance(raw, dict):
             continue
+        is_author = bool(author_login) and login.lower() == author_login.lower()
+        # The cached scan counts every PR the author opened; withdrawn ones are excluded from
+        # totals everywhere else on the page, so keep them out of the rate too.
+        recent_count = (
+            author_recent
+            if is_author and author_recent is not None
+            else int_value(raw.get("recentCount"))
+        )
         stat = new_leaderboard_stat(
             total=int_value(raw.get("total")),
             open_count=int_value(raw.get("open")),
-            recent_count=int_value(raw.get("recentCount")),
+            recent_count=recent_count,
             last_created_at=_string_value(raw.get("lastCreatedAt")),
             now=now,
             rate_window_days=rate_window_days,
@@ -238,7 +252,7 @@ def cached_leaderboard_rows(
             0 if profile == CHANGELOG_RELEASE_PROFILE else stat.credited,
         )
         open_count = stat.open
-        if author_login and login.lower() == author_login.lower():
+        if is_author:
             credited = author_credited
             open_count = author_open
         rows.append((
@@ -262,6 +276,32 @@ def cached_leaderboard_rows(
         CachedLeaderboardRow(rank=rank, login=login, credited=stat.credited, open=stat.open, rate=stat.rate, idle=stat.idle)
         for rank, (login, stat) in enumerate(sorted_rows, start=1)
     ]
+
+
+def _author_recent_count(
+    entry: Mapping[str, object],
+    created_ats: Iterable[str] | None,
+    *,
+    window_days: float,
+) -> int | None:
+    if created_ats is None:
+        return None
+    # Anchored to cachedAt, not now: every other login's recentCount was counted against the
+    # window that ran when the board was scanned, so the author's has to use the same one to
+    # stay comparable in the leaderboard's rate column.
+    cached_at = _parse_datetime(_string_value(entry.get("cachedAt")))
+    if cached_at is None:
+        return None
+    cutoff = cached_at - timedelta(days=window_days)
+    count = 0
+    for raw in created_ats:
+        created = _parse_datetime(raw)
+        # Bounded at both ends. The scan needed no upper bound (nothing was newer than the run
+        # that wrote it), but this counts at render time, when the author has PRs the board has
+        # never seen; without the bound a stale board stretches the window past its window_days.
+        if created is not None and cutoff <= created < cached_at:
+            count += 1
+    return count
 
 
 def fetch_community_leaderboard(repo: str, cache: Cache, *, now: datetime) -> bool:

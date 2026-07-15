@@ -7,7 +7,13 @@ from typing import Any
 
 import pytest
 
-from core.timeline import build_daily_data, load_active_repos_from_text, load_pr_data_from_html, prepare_timeline_prs
+from core.timeline import (
+    breakdown_seed,
+    build_daily_data,
+    load_active_repos_from_text,
+    load_pr_data_from_html,
+    prepare_timeline_prs,
+)
 
 
 def _read_index(repo_root: Path) -> str:
@@ -66,13 +72,37 @@ def test_summary_cards_add_up_to_total(repo_root: Path) -> None:
     assert shipped + open_count + lost_withdrawn == total
 
 
+def test_breakdown_cards_render_the_load_seed_not_the_all_time_rollup(repo_root: Path) -> None:
+    content = _read_index(repo_root)
+    today = re.search(r"var TL_TODAY = '([^']+)'", content)
+    assert today is not None
+    seed = breakdown_seed(_script_array(content, "TL_ALL"), today.group(1))
+
+    # timeline.js lerps out of bdDisplay(bdStats(BD_LOAD_RANGES[0])). The markup has to already sit
+    # on that frame; any drift here is a visible jump the instant the animation takes the first frame.
+    assert _stat_number(content, "", "Total PRs") == seed.counts.total
+    assert _stat_number(content, " green", "Shipped") == seed.counts.accepted
+    assert _stat_number(content, " yellow", "Open") == seed.counts.open
+    assert _stat_number(content, "", "Lost/Superseded") == seed.counts.not_shipped
+
+
+def test_bar_segments_carry_their_width_inline(repo_root: Path) -> None:
+    content = _read_index(repo_root)
+
+    # Flex items with no width collapse to their labels, so a width applied by a later script leaves
+    # the bar a sliver for the whole first paint.
+    assert "data-width" not in content
+    for key in ("shipped", "superseded", "lost", "open"):
+        assert re.search(rf'id="bd-bar-{key}" style="width:[\d.]+%"', content) is not None
+
+
 def test_shipped_counts_are_rolled_up_consistently(repo_root: Path) -> None:
     content = _read_index(repo_root)
-    shipped = _stat_number(content, " green", "Shipped")
     pill = re.search(r'<div class="sort-pill active" data-status="shipped">Shipped \((\d+)\)</div>', content)
 
+    # The PR table filter stays on the all-time rollup; only the breakdown carries the seed.
     assert pill is not None
-    assert int(pill.group(1)) == shipped
+    assert int(pill.group(1)) == sum(int(day["clsShipped"]) for day in _script_array(content, "TL_ALL"))
     assert 'data-status="accepted-indirect"' not in content
     assert '"key":"accepted-indirect"' not in content
     assert '"statusKey":"accepted-indirect"' not in content

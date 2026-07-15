@@ -48,6 +48,16 @@ Known gaps (2026-07-03):
 - `releaseCreditCounts` has no Python writer, so hermes-webui's credited column is frozen at PS1-era values; new release credits require wiring `core/credit.py` output into the board entry.
 - Evidence-based shipped counts are preserved, not recomputed; a login's evidence count only grows again if their merged-PR proxy overtakes it.
 
+## Breakdown seed
+
+The Breakdown cards, bar, and legend in `index.html` render the **first frame of the load animation**, not the all-time totals. `animateOnLoad` in `timeline.js` walks `BD_LOAD_RANGES` (`[1, 7, 14, 30, 0]`), lerping between real range states from `bdDisplay(bdStats(r))`, and `updateBreakdown(0)` writes the all-time numbers when it settles. `breakdown_seed` in `core/timeline.py` is a port of `bdStats`/`bdDisplay` at `BD_LOAD_RANGES[0]` and must produce byte-identical values, or the page visibly jumps the moment the animation takes the first frame. `test_breakdown_cards_render_the_load_seed_not_the_all_time_rollup` pins the generated markup to the port; the port itself is only pinned by the unit tests, so change one side and you must change the other.
+
+Two rules that look arbitrary are load-bearing. The window is 1 day, not 0: today's PRs are all still open, so a 0-day window puts the acceptance rate at 0/0 and the bar at 100% open. And bar widths are emitted inline by `render_bar_segments`, never applied from a `data-width` attribute by a script: the segments are flex items with no intrinsic width, so a deferred width leaves the bar collapsed to its labels for the whole first paint.
+
+The animation previously scaled the all-time totals by a fraction (`dispAt(f)`) instead of reading the ranges, which fabricated outcome counts and acceptance rates that never existed (16 shipped, 0 lost, 14%) and bottomed out at a 0/0 rate that a hardcoded `barSh = 66.7` was covering for. Don't reintroduce a scaled seed. Note `bd-rate-label` and `bd-days-label` do not animate, so they read the seed window until `updateBreakdown` settles.
+
+Python and JS still disagree on the all-time day count (`report_activity_summary` computes from PR items and excludes today; `bdStats` computes from the daily series and subtracts today from the count). It renders 46 vs the 47 JS settles on. The seed does not go through that path, so this is latent, not visible.
+
 ## Conventions
 
 PR pipeline skills (sweep, find, code, review, rework, cleanup) live in `C:\Apps\hermes\.claude\skills\pr\`.

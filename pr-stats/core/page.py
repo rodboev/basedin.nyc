@@ -152,6 +152,14 @@ def _matrix_cell(count: int) -> str:
     return '<td class="dim">0</td>' if count == 0 else f"<td>{count}</td>"
 
 
+def _matrix_heading(*, label: str, tag_class: str, total: int) -> str:
+    return (
+        '<span class="matrix-heading">'
+        f"{render_tag(label=label, tag_class=tag_class)}"
+        f'<span class="matrix-heading-width" aria-hidden="true">{total}</span></span>'
+    )
+
+
 def render_repo_matrix_section(
     *,
     repos: Iterable[str],
@@ -202,10 +210,10 @@ def render_repo_matrix_section(
     return (
         f'<table class="repo-matrix" style="--rank-digits:{rank_digits};--peer-digits:{peer_digits}">\n'
         "  <thead><tr><th>Repo</th>"
-        f"<th>{render_tag(label='Shipped', tag_class='tag-shipped')}</th>"
-        f"<th>{render_tag(label='Open', tag_class='tag-open')}</th>"
-        f"<th>{render_tag(label='Superseded', tag_class='tag-superseded')}</th>"
-        f"<th>{render_tag(label='Lost', tag_class='tag-lost')}</th>"
+        f"<th>{_matrix_heading(label='Shipped', tag_class='tag-shipped', total=shipped)}</th>"
+        f"<th>{_matrix_heading(label='Open', tag_class='tag-open', total=opened)}</th>"
+        f"<th>{_matrix_heading(label='Superseded', tag_class='tag-superseded', total=superseded)}</th>"
+        f"<th>{_matrix_heading(label='Lost', tag_class='tag-lost', total=lost)}</th>"
         "<th>Total</th><th>Rank</th><th>Rate (7d)</th></tr></thead>\n"
         "  <tbody>\n"
         f"{''.join(rows)}  </tbody>\n"
@@ -233,6 +241,7 @@ def author_leaderboard_rows(
         author_login=author,
         author_credited=sum(1 for item in items if item.statusKey == "shipped"),
         author_open=sum(1 for item in items if item.statusKey == "open"),
+        author_recent_created=[item.createdAt for item in items if item.classification != "withdrawn"],
         max_entries=None,
     )
 

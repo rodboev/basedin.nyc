@@ -44,10 +44,10 @@ def test_render_breakdown_section_matches_ps1_owned_markup() -> None:
         '  <div class="stat-card"><div class="number blue" id="bd-days">3 days</div><div class="label" id="bd-days-label">Active days from Jul 1 - Jul 3</div></div>\n'
         "</div>\n\n"
         '<div class="bar-container">\n'
-        '  <div class="bar-segment bar-shipped" id="bd-bar-shipped" data-width="70" title="7">7</div>\n'
-        '  <div class="bar-segment bar-superseded" id="bd-bar-superseded" data-width="10">1</div>\n'
-        '  <div class="bar-segment bar-lost" id="bd-bar-lost" data-width="10">1</div>\n'
-        '  <div class="bar-segment bar-open" id="bd-bar-open" data-width="10" title="1">1</div>\n'
+        '  <div class="bar-segment bar-shipped" id="bd-bar-shipped" style="width:70%" title="7">7</div>\n'
+        '  <div class="bar-segment bar-superseded" id="bd-bar-superseded" style="width:10%">1</div>\n'
+        '  <div class="bar-segment bar-lost" id="bd-bar-lost" style="width:10%">1</div>\n'
+        '  <div class="bar-segment bar-open" id="bd-bar-open" style="width:10%" title="1">1</div>\n'
         "</div>\n"
         '<div class="legend">\n'
         '  <div class="legend-item" id="bd-leg-shipped"><div class="legend-dot legend-dot-shipped"></div> Shipped (7)</div>\n'
@@ -143,10 +143,10 @@ def test_render_repo_matrix_heads_status_columns_with_two_tone_pills() -> None:
         repos=["owner/repo"], items=items, cache=Cache(), now=NOW, author="rodboev",
     )
 
-    assert '<th><span class="tag tag-shipped">Shipped</span></th>' in html
-    assert '<th><span class="tag tag-open">Open</span></th>' in html
-    assert '<th><span class="tag tag-superseded">Superseded</span></th>' in html
-    assert '<th><span class="tag tag-lost">Lost</span></th>' in html
+    assert '<span class="tag tag-shipped">Shipped</span><span class="matrix-heading-width" aria-hidden="true">1</span>' in html
+    assert '<span class="tag tag-open">Open</span><span class="matrix-heading-width" aria-hidden="true">0</span>' in html
+    assert '<span class="tag tag-superseded">Superseded</span><span class="matrix-heading-width" aria-hidden="true">0</span>' in html
+    assert '<span class="tag tag-lost">Lost</span><span class="matrix-heading-width" aria-hidden="true">0</span>' in html
     assert "<h2>Repos</h2>" not in html
 
 

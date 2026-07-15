@@ -44,7 +44,14 @@ from core.report import (
     sort_report_items_by_effective_date,
     sort_repos_by_accepted_count,
 )
-from core.timeline import build_chart_payload, build_daily_data, load_active_repos_from_text, load_pr_data_from_html, prepare_timeline_prs
+from core.timeline import (
+    breakdown_seed,
+    build_chart_payload,
+    build_daily_data,
+    load_active_repos_from_text,
+    load_pr_data_from_html,
+    prepare_timeline_prs,
+)
 
 DEFAULT_AUTHOR = "rodboev"
 DEFAULT_CACHE_FILE = Path(".pr-classification-cache.json")
@@ -283,19 +290,22 @@ def generate_report(
     try:
         all_prs = prepare_timeline_prs(pr_items)
         chart_data, repo_data, repo_names = build_daily_data(all_prs, repos)
-        chart_json, repo_json, names_json, avg_prs, avg_loc = build_chart_payload(chart_data, repo_data, repo_names)
+        chart_json, repo_json, names_json = build_chart_payload(chart_data, repo_data, repo_names)
         representative_items = enrich_representative_items(
             parse_representative_readme(load_representative_readme_text(readme_file)),
             typed_items,
         )
         now_eastern = now.astimezone(EASTERN)
         today_label = now_eastern.strftime("%Y-%m-%d")
+        # Rendered at the load animation's first frame, not the all-time totals, so the page does not
+        # jump the moment timeline.js starts lerping. The settled all-time state is JS's to fill in.
+        seed = breakdown_seed(chart_data, today_label)
         context = {
             "breakdown": render_breakdown_section(
-                counts,
-                report_activity_summary(typed_items),
-                avg_prs=avg_prs,
-                avg_loc=avg_loc,
+                seed.counts,
+                seed.activity,
+                avg_prs=seed.avg_prs,
+                avg_loc=seed.avg_loc,
             ),
             "timeline_bootstrap": render_timeline_bootstrap(chart_json, repo_json, names_json, today_label),
             "today": today_label,
