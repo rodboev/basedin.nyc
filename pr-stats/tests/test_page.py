@@ -150,6 +150,27 @@ def test_render_repo_matrix_heads_status_columns_with_two_tone_pills() -> None:
     assert "<h2>Repos</h2>" not in html
 
 
+def test_render_repo_matrix_explains_status_pills_below_the_table() -> None:
+    items = [_item(number=1, repo="owner/repo", classification="shipped", statusKey="shipped")]
+
+    html = render_repo_matrix_section(
+        repos=["owner/repo"], items=items, cache=Cache(), now=NOW, author="rodboev",
+    )
+
+    legend = html[html.index('<div class="repo-legend"'):]
+    assert html.index("</table>") < html.index('<div class="repo-legend"')
+    assert "<th" not in legend
+    assert "Merged, released, or accepted with credit" in html
+    assert "Pending review" in html
+    assert "Replaced by a newer PR" in html
+    assert "Maintainer-closed without acceptance" in html
+    assert legend.count('role="listitem"') == 4
+    for status in ("shipped", "open", "superseded", "lost"):
+        assert f"repo-legend-entry-{status}" in legend
+    assert legend.count('class="repo-legend-group"') == 1
+    assert legend.count('class="repo-legend-group repo-legend-group-right"') == 1
+
+
 def test_render_repo_matrix_joins_rank_over_field_with_rate_last() -> None:
     cache = _leaderboard_cache(
         {

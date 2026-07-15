@@ -21,7 +21,6 @@ from core.report import (
     pull_request_effective_iso_date,
     repo_filter_dicts,
     repo_label,
-    report_activity_summary,
     report_bar_items,
     report_counts,
     report_item_from_pull_request_view,
@@ -369,20 +368,6 @@ def test_default_status_filters_match_ps1_order() -> None:
         {"key": "shipped", "label": "Shipped", "count": 1},
         {"key": "not-shipped", "label": "Not Shipped", "count": 2},
     ]
-
-
-def test_report_activity_summary_matches_ps1_active_day_text() -> None:
-    summary = report_activity_summary(
-        [
-            _item(number=1, classification="shipped", createdAt="2026-07-01T00:00:00Z", closedAt="2026-07-02T00:00:00Z"),
-            _item(number=2, classification="open", createdAt="2026-07-04T00:00:00Z", closedAt=""),
-            _item(number=3, classification="lost", createdAt="2026-07-02T00:00:00Z", closedAt="2026-07-03T00:00:00Z"),
-        ],
-    )
-
-    assert summary.time_span == "3 days"
-    assert summary.time_range == "Active days from Jul 2 - Jul 4"
-    assert report_activity_summary([_item(number=1)]).time_span == "N/A"
 
 
 def test_report_bar_items_match_ps1_width_title_and_content_rules() -> None:

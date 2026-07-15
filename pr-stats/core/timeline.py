@@ -13,8 +13,21 @@ from core.report import ReportActivitySummary, ReportCounts
 SHIPPED_CLASSIFICATIONS = {"shipped", "accepted-indirect"}
 EASTERN = ZoneInfo("America/New_York")
 
-# BD_LOAD_RANGES[0] in timeline.js. The static breakdown is rendered at this window.
-BD_LOAD_SEED_RANGE = 1
+# Mirrors BD_LOAD_RANGES in timeline.js: the windows the load animation walks, in order.
+BD_LOAD_RANGES = (2, 7, 14, 30, 0)
+
+# The static breakdown is rendered at the first window. Not 1: a 1-day window is the only one in the
+# data that closed nothing but shipped work, so its rate is a 0-denominator 100% that drops to 84%
+# the moment a second day is in scope, and it is the only frame that would render a 4-char rate,
+# since format_acceptance_rate switches to decimals above 99. Not 0 either: today's PRs are all still
+# open, which is a 0/0 rate and a 100% open bar.
+BD_LOAD_SEED_RANGE = BD_LOAD_RANGES[0]
+
+# bd-rate alone seeds from the second window. A rate over BD_LOAD_SEED_RANGE is decided by whether a
+# single bad day sits inside it, and no window that narrow can state one honestly; this is the
+# narrowest window no single day can swing. The trade is that bd-rate disagrees with the counts and
+# with bd-rate-label beneath it until the first phase lands.
+BD_RATE_SEED_RANGE = BD_LOAD_RANGES[1]
 
 TimelinePr = dict[str, str | int | bool]
 TimelineDay = dict[str, str | int | float]
@@ -197,13 +210,11 @@ def breakdown_seed(chart_data: list[TimelineDay], today: str) -> BreakdownSeed:
     """The frame the load animation starts from, as bdStats()/bdDisplay() in timeline.js compute it.
 
     Must stay identical to the JS, or the static markup jumps on the first rendered frame. The
-    window is BD_LOAD_RANGES[0]; anything shorter is a day whose PRs are all still open, which
-    would put the acceptance rate at 0/0 and the bar at 100% open.
+    window is BD_LOAD_SEED_RANGE; see the note on it for why shorter windows are unusable.
     """
     window = slice_daily(chart_data, BD_LOAD_SEED_RANGE)
     opened = shipped = open_ = superseded = lost = loc = active_days = 0
-    today_active = False
-    active_dates: list[str] = []
+    first_active = last_active = prev_active = ""
     for day in window:
         day_opened = int(day["prsOpened"])
         opened += day_opened
@@ -214,12 +225,14 @@ def breakdown_seed(chart_data: list[TimelineDay], today: str) -> BreakdownSeed:
         loc += int(day["loc"])
         if day_opened > 0:
             active_days += 1
-            active_dates.append(str(day["date"]))
-            today_active = today_active or str(day["date"]) == today
-    display_days = max(0, active_days - 1) if today_active else active_days
-    closed = shipped + lost + superseded
-    # bdDisplay() coerces a null rate to 0; nothing closed means there is no rate to show.
-    rate = (shipped / closed * 100) if closed > 0 else 0.0
+            if not first_active:
+                first_active = str(day["date"])
+            prev_active, last_active = last_active, str(day["date"])
+    display_days = active_days
+    # Today is still in progress, so it counts for neither the day tally nor the range end.
+    if last_active == today:
+        display_days = max(0, display_days - 1)
+        last_active = prev_active
     divisor = max(1, active_days)
     raw_avg_loc = round(loc / divisor)
     return BreakdownSeed(
@@ -230,22 +243,30 @@ def breakdown_seed(chart_data: list[TimelineDay], today: str) -> BreakdownSeed:
             superseded=superseded,
             lost=lost,
             not_shipped=superseded + lost,
-            acceptance_rate=rate,
+            acceptance_rate=_window_acceptance_rate(chart_data, BD_RATE_SEED_RANGE),
         ),
         activity=ReportActivitySummary(
             time_span="1 day" if display_days == 1 else f"{display_days} days",
-            time_range=_active_days_label(active_dates),
+            time_range=_active_days_label(first_active, last_active),
         ),
         avg_prs=str(int(opened / divisor + 0.5)),
         avg_loc=f"{raw_avg_loc / 1000:.1f}k" if raw_avg_loc >= 1000 else str(raw_avg_loc),
     )
 
 
-def _active_days_label(active_dates: list[str]) -> str:
-    """Port of the bd-days-label branch in updateBreakdown()."""
-    if not active_dates:
+def _window_acceptance_rate(chart_data: list[TimelineDay], days: int) -> float:
+    """Matches `states[0].rate = states[1].rate` in animateOnLoad plus bdDisplay's null-to-0 coercion."""
+    window = slice_daily(chart_data, days)
+    shipped = sum(int(day["clsShipped"]) for day in window)
+    closed = shipped + sum(int(day["clsSuperseded"]) + int(day["clsLost"]) for day in window)
+    return (shipped / closed * 100) if closed > 0 else 0.0
+
+
+def _active_days_label(first_active: str, last_active: str) -> str:
+    """Port of the bd-days-label branch in updateBreakdown(); an all-today window has no range."""
+    if not first_active or not last_active:
         return "No active days in range"
-    first, last = date.fromisoformat(active_dates[0]), date.fromisoformat(active_dates[-1])
+    first, last = date.fromisoformat(first_active), date.fromisoformat(last_active)
     return f"Active days from {first.strftime('%b')} {first.day} - {last.strftime('%b')} {last.day}"
 
 

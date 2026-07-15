@@ -25,6 +25,7 @@ from core.leaderboard import CachedLeaderboardRow, cached_leaderboard_rows, conf
 from core.repos import display_repo
 from core.models import Cache
 from core.report import (
+    CLASSIFICATION_STATUS_META,
     EASTERN,
     PrReportItem,
     ReportActivitySummary,
@@ -206,6 +207,14 @@ def render_repo_matrix_section(
     shipped, opened, superseded, lost, total = totals
     # The total row is the next row in the zebra sequence, so it stripes when it lands on an odd one.
     foot_class = ' class="stripe"' if len(rows) % 2 == 0 else ""
+    legend_entries: dict[str, str] = {}
+    for status in ("shipped", "open", "superseded", "lost"):
+        label, tag_class, details = CLASSIFICATION_STATUS_META[status]
+        legend_entries[status] = (
+            f'<div class="repo-legend-entry repo-legend-entry-{status}" role="listitem">'
+            f"{render_tag(label=label, tag_class=tag_class)}"
+            f'<span class="repo-legend-copy">{escape(details)}</span></div>'
+        )
     # Widest rank and field size drive the two halves of the rank cell so the slashes line up.
     return (
         f'<table class="repo-matrix" style="--rank-digits:{rank_digits};--peer-digits:{peer_digits}">\n'
@@ -220,7 +229,12 @@ def render_repo_matrix_section(
         f"  <tfoot><tr{foot_class}><td>Total</td>"
         f"<td>{shipped}</td><td>{opened}</td><td>{superseded}</td><td>{lost}</td>"
         f"<td>{total}</td><td></td><td></td></tr></tfoot>\n"
-        "</table>"
+        "</table>\n"
+        '<div class="repo-legend" role="list" aria-label="Pull request status definitions">\n'
+        f'  <div class="repo-legend-group">{legend_entries["shipped"]}{legend_entries["superseded"]}</div>\n'
+        f'  <div class="repo-legend-group repo-legend-group-right">{legend_entries["open"]}'
+        f'{legend_entries["lost"]}</div>\n'
+        "</div>"
     )
 
 

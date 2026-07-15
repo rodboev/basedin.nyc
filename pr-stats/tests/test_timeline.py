@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from core.timeline import TimelineDay, aggregate_daily, breakdown_seed, prepare_timeline_prs, slice_daily
 
 
@@ -88,28 +90,52 @@ def _series_day(date: str, *, opened: int = 0, loc: int = 0, shipped: int = 0, o
 def test_slice_daily_keeps_the_tail_from_the_cutoff_on_and_treats_zero_as_every_day() -> None:
     days = [_series_day("2026-07-01"), _series_day("2026-07-13"), _series_day("2026-07-14"), _series_day("2026-07-15")]
 
-    # sliceData() cuts at last-days and keeps `>=`, so a 1-day window spans two dates.
-    assert [day["date"] for day in slice_daily(days, 1)] == ["2026-07-14", "2026-07-15"]
+    # sliceData() cuts at last-days and keeps `>=`, so an N-day window spans N+1 dates.
+    assert [day["date"] for day in slice_daily(days, 2)] == ["2026-07-13", "2026-07-14", "2026-07-15"]
     assert [day["date"] for day in slice_daily(days, 0)] == [day["date"] for day in days]
 
 
-def test_breakdown_seed_reads_the_one_day_window_not_the_all_time_totals() -> None:
-    days = [
+def _seed_fixture() -> list[TimelineDay]:
+    # Jul 10 lands inside BD_RATE_SEED_RANGE but outside BD_LOAD_SEED_RANGE, so the two windows
+    # disagree on the rate and the override is actually exercised.
+    return [
         _series_day("2026-02-05", opened=400, loc=900_000, shipped=380, lost=15, sup=5),
+        _series_day("2026-07-10", opened=4, loc=1_000, shipped=20),
+        _series_day("2026-07-13", opened=5, loc=5_000, shipped=6, lost=2, sup=1),
         _series_day("2026-07-14", opened=12, loc=10_000, shipped=20, open_=4),
         _series_day("2026-07-15", opened=13, loc=20_000, shipped=4, open_=16),
     ]
 
+
+def test_breakdown_seed_reads_the_seed_window_not_the_all_time_totals() -> None:
+    seed = breakdown_seed(_seed_fixture(), "2026-07-15")
+
+    assert (seed.counts.total, seed.counts.accepted, seed.counts.open) == (53, 30, 20)
+    assert (seed.counts.superseded, seed.counts.lost, seed.counts.not_shipped) == (1, 2, 3)
+    assert seed.avg_prs == "10"  # 30 opened / 3 active days
+    assert seed.avg_loc == "11.7k"
+    # Today is in progress, so updateBreakdown() drops it from the tally and rolls the range end
+    # back to the previous active day. Diverge here and bd-days-label snaps on the final frame.
+    assert seed.activity.time_span == "2 days"
+    assert seed.activity.time_range == "Active days from Jul 13 - Jul 14"
+
+
+def test_breakdown_seed_takes_only_its_rate_from_the_wider_window() -> None:
+    seed = breakdown_seed(_seed_fixture(), "2026-07-15")
+
+    # Mirrors `states[0].rate = states[1].rate`: the counts stay on the 2d window (30 shipped of 33
+    # closed = 90.9%) while the rate reads the 7d window, which pulls Jul 10's 20 shipped in.
+    assert seed.counts.acceptance_rate == pytest.approx(50 / 53 * 100)
+    assert seed.counts.acceptance_rate != pytest.approx(30 / 33 * 100)
+
+
+def test_breakdown_seed_has_no_range_when_today_is_the_only_active_day() -> None:
+    days = [_series_day("2026-07-14"), _series_day("2026-07-15", opened=7, loc=200, open_=7)]
+
     seed = breakdown_seed(days, "2026-07-15")
 
-    assert (seed.counts.total, seed.counts.accepted, seed.counts.open) == (44, 24, 20)
-    assert (seed.counts.superseded, seed.counts.lost, seed.counts.not_shipped) == (0, 0, 0)
-    assert seed.counts.acceptance_rate == 100
-    assert seed.avg_prs == "13"  # 25 opened / 2 active days, rounded half up
-    assert seed.avg_loc == "15.0k"
-    # Today is partial, so it is excluded from the count while still bounding the label.
-    assert seed.activity.time_span == "1 day"
-    assert seed.activity.time_range == "Active days from Jul 14 - Jul 15"
+    assert seed.activity.time_span == "0 days"
+    assert seed.activity.time_range == "No active days in range"
 
 
 def test_breakdown_seed_reports_a_zero_rate_when_the_window_closed_nothing() -> None:

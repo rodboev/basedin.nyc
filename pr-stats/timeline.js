@@ -587,21 +587,29 @@ function build(r) {
     },
   });
 }
-// Load animation walks these ranges in order; the first is the frame the static markup is built at.
-var BD_LOAD_RANGES = [1, 7, 14, 30, 0];
+// Load animation walks these ranges in order; the first is the frame the static markup is built at
+// and must match BD_LOAD_SEED_RANGE in core/timeline.py. See the note there for why it is not 1 or 0.
+var BD_LOAD_RANGES = [2, 7, 14, 30, 0];
 function bdStats(r) {
   var sl = sliceData(r);
-  var op = 0, s = 0, o = 0, sp = 0, l = 0, loc = 0, ad = 0, todayActive = false;
+  var op = 0, s = 0, o = 0, sp = 0, l = 0, loc = 0, ad = 0;
+  var firstDate = '', lastDate = '', prevDate = '';
   for (var i = 0; i < sl.length; i++) {
     var d = sl[i]; op += d.prsOpened; s += (d.clsShipped||0); o += (d.clsOpen||0);
     sp += (d.clsSuperseded||0); l += (d.clsLost||0); loc += d.loc;
-    if (d.prsOpened > 0) { ad++; if (d.date === TL_TODAY) todayActive = true; }
+    if (d.prsOpened > 0) {
+      ad++; if (!firstDate) firstDate = d.date;
+      prevDate = lastDate; lastDate = d.date;
+    }
   }
-  var dd = todayActive ? Math.max(0, ad - 1) : ad;
+  // Today is still in progress, so it counts for neither the day tally nor the range end.
+  var dd = ad;
+  if (lastDate === TL_TODAY) { dd = Math.max(0, dd - 1); lastDate = prevDate; }
   // total counts the classes, not prsOpened: outcomes are dated by when they landed, so a
   // window holds outcomes for PRs opened before it. Only opened/loc stay opened-dated, since
   // Avg PRs/day and Avg LOC/day are about what was written per active day.
-  return {total:s+o+sp+l, opened:op, shipped:s, open:o, sup:sp, lost:l, loc:loc, activeDays:ad, displayDays:dd};
+  return {total:s+o+sp+l, opened:op, shipped:s, open:o, sup:sp, lost:l, loc:loc, activeDays:ad, displayDays:dd,
+    firstDate:firstDate, lastDate:lastDate};
 }
 function bdDisplay(b) {
   var ls = b.lost + b.sup, cd = b.shipped + b.lost + b.sup;
@@ -611,7 +619,18 @@ function bdDisplay(b) {
   var bT = b.total || 1;
   return {total:b.total, shipped:b.shipped, open:b.open, sup:b.sup, lost:b.lost, lostSup:ls,
     rate:rate, activeDays:ad, displayDays:b.displayDays, avgPrs:avgPrs, avgLoc:avgLoc,
+    firstDate:b.firstDate, lastDate:b.lastDate,
     barSh:b.shipped/bT*100, barSp:b.sup/bT*100, barL:b.lost/bT*100, barO:b.open/bT*100};
+}
+var BD_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function bdDateMs(iso) { var p = iso.split('-'); return new Date(+p[0], +p[1]-1, +p[2]).getTime(); }
+function bdMonthDay(ms) { var d = new Date(ms); return BD_MONTHS[d.getMonth()] + ' ' + d.getDate(); }
+// Both labels ride the same lerp as the cards they sit under; left out, they snap at the very end.
+function bdRangeLabel(oD, nD, et) {
+  if (!oD.firstDate || !nD.firstDate) return 'No active days in range';
+  var lerpMs = function(a, b) { return bdDateMs(a) + et * (bdDateMs(b) - bdDateMs(a)); };
+  return 'Active days from ' + bdMonthDay(lerpMs(oD.firstDate, nD.firstDate)) +
+    ' - ' + bdMonthDay(lerpMs(oD.lastDate, nD.lastDate));
 }
 function renderBdFrame(oD, nD, et) {
   var cT = Math.round(oD.total+et*(nD.total-oD.total));
@@ -630,9 +649,11 @@ function renderBdFrame(oD, nD, et) {
   if (el = document.getElementById('bd-open')) el.textContent = cO;
   if (el = document.getElementById('bd-lost-sup')) el.textContent = cL + cSp;
   if (el = document.getElementById('bd-rate')) el.textContent = formatAcceptanceRate(cR) + '%';
+  if (el = document.getElementById('bd-rate-label')) el.textContent = 'Acceptance rate (' + cSp + ' superseded, ' + cL + ' lost)';
   if (el = document.getElementById('bd-avg-prs')) el.textContent = Math.round(cAp);
   if (el = document.getElementById('bd-avg-loc')) el.textContent = rL >= 1000 ? (rL/1000).toFixed(1)+'k' : rL;
   if (el = document.getElementById('bd-days')) el.textContent = cDd === 1 ? '1 day' : cDd + ' days';
+  if (el = document.getElementById('bd-days-label')) el.textContent = bdRangeLabel(oD, nD, et);
   [['bd-bar-shipped',cSh,oD.barSh,nD.barSh],['bd-bar-superseded',cSp,oD.barSp,nD.barSp],
    ['bd-bar-lost',cL,oD.barL,nD.barL],['bd-bar-open',cO,oD.barO,nD.barO]].forEach(function(s) {
     var el = document.getElementById(s[0]); if (!el) return;
@@ -833,11 +854,28 @@ build(range);
   // BD_LOAD_RANGES[0] is the seed core/timeline.py bakes into the static markup; keep them in sync.
   var states = [];
   for (var i = 0; i < BD_LOAD_RANGES.length; i++) states.push(bdDisplay(bdStats(BD_LOAD_RANGES[i])));
+  // The rate is the one card the seed window cannot state honestly. Over a window this narrow it is
+  // decided by whether a single bad day is in scope (100% with Jul 13 out, 84% with it in), so it
+  // seeds from the next window up, the narrowest one no single day can swing. Every other card still
+  // lerps from the real seed window, so the rate disagrees with the counts under it until phase 0
+  // lands. core/timeline.py seeds bd-rate the same way; keep them together.
+  states[0].rate = states[1].rate;
   var phases = [];
   for (var i = 1; i < BD_LOAD_RANGES.length; i++) {
     phases.push({pill: String(BD_LOAD_RANGES[i]), startD: states[i-1], endD: states[i]});
   }
-  var dur = 1000, phaseDur = dur / phases.length, start = null;
+  // Phase length follows how far the bar travels, not the clock. Equal slices swing the shipped
+  // edge 4.7x between phases and the eye tracks that edge, while the counts blur either way. The
+  // settle keeps a floor so the last pill stays readable instead of getting ~90ms.
+  var dur = 1000, settleDur = 150, start = null;
+  var travel = phases.map(function(p) { return Math.abs(p.endD.barSh - p.startD.barSh); });
+  var leadTravel = travel.slice(0, -1).reduce(function(a, b) { return a + b; }, 0);
+  var durs = travel.map(function(t, i) {
+    if (i === phases.length - 1) return settleDur;
+    return leadTravel > 0 ? t / leadTravel * (dur - settleDur) : (dur - settleDur) / (phases.length - 1);
+  });
+  var starts = [], acc = 0;
+  for (var i = 0; i < durs.length; i++) { starts.push(acc); acc += durs[i]; }
   var pills = document.querySelectorAll('#bd-range-pills .sort-pill');
   var dLabsFull = dChart.data.labels.slice();
   var cLabsFull = cChart.data.labels.slice();
@@ -864,9 +902,19 @@ build(range);
     cChart.config._config.options.scales.x.ticks.color = labelA<0.01 ? 'transparent' : textAlpha(labelA);
     dChart._barScales = sc; setXLabelTransition(dChart, null, dLoadTargets, prog); dChart.update('none');
     cChart._barScales = sc; setXLabelTransition(cChart, null, cLoadTargets, prog);
-    var pi = done ? phases.length - 1 : Math.min(Math.floor(elapsed / phaseDur), phases.length - 1);
+    // One ease for the whole run, walked across the phases. Easing each phase separately ran the
+    // cubic to a standstill at every boundary, which is the stutter; the chart above never did that
+    // because it rides `prog` directly. Within a phase the walk is linear, so velocity stays
+    // continuous across boundaries.
+    var pt = prog * dur;
+    var pi = phases.length - 1;
+    if (!done) {
+      for (var j = 0; j < phases.length; j++) {
+        if (pt < starts[j] + durs[j]) { pi = j; break; }
+      }
+    }
     var phase = phases[pi];
-    var et = done ? 1 : ease(Math.min((elapsed - pi * phaseDur) / phaseDur, 1));
+    var et = done ? 1 : Math.max(0, Math.min((pt - starts[pi]) / durs[pi], 1));
     var sD = phase.startD, eD = phase.endD;
     var activePill = phase.pill;
     pills.forEach(function(p) { p.classList.toggle('active', p.getAttribute('data-range') === activePill); });

@@ -37,7 +37,6 @@ from core.report import (
     PrReportItem,
     enrich_representative_items,
     parse_representative_readme,
-    report_activity_summary,
     report_counts,
     report_item_from_pull_request_view,
     report_items_to_script_dicts,

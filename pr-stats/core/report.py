@@ -17,7 +17,7 @@ CLASSIFICATION_STATUS_META: dict[str, tuple[str, str, str]] = {
     "shipped": (
         "Shipped",
         "tag-shipped",
-        "Verified via merged release PR, maintainer release evidence, or indirect accepted sibling",
+        "Merged, released, or accepted with credit",
     ),
     "accepted-indirect": ("Shipped", "tag-shipped", ""),
     "open": ("Open", "tag-open", "Pending review"),
@@ -432,32 +432,6 @@ def format_acceptance_rate(rate: float | None) -> str:
     return str(round(rate))
 
 
-def report_activity_summary(items: Iterable[PrReportItem]) -> ReportActivitySummary:
-    dates = sorted(
-        parsed
-        for parsed in (
-            _parse_datetime(
-                pull_request_effective_iso_date(
-                    status_key=item.classification or "open",
-                    created_at=item.createdAt,
-                    closed_at=item.closedAt,
-                ),
-            )
-            for item in items
-        )
-        if parsed is not None
-    )
-    if len(dates) < 2:
-        return ReportActivitySummary(time_span="N/A", time_range="")
-
-    active_days = len({date.date() for date in dates})
-    time_span = "1 day" if active_days == 1 else f"{active_days} days"
-    display_end = dates[0].date().toordinal() + (dates[-1] - dates[0]).days
-    end_date = datetime.fromordinal(display_end)
-    time_range = f"Active days from {_format_month_day(dates[0])} - {_format_month_day(end_date)}"
-    return ReportActivitySummary(time_span=time_span, time_range=time_range)
-
-
 def report_bar_items(counts: ReportCounts) -> list[ReportBarItem]:
     specs = (
         ("shipped", "Shipped", counts.accepted, "wide", "wide"),
@@ -494,10 +468,6 @@ def _parse_datetime(value: str) -> datetime | None:
     if parsed.tzinfo is None:
         return parsed.replace(tzinfo=timezone.utc)
     return parsed.astimezone(timezone.utc)
-
-
-def _format_month_day(value: datetime) -> str:
-    return f"{value.strftime('%b')} {value.day}"
 
 
 def _report_item_sort_datetime(item: PrReportItem) -> datetime:
