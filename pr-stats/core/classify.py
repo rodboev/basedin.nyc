@@ -28,7 +28,13 @@ NEGATIVE_REFERENCE_PATTERN = re.compile(
     re.IGNORECASE,
 )
 POSITIVE_REFERENCE_PATTERN = re.compile(
-    r"\b(?:ship(?:s|ped|ping)?|release(?:d)?|credit(?:ed)?|co-auth(?:or|ored)|authorship|attribution|carry(?:ing|ied)\s+forward|land(?:ed|ing)|merge(?:d|s|ing)?|fix(?:es|ed)?|close(?:s|d)?)\b",
+    r"\b(?:ship(?:s|ped|ping)?|release(?:d)?|credit(?:ed)?|co-auth(?:or|ored)|authorship|attribution|carry(?:ing|ied)\s+forward|land(?:ed|ing)|merge(?:d|s|ing)?|fix(?:es|ed)?|close(?:s|d)?|includ(?:e|es|ed|ing)|incorporat(?:e|es|ed|ing)|subsum(?:e|es|ed|ing)|absorb(?:s|ed|ing)?|folds?\s+in)\b",
+    re.IGNORECASE,
+)
+# Attribution vocabulary a replacement PR's body uses when naming the original
+# author at the reference to their PR ("Credit: builds on @author's approach in #N").
+AUTHOR_ATTRIBUTION_PATTERN = re.compile(
+    r"\b(?:credit(?:s|ed)?|based\s+on|builds?\s+on|thanks\s+to|approach|propos(?:ed|al)|co-auth(?:or|ored)|original(?:ly)?)\b",
     re.IGNORECASE,
 )
 MIN_SPECULATIVE_REFERENCED_PR_NUMBER = 100
@@ -129,6 +135,7 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
         accepted_sibling = get_referenced_merged_pull_request(pr.repo, pr, evidence, comments)
     credited_ship = get_credited_ship_evidence(pr, evidence)
     adoption_credit = get_adoption_credit(pr, evidence)
+    credited_replacement = get_credited_replacement(pr, evidence)
     if (
         accepted_sibling is not None
         and superseded_evidence is not None
@@ -180,6 +187,19 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
             )
         return ClassificationResult(classification="shipped", release=release, evidence_kind="comment", log_label="shipped")
 
+    if credited_replacement is not None:
+        # A merged replacement whose own body credits the author (@author named with
+        # attribution vocabulary at the reference to this PR) is an indirect ship,
+        # and it outranks the author's close: closing in favor of a credited
+        # takeover is handing the work off, not withdrawing it.
+        return ClassificationResult(
+            classification="accepted-indirect",
+            release=release,
+            via_label=f"#{credited_replacement.number}",
+            via_url=credited_replacement.url,
+            evidence_kind="accepted-indirect",
+            log_label=f"accepted indirectly via #{credited_replacement.number} (replacement credits author)",
+        )
     if is_author_withdrawn_value:
         return ClassificationResult(classification="withdrawn", release=release, evidence_kind="author-withdrawn", log_label="withdrawn (author withdrew)")
     if accepted_sibling is not None:
@@ -535,6 +555,41 @@ def _adoption_via_number(pr: PullRequest, evidence: Evidence, body: str) -> int:
     return 0
 
 
+def get_credited_replacement(pr: PullRequest, evidence: Evidence) -> PullRequestRef | None:
+    # Body credit only. Commit authorship in the replacement is deliberately not
+    # evidence here: a release PR shipping a different PR by the same author carries
+    # his commits and may mention this PR in passing, which reads as credit for the
+    # wrong PR (hermes-webui#5845 shipping #5823 while name-dropping #5597).
+    author_login = author_login_for_classification(pr, evidence)
+    if not author_login:
+        return None
+    folded_author = author_login.casefold()
+    for number in sorted(evidence.pull_states_by_pr):
+        ref = evidence.pull_states_by_pr[number]
+        if number == pr.number or not (ref.state == "MERGED" or ref.mergedAt):
+            continue
+        # The author's own merged PR is a direct ship in its own right; counting it
+        # here would double-count the same work.
+        if ref.author.login.casefold() == folded_author:
+            continue
+        if replacement_body_credits_author(ref.body, pr.repo, pr.number, author_login):
+            return ref
+    return None
+
+
+def replacement_body_credits_author(body: str, repo: str, number: int, author_login: str) -> bool:
+    # Credit must sit at the reference site: @author named in the same context as the
+    # link to their PR, with attribution vocabulary. A body that references the PR
+    # without naming the author ("supersedes the narrower path in #N") is not credit.
+    if not body or not author_login:
+        return False
+    mention = re.compile(rf"(?<!\w)@{re.escape(author_login)}(?![\w-])", re.IGNORECASE)
+    for context in get_pull_request_reference_contexts(body, repo, number):
+        if mention.search(context) and AUTHOR_ATTRIBUTION_PATTERN.search(context):
+            return True
+    return False
+
+
 def get_replacement_pull_request(pr: PullRequest, evidence: Evidence, body: str) -> PullRequestRef | None:
     for match in re.finditer(r"#(\d+)", body):
         number = int(match.group(1))
@@ -617,6 +672,18 @@ def has_positive_pull_request_reference_context(text: str, repo: str, number: in
     return False
 
 
+def has_credited_pull_request_reference_context(text: str, repo: str, number: int) -> bool:
+    # A merged sibling credits this PR when its reference to this PR says the work
+    # shipped, merged, landed, or was credited. A bare mention ("#N owns adjacent
+    # work") names the PR without claiming its content.
+    for context in get_pull_request_reference_contexts(text, repo, number):
+        if NEGATIVE_REFERENCE_PATTERN.search(context):
+            continue
+        if POSITIVE_REFERENCE_PATTERN.search(context):
+            return True
+    return False
+
+
 def is_positive_release_reference_to_pull_request(
     repo: str,
     original_pr: PullRequest,
@@ -673,7 +740,7 @@ def is_credited_merged_sibling_by_maintainer_carry_forward(
 
 def is_credited_merged_sibling(repo: str, original_pr: PullRequest, merged_pr: PullRequestRef, evidence: Evidence) -> bool:
     reference_text = evidence.reference_text_by_pr.get(merged_pr.number, "")
-    if reference_text and has_positive_pull_request_reference_context(reference_text, repo, original_pr.number, original_pr.author.login):
+    if reference_text and has_credited_pull_request_reference_context(reference_text, repo, original_pr.number):
         return True
     return is_credited_merged_sibling_by_maintainer_carry_forward(repo, original_pr, evidence, merged_pr)
 

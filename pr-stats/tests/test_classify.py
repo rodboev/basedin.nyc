@@ -159,6 +159,53 @@ def test_accepted_sibling_branch(
     assert result.via_label == "#22"
 
 
+def test_bare_scope_mention_in_merged_sibling_is_not_credit(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # claude-mem#2904: a merged PR's scope section named this PR as adjacent open
+    # work. The mention claims nothing about this PR's content, and the negative
+    # "excludes" sits too far from the link for the windowed context to see it.
+    pr = make_pr()
+    sibling = make_ref(number=22, url="https://github.com/owner/repo/pull/22")
+    evidence = make_evidence(
+        timeline_items=[make_event(__typename="CrossReferencedEvent", source=sibling), make_event(actor={"login": "rodboev"})],
+        reference_text_by_pr={
+            22: (
+                "This excludes retention, pruning, migrations, prompt rewriting, fuzzy classification, "
+                "and cleanup of existing rows. Open PRs #10 and #11 own adjacent storage-reclamation work."
+            ),
+        },
+        pull_states_by_pr={22: sibling},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "withdrawn"
+
+
+def test_merged_sibling_that_absorbs_this_pr_is_credit(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr()
+    sibling = make_ref(number=22, url="https://github.com/owner/repo/pull/22")
+    evidence = make_evidence(
+        timeline_items=[make_event(__typename="CrossReferencedEvent", source=sibling)],
+        reference_text_by_pr={22: "This stack folds in #10 and #11 under one review target."},
+        pull_states_by_pr={22: sibling},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "accepted-indirect"
+    assert result.via_label == "#22"
+
+
 def test_timeline_accepted_sibling_requires_resolved_state(
     make_pr: Callable[..., PullRequest],
     make_ref: Callable[..., PullRequestRef],
@@ -903,3 +950,203 @@ def test_closing_because_with_third_party_replacement_is_lost(
 
     assert result.classification == "lost"
     assert "competing" in result.log_label
+
+
+def test_author_close_in_favor_of_credited_takeover_is_accepted_indirect(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # orca#8942: the author closed his own PR in favor of a takeover PR whose body
+    # names him at the reference site; the credited replacement outranks the close.
+    pr = make_pr()
+    replacement = make_ref(
+        number=9103,
+        url="https://github.com/owner/repo/pull/9103",
+        author={"login": "nwparker"},
+        body=(
+            "**Credits:** builds on @rodboev's approach in #10 (same core strip + provider path); "
+            "this PR lands it with broader adversarial coverage."
+        ),
+    )
+    evidence = make_evidence(
+        comments=[make_comment(body="Closing in favor of #9103.", author={"login": "rodboev"}, authorAssociation="CONTRIBUTOR")],
+        timeline_items=[make_event(actor={"login": "rodboev"})],
+        pull_states_by_pr={9103: replacement},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "accepted-indirect"
+    assert result.via_label == "#9103"
+
+
+def test_markdown_author_link_in_takeover_body_counts_as_credit(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # orca#9109 names the author as a markdown profile link and supersedes a third
+    # PR in the same sentence; the credit context still reads as credit, and the
+    # superseded #8422 gains nothing because its context names no author.
+    pr = make_pr()
+    replacement = make_ref(
+        number=9109,
+        url="https://github.com/owner/repo/pull/9109",
+        author={"login": "nwparker"},
+        body=(
+            "Credit: builds on [@rodboev](https://github.com/rodboev)'s approach in #10 "
+            "(explicit Off vs auto discriminator). Supersedes the narrower path in #8422 "
+            "by covering the shared root cause."
+        ),
+    )
+    evidence = make_evidence(
+        comments=[make_comment(body="Closing in favor of #9109.", author={"login": "rodboev"}, authorAssociation="CONTRIBUTOR")],
+        timeline_items=[make_event(actor={"login": "rodboev"})],
+        pull_states_by_pr={9109: replacement},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "accepted-indirect"
+    assert result.via_label == "#9109"
+
+
+def test_unmerged_takeover_with_credit_stays_withdrawn(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # Body credit on an open takeover is a promise, not a ship; the recheck window
+    # upgrades the entry once the replacement merges.
+    pr = make_pr()
+    replacement = make_ref(
+        number=9103,
+        state="OPEN",
+        merged=False,
+        mergedAt="",
+        author={"login": "nwparker"},
+        body="**Credits:** builds on @rodboev's approach in #10.",
+    )
+    evidence = make_evidence(
+        comments=[make_comment(body="Closing in favor of #9103.", author={"login": "rodboev"}, authorAssociation="CONTRIBUTOR")],
+        timeline_items=[make_event(actor={"login": "rodboev"})],
+        pull_states_by_pr={9103: replacement},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "withdrawn"
+    assert result.evidence_kind == "author-withdrawn"
+
+
+def test_close_in_favor_of_uncredited_competing_pr_stays_withdrawn(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # unsloth#6765: the author yielded to a newer competing PR whose body describes
+    # the same fix without naming him or his PR; merging it earns no indirect credit.
+    pr = make_pr()
+    replacement = make_ref(
+        number=6784,
+        author={"login": "hakanbaysal"},
+        body=(
+            "Capture the real parent pid before the fork (in the parent) and compare "
+            "the child's getppid() against that instead of the literal 1."
+        ),
+    )
+    evidence = make_evidence(
+        comments=[
+            make_comment(
+                body=(
+                    "Closing this in favor of #6784. It covers the same process_lifetime and test "
+                    "surfaces, it is newer, and keeping both open would spend review cycles on overlapping fixes."
+                ),
+                author={"login": "rodboev"},
+                authorAssociation="CONTRIBUTOR",
+            ),
+        ],
+        timeline_items=[make_event(actor={"login": "rodboev"})],
+        pull_states_by_pr={6784: replacement},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "withdrawn"
+    assert result.evidence_kind == "author-withdrawn"
+
+
+def test_commit_credit_for_another_pr_is_not_takeover_credit(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # hermes-webui#5845: a release PR ships a different PR by the same author (so he
+    # is a commit author there) and mentions this PR only in passing; that commit
+    # credit belongs to the other PR and must not upgrade this one.
+    pr = make_pr()
+    replacement = make_ref(
+        number=5845,
+        author={"login": "nesquena-hermes"},
+        body=(
+            "Ships **#5823** (@rodboev) — queue gateway-owned steer fallback so the composer "
+            "keeps its draft when steering a live gateway run.\n\n"
+            "Gateway sibling of the already-shipped #10 local-agent fallback."
+        ),
+    )
+    evidence = make_evidence(
+        comments=[
+            make_comment(
+                body="Closing this one rather than rebasing it through the current steer stack.",
+                author={"login": "rodboev"},
+                authorAssociation="CONTRIBUTOR",
+            ),
+        ],
+        timeline_items=[
+            make_event(actor={"login": "rodboev"}),
+            make_event(source=replacement, **{"__typename": "CrossReferencedEvent"}),
+        ],
+        pull_states_by_pr={5845: replacement},
+        commit_author_logins_by_pr={5845: {"rodboev"}},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "withdrawn"
+
+
+def test_authors_own_merged_replacement_is_not_a_credited_takeover(
+    make_pr: Callable[..., PullRequest],
+    make_ref: Callable[..., PullRequestRef],
+    make_comment: Callable[..., Comment],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    # The author's own merged resubmit ships directly under its own number; crediting
+    # it here too would double-count the same work.
+    pr = make_pr()
+    replacement = make_ref(
+        number=210,
+        author={"login": "rodboev"},
+        body="Credit: builds on @rodboev's approach in #10.",
+    )
+    evidence = make_evidence(
+        comments=[make_comment(body="Closing in favor of #210.", author={"login": "rodboev"}, authorAssociation="CONTRIBUTOR")],
+        timeline_items=[make_event(actor={"login": "rodboev"})],
+        pull_states_by_pr={210: replacement},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "withdrawn"

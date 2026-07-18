@@ -6,8 +6,8 @@ thedotmack/claude-mem
 headroomlabs-ai/headroom
 mem0ai/mem0
 stablyai/orca
-NVIDIA/SkillSpector
-microsoft/presidio
+# NVIDIA/SkillSpector
+# microsoft/presidio
 # NousResearch/hermes-agent
 # unslothai/unsloth
 # cline/cline

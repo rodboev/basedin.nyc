@@ -14,9 +14,9 @@ import generate
 import core.leaderboard as leaderboard_mod
 import core.releases as releases_mod
 from core.classification_rebuild import CacheRebuildInterrupted, CacheRebuildResult
-from core.github import GhRetryExhausted
+from core.github import GhPullRequestView, GhRetryExhausted
 from core.classify import ClassificationResult
-from core.models import Cache, Evidence
+from core.models import Cache, ClassificationEntry, Evidence
 from core.report import EASTERN
 
 def test_verify_webui_credits_only_uses_python_credit_pipeline(repo_root: Path) -> None:
@@ -612,3 +612,126 @@ def _graphql_search_json(repo: str, items: list[dict[str, object]]) -> str:
             },
         },
     })
+
+
+def _closed_view(closed_at: str) -> GhPullRequestView:
+    return GhPullRequestView.model_validate(
+        {
+            "number": 10,
+            "state": "CLOSED",
+            "title": "Fix bug",
+            "closedAt": closed_at,
+            "author": {"login": "rodboev"},
+        }
+    )
+
+
+def test_withdrawn_entry_within_recheck_window_reclassifies_live(monkeypatch: MonkeyPatch) -> None:
+    now = datetime(2026, 7, 17, tzinfo=timezone.utc)
+    cache = Cache()
+    cache.entries["owner/repo#10"] = ClassificationEntry(classification="withdrawn", evidenceKind="author-withdrawn", cachedAt="2026-07-12T00:00:00Z")
+    view = _closed_view("2026-07-12T00:00:00Z")
+    monkeypatch.setattr(generate, "live_evidence", lambda repo, number, pr: Evidence())
+    monkeypatch.setattr(
+        generate,
+        "classify_closed_pr",
+        lambda pr, evidence: ClassificationResult(
+            classification="accepted-indirect",
+            via_label="#9103",
+            via_url="https://github.com/owner/repo/pull/9103",
+            evidence_kind="accepted-indirect",
+            log_label="accepted indirectly via #9103 (replacement credits author)",
+        ),
+    )
+
+    assert generate._needs_live_classification("owner/repo", view, cache, now)
+    result, updated = generate.live_pull_request_classification("owner/repo", view, cache, now=now)
+
+    assert updated
+    assert result.classification == "accepted-indirect"
+    assert cache.entries["owner/repo#10"].classification == "accepted-indirect"
+
+
+def test_withdrawn_entry_rechecked_within_interval_stays_cached(monkeypatch: MonkeyPatch) -> None:
+    # Young withdrawal, but cachedAt is fresher than WITHDRAWN_RECHECK_INTERVAL_HOURS:
+    # the run must serve from cache instead of reclassifying again.
+    now = datetime(2026, 7, 17, tzinfo=timezone.utc)
+    cache = Cache()
+    cache.entries["owner/repo#10"] = ClassificationEntry(classification="withdrawn", evidenceKind="author-withdrawn", cachedAt="2026-07-16T22:00:00Z")
+    view = _closed_view("2026-07-16T00:00:00Z")
+
+    def fail_classify(pr: object, evidence: object) -> ClassificationResult:
+        raise AssertionError("recheck within the interval must not reclassify")
+
+    monkeypatch.setattr(generate, "classify_closed_pr", fail_classify)
+
+    assert not generate._needs_live_classification("owner/repo", view, cache, now)
+    result, updated = generate.live_pull_request_classification("owner/repo", view, cache, now=now)
+
+    assert not updated
+    assert result.from_cache
+    assert result.classification == "withdrawn"
+
+
+def test_withdrawn_entry_rechecked_after_interval_reclassifies(monkeypatch: MonkeyPatch) -> None:
+    # Young withdrawal whose last recheck is older than the interval: recheck fires.
+    now = datetime(2026, 7, 17, tzinfo=timezone.utc)
+    cache = Cache()
+    cache.entries["owner/repo#10"] = ClassificationEntry(classification="withdrawn", evidenceKind="author-withdrawn", cachedAt="2026-07-16T12:00:00Z")
+    view = _closed_view("2026-07-16T00:00:00Z")
+    monkeypatch.setattr(generate, "live_evidence", lambda repo, number, pr: Evidence())
+    monkeypatch.setattr(
+        generate,
+        "classify_closed_pr",
+        lambda pr, evidence: ClassificationResult(
+            classification="accepted-indirect",
+            via_label="#9103",
+            via_url="https://github.com/owner/repo/pull/9103",
+            evidence_kind="accepted-indirect",
+            log_label="accepted indirectly via #9103 (replacement credits author)",
+        ),
+    )
+
+    assert generate._needs_live_classification("owner/repo", view, cache, now)
+    result, updated = generate.live_pull_request_classification("owner/repo", view, cache, now=now)
+
+    assert updated
+    assert result.classification == "accepted-indirect"
+
+
+def test_withdrawn_entry_past_recheck_window_stays_cached(monkeypatch: MonkeyPatch) -> None:
+    now = datetime(2026, 7, 17, tzinfo=timezone.utc)
+    cache = Cache()
+    cache.entries["owner/repo#10"] = ClassificationEntry(classification="withdrawn", evidenceKind="author-withdrawn", cachedAt="2026-06-02T00:00:00Z")
+    view = _closed_view("2026-06-01T00:00:00Z")
+
+    def fail_classify(pr: object, evidence: object) -> ClassificationResult:
+        raise AssertionError("settled withdrawal must not reclassify")
+
+    monkeypatch.setattr(generate, "classify_closed_pr", fail_classify)
+
+    assert not generate._needs_live_classification("owner/repo", view, cache, now)
+    result, updated = generate.live_pull_request_classification("owner/repo", view, cache, now=now)
+
+    assert not updated
+    assert result.from_cache
+    assert result.classification == "withdrawn"
+
+
+def test_non_withdrawn_entry_is_not_rechecked(monkeypatch: MonkeyPatch) -> None:
+    now = datetime(2026, 7, 17, tzinfo=timezone.utc)
+    cache = Cache()
+    cache.entries["owner/repo#10"] = ClassificationEntry(classification="lost", evidenceKind="lost", cachedAt="2026-07-16T00:00:00Z")
+    view = _closed_view("2026-07-16T00:00:00Z")
+
+    def fail_classify(pr: object, evidence: object) -> ClassificationResult:
+        raise AssertionError("non-withdrawn entries must serve from cache")
+
+    monkeypatch.setattr(generate, "classify_closed_pr", fail_classify)
+
+    assert not generate._needs_live_classification("owner/repo", view, cache, now)
+    result, updated = generate.live_pull_request_classification("owner/repo", view, cache, now=now)
+
+    assert not updated
+    assert result.from_cache
+    assert result.classification == "lost"

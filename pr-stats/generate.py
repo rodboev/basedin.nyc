@@ -1,3 +1,46 @@
+"""Generate the pr-stats page (index.html) from cached GitHub PR data.
+
+Usage:
+    python generate.py [options]
+
+Three modes, selected by flags:
+    (default)                          Render index.html from the cache; refreshes
+                                       leaderboards and release data as a side effect.
+    --classify-cache                   Rebuild every closed-PR classification from
+                                       scratch. Slow (4+ hours); needs explicit approval.
+    --verify-webui-cached-credits-only Print the hermes-webui release-credit check and
+                                       exit without rendering.
+
+Options:
+    --cache-file PATH        Classification cache to read/write
+                             (default: .pr-classification-cache.json).
+    --template-file PATH     Jinja2 shell to render (default: template.html).
+    --out-file PATH          Rendered page path (default: index.html).
+    --repos-file PATH        Active repo list, one owner/repo per line
+                             (default: repos.txt).
+    --readme-file PATH       Representative README overriding the pr-sweep default.
+    --author LOGIN           GitHub login whose PRs are reported (default: rodboev).
+    --force-write            Write the page even if the sanity checks reject it.
+    --silent                 Suppress progress output and the end-of-run pause.
+    --workers N              Thread pool size for PR fetches (default: 4).
+    --overlay-config-dir DIR pr-sweep overlay bundle root feeding maintainer lists
+                             and leaderboard exclusions.
+
+    Classification-rebuild only (--classify-cache):
+    --out-cache-file PATH    Write the rebuilt cache here instead of promoting it in
+                             place (default writes .pr-classification-cache.rebuild.json
+                             and promotes it).
+    --divergence-file PATH   Where to record classification divergences
+                             (default: classification-divergences.json).
+    --active-repos-only      Restrict the rebuild to repos.txt's active entries.
+    --limit N                Cap the number of PRs reclassified.
+
+    Credit verification only (--verify-webui-cached-credits-only):
+    --changelog-file PATH    hermes-webui CHANGELOG override.
+    --contributors-file PATH hermes-webui contributors file override.
+    --verify-webui-credits-only  Alias for --verify-webui-cached-credits-only.
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -16,7 +59,7 @@ from core.cache import classification_cache_key, load_cache, save_cache, set_cac
 from core.leaderboard import CHANGELOG_RELEASE_PROFILE, DEFAULT_OVERLAY_CONFIG_DIR, fetch_community_leaderboard, repo_credit_profile, set_overlay_config_dir
 from core.classify import ClassificationResult, classify_closed_pr
 from core.classification_rebuild import CacheRebuildInterrupted, live_evidence, rebuild_classification_cache, write_pr_classification_progress
-from core.models import Cache, PullRequest, UserRef, int_value
+from core.models import Cache, ClassificationEntry, PullRequest, UserRef, int_value
 from core.repos import resolve_canonical_repos, set_repo_display_names
 from core.credit import cached_release_credit_counts
 from core.releases import refresh_release_cache, release_for_pr
@@ -59,6 +102,8 @@ DEFAULT_DIVERGENCE_FILE = Path("classification-divergences.json")
 DEFAULT_README_FILE = Path(r"C:\Users\Rod\.claude\skills\pr\README.md")
 README_REPO = "rodboev/pr-sweep"
 AUTHOR_PULL_LOOKBACK_HOURS = 48
+WITHDRAWN_RECHECK_DAYS = 14
+WITHDRAWN_RECHECK_INTERVAL_HOURS = 6
 AUTHOR_PULL_SEARCH_PAGE_SIZE = 100
 AUTHOR_PULL_SEARCH_MAX_PAGES = 10
 AUTHOR_PULL_GRAPHQL_QUERY = """\
@@ -642,10 +687,10 @@ def report_items_from_live_pull_requests(
 ) -> tuple[list[PrReportItem], bool]:
     items: list[PrReportItem] = []
     cache_updated = False
-    classification_total = sum(1 for repo, pr in pulls if _needs_live_classification(repo, pr, cache))
+    classification_total = sum(1 for repo, pr in pulls if _needs_live_classification(repo, pr, cache, now))
     classified_count = 0
     for repo, pr in pulls:
-        should_log_classification = _needs_live_classification(repo, pr, cache)
+        should_log_classification = _needs_live_classification(repo, pr, cache, now)
         classification, did_update_cache = live_pull_request_classification(repo, pr, cache, now=now)
         if should_log_classification and did_update_cache:
             classified_count += 1
@@ -712,10 +757,32 @@ def backfill_release_data(
     return result, updated
 
 
-def _needs_live_classification(repo: str, pr: GhPullRequestView, cache: Cache) -> bool:
+def _needs_live_classification(repo: str, pr: GhPullRequestView, cache: Cache, now: datetime) -> bool:
+    if pr.state == "OPEN":
+        return False
     key = classification_cache_key(repo, pr.number)
     entry = cache.entries.get(key)
-    return not (entry is not None and entry.classification) and pr.state != "OPEN"
+    if entry is None or not entry.classification:
+        return True
+    return _withdrawn_recheck_due(entry, pr, now)
+
+
+def _withdrawn_recheck_due(entry: ClassificationEntry, pr: GhPullRequestView, now: datetime) -> bool:
+    # A withdrawal can be provisional: the author closed in favor of a takeover PR
+    # that has not merged yet. Keep reclassifying live until the close is 14 days
+    # old so a replacement that lands with credit upgrades the entry; after that
+    # the withdrawal is settled and the cache entry is final. Within that window,
+    # throttle to WITHDRAWN_RECHECK_INTERVAL_HOURS against cachedAt (rewritten on
+    # every recheck) so a run does not reclassify the same young withdrawal twice.
+    if entry.classification != "withdrawn":
+        return False
+    closed_at = _parse_datetime(pr.closedAt)
+    if closed_at is None or now - closed_at >= timedelta(days=WITHDRAWN_RECHECK_DAYS):
+        return False
+    cached_at = _parse_datetime(entry.cachedAt)
+    if cached_at is None:
+        return True
+    return now - cached_at >= timedelta(hours=WITHDRAWN_RECHECK_INTERVAL_HOURS)
 
 
 def live_pull_request_classification(
@@ -727,7 +794,13 @@ def live_pull_request_classification(
 ) -> tuple[ClassificationResult, bool]:
     key = classification_cache_key(repo, pr.number)
     entry = cache.entries.get(key)
-    if entry is not None and entry.classification:
+    if pr.state == "OPEN":
+        # A cached closed classification on a PR that is open again means the PR
+        # was reopened; drop the stale entry so the next close reclassifies.
+        stale = entry is not None and bool(entry.classification)
+        cache.entries.pop(key, None)
+        return ClassificationResult(classification="open", evidence_kind="open", log_label="open"), stale
+    if entry is not None and entry.classification and not _withdrawn_recheck_due(entry, pr, now):
         return (
             ClassificationResult(
                 classification=entry.classification,
@@ -740,8 +813,6 @@ def live_pull_request_classification(
             ),
             False,
         )
-    if pr.state == "OPEN":
-        return ClassificationResult(classification="open", evidence_kind="open", log_label="open"), False
     if pr.state == "MERGED" or pr.mergedAt:
         result = ClassificationResult(
             classification="shipped",
