@@ -8,7 +8,7 @@ from datetime import date, datetime, timedelta
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from core.report import ReportActivitySummary, ReportCounts
+from core.report import ReportActivitySummary, ReportCounts, resolved_iso_date
 
 SHIPPED_CLASSIFICATIONS = {"shipped", "accepted-indirect"}
 EASTERN = ZoneInfo("America/New_York")
@@ -80,7 +80,12 @@ def prepare_timeline_prs(pr_items: list[dict[str, Any]]) -> list[TimelinePr]:
 
         created_iso = str(item.get("createdAt") or "")
         created_date = to_eastern_date(created_iso) if created_iso else ""
-        resolved_iso = str(item.get("mergedAt") or item.get("closedAt") or "")
+        # Same rule the PR table dates its rows by, so the two can't drift apart.
+        resolved_iso = resolved_iso_date(
+            merged_at=str(item.get("mergedAt") or ""),
+            closed_at=str(item.get("closedAt") or ""),
+            created_at=created_iso,
+        )
         resolved_date = to_eastern_date(resolved_iso) if resolved_iso else ""
 
         all_prs.append(
@@ -123,7 +128,7 @@ def aggregate_daily(prs: list[TimelinePr]) -> list[TimelineDay]:
         if pr["classification"] == "open":
             opened["clsOpen"] += 1
         else:
-            outcome = daily_class[str(pr["resolvedDate"]) or day]
+            outcome = daily_class[str(pr["resolvedDate"])]
             if pr["isShipped"]:
                 outcome["clsShipped"] += 1
             elif pr["classification"] == "superseded":
@@ -131,7 +136,7 @@ def aggregate_daily(prs: list[TimelinePr]) -> list[TimelineDay]:
             elif pr["classification"] == "lost":
                 outcome["clsLost"] += 1
 
-        if pr["isShipped"] and pr["resolvedDate"]:
+        if pr["isShipped"]:
             shipped = daily_shipped[str(pr["resolvedDate"])]
             shipped["count"] += 1
             shipped["loc"] += loc

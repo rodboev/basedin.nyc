@@ -206,10 +206,20 @@ def repo_label(repo: str) -> str:
     return short
 
 
-def pull_request_effective_iso_date(*, status_key: str, created_at: str, closed_at: str) -> str:
+def resolved_iso_date(*, merged_at: str, closed_at: str, created_at: str) -> str:
+    """The day the maintainer acted, for every non-open PR. The one place this rule lives.
+
+    mergedAt wins: GitHub stamps closedAt up to a second off the merge, and an evidence-based
+    classification has no mergedAt at all. createdAt is the last resort so the day is never empty,
+    which is what keeps the class counts and the shipped series on the same day.
+    """
+    return merged_at or closed_at or created_at
+
+
+def pull_request_effective_iso_date(*, status_key: str, created_at: str, closed_at: str, merged_at: str = "") -> str:
     if status_key == "open":
         return created_at
-    return closed_at or created_at
+    return resolved_iso_date(merged_at=merged_at, closed_at=closed_at, created_at=created_at)
 
 
 def format_eastern_date(iso_date: str) -> str:
@@ -332,7 +342,13 @@ def report_item_from_pull_request_view(
 
     created_at = pr.createdAt
     closed_at = pr.closedAt or ""
-    effective_date = pull_request_effective_iso_date(status_key=status_key, created_at=created_at, closed_at=closed_at)
+    merged_at = pr.mergedAt or ""
+    effective_date = pull_request_effective_iso_date(
+        status_key=status_key,
+        created_at=created_at,
+        closed_at=closed_at,
+        merged_at=merged_at,
+    )
     return PrReportItem(
         number=pr.number,
         url=pr.url or f"https://github.com/{repo}/pull/{pr.number}",
@@ -350,7 +366,7 @@ def report_item_from_pull_request_view(
         viaUrl=classification.via_url,
         createdAt=created_at,
         closedAt=closed_at,
-        mergedAt=pr.mergedAt or "",
+        mergedAt=merged_at,
         additions=pr.additions,
         deletions=pr.deletions,
         changedFiles=pr.changedFiles,
@@ -476,6 +492,7 @@ def _report_item_sort_datetime(item: PrReportItem) -> datetime:
             status_key=item.statusKey,
             created_at=item.createdAt,
             closed_at=item.closedAt,
+            merged_at=item.mergedAt,
         ),
     )
     return parsed if parsed is not None else datetime.min.replace(tzinfo=timezone.utc)

@@ -11,6 +11,7 @@ def _pr(
     classification: str,
     created: str,
     resolved: str = "",
+    merged: str = "",
 ) -> dict[str, object]:
     return {
         "repo": "owner/repo",
@@ -18,7 +19,7 @@ def _pr(
         "classification": classification,
         "createdAt": created,
         "closedAt": resolved,
-        "mergedAt": "",
+        "mergedAt": merged,
         "additions": 1,
         "deletions": 0,
         "changedFiles": 1,
@@ -47,6 +48,39 @@ def test_outcomes_land_on_the_day_they_resolved_not_the_day_the_pr_opened() -> N
     assert resolved_july is not None
     assert resolved_july["prsOpened"] == 0
     assert (resolved_july["clsLost"], resolved_july["clsSuperseded"]) == (1, 1)
+
+
+def test_a_merge_lands_on_the_merge_day_even_when_github_stamps_closed_a_second_later() -> None:
+    days = aggregate_daily(
+        prepare_timeline_prs([
+            # 6:56 PM ET on the 13th vs 12:00 AM ET on the 14th: the two fields pick different days.
+            _pr(
+                number=1,
+                classification="shipped",
+                created="2026-06-01T12:00:00Z",
+                merged="2026-07-13T22:56:51Z",
+                resolved="2026-07-14T04:00:00Z",
+            ),
+        ]),
+    )
+
+    merge_day = _day(days, "2026-07-13")
+    assert merge_day is not None
+    assert (merge_day["clsShipped"], merge_day["prsShipped"]) == (1, 1)
+    assert _day(days, "2026-07-14") is None
+
+
+def test_a_shipped_pr_with_no_resolve_date_keeps_both_shipped_series_on_one_day() -> None:
+    # No mergedAt and no closedAt is unreachable on live data, but the two series used to disagree
+    # about it: the class count fell back to the opened day while prsShipped counted nowhere.
+    days = aggregate_daily(
+        prepare_timeline_prs([_pr(number=1, classification="shipped", created="2026-06-01T12:00:00Z")]),
+    )
+
+    opened = _day(days, "2026-06-01")
+    assert opened is not None
+    assert (opened["clsShipped"], opened["prsShipped"]) == (1, 1)
+    assert [day["date"] for day in days] == ["2026-06-01"]
 
 
 def test_open_prs_stay_on_their_opened_day_since_they_have_no_outcome() -> None:

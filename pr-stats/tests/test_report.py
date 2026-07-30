@@ -26,6 +26,7 @@ from core.report import (
     report_item_from_pull_request_view,
     report_items_from_script_dicts,
     report_items_to_script_dicts,
+    resolved_iso_date,
     scalar_value,
     sort_report_items_by_effective_date,
     sort_repos_by_accepted_count,
@@ -126,6 +127,29 @@ def test_pull_request_effective_iso_date_matches_status_rules() -> None:
     assert pull_request_effective_iso_date(status_key="open", created_at="created", closed_at="closed") == "created"
     assert pull_request_effective_iso_date(status_key="done", created_at="created", closed_at="closed") == "closed"
     assert pull_request_effective_iso_date(status_key="done", created_at="created", closed_at="") == "created"
+    # An open PR ignores both resolve dates even when GitHub reports them.
+    assert (
+        pull_request_effective_iso_date(status_key="open", created_at="created", closed_at="closed", merged_at="merged")
+        == "created"
+    )
+
+
+def test_resolved_iso_date_prefers_merged_then_closed_then_created() -> None:
+    assert resolved_iso_date(merged_at="merged", closed_at="closed", created_at="created") == "merged"
+    # Evidence-based shipping never merges, so closedAt is the maintainer's action.
+    assert resolved_iso_date(merged_at="", closed_at="closed", created_at="created") == "closed"
+    assert resolved_iso_date(merged_at="", closed_at="", created_at="created") == "created"
+    # mergedAt wins over the closedAt GitHub stamps a second later.
+    assert (
+        resolved_iso_date(merged_at="2026-07-13T22:56:51Z", closed_at="2026-07-13T22:56:52Z", created_at="x")
+        == "2026-07-13T22:56:51Z"
+    )
+    assert pull_request_effective_iso_date(
+        status_key="shipped",
+        created_at="created",
+        closed_at="closed",
+        merged_at="merged",
+    ) == resolved_iso_date(merged_at="merged", closed_at="closed", created_at="created")
 
 
 def test_format_eastern_date_matches_ps1_format() -> None:
