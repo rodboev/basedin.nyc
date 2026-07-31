@@ -105,8 +105,6 @@ class LeaderboardStat:
     total: int
     recentCount: int
     rate: float
-    idle: float
-    lastCreatedAt: str
     estimated: bool = False
     shippedClassified: bool = False
 
@@ -117,7 +115,6 @@ class CachedLeaderboardRow:
     credited: int
     open: int
     rate: float
-    idle: float = 999.0
 
 
 def is_leaderboard_bot(login: str) -> bool:
@@ -179,20 +176,14 @@ def new_leaderboard_stat(
     total: int,
     open_count: int,
     recent_count: int,
-    last_created_at: str,
-    now: datetime,
     rate_window_days: float,
 ) -> LeaderboardStat:
-    last = _parse_datetime(last_created_at)
-    idle = round((now - last).total_seconds() / 86_400, 1) if last is not None else 999
     return LeaderboardStat(
         credited=max(0, total - open_count),
         open=open_count,
         total=total,
         recentCount=recent_count,
         rate=round(recent_count / rate_window_days, 1) if rate_window_days > 0 else 0,
-        idle=idle,
-        lastCreatedAt=last_created_at if last_created_at else "",
     )
 
 
@@ -201,7 +192,6 @@ def cached_leaderboard_rows(
     cache: Cache,
     repo: str,
     exclusions: LeaderboardExclusions,
-    now: datetime,
     rate_window_days: float,
     start_date: datetime | None = None,
     max_entries: int | None = 50,
@@ -242,8 +232,6 @@ def cached_leaderboard_rows(
             total=int_value(raw.get("total")),
             open_count=int_value(raw.get("open")),
             recent_count=recent_count,
-            last_created_at=_string_value(raw.get("lastCreatedAt")),
-            now=now,
             rate_window_days=rate_window_days,
         )
         credited_key = _existing_case_key(credited_counts, login)
@@ -263,8 +251,6 @@ def cached_leaderboard_rows(
                 total=credited + open_count,
                 recentCount=stat.recentCount,
                 rate=stat.rate,
-                idle=stat.idle,
-                lastCreatedAt=stat.lastCreatedAt,
                 estimated=False,
                 shippedClassified=True,
             ),
@@ -273,7 +259,7 @@ def cached_leaderboard_rows(
     if max_entries is not None:
         sorted_rows = sorted_rows[:max_entries]
     return [
-        CachedLeaderboardRow(rank=rank, login=login, credited=stat.credited, open=stat.open, rate=stat.rate, idle=stat.idle)
+        CachedLeaderboardRow(rank=rank, login=login, credited=stat.credited, open=stat.open, rate=stat.rate)
         for rank, (login, stat) in enumerate(sorted_rows, start=1)
     ]
 
@@ -319,7 +305,6 @@ def fetch_community_leaderboard(repo: str, cache: Cache, *, now: datetime) -> bo
     opens: dict[str, int] = {}
     merged: dict[str, int] = {}
     recents: dict[str, int] = {}
-    last_dates: dict[str, str] = {}
 
     for node in nodes:
         author_raw = node.get("author")
@@ -339,8 +324,6 @@ def fetch_community_leaderboard(repo: str, cache: Cache, *, now: datetime) -> bo
         if state == "MERGED":
             merged[login] = merged.get(login, 0) + 1
         if created_at:
-            if created_at > last_dates.get(login, ""):
-                last_dates[login] = created_at
             try:
                 if datetime.fromisoformat(created_at.replace("Z", "+00:00")).timestamp() >= recent_cutoff:
                     recents[login] = recents.get(login, 0) + 1
@@ -360,7 +343,7 @@ def fetch_community_leaderboard(repo: str, cache: Cache, *, now: datetime) -> bo
         "logins": logins,
         "stats": {
             login: {"total": totals[login], "open": opens.get(login, 0),
-                    "recentCount": recents.get(login, 0), "lastCreatedAt": last_dates.get(login, "")}
+                    "recentCount": recents.get(login, 0)}
             for login in logins
         },
         "shippedCounts": _merged_shipped_counts(

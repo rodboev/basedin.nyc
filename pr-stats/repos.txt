@@ -6,14 +6,14 @@ thedotmack/claude-mem
 headroomlabs-ai/headroom
 mem0ai/mem0
 stablyai/orca
-# NVIDIA/SkillSpector
-# microsoft/presidio
+NVIDIA/SkillSpector
+microsoft/presidio
 # NousResearch/hermes-agent
 # unslothai/unsloth
 # cline/cline
 # continuedev/continue
-# CopilotKit/CopilotKit
+CopilotKit/CopilotKit
 # MemPalace/mempalace
-# mastra-ai/mastra
+mastra-ai/mastra
 # github/github-mcp-server
 # lsdefine/GenericAgent

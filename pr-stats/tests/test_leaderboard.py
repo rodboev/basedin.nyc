@@ -10,6 +10,7 @@ from pytest import MonkeyPatch
 import core.leaderboard as leaderboard_mod
 from core.cache import load_cache
 from core.leaderboard import (
+    _parse_datetime,
     cached_leaderboard_rows,
     configured_repo_leaderboard_exclusions,
     fetch_community_leaderboard,
@@ -57,8 +58,6 @@ def test_new_leaderboard_stat_matches_ps1_math() -> None:
         total=12,
         open_count=5,
         recent_count=4,
-        last_created_at="2026-07-01T00:00:00Z",
-        now=datetime(2026, 7, 2, 12, 0, tzinfo=timezone.utc),
         rate_window_days=7,
     )
 
@@ -66,35 +65,23 @@ def test_new_leaderboard_stat_matches_ps1_math() -> None:
     assert stat.open == 5
     assert stat.total == 12
     assert stat.rate == 0.6
-    assert stat.idle == 1.5
 
 
-def test_new_leaderboard_stat_handles_missing_last_date() -> None:
+def test_new_leaderboard_stat_floors_credited_and_survives_a_zero_window() -> None:
     stat = new_leaderboard_stat(
         total=3,
         open_count=9,
         recent_count=0,
-        last_created_at="",
-        now=datetime(2026, 7, 2, tzinfo=timezone.utc),
         rate_window_days=0,
     )
 
     assert stat.credited == 0
     assert stat.rate == 0
-    assert stat.idle == 999
 
 
-def test_new_leaderboard_stat_parses_legacy_cache_datetime() -> None:
-    stat = new_leaderboard_stat(
-        total=3,
-        open_count=0,
-        recent_count=0,
-        last_created_at="06/25/2026 12:39:14",
-        now=datetime(2026, 6, 26, 12, 39, 14, tzinfo=timezone.utc),
-        rate_window_days=7,
-    )
-
-    assert stat.idle == 1.0
+def test_parse_datetime_reads_the_ps1_era_cache_format() -> None:
+    # PS1 wrote cachedAt in local en-US format; _author_recent_count still anchors on it.
+    assert _parse_datetime("06/25/2026 12:39:14") == datetime(2026, 6, 25, 12, 39, 14, tzinfo=timezone.utc)
 
 
 def _pr_node(login: str, *, state: str = "MERGED", created_at: str = "2026-07-01T00:00:00Z", typename: str = "User") -> dict[str, object]:
@@ -168,7 +155,7 @@ def test_fetch_community_leaderboard_preserves_credit_keys_and_evidence_counts(m
     assert entry["shippedCounts"] == {"alice": 5, "bob": 2}
     stats = entry["stats"]
     assert isinstance(stats, dict)
-    assert stats["bob"] == {"total": 3, "open": 1, "recentCount": 3, "lastCreatedAt": "2026-07-02T00:00:00Z"}
+    assert stats["bob"] == {"total": 3, "open": 1, "recentCount": 3}
     assert entry["cachedAt"] == "2026-07-03T00:00:00Z"
 
 
@@ -319,7 +306,6 @@ def test_cached_webui_leaderboard_rows_match_rendered_ps1_output(repo_root: Path
         cache=cache,
         repo="nesquena/hermes-webui",
         exclusions=exclusions,
-        now=datetime(2026, 7, 2, tzinfo=timezone.utc),
         rate_window_days=7,
         author_login="rodboev",
         author_credited=author_credited,
@@ -369,7 +355,6 @@ def test_cached_leaderboard_rows_override_author_with_report_counts(tmp_path: Pa
         cache=load_cache(cache_path),
         repo="owner/repo",
         exclusions=repo_leaderboard_exclusions(owner="owner"),
-        now=datetime(2026, 7, 2, tzinfo=timezone.utc),
         rate_window_days=7,
         author_login="rodboev",
         author_credited=39,
@@ -397,7 +382,6 @@ def test_cached_leaderboard_rows_match_all_rendered_ps1_boards(repo_root: Path) 
             cache=cache,
             repo=repo,
             exclusions=configured_repo_leaderboard_exclusions(repo),
-            now=datetime(2026, 7, 2, tzinfo=timezone.utc),
             rate_window_days=7,
             author_login="rodboev",
             author_credited=author_credited,

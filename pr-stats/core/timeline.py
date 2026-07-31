@@ -118,7 +118,9 @@ def aggregate_daily(prs: list[TimelinePr]) -> list[TimelineDay]:
 
         day = str(pr["createdDate"])
         opened = daily_opened[day]
-        loc = int(pr["additions"]) + int(pr["deletions"])
+        # Net, not churn: a refactor that rewrites a file in place moves no lines, and summing both
+        # sides double-counts every touched line (a 27.9k/27.2k i18n reshuffle reads as 55k).
+        loc = int(pr["additions"]) - int(pr["deletions"])
         opened["count"] += 1
         opened["loc"] += loc
         opened["files"] += int(pr["changedFiles"])

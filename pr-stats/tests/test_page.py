@@ -6,7 +6,6 @@ import pytest
 
 from core.models import Cache
 from core.page import (
-    leaderboard_idle_status,
     render_breakdown_section,
     render_leaderboard_section,
     render_leaderboard_sections,
@@ -40,7 +39,7 @@ def test_render_breakdown_section_matches_ps1_owned_markup() -> None:
         '<div class="grid grid-summary">\n'
         '  <div class="stat-card"><div class="number green" id="bd-rate">78%</div><div class="label" id="bd-rate-label">Acceptance rate (1 superseded, 1 lost)</div></div>\n'
         '  <div class="stat-card"><div class="number" id="bd-avg-prs">12.0</div><div class="label">Avg PRs/day</div></div>\n'
-        '  <div class="stat-card"><div class="number" id="bd-avg-loc">5.5k</div><div class="label">Avg LOC/day</div></div>\n'
+        '  <div class="stat-card"><div class="number" id="bd-avg-loc">5.5k</div><div class="label">Avg net LOC/day</div></div>\n'
         '  <div class="stat-card"><div class="number blue" id="bd-days">3 days</div><div class="label" id="bd-days-label">Active days from Jul 1 - Jul 3</div></div>\n'
         "</div>\n\n"
         '<div class="bar-container">\n'
@@ -241,14 +240,6 @@ def test_render_repo_matrix_labels_a_renamed_repo_as_written_in_repos_txt() -> N
     assert "data-privacy-stack" not in html
 
 
-def test_leaderboard_idle_status_uses_ps1_ladder() -> None:
-    assert leaderboard_idle_status(0.5) == ("green", "Active")
-    assert leaderboard_idle_status(1.5) == ("green", "Recent")
-    assert leaderboard_idle_status(4.5) == ("yellow", "Slowing")
-    assert leaderboard_idle_status(10.5) == ("dim", "Quiet")
-    assert leaderboard_idle_status(999) == ("dim", "Gone")
-
-
 def test_render_leaderboard_section_top_mode_rows_and_projections() -> None:
     cache = _leaderboard_cache(
         {
@@ -270,10 +261,9 @@ def test_render_leaderboard_section_top_mode_rows_and_projections() -> None:
     assert 'id="lb-repo" data-collapse-mode="top" data-visible-items="10" data-rows-per-item="1"' in html
     assert ' collapsed' not in html
     assert "expand-row" not in html
-    # Status returns as the sixth column; the two-column grid hides it in CSS, stacked shows it.
-    assert "<th>Rank</th><th>Contributor</th><th>Shipped</th><th>Open</th><th>Rate</th><th>Status</th></tr>" in html
-    assert '  <tr data-rank="1"><td>#1</td><td><a href="https://github.com/alice">alice</a></td><td>30</td><td>0</td><td>0/d</td><td><span class="dim">Gone</span></td></tr>' in html
-    assert '<td>2/d</td><td><span class="green">Active</span></td>' in html
+    assert "<th>Rank</th><th>Contributor</th><th>Shipped</th><th>Open</th><th>Rate</th></tr>" in html
+    assert '  <tr data-rank="1"><td>#1</td><td><a href="https://github.com/alice">alice</a></td><td>30</td><td>0</td><td>0/d</td></tr>' in html
+    assert "<td>2/d</td></tr>" in html
     assert '<tr class="is-self" data-rank="3">' in html
     assert "<summary>Projections (rodboev @ 1/day Rate, rank #3)</summary>" in html
     assert "  <tr><td>alice</td><td>30 (+25)</td><td>0/d</td><td>25d (Jul 27)</td></tr>" in html

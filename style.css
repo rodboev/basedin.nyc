@@ -1826,16 +1826,16 @@ body.pr .leaderboard-cell > h3:first-child {
 }
 
 /* Two boards per row need ~420px each before long contributor names wrap; 1000px viewport gives
-   each column 436px. Status is the column the pair can spare, so it only shows once the grid
-   stacks and every board has the full container width to itself. */
+   each column 436px. */
 @media (min-width: 1000px) {
   body.pr .leaderboard-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  body.pr .leaderboard-grid .leaderboard th:nth-child(6),
-  body.pr .leaderboard-grid .leaderboard td:nth-child(6) {
-    display: none;
+  /* An odd board count leaves the last cell alone on its row; span it rather than hold a column
+     open for a partner that does not exist. */
+  body.pr .leaderboard-cell:nth-child(odd):last-child {
+    grid-column: 1 / -1;
   }
 }
 
@@ -2306,9 +2306,7 @@ body.pr .separator-row td {
   }
 
   body.pr .leaderboard th:nth-child(5),
-  body.pr .leaderboard td:nth-child(5),
-  body.pr .leaderboard th:nth-child(6),
-  body.pr .leaderboard td:nth-child(6) {
+  body.pr .leaderboard td:nth-child(5) {
     display: none;
   }
 

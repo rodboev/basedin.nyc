@@ -92,7 +92,7 @@ def render_breakdown_section(
             label_id="bd-rate-label",
         ),
         StatCard(value=avg_prs, label="Avg PRs/day", value_id="bd-avg-prs"),
-        StatCard(value=avg_loc, label="Avg LOC/day", value_id="bd-avg-loc"),
+        StatCard(value=avg_loc, label="Avg net LOC/day", value_id="bd-avg-loc"),
         StatCard(
             value=activity.time_span,
             label=activity.time_range,
@@ -183,7 +183,7 @@ def render_repo_matrix_section(
             (counts.accepted, counts.open, counts.superseded, counts.lost, counts.total),
         ):
             totals[index] += value
-        board = author_leaderboard_rows(cache=cache, repo=repo, items=repo_items, now=now, author=author)
+        board = author_leaderboard_rows(cache=cache, repo=repo, items=repo_items, author=author)
         me = next((row for row in board if row.login.lower() == author.lower()), None)
         if me is None:
             standing = "<td></td><td></td>"
@@ -243,14 +243,12 @@ def author_leaderboard_rows(
     cache: Cache,
     repo: str,
     items: list[PrReportItem],
-    now: datetime,
     author: str,
 ) -> list[CachedLeaderboardRow]:
     return cached_leaderboard_rows(
         cache=cache,
         repo=repo,
         exclusions=configured_repo_leaderboard_exclusions(repo),
-        now=now,
         rate_window_days=7,
         author_login=author,
         author_credited=sum(1 for item in items if item.statusKey == "shipped"),
@@ -303,7 +301,7 @@ def render_leaderboard_section(
     visible_entries: int = 10,
     max_entries: int = 50,
 ) -> str:
-    rows = author_leaderboard_rows(cache=cache, repo=repo, items=items, now=now, author=author)
+    rows = author_leaderboard_rows(cache=cache, repo=repo, items=items, author=author)
     if not rows:
         return ""
     total_community = len(rows)
@@ -340,15 +338,13 @@ def render_leaderboard_section(
         if collapse_mode == "context" and (row.rank < visible_start or row.rank > visible_end):
             row_classes.append("context-hidden")
         class_attr = f' class="{" ".join(row_classes)}"' if row_classes else ""
-        status_class, status_label = leaderboard_idle_status(row.idle)
         row_html.append(
             f'  <tr{class_attr} data-rank="{row.rank}"><td>#{row.rank}</td>'
             f'<td><a href="https://github.com/{escape(row.login, quote=True)}">{escape(row.login)}</a></td>'
-            f"<td>{row.credited}</td><td>{row.open}</td><td>{row.rate:g}/d</td>"
-            f'<td><span class="{status_class}">{status_label}</span></td></tr>\n',
+            f"<td>{row.credited}</td><td>{row.open}</td><td>{row.rate:g}/d</td></tr>\n",
         )
         if row.rank == expand_after_rank and total_contributors > visible_entries:
-            row_html.append(render_expand_row(block_id=block_id, label=expand_label, colspan=6))
+            row_html.append(render_expand_row(block_id=block_id, label=expand_label, colspan=5))
 
     collapsed_class = " collapsed" if total_contributors > visible_entries else ""
     overlay = render_collapse_overlay(block_id=block_id) if total_contributors > visible_entries else ""
@@ -361,8 +357,7 @@ def render_leaderboard_section(
         f'<div class="collapsible-table leaderboard{collapsed_class}" id="{escape(block_id, quote=True)}" '
         f'data-collapse-mode="{collapse_mode}"{top_attrs}>\n'
         "<table>\n"
-        "  <thead><tr><th>Rank</th><th>Contributor</th><th>Shipped</th><th>Open</th><th>Rate</th>"
-        "<th>Status</th></tr></thead>\n"
+        "  <thead><tr><th>Rank</th><th>Contributor</th><th>Shipped</th><th>Open</th><th>Rate</th></tr></thead>\n"
         "  <tbody>\n"
         f"{''.join(row_html)}  </tbody>\n"
         "</table>\n"
@@ -370,21 +365,6 @@ def render_leaderboard_section(
         "</div>\n"
         f"{projections}"
     )
-
-
-def leaderboard_idle_status(idle: float) -> tuple[str, str]:
-    if idle < 1:
-        label = "Active"
-    elif idle < 3:
-        label = "Recent"
-    elif idle < 7:
-        label = "Slowing"
-    elif idle < 14:
-        label = "Quiet"
-    else:
-        label = "Gone"
-    status_class = "green" if idle < 3 else ("yellow" if idle < 7 else "dim")
-    return status_class, label
 
 
 def render_leaderboard_projections(

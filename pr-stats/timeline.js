@@ -515,7 +515,7 @@ function build(r) {
     data: {
       labels: labs,
       datasets: [
-        { label: 'Lines of code', data: sl.map(function(d){return d.loc}),
+        { label: 'Net lines of code', data: sl.map(function(d){return d.loc}),
            backgroundColor: function(ctx) { return isToday(ctx) ? C.green+'20' : C.green+'40'; },
            borderColor: function(ctx) { return isToday(ctx) ? C.green+'30' : C.green+'60'; },
            borderWidth: 1, borderRadius: 3, yAxisID: 'yL', order: 4 },
