@@ -399,7 +399,7 @@ function syncRangeLabels(r) {
 function updateBreakdown(r) {
   var sl = sliceData(r);
   var opened = 0, shipped = 0, open = 0, superseded = 0, lost = 0;
-  var totalLoc = 0, activeDays = 0;
+  var totalLoc = 0, activeDays = 0, locDays = 0;
   var firstDate = null, lastDate = null, prevDate = null;
   for (var i = 0; i < sl.length; i++) {
     var d = sl[i];
@@ -415,6 +415,7 @@ function updateBreakdown(r) {
       prevDate = lastDate;
       lastDate = d.date;
     }
+    if ((d.prsShipped || 0) > 0) locDays++;
   }
   var displayDays = activeDays;
   if (lastDate === TL_TODAY) {
@@ -443,7 +444,7 @@ function updateBreakdown(r) {
     if (el = document.getElementById('bd-days-label')) el.textContent = 'No active days in range';
   }
   var avgPrs = activeDays > 0 ? String(Math.round(opened / activeDays)) : '0';
-  var rawAvgLoc = activeDays > 0 ? Math.round(totalLoc / activeDays) : 0;
+  var rawAvgLoc = locDays > 0 ? Math.round(totalLoc / locDays) : 0;
   var avgLoc = rawAvgLoc >= 1000 ? (rawAvgLoc / 1000).toFixed(1) + 'k' : String(rawAvgLoc);
   if (el = document.getElementById('bd-avg-prs')) el.textContent = avgPrs;
   if (el = document.getElementById('bd-avg-loc')) el.textContent = avgLoc;
@@ -515,7 +516,7 @@ function build(r) {
     data: {
       labels: labs,
       datasets: [
-        { label: 'Net lines of code', data: sl.map(function(d){return d.loc}),
+        { label: 'Net lines merged', data: sl.map(function(d){return d.loc}),
            backgroundColor: function(ctx) { return isToday(ctx) ? C.green+'20' : C.green+'40'; },
            borderColor: function(ctx) { return isToday(ctx) ? C.green+'30' : C.green+'60'; },
            borderWidth: 1, borderRadius: 3, yAxisID: 'yL', order: 4 },
@@ -552,7 +553,7 @@ function build(r) {
           afterBody: function(ctx) {
             var d = sl[ctx[0].dataIndex];
             return [' ', '+'+fmtK(d.additions)+'/-'+fmtK(d.deletions)+' ('+d.files+' files)',
-              d.prsOpened > 0 ? 'LOC/PR: '+fmtK(d.locPerPr)+'  Files/PR: '+d.filesPerPr : ''].filter(Boolean);
+              d.prsShipped > 0 ? 'LOC/PR: '+fmtK(d.locPerPr)+'  Files/PR: '+d.filesPerPr : ''].filter(Boolean);
           }
         } },
         legend: { position: 'top', labels: { padding: 28, boxWidth: 12, boxHeight: 12, useBorderRadius: true, borderRadius: 2, filter: function(item) { return item.text.trim().length > 0; } } },
@@ -565,7 +566,7 @@ function build(r) {
     data: {
       labels: labs,
       datasets: [
-        { label: 'Cum. LOC', data: sl.map(function(d){return d.cumLoc}),
+        { label: 'Cum. LOC merged', data: sl.map(function(d){return d.cumLoc}),
            borderColor: C.green, borderWidth: 2, backgroundColor: C.green+'20', fill: true, tension: 0, yAxisID: 'yL',
            pointRadius: 3, pointBackgroundColor: function(ctx) { return isToday(ctx) ? C.green+'80' : C.green; } },
         { label: 'Cum. PRs opened', data: sl.map(function(d){return d.cumOpened}),
@@ -592,7 +593,7 @@ function build(r) {
 var BD_LOAD_RANGES = [2, 7, 14, 30, 0];
 function bdStats(r) {
   var sl = sliceData(r);
-  var op = 0, s = 0, o = 0, sp = 0, l = 0, loc = 0, ad = 0;
+  var op = 0, s = 0, o = 0, sp = 0, l = 0, loc = 0, ad = 0, ld = 0;
   var firstDate = '', lastDate = '', prevDate = '';
   for (var i = 0; i < sl.length; i++) {
     var d = sl[i]; op += d.prsOpened; s += (d.clsShipped||0); o += (d.clsOpen||0);
@@ -601,24 +602,26 @@ function bdStats(r) {
       ad++; if (!firstDate) firstDate = d.date;
       prevDate = lastDate; lastDate = d.date;
     }
+    if ((d.prsShipped||0) > 0) ld++;
   }
   // Today is still in progress, so it counts for neither the day tally nor the range end.
   var dd = ad;
   if (lastDate === TL_TODAY) { dd = Math.max(0, dd - 1); lastDate = prevDate; }
   // total counts the classes, not prsOpened: outcomes are dated by when they landed, so a
-  // window holds outcomes for PRs opened before it. Only opened/loc stay opened-dated, since
-  // Avg PRs/day and Avg LOC/day are about what was written per active day.
-  return {total:s+o+sp+l, opened:op, shipped:s, open:o, sup:sp, lost:l, loc:loc, activeDays:ad, displayDays:dd,
-    firstDate:firstDate, lastDate:lastDate};
+  // window holds outcomes for PRs opened before it. LOC is shipped-dated too, unlike Avg PRs/day,
+  // which is about what was written per day; Avg LOC/day reads merged code per day it landed, so
+  // it tracks days with shipped work, not days with opened PRs.
+  return {total:s+o+sp+l, opened:op, shipped:s, open:o, sup:sp, lost:l, loc:loc, activeDays:ad,
+    locDays:ld, displayDays:dd, firstDate:firstDate, lastDate:lastDate};
 }
 function bdDisplay(b) {
   var ls = b.lost + b.sup, cd = b.shipped + b.lost + b.sup;
   var rate = acceptanceRate(b.shipped, cd) || 0;
-  var ad = Math.max(1, b.activeDays);
-  var avgPrs = b.opened / ad, avgLoc = b.loc / ad;
+  var ad = Math.max(1, b.activeDays), lad = Math.max(1, b.locDays);
+  var avgPrs = b.opened / ad, avgLoc = b.loc / lad;
   var bT = b.total || 1;
   return {total:b.total, shipped:b.shipped, open:b.open, sup:b.sup, lost:b.lost, lostSup:ls,
-    rate:rate, activeDays:ad, displayDays:b.displayDays, avgPrs:avgPrs, avgLoc:avgLoc,
+    rate:rate, activeDays:ad, locDays:lad, displayDays:b.displayDays, avgPrs:avgPrs, avgLoc:avgLoc,
     firstDate:b.firstDate, lastDate:b.lastDate,
     barSh:b.shipped/bT*100, barSp:b.sup/bT*100, barL:b.lost/bT*100, barO:b.open/bT*100};
 }

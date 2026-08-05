@@ -113,6 +113,7 @@ def _series_day(date: str, *, opened: int = 0, loc: int = 0, shipped: int = 0, o
     return {
         "date": date,
         "prsOpened": opened,
+        "prsShipped": shipped,
         "loc": loc,
         "clsShipped": shipped,
         "clsOpen": open_,
@@ -180,3 +181,51 @@ def test_breakdown_seed_reports_a_zero_rate_when_the_window_closed_nothing() -> 
     # bdDisplay() coerces the null 0/0 rate to 0; the seed has to agree or the first frame jumps.
     assert seed.counts.acceptance_rate == 0
     assert (seed.counts.total, seed.counts.accepted) == (7, 0)
+
+
+def test_merged_loc_counts_to_the_day_it_merged_not_the_day_it_opened() -> None:
+    days = aggregate_daily(
+        prepare_timeline_prs([
+            _pr(
+                number=1,
+                classification="shipped",
+                created="2026-06-01T12:00:00Z",
+                merged="2026-07-13T12:00:00Z",
+                resolved="2026-07-13T12:00:00Z",
+            ),
+        ]),
+    )
+
+    opened_june = _day(days, "2026-06-01")
+    assert opened_june is not None
+    assert opened_june["prsOpened"] == 1
+    # June got the PR; the merged code belongs to July.
+    assert opened_june["loc"] == 0
+
+    merged_july = _day(days, "2026-07-13")
+    assert merged_july is not None
+    assert (merged_july["prsShipped"], merged_july["loc"]) == (1, 1)
+
+
+def test_open_prs_contribute_no_loc_until_they_land() -> None:
+    days = aggregate_daily(
+        prepare_timeline_prs([_pr(number=1, classification="open", created="2026-07-14T12:00:00Z")]),
+    )
+
+    opened = _day(days, "2026-07-14")
+    assert opened is not None
+    assert (opened["prsOpened"], opened["clsOpen"], opened["loc"]) == (1, 1, 0)
+
+
+def test_non_shipped_outcomes_contribute_no_loc() -> None:
+    days = aggregate_daily(
+        prepare_timeline_prs([
+            _pr(number=1, classification="lost", created="2026-06-01T12:00:00Z", resolved="2026-07-13T12:00:00Z"),
+            _pr(number=2, classification="superseded", created="2026-06-02T12:00:00Z", resolved="2026-07-13T12:00:00Z"),
+        ]),
+    )
+
+    resolved_july = _day(days, "2026-07-13")
+    assert resolved_july is not None
+    assert (resolved_july["clsLost"], resolved_july["clsSuperseded"]) == (1, 1)
+    assert resolved_july["loc"] == 0

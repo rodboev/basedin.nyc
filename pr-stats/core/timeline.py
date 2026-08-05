@@ -118,14 +118,7 @@ def aggregate_daily(prs: list[TimelinePr]) -> list[TimelineDay]:
 
         day = str(pr["createdDate"])
         opened = daily_opened[day]
-        # Net, not churn: a refactor that rewrites a file in place moves no lines, and summing both
-        # sides double-counts every touched line (a 27.9k/27.2k i18n reshuffle reads as 55k).
-        loc = int(pr["additions"]) - int(pr["deletions"])
         opened["count"] += 1
-        opened["loc"] += loc
-        opened["files"] += int(pr["changedFiles"])
-        opened["additions"] += int(pr["additions"])
-        opened["deletions"] += int(pr["deletions"])
 
         if pr["classification"] == "open":
             opened["clsOpen"] += 1
@@ -139,9 +132,17 @@ def aggregate_daily(prs: list[TimelinePr]) -> list[TimelineDay]:
                 outcome["clsLost"] += 1
 
         if pr["isShipped"]:
+            # Net LOC is the code the merge lands, so it is attributed to the day it merged, not the
+            # day the PR opened. Writing it in June does not make June's bar taller when the merge
+            # lands in July; an open PR counts to no day at all until it lands. Net, not churn: a
+            # refactor that rewrites a file in place moves no lines, and summing both sides
+            # double-counts every touched line (a 27.9k/27.2k i18n reshuffle reads as 55k).
             shipped = daily_shipped[str(pr["resolvedDate"])]
+            loc = int(pr["additions"]) - int(pr["deletions"])
             shipped["count"] += 1
             shipped["loc"] += loc
+            shipped["additions"] += int(pr["additions"])
+            shipped["deletions"] += int(pr["deletions"])
             shipped["files"] += int(pr["changedFiles"])
 
     all_dates = sorted(set(daily_opened) | set(daily_shipped) | set(daily_class))
@@ -155,7 +156,7 @@ def aggregate_daily(prs: list[TimelinePr]) -> list[TimelineDay]:
         shipped = daily_shipped.get(day, _empty_shipped())
         outcome = daily_class.get(day, _empty_class())
         cum_opened += opened["count"]
-        cum_loc += opened["loc"]
+        cum_loc += shipped["loc"]
         cum_shipped += shipped["count"]
 
         chart_data.append(
@@ -163,16 +164,15 @@ def aggregate_daily(prs: list[TimelinePr]) -> list[TimelineDay]:
                 "date": day,
                 "prsOpened": opened["count"],
                 "prsShipped": shipped["count"],
-                "loc": opened["loc"],
-                "additions": opened["additions"],
-                "deletions": opened["deletions"],
-                "files": opened["files"],
-                "shippedLoc": shipped["loc"],
+                "loc": shipped["loc"],
+                "additions": shipped["additions"],
+                "deletions": shipped["deletions"],
+                "files": shipped["files"],
                 "cumOpened": cum_opened,
                 "cumShipped": cum_shipped,
                 "cumLoc": cum_loc,
-                "locPerPr": round(opened["loc"] / opened["count"]) if opened["count"] else 0,
-                "filesPerPr": round(opened["files"] / opened["count"], 1) if opened["count"] else 0,
+                "locPerPr": round(shipped["loc"] / shipped["count"]) if shipped["count"] else 0,
+                "filesPerPr": round(shipped["files"] / shipped["count"], 1) if shipped["count"] else 0,
                 "clsShipped": outcome["clsShipped"],
                 "clsOpen": opened["clsOpen"],
                 "clsSuperseded": outcome["clsSuperseded"],
@@ -220,7 +220,7 @@ def breakdown_seed(chart_data: list[TimelineDay], today: str) -> BreakdownSeed:
     window is BD_LOAD_SEED_RANGE; see the note on it for why shorter windows are unusable.
     """
     window = slice_daily(chart_data, BD_LOAD_SEED_RANGE)
-    opened = shipped = open_ = superseded = lost = loc = active_days = 0
+    opened = shipped = open_ = superseded = lost = loc = active_days = loc_days = 0
     first_active = last_active = prev_active = ""
     for day in window:
         day_opened = int(day["prsOpened"])
@@ -235,13 +235,16 @@ def breakdown_seed(chart_data: list[TimelineDay], today: str) -> BreakdownSeed:
             if not first_active:
                 first_active = str(day["date"])
             prev_active, last_active = last_active, str(day["date"])
+        if int(day.get("prsShipped", 0)) > 0:
+            loc_days += 1
     display_days = active_days
     # Today is still in progress, so it counts for neither the day tally nor the range end.
     if last_active == today:
         display_days = max(0, display_days - 1)
         last_active = prev_active
-    divisor = max(1, active_days)
-    raw_avg_loc = round(loc / divisor)
+    opened_divisor = max(1, active_days)
+    loc_divisor = max(1, loc_days)
+    raw_avg_loc = round(loc / loc_divisor)
     return BreakdownSeed(
         counts=ReportCounts(
             total=shipped + open_ + superseded + lost,
@@ -256,7 +259,7 @@ def breakdown_seed(chart_data: list[TimelineDay], today: str) -> BreakdownSeed:
             time_span="1 day" if display_days == 1 else f"{display_days} days",
             time_range=_active_days_label(first_active, last_active),
         ),
-        avg_prs=str(int(opened / divisor + 0.5)),
+        avg_prs=str(int(opened / opened_divisor + 0.5)),
         avg_loc=f"{raw_avg_loc / 1000:.1f}k" if raw_avg_loc >= 1000 else str(raw_avg_loc),
     )
 
@@ -278,11 +281,11 @@ def _active_days_label(first_active: str, last_active: str) -> str:
 
 
 def _empty_opened() -> dict[str, int]:
-    return dict(count=0, loc=0, files=0, additions=0, deletions=0, clsOpen=0)
+    return dict(count=0, clsOpen=0)
 
 
 def _empty_shipped() -> dict[str, int]:
-    return dict(count=0, loc=0, files=0)
+    return dict(count=0, loc=0, files=0, additions=0, deletions=0)
 
 
 def _empty_class() -> dict[str, int]:

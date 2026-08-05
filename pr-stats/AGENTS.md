@@ -60,6 +60,10 @@ Everything `renderBdFrame` does not touch snaps when `updateBreakdown` settles, 
 
 The animation previously scaled the all-time totals by a fraction (`dispAt(f)`) instead of reading the ranges, which fabricated outcome counts and acceptance rates that never existed (16 shipped, 0 lost, 14%) and bottomed out at a 0/0 rate that a hardcoded `barSh = 66.7` was covering for. Don't reintroduce a scaled seed.
 
+## Timeline LOC attribution
+
+The daily and cumulative LOC series, and the Avg net LOC/day card, count **merged** code and charge it to the day it merged, not the day the PR opened. `aggregate_daily` in `core/timeline.py` buckets net additions minus deletions into the resolved date (`mergedAt` wins) and only for shipped PRs; open PRs contribute nothing until they land, and lost/superseded PRs never do. The daily `loc`, `additions`, `deletions`, `files`, `locPerPr`, `filesPerPr`, and `cumLoc` all come from that shipped bucket, so a day's bar and its tooltip agree. Avg LOC/day divides by days with shipped code (`prsShipped > 0`), a separate tally from the PR active-day count that Avg PRs/day and the range label use; `bdStats`/`updateBreakdown` in `timeline.js` keep both, and `breakdown_seed` must too.
+
 ## Conventions
 
 PR pipeline skills (sweep, find, code, review, rework, cleanup) live in `C:\Apps\hermes\.claude\skills\pr\`.
