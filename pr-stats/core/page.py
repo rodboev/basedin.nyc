@@ -30,7 +30,6 @@ from core.report import (
     PrReportItem,
     ReportActivitySummary,
     ReportCounts,
-    RepresentativeItem,
     default_status_filter_dicts,
     format_acceptance_rate,
     repo_filter_dicts,
@@ -46,7 +45,6 @@ REPORT_TEMPLATE_SLOTS = frozenset(
         "today",
         "repo_matrix",
         "leaderboard_sections",
-        "representative_section",
         "pr_controls",
         "pr_bootstrap",
         "generated_date",
@@ -402,44 +400,6 @@ def render_leaderboard_projections(
         f"{''.join(proj_rows)}</table>\n"
         "</details>\n"
     )
-
-
-def render_representative_section(items: Iterable[RepresentativeItem]) -> str:
-    item_list = list(items)
-    if not item_list:
-        return '<p class="empty-state">Representative PRs unavailable.</p>'
-    rows: list[str] = []
-    for item in item_list:
-        release_cell = _representative_release_cell(item)
-        via_cell = _linked_label(item.viaLabel, item.viaUrl)
-        repo_cell = (
-            f'<a class="plain-link" href="https://github.com/{escape(item.repo, quote=True)}">{escape(item.repoLabel)}</a>'
-            if item.repo
-            else escape(item.repoLabel)
-        )
-        rows.append(
-            f'  <tr class="rep-main-row"><td><a href="{escape(item.url, quote=True)}">#{item.number}</a></td>'
-            f'<td>{repo_cell}</td><td class="rep-desc-cell">{item.desc}</td>'
-            f"<td>{release_cell}</td><td>{via_cell}</td></tr>\n"
-            f'  <tr class="rep-desc-row"><td class="rep-desc-gap"></td>'
-            f'<td colspan="4"><div class="rep-desc-text">{item.desc}</div></td></tr>\n',
-        )
-    return (
-        "    <h2>Representative PRs</h2>\n"
-        '<table class="rep-prs-table shipped-prs">\n'
-        "  <tr><th>PR</th><th>Repo</th><th>Description</th><th>Release</th><th>Via</th></tr>\n"
-        "\n"
-        f"{''.join(rows)}</table>"
-    )
-
-
-def _representative_release_cell(item: RepresentativeItem) -> str:
-    cell = _linked_label(item.release, item.releaseUrl)
-    if cell:
-        return cell
-    if item.classification == "accepted-indirect":
-        return "indirect"
-    return ""
 
 
 def _linked_label(label: str, url: str) -> str:

@@ -18,7 +18,6 @@ Options:
     --out-file PATH          Rendered page path (default: index.html).
     --repos-file PATH        Active repo list, one owner/repo per line
                              (default: repos.txt).
-    --readme-file PATH       Representative README overriding the pr-sweep default.
     --author LOGIN           GitHub login whose PRs are reported (default: rodboev).
     --force-write            Write the page even if the sanity checks reject it.
     --silent                 Suppress progress output and the end-of-run pause.
@@ -63,7 +62,7 @@ from core.models import Cache, ClassificationEntry, PullRequest, UserRef, int_va
 from core.repos import resolve_canonical_repos, set_repo_display_names
 from core.credit import cached_release_credit_counts
 from core.releases import refresh_release_cache, release_for_pr
-from core.github import GhError, GhPullRequestView, GhRetryExhausted, run_gh
+from core.github import GhPullRequestView, GhRetryExhausted, run_gh
 from core.html import ReportSanityInput, write_report_if_sane
 from core.page import (
     render_breakdown_section,
@@ -72,14 +71,11 @@ from core.page import (
     render_pr_controls_and_table,
     render_report_page,
     render_repo_matrix_section,
-    render_representative_section,
     render_timeline_bootstrap,
 )
 from core.report import (
     EASTERN,
     PrReportItem,
-    enrich_representative_items,
-    parse_representative_readme,
     report_counts,
     report_item_from_pull_request_view,
     report_items_to_script_dicts,
@@ -99,8 +95,6 @@ DEFAULT_AUTHOR = "rodboev"
 DEFAULT_CACHE_FILE = Path(".pr-classification-cache.json")
 DEFAULT_REBUILD_CACHE_FILE = Path(".pr-classification-cache.rebuild.json")
 DEFAULT_DIVERGENCE_FILE = Path("classification-divergences.json")
-DEFAULT_README_FILE = Path(r"C:\Users\Rod\.claude\skills\pr\README.md")
-README_REPO = "rodboev/pr-sweep"
 AUTHOR_PULL_LOOKBACK_HOURS = 48
 WITHDRAWN_RECHECK_DAYS = 14
 WITHDRAWN_RECHECK_INTERVAL_HOURS = 6
@@ -151,7 +145,6 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--template-file", type=Path, default=Path("template.html"))
     parser.add_argument("--out-file", type=Path, default=None)
     parser.add_argument("--repos-file", type=Path, default=Path("repos.txt"))
-    parser.add_argument("--readme-file", type=Path, default=None)
     parser.add_argument("--author", default=DEFAULT_AUTHOR)
     parser.add_argument("--classify-cache", action="store_true")
     parser.add_argument("--out-cache-file", type=Path, default=None)
@@ -193,7 +186,6 @@ def main(argv: list[str] | None = None) -> int:
         template_file=args.template_file,
         out_file=args.out_file or Path("index.html"),
         repos_file=args.repos_file,
-        readme_file=args.readme_file,
         author=args.author,
         force_write=args.force_write,
         silent=args.silent,
@@ -248,7 +240,6 @@ def generate_report(
     template_file: Path,
     out_file: Path,
     repos_file: Path,
-    readme_file: Path | None = None,
     author: str = DEFAULT_AUTHOR,
     force_write: bool = False,
     silent: bool = False,
@@ -335,10 +326,6 @@ def generate_report(
         all_prs = prepare_timeline_prs(pr_items)
         chart_data, repo_data, repo_names = build_daily_data(all_prs, repos)
         chart_json, repo_json, names_json = build_chart_payload(chart_data, repo_data, repo_names)
-        representative_items = enrich_representative_items(
-            parse_representative_readme(load_representative_readme_text(readme_file)),
-            typed_items,
-        )
         now_eastern = now.astimezone(EASTERN)
         today_label = now_eastern.strftime("%Y-%m-%d")
         # Rendered at the load animation's first frame, not the all-time totals, so the page does not
@@ -367,7 +354,6 @@ def generate_report(
                 now=now,
                 author=author,
             ),
-            "representative_section": render_representative_section(representative_items),
             "pr_controls": render_pr_controls_and_table(items=typed_items, display_repos=display_repos, visible_items=40),
             "pr_bootstrap": render_pr_bootstrap(items=typed_items),
             "generated_date": f"{now_eastern.strftime('%B')} {now_eastern.day}, {now_eastern.year}",
@@ -396,21 +382,6 @@ def generate_report(
         return 1
     print(f"Generated report at {out_file}", file=sys.stderr)
     return 0
-
-def load_representative_readme_text(readme_file: Path | None) -> str:
-    path = readme_file if readme_file is not None else DEFAULT_README_FILE
-    if path.exists():
-        return path.read_text(encoding="utf-8")
-    try:
-        return run_gh(
-            "api",
-            f"repos/{README_REPO}/contents/README.md",
-            "-H",
-            "Accept: application/vnd.github.raw",
-            suppress_errors=True,
-        )
-    except GhError:
-        return ""
 
 def fetch_author_pull_requests(
     repos: list[str],

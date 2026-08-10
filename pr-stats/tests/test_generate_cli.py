@@ -95,19 +95,11 @@ def test_default_generate_fetches_live_prs_instead_of_reusing_stale_html(
     monkeypatch.setattr(leaderboard_mod, "_overlay_dir", tmp_path)
     monkeypatch.setattr(leaderboard_mod, "_overlay_cache", {})
 
-    readme_file = tmp_path / "README.md"
-    readme_file.write_text(
-        "Representative merged PRs:\n"
-        "- [#101](https://github.com/owner/repo/pull/101) — lands a fresh merge\n",
-        encoding="utf-8",
-    )
-
     result = generate.generate_report(
         cache_file=cache_file,
         template_file=repo_root / "template.html",
         out_file=out_file,
         repos_file=repos_file,
-        readme_file=readme_file,
     )
 
     assert result == 0
@@ -118,7 +110,6 @@ def test_default_generate_fetches_live_prs_instead_of_reusing_stale_html(
     assert '"number":101' in content
     now_eastern = datetime.now(timezone.utc).astimezone(EASTERN)
     assert f"Generated {now_eastern.strftime('%B')} {now_eastern.day}, {now_eastern.year} from GitHub API" in content
-    assert '<td class="rep-desc-cell">lands a fresh merge</td>' in content
     assert re.search(r"\{\{ \w+ \}\}", content) is None
 
 def test_default_generate_survives_leaderboard_retry_exhaustion(

@@ -13,10 +13,9 @@ from core.page import (
     render_pr_controls_and_table,
     render_report_page,
     render_repo_matrix_section,
-    render_representative_section,
     render_timeline_bootstrap,
 )
-from core.report import PrReportItem, ReportActivitySummary, ReportCounts, RepresentativeItem
+from core.report import PrReportItem, ReportActivitySummary, ReportCounts
 from core.repos import set_repo_display_names
 
 NOW = datetime(2026, 7, 2, 12, 0, tzinfo=timezone.utc)
@@ -376,47 +375,6 @@ def test_render_leaderboard_projections_absent_when_author_rate_is_zero() -> Non
     html = render_leaderboard_section(repo="owner/repo", items=items, cache=cache, now=NOW, author="rodboev")
 
     assert "projections" not in html
-
-
-def test_render_representative_section_rows_release_and_via() -> None:
-    html = render_representative_section(
-        [
-            RepresentativeItem(
-                number=3571,
-                url="https://github.com/nesquena/hermes-webui/pull/3571",
-                repo="nesquena/hermes-webui",
-                repoLabel="webui",
-                desc="adds a saved prompts library",
-                release="v0.51.338",
-                releaseUrl="https://github.com/nesquena/hermes-webui/releases/tag/v0.51.338",
-                viaLabel="#3860",
-                viaUrl="https://github.com/nesquena/hermes-webui/pull/3860",
-            ),
-            RepresentativeItem(
-                number=200,
-                url="https://github.com/kenn-io/agentsview/pull/200",
-                repo="kenn-io/agentsview",
-                repoLabel="agentsview",
-                desc="continued work",
-                classification="accepted-indirect",
-            ),
-        ],
-    )
-
-    assert html.startswith("    <h2>Representative PRs</h2>\n")
-    assert '<table class="rep-prs-table shipped-prs">' in html
-    assert (
-        '  <tr class="rep-main-row"><td><a href="https://github.com/nesquena/hermes-webui/pull/3571">#3571</a></td>'
-        '<td><a class="plain-link" href="https://github.com/nesquena/hermes-webui">webui</a></td><td class="rep-desc-cell">adds a saved prompts library</td>'
-        '<td><a href="https://github.com/nesquena/hermes-webui/releases/tag/v0.51.338">v0.51.338</a></td>'
-        '<td><a href="https://github.com/nesquena/hermes-webui/pull/3860">#3860</a></td></tr>'
-    ) in html
-    assert '<div class="rep-desc-text">adds a saved prompts library</div>' in html
-    assert "<td>indirect</td><td></td></tr>" in html
-
-
-def test_render_representative_section_empty_state() -> None:
-    assert render_representative_section([]) == '<p class="empty-state">Representative PRs unavailable.</p>'
 
 
 def test_render_report_page_fills_slots() -> None:

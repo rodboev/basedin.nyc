@@ -8,11 +8,11 @@ mem0ai/mem0
 stablyai/orca
 NVIDIA/SkillSpector
 microsoft/presidio
-# NousResearch/hermes-agent
+NousResearch/hermes-agent
 # unslothai/unsloth
 # cline/cline
 # continuedev/continue
-CopilotKit/CopilotKit
+# CopilotKit/CopilotKit
 # MemPalace/mempalace
 mastra-ai/mastra
 # github/github-mcp-server

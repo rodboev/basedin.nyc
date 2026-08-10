@@ -1871,6 +1871,10 @@ body.pr .landscape-row {
   border-bottom: 1px solid var(--pr-border);
 }
 
+body.pr #pr-landscape-row {
+  margin-top: 2rem;
+}
+
 body.pr .landscape-row + table {
   border-top: none;
 }

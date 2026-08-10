@@ -135,23 +135,6 @@ def test_timeline_repo_labels_use_repo_names(repo_root: Path) -> None:
     assert "pill.textContent = name;" in content
 
 
-def test_representative_prs_are_inlined_and_curated(repo_root: Path) -> None:
-    content = _read_index(repo_root)
-    representative = re.search(r"<h2>Representative PRs</h2>\s*<table[^>]*>.*?</table>", content, re.S)
-
-    assert representative is not None
-    block = representative.group(0)
-    assert 'id="representative-prs"' not in content
-    assert "loadRepresentativePrs()" not in content
-    assert "fetch(src, { credentials: 'same-origin' })" not in content
-    assert "https://github.com/nesquena/hermes-webui/pull/3571" in block
-    assert "https://github.com/kenn-io/agentsview/pull/734" in block
-    assert "https://github.com/kenn-io/agentsview/pull/733" in block
-    assert "https://github.com/NousResearch/hermes-agent/pull/" not in block
-    assert "https://github.com/nesquena/hermes-webui/pull/3606" not in block
-    assert "https://github.com/nesquena/hermes-webui/pull/3667" not in block
-
-
 def test_specific_pr_classifications_from_generated_data(repo_root: Path) -> None:
     items = _pr_data(_read_index(repo_root))
 

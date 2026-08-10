@@ -7,23 +7,15 @@ from concurrent.futures import ThreadPoolExecutor
 from core.github import GhRetryExhausted, run_gh
 
 _display_names: dict[str, str] = {}
-_canonical_names: dict[str, str] = {}
 
 
 def set_repo_display_names(mapping: Mapping[str, str]) -> None:
     _display_names.clear()
     _display_names.update(mapping)
-    _canonical_names.clear()
-    _canonical_names.update({display: canonical for canonical, display in mapping.items()})
 
 
 def display_repo(repo: str) -> str:
     return _display_names.get(repo, repo)
-
-
-def canonical_repo(repo: str) -> str:
-    """Fold a repo name written by hand (repos.txt, the representative README) onto its canonical name."""
-    return _canonical_names.get(repo, repo)
 
 
 def resolve_canonical_repos(repos: Iterable[str], *, workers: int = 4) -> dict[str, str]:

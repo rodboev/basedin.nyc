@@ -87,23 +87,40 @@ def format_display_datetime(value: datetime) -> str:
         return eastern.strftime("%#m/%#d/%Y %#I:%M %p")
 
 
+def _make_entry(path: Path, label: str) -> dict[str, str]:
+    relative_name = path.relative_to(DOCS_DIR).as_posix()
+    created_at, modified_at = file_timestamps(path)
+    return {
+        "href": relative_name,
+        "label": label,
+        "created_display": format_display_datetime(created_at),
+        "created_sort": created_at.astimezone(ZoneInfo("UTC")).isoformat(),
+        "modified_display": format_display_datetime(modified_at),
+        "modified_sort": modified_at.astimezone(ZoneInfo("UTC")).isoformat(),
+    }
+
+
 def collect_docs() -> list[dict[str, str]]:
     entries = []
-    for path in sorted(DOCS_DIR.rglob("*.html")):
+
+    for path in sorted(DOCS_DIR.glob("*.html")):
         if path.resolve() == OUTPUT_PATH.resolve():
             continue
-        relative_name = path.relative_to(DOCS_DIR).as_posix()
-        created_at, modified_at = file_timestamps(path)
-        entries.append(
-            {
-                "href": relative_name,
-                "label": extract_label(path),
-                "created_display": format_display_datetime(created_at),
-                "created_sort": created_at.astimezone(ZoneInfo("UTC")).isoformat(),
-                "modified_display": format_display_datetime(modified_at),
-                "modified_sort": modified_at.astimezone(ZoneInfo("UTC")).isoformat(),
-            }
-        )
+        entries.append(_make_entry(path, extract_label(path)))
+
+    for child in sorted(DOCS_DIR.iterdir()):
+        if not child.is_dir() or child.name.startswith(("_", ".")):
+            continue
+        index = child / "index.html"
+        if index.exists():
+            target = index
+        else:
+            html_files = list(child.glob("*.html"))
+            if not html_files:
+                continue
+            target = min(html_files, key=lambda f: file_timestamps(f)[0])
+        entries.append(_make_entry(target, humanize_stem(child.name)))
+
     return sorted(entries, key=lambda item: item["modified_sort"], reverse=True)
 
 

@@ -4,7 +4,7 @@ import pytest
 from pytest import MonkeyPatch
 
 import core.repos as repos_mod
-from core.repos import canonical_repo, display_repo, resolve_canonical_repos, set_repo_display_names
+from core.repos import display_repo, resolve_canonical_repos, set_repo_display_names
 
 RENAMES = {"microsoft/presidio": "data-privacy-stack/presidio"}
 
@@ -41,11 +41,3 @@ def test_display_repo_reports_the_name_as_written_in_repos_txt() -> None:
 
     assert display_repo("data-privacy-stack/presidio") == "microsoft/presidio"
     assert display_repo("owner/unmapped") == "owner/unmapped"
-
-
-def test_canonical_repo_folds_a_hand_written_name_onto_the_canonical_one() -> None:
-    set_repo_display_names({"data-privacy-stack/presidio": "microsoft/presidio"})
-
-    assert canonical_repo("microsoft/presidio") == "data-privacy-stack/presidio"
-    assert canonical_repo("data-privacy-stack/presidio") == "data-privacy-stack/presidio"
-    assert canonical_repo("owner/unmapped") == "owner/unmapped"
