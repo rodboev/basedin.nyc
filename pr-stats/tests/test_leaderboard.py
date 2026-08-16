@@ -10,6 +10,7 @@ from pytest import MonkeyPatch
 import core.leaderboard as leaderboard_mod
 from core.cache import load_cache
 from core.leaderboard import (
+    CHANGELOG_RELEASE_PROFILE,
     _parse_datetime,
     cached_leaderboard_rows,
     configured_repo_leaderboard_exclusions,
@@ -363,6 +364,42 @@ def test_cached_leaderboard_rows_override_author_with_report_counts(tmp_path: Pa
 
     rod = next(row for row in rows if row.login == "rodboev")
     assert (rod.credited, rod.open) == (39, 3)
+
+def test_changelog_release_board_falls_back_to_merged_counts_for_uncredited_logins(tmp_path: Path) -> None:
+    cache_path = tmp_path / "cache.json"
+    cache_path.write_text(
+        json.dumps(
+            {
+                "version": 3,
+                "leaderboards": {
+                    "owner/repo|community-shipped-v4|all": {
+                        "stats": {
+                            "alice": {"total": 20, "open": 2, "recentCount": 0, "lastCreatedAt": ""},
+                            "newcomer": {"total": 30, "open": 17, "recentCount": 0, "lastCreatedAt": ""},
+                        },
+                        # The curated map froze before newcomer landed anything.
+                        "releaseCreditCounts": {"alice": 9},
+                        "shippedCounts": {"alice": 7, "newcomer": 13},
+                    },
+                },
+            },
+        ),
+        encoding="utf-8",
+    )
+
+    rows = cached_leaderboard_rows(
+        cache=load_cache(cache_path),
+        repo="owner/repo",
+        exclusions=repo_leaderboard_exclusions(owner="owner"),
+        rate_window_days=7,
+        credit_profile=CHANGELOG_RELEASE_PROFILE,
+    )
+
+    credited = {row.login: row.credited for row in rows}
+    assert credited["newcomer"] == 13
+    # The curated count still wins where it is the larger of the two.
+    assert credited["alice"] == 9
+
 
 def test_cached_leaderboard_rows_match_all_rendered_ps1_boards(repo_root: Path) -> None:
     cache_path = repo_root / ".pr-classification-cache.json"

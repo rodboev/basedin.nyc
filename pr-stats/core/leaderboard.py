@@ -448,12 +448,23 @@ def _unique(values: Iterable[str]) -> list[str]:
     return result
 
 def _credited_counts_for_cached_board(entry: Mapping[str, object], *, credit_profile: str) -> dict[str, int]:
-    keys = ("releaseCreditCounts",) if credit_profile == CHANGELOG_RELEASE_PROFILE else ("shippedCounts",)
+    # The curated release-credit map is a floor, never a gate: a contributor missing from it
+    # (it froze at the last PS1 run, and upstream's own roll lags releases) still gets credit
+    # for the merged PRs the fresh scan saw, or the whole tail of newer contributors reads 0.
+    keys = (
+        ("releaseCreditCounts", "shippedCounts")
+        if credit_profile == CHANGELOG_RELEASE_PROFILE
+        else ("shippedCounts",)
+    )
+    counts: dict[str, int] = {}
     for key in keys:
         raw = entry.get(key)
-        if isinstance(raw, dict) and raw:
-            return {str(login): int_value(value) for login, value in raw.items()}
-    return {}
+        if not isinstance(raw, dict):
+            continue
+        for login, value in raw.items():
+            login_key = _existing_case_key(counts, str(login))
+            counts[login_key] = max(counts.get(login_key, 0), int_value(value))
+    return counts
 
 def _existing_case_key(values: Mapping[str, object], login: str) -> str:
     folded = login.lower()

@@ -82575,7 +82575,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-08-15T01:04:01.879343Z"
+      "cachedAt": "2026-08-16T02:05:03.710118Z"
     },
     "stablyai/orca#8913": {
       "classification": "withdrawn",
@@ -82583,7 +82583,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-08-15T01:04:01.879343Z"
+      "cachedAt": "2026-08-16T02:05:03.710118Z"
     },
     "stablyai/orca#8925": {
       "classification": "superseded",
@@ -82751,7 +82751,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-08-15T01:04:01.879343Z"
+      "cachedAt": "2026-08-16T02:05:03.710118Z"
     },
     "kenn-io/agentsview#1331": {
       "classification": "withdrawn",
@@ -82759,7 +82759,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-08-15T01:04:01.879343Z"
+      "cachedAt": "2026-08-16T02:05:03.710118Z"
     },
     "NVIDIA/SkillSpector#197": {
       "classification": "withdrawn",
@@ -82767,7 +82767,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-08-15T01:04:01.879343Z"
+      "cachedAt": "2026-08-16T02:05:03.710118Z"
     },
     "mastra-ai/mastra#20578": {
       "classification": "shipped",
@@ -82831,7 +82831,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-08-15T01:04:01.879343Z"
+      "cachedAt": "2026-08-16T02:05:03.710118Z"
     },
     "nesquena/hermes-webui#6695": {
       "classification": "withdrawn",
@@ -82839,7 +82839,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-08-15T01:04:01.879343Z"
+      "cachedAt": "2026-08-16T02:05:03.710118Z"
     },
     "headroomlabs-ai/headroom#2180": {
       "classification": "withdrawn",
@@ -82847,7 +82847,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-08-15T01:04:01.879343Z"
+      "cachedAt": "2026-08-16T02:05:03.710118Z"
     },
     "headroomlabs-ai/headroom#2181": {
       "classification": "withdrawn",
@@ -82855,7 +82855,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-08-15T01:04:01.879343Z"
+      "cachedAt": "2026-08-16T02:05:03.710118Z"
     },
     "nesquena/hermes-webui#6055": {
       "classification": "shipped",
@@ -82983,7 +82983,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-08-15T01:04:01.879343Z"
+      "cachedAt": "2026-08-16T02:05:03.710118Z"
     },
     "NousResearch/hermes-agent#39653": {
       "classification": "accepted-indirect",
@@ -83008,6 +83008,38 @@
       "viaUrl": "https://github.com/mastra-ai/mastra/pull/17948",
       "evidenceKind": "direct-merge",
       "cachedAt": "2026-08-15T01:04:01.879343Z"
+    },
+    "nesquena/hermes-webui#6409": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-08-16T02:05:03.710118Z"
+    },
+    "headroomlabs-ai/headroom#2705": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-08-16T02:05:03.710118Z"
+    },
+    "stablyai/orca#7396": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-08-16T02:05:03.710118Z"
+    },
+    "stablyai/orca#8447": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-08-16T02:05:03.710118Z"
     }
   },
   "authorPulls": {
@@ -84454,11 +84486,11 @@
     "stablyai/orca#7396": {
       "repo": "stablyai/orca",
       "number": 7396,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(runtime): flag missing agent CLIs as blocked launches",
       "createdAt": "2026-07-05T02:18:21Z",
-      "updatedAt": "2026-07-27T04:51:40Z",
-      "closedAt": null,
+      "updatedAt": "2026-08-15T01:38:09Z",
+      "closedAt": "2026-08-15T01:38:09Z",
       "mergedAt": null,
       "headRefName": "pr/orca-7047-agent-command-not-found",
       "author": {
@@ -93655,16 +93687,16 @@
       "state": "OPEN",
       "title": "feat(scan): add opt-in transitive reference scanning",
       "createdAt": "2026-06-29T03:49:14Z",
-      "updatedAt": "2026-08-14T20:20:45Z",
+      "updatedAt": "2026-08-15T20:25:09Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/transitive-external-reference-scanning",
       "author": {
         "login": "rodboev"
       },
-      "additions": 3374,
-      "deletions": 319,
-      "changedFiles": 25,
+      "additions": 3263,
+      "deletions": 108,
+      "changedFiles": 22,
       "url": "https://github.com/NVIDIA/SkillSpector/pull/225"
     },
     "NVIDIA/SkillSpector#216": {
@@ -96010,11 +96042,11 @@
     "stablyai/orca#8447": {
       "repo": "stablyai/orca",
       "number": 8447,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(agents): open the Orca browser from Agents View terminal links (#7813)",
       "createdAt": "2026-07-13T01:06:46Z",
-      "updatedAt": "2026-07-27T04:49:44Z",
-      "closedAt": null,
+      "updatedAt": "2026-08-15T01:38:09Z",
+      "closedAt": "2026-08-15T01:38:09Z",
       "mergedAt": null,
       "headRefName": "pr/agents-view-browser-routing",
       "author": {
@@ -98440,11 +98472,11 @@
     "nesquena/hermes-webui#6409": {
       "repo": "nesquena/hermes-webui",
       "number": 6409,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "Honor memory feature flags in the WebUI",
       "createdAt": "2026-07-21T18:14:06Z",
-      "updatedAt": "2026-08-05T04:04:46Z",
-      "closedAt": null,
+      "updatedAt": "2026-08-15T01:54:51Z",
+      "closedAt": "2026-08-15T01:54:51Z",
       "mergedAt": null,
       "headRefName": "pr/6406-memory-feature-flags",
       "author": {
@@ -100294,11 +100326,11 @@
     "headroomlabs-ai/headroom#2705": {
       "repo": "headroomlabs-ai/headroom",
       "number": 2705,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(proxy): make Responses memory continuations ZDR-safe",
       "createdAt": "2026-08-01T15:11:43Z",
-      "updatedAt": "2026-08-14T21:25:01Z",
-      "closedAt": null,
+      "updatedAt": "2026-08-15T01:30:25Z",
+      "closedAt": "2026-08-15T01:30:25Z",
       "mergedAt": null,
       "headRefName": "pr/2675-zdr-safe-responses-memory-continuation",
       "author": {
@@ -100837,16 +100869,16 @@
       "state": "OPEN",
       "title": "fix(deployer): install configured bundle lockfiles immutably",
       "createdAt": "2026-08-01T17:00:48Z",
-      "updatedAt": "2026-08-06T18:25:24Z",
+      "updatedAt": "2026-08-15T21:19:23Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/20357-deployer-lockfile-order",
       "author": {
         "login": "rodboev"
       },
-      "additions": 677,
+      "additions": 848,
       "deletions": 34,
-      "changedFiles": 15,
+      "changedFiles": 18,
       "url": "https://github.com/mastra-ai/mastra/pull/20583"
     },
     "mastra-ai/mastra#20578": {
@@ -101136,51 +101168,249 @@
       "deletions": 29,
       "changedFiles": 9,
       "url": "https://github.com/kenn-io/agentsview/pull/1355"
+    },
+    "kenn-io/agentsview#1424": {
+      "repo": "kenn-io/agentsview",
+      "number": 1424,
+      "state": "OPEN",
+      "title": "feat(frontend): add raw and formatted tool output display",
+      "createdAt": "2026-08-16T01:40:21Z",
+      "updatedAt": "2026-08-16T01:49:54Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/984-session-output-display",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 363,
+      "deletions": 21,
+      "changedFiles": 14,
+      "url": "https://github.com/kenn-io/agentsview/pull/1424"
+    },
+    "kenn-io/agentsview#1423": {
+      "repo": "kenn-io/agentsview",
+      "number": 1423,
+      "state": "OPEN",
+      "title": "fix(config): honor explicit empty agent directory arrays",
+      "createdAt": "2026-08-16T00:05:33Z",
+      "updatedAt": "2026-08-16T00:15:10Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/1417-source-exclusion",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 131,
+      "deletions": 4,
+      "changedFiles": 3,
+      "url": "https://github.com/kenn-io/agentsview/pull/1423"
+    },
+    "headroomlabs-ai/headroom#3053": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 3053,
+      "state": "OPEN",
+      "title": "fix(plugin): resolve hook CLI through plugin-root launcher",
+      "createdAt": "2026-08-16T01:56:15Z",
+      "updatedAt": "2026-08-16T02:04:10Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/3039-plugin-hook-launcher",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 362,
+      "deletions": 4,
+      "changedFiles": 6,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/3053"
+    },
+    "headroomlabs-ai/headroom#3052": {
+      "repo": "headroomlabs-ai/headroom",
+      "number": 3052,
+      "state": "OPEN",
+      "title": "fix(proxy/anthropic): don't replay recorded prefix over live history (#3026)",
+      "createdAt": "2026-08-16T01:56:06Z",
+      "updatedAt": "2026-08-16T02:04:50Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/3026-anthropic-overlay-guard",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 489,
+      "deletions": 28,
+      "changedFiles": 6,
+      "url": "https://github.com/headroomlabs-ai/headroom/pull/3052"
+    },
+    "nesquena/hermes-webui#7067": {
+      "repo": "nesquena/hermes-webui",
+      "number": 7067,
+      "state": "OPEN",
+      "title": "fix(#6867): refresh artifacts after settled-session recovery",
+      "createdAt": "2026-08-16T01:39:41Z",
+      "updatedAt": "2026-08-16T01:48:50Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/6867-artifact-projection-recovery",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 265,
+      "deletions": 3,
+      "changedFiles": 5,
+      "url": "https://github.com/nesquena/hermes-webui/pull/7067"
+    },
+    "nesquena/hermes-webui#7066": {
+      "repo": "nesquena/hermes-webui",
+      "number": 7066,
+      "state": "OPEN",
+      "title": "fix(#7050): report merged display count on the metadata path for foreign sessions",
+      "createdAt": "2026-08-16T01:36:45Z",
+      "updatedAt": "2026-08-16T01:45:20Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/7050-foreign-metadata-count",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 286,
+      "deletions": 13,
+      "changedFiles": 2,
+      "url": "https://github.com/nesquena/hermes-webui/pull/7066"
+    },
+    "nesquena/hermes-webui#7065": {
+      "repo": "nesquena/hermes-webui",
+      "number": 7065,
+      "state": "OPEN",
+      "title": "fix(#6906): keep kanban actions reachable in short windows",
+      "createdAt": "2026-08-16T01:36:16Z",
+      "updatedAt": "2026-08-16T01:50:24Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/6906-kanban-modal-height-cap",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 126,
+      "deletions": 1,
+      "changedFiles": 2,
+      "url": "https://github.com/nesquena/hermes-webui/pull/7065"
+    },
+    "nesquena/hermes-webui#7064": {
+      "repo": "nesquena/hermes-webui",
+      "number": 7064,
+      "state": "OPEN",
+      "title": "fix(#6894): canonicalize Mistral provider identity",
+      "createdAt": "2026-08-16T01:21:49Z",
+      "updatedAt": "2026-08-16T01:25:13Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/6894-mistral-provider-identity",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 329,
+      "deletions": 121,
+      "changedFiles": 7,
+      "url": "https://github.com/nesquena/hermes-webui/pull/7064"
+    },
+    "nesquena/hermes-webui#7063": {
+      "repo": "nesquena/hermes-webui",
+      "number": 7063,
+      "state": "OPEN",
+      "title": "Fix Refresh Models invalidating live model caches",
+      "createdAt": "2026-08-16T00:59:49Z",
+      "updatedAt": "2026-08-16T01:02:53Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/6919-refresh-live-model-caches",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 367,
+      "deletions": 16,
+      "changedFiles": 4,
+      "url": "https://github.com/nesquena/hermes-webui/pull/7063"
+    },
+    "nesquena/hermes-webui#7062": {
+      "repo": "nesquena/hermes-webui",
+      "number": 7062,
+      "state": "OPEN",
+      "title": "fix(#7013): make test portability platform-neutral",
+      "createdAt": "2026-08-16T00:58:51Z",
+      "updatedAt": "2026-08-16T01:02:13Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/7013-test-portability",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 19,
+      "deletions": 3,
+      "changedFiles": 3,
+      "url": "https://github.com/nesquena/hermes-webui/pull/7062"
+    },
+    "nesquena/hermes-webui#7061": {
+      "repo": "nesquena/hermes-webui",
+      "number": 7061,
+      "state": "OPEN",
+      "title": "fix(#6804): resolve key_env providers and discover configured catalogs",
+      "createdAt": "2026-08-16T00:58:38Z",
+      "updatedAt": "2026-08-16T01:11:01Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/6804-provider-key-env-discovery",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 341,
+      "deletions": 40,
+      "changedFiles": 3,
+      "url": "https://github.com/nesquena/hermes-webui/pull/7061"
     }
   },
   "authorPullScanMeta": {
     "kenn-io/agentsview": {
-      "scannedAt": "2026-08-15T01:18:00.808578Z",
+      "scannedAt": "2026-08-16T02:05:03.710118Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "thedotmack/claude-mem": {
-      "scannedAt": "2026-08-15T01:18:00.808578Z",
+      "scannedAt": "2026-08-16T02:05:03.710118Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "headroomlabs-ai/headroom": {
-      "scannedAt": "2026-08-15T01:18:00.808578Z",
+      "scannedAt": "2026-08-16T02:05:03.710118Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "nesquena/hermes-webui": {
-      "scannedAt": "2026-08-15T01:18:00.808578Z",
+      "scannedAt": "2026-08-16T02:05:03.710118Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "stablyai/orca": {
-      "scannedAt": "2026-08-15T01:18:00.808578Z",
+      "scannedAt": "2026-08-16T02:05:03.710118Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "mem0ai/mem0": {
-      "scannedAt": "2026-08-15T01:18:00.808578Z",
+      "scannedAt": "2026-08-16T02:05:03.710118Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "NVIDIA/SkillSpector": {
-      "scannedAt": "2026-08-15T01:18:00.808578Z",
+      "scannedAt": "2026-08-16T02:05:03.710118Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "NousResearch/hermes-agent": {
-      "scannedAt": "2026-08-15T01:18:00.808578Z",
+      "scannedAt": "2026-08-16T02:05:03.710118Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "data-privacy-stack/presidio": {
-      "scannedAt": "2026-08-15T01:18:00.808578Z",
+      "scannedAt": "2026-08-16T02:05:03.710118Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
@@ -101195,7 +101425,7 @@
       "lookbackHours": 48
     },
     "mastra-ai/mastra": {
-      "scannedAt": "2026-08-15T01:18:00.808578Z",
+      "scannedAt": "2026-08-16T02:05:03.710118Z",
       "source": "graphql-search",
       "lookbackHours": 48
     }
@@ -104198,8 +104428,8 @@
       "releaseCreditMeta": null
     },
     "headroomlabs-ai/headroom|community-shipped-v4|all": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
-      "refreshedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
+      "refreshedAt": "2026-08-16T02:05:03.710118Z",
       "logins": [
         "abhay-codes07",
         "rodboev",
@@ -104238,6 +104468,7 @@
         "shekharcharles",
         "rocker-zhang",
         "Kayzo",
+        "LeonSGP43",
         "gingeekrishna",
         "mvanhorn",
         "Bortlesboat",
@@ -104254,6 +104485,7 @@
         "SuperMarioYL",
         "falkoro",
         "pacifio",
+        "mactonicaaron",
         "Zenjibad",
         "SulimanAbdulrazzaq",
         "krzkraw",
@@ -104280,6 +104512,7 @@
         "withsivram",
         "longtngo",
         "prakersh",
+        "Robert2547",
         "GilKorzen",
         "msoleimanip",
         "probepark",
@@ -104343,7 +104576,6 @@
         "agsuy",
         "thomasdorts-hash",
         "Vasilije1990",
-        "Robert2547",
         "romulomorgan",
         "connectsudhindra-gif",
         "djpken",
@@ -104601,12 +104833,12 @@
         "abhay-codes07": {
           "total": 176,
           "open": 28,
-          "recentCount": 19
+          "recentCount": 18
         },
         "rodboev": {
-          "total": 108,
-          "open": 6,
-          "recentCount": 0
+          "total": 110,
+          "open": 7,
+          "recentCount": 2
         },
         "Parideboy": {
           "total": 61,
@@ -104630,7 +104862,7 @@
         },
         "lifeodyssey": {
           "total": 26,
-          "open": 2,
+          "open": 0,
           "recentCount": 0
         },
         "inix-x": {
@@ -104783,10 +105015,15 @@
           "open": 1,
           "recentCount": 0
         },
+        "LeonSGP43": {
+          "total": 5,
+          "open": 5,
+          "recentCount": 5
+        },
         "gingeekrishna": {
           "total": 5,
           "open": 1,
-          "recentCount": 5
+          "recentCount": 0
         },
         "mvanhorn": {
           "total": 5,
@@ -104862,6 +105099,11 @@
           "total": 4,
           "open": 1,
           "recentCount": 0
+        },
+        "mactonicaaron": {
+          "total": 3,
+          "open": 1,
+          "recentCount": 3
         },
         "Zenjibad": {
           "total": 3,
@@ -104992,6 +105234,11 @@
           "total": 3,
           "open": 0,
           "recentCount": 0
+        },
+        "Robert2547": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 2
         },
         "GilKorzen": {
           "total": 2,
@@ -105300,7 +105547,7 @@
         },
         "thomasdorts-hash": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1
         },
         "Vasilije1990": {
@@ -105308,20 +105555,15 @@
           "open": 1,
           "recentCount": 1
         },
-        "Robert2547": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 1
-        },
         "romulomorgan": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "connectsudhindra-gif": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "djpken": {
           "total": 1,
@@ -106616,6 +106858,7 @@
         "shekharcharles": 4,
         "rocker-zhang": 6,
         "Kayzo": 5,
+        "LeonSGP43": 0,
         "gingeekrishna": 2,
         "mvanhorn": 5,
         "Bortlesboat": 4,
@@ -106632,6 +106875,7 @@
         "SuperMarioYL": 4,
         "falkoro": 0,
         "pacifio": 2,
+        "mactonicaaron": 0,
         "Zenjibad": 0,
         "SulimanAbdulrazzaq": 3,
         "krzkraw": 0,
@@ -106658,6 +106902,7 @@
         "withsivram": 0,
         "longtngo": 3,
         "prakersh": 3,
+        "Robert2547": 2,
         "GilKorzen": 0,
         "msoleimanip": 0,
         "probepark": 0,
@@ -106721,7 +106966,6 @@
         "agsuy": 0,
         "thomasdorts-hash": 0,
         "Vasilije1990": 0,
-        "Robert2547": 1,
         "romulomorgan": 1,
         "connectsudhindra-gif": 1,
         "djpken": 0,
@@ -106980,8 +107224,8 @@
       "releaseCreditMeta": null
     },
     "kenn-io/agentsview|community-shipped-v4|all": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
-      "refreshedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
+      "refreshedAt": "2026-08-16T02:05:03.710118Z",
       "logins": [
         "rodboev",
         "mjacobs",
@@ -107120,9 +107364,9 @@
       ],
       "stats": {
         "rodboev": {
-          "total": 96,
-          "open": 0,
-          "recentCount": 0
+          "total": 98,
+          "open": 2,
+          "recentCount": 2
         },
         "mjacobs": {
           "total": 69,
@@ -107346,7 +107590,7 @@
         },
         "Stool233": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1
         },
         "salmonumbrella": {
@@ -107372,7 +107616,7 @@
         "shrivatsas": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "GhostFlying": {
           "total": 1,
@@ -107837,7 +108081,7 @@
         "sinnet3000": 2,
         "cdeil": 2,
         "thellert": 2,
-        "Stool233": 0,
+        "Stool233": 1,
         "salmonumbrella": 0,
         "pascalwhoop": 0,
         "wahajahmed010": 1,
@@ -109979,8 +110223,8 @@
       "releaseCreditMeta": null
     },
     "mem0ai/mem0|community-shipped-v4|all": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
-      "refreshedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
+      "refreshedAt": "2026-08-16T02:05:03.710118Z",
       "logins": [
         "Dev-Khant",
         "whysosaket",
@@ -110009,13 +110253,13 @@
         "MgeeeeK",
         "PranavPuranik",
         "aaishikdutta",
+        "krishna231122-del",
         "akshat1423",
         "themavik",
         "youneshima",
         "haosenwang1018",
         "DivyamTalwar",
         "OfficialAbhinavSingh",
-        "krishna231122-del",
         "frederikb96",
         "rajarshidattapy",
         "gabrielstein-mem0",
@@ -110101,6 +110345,7 @@
         "shlokkhemani",
         "vatsalrathod16",
         "krescent",
+        "a-yeyang",
         "ratishjain12",
         "Anai-Guo",
         "bennyyuan1008",
@@ -110203,7 +110448,7 @@
         "SerSamgy",
         "KapilM26",
         "aalmuarik",
-        "a-yeyang",
+        "BCathcart",
         "xiangnuans",
         "786262170",
         "uuzzrm",
@@ -111287,9 +111532,9 @@
           "recentCount": 0
         },
         "Himanshu-Sangshetti": {
-          "total": 21,
-          "open": 2,
-          "recentCount": 1
+          "total": 22,
+          "open": 3,
+          "recentCount": 2
         },
         "PHclaw": {
           "total": 20,
@@ -111315,6 +111560,11 @@
           "total": 19,
           "open": 0,
           "recentCount": 0
+        },
+        "krishna231122-del": {
+          "total": 17,
+          "open": 5,
+          "recentCount": 9
         },
         "akshat1423": {
           "total": 17,
@@ -111345,11 +111595,6 @@
           "total": 13,
           "open": 6,
           "recentCount": 2
-        },
-        "krishna231122-del": {
-          "total": 13,
-          "open": 7,
-          "recentCount": 5
         },
         "frederikb96": {
           "total": 13,
@@ -111438,7 +111683,7 @@
         },
         "ChiragArora31": {
           "total": 9,
-          "open": 3,
+          "open": 2,
           "recentCount": 0
         },
         "harshitanand": {
@@ -111579,7 +111824,7 @@
         "iroiro147": {
           "total": 6,
           "open": 6,
-          "recentCount": 2
+          "recentCount": 0
         },
         "Salomondiei08": {
           "total": 6,
@@ -111776,6 +112021,11 @@
           "open": 0,
           "recentCount": 0
         },
+        "a-yeyang": {
+          "total": 4,
+          "open": 0,
+          "recentCount": 4
+        },
         "ratishjain12": {
           "total": 4,
           "open": 2,
@@ -111784,7 +112034,7 @@
         "Anai-Guo": {
           "total": 4,
           "open": 4,
-          "recentCount": 1
+          "recentCount": 0
         },
         "bennyyuan1008": {
           "total": 4,
@@ -112286,7 +112536,7 @@
           "open": 0,
           "recentCount": 0
         },
-        "a-yeyang": {
+        "BCathcart": {
           "total": 2,
           "open": 0,
           "recentCount": 2
@@ -113239,17 +113489,17 @@
         "lazyeasteregg": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "Mchenr": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "eeshsaxena": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "agarwalpranav0711": {
           "total": 1,
@@ -117205,13 +117455,13 @@
         "MgeeeeK": 11,
         "PranavPuranik": 16,
         "aaishikdutta": 16,
+        "krishna231122-del": 1,
         "akshat1423": 12,
         "themavik": 0,
         "youneshima": 11,
         "haosenwang1018": 2,
         "DivyamTalwar": 0,
         "OfficialAbhinavSingh": 3,
-        "krishna231122-del": 1,
         "frederikb96": 6,
         "rajarshidattapy": 0,
         "gabrielstein-mem0": 12,
@@ -117297,6 +117547,7 @@
         "shlokkhemani": 2,
         "vatsalrathod16": 3,
         "krescent": 3,
+        "a-yeyang": 0,
         "ratishjain12": 1,
         "Anai-Guo": 0,
         "bennyyuan1008": 0,
@@ -117399,7 +117650,7 @@
         "SerSamgy": 2,
         "KapilM26": 2,
         "aalmuarik": 0,
-        "a-yeyang": 0,
+        "BCathcart": 0,
         "xiangnuans": 0,
         "786262170": 0,
         "uuzzrm": 0,
@@ -122996,8 +123247,8 @@
       "releaseCreditMeta": null
     },
     "nesquena/hermes-webui|community-shipped-v4|all": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
-      "refreshedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
+      "refreshedAt": "2026-08-16T02:05:03.710118Z",
       "logins": [
         "rodboev",
         "franksong2702",
@@ -123052,6 +123303,7 @@
         "bschmidy10",
         "24601",
         "NocGeek",
+        "sheldon-im",
         "tomtong2015",
         "ChonSong",
         "kaishi00",
@@ -123061,15 +123313,15 @@
         "Charanis",
         "espokaos-ops",
         "armorbreak001",
+        "carlotestor",
+        "sand01chi",
         "Paladin173",
-        "sheldon-im",
         "renheqiang",
         "akay64",
         "wirtsi",
         "wtj-0527",
         "cloudyun888",
         "iRonin",
-        "sand01chi",
         "samfoy",
         "rodrigogs",
         "dirtydishes",
@@ -123083,7 +123335,6 @@
         "fecolinhares",
         "EdwardWason",
         "aslater3",
-        "carlotestor",
         "ildunari",
         "MinhoJJang",
         "stefanpieter",
@@ -123105,6 +123356,8 @@
         "frap129",
         "pavolbiely",
         "TaraTheStar",
+        "X-Shihai",
+        "keithah",
         "dss539",
         "rudidev08",
         "waterWang",
@@ -123140,11 +123393,9 @@
         "renatomott",
         "Bobby9228",
         "deboste",
-        "keithah",
         "ashuio",
         "harsh2hell",
         "ticketclosed-wontfix",
-        "X-Shihai",
         "Rogerthis",
         "mintymac",
         "martindell",
@@ -123218,6 +123469,7 @@
         "gabogabucho",
         "DavidSchuchert",
         "thadreber-web",
+        "segator",
         "fluxkapacitor",
         "jorgejiro",
         "joa8270",
@@ -123565,9 +123817,9 @@
       ],
       "stats": {
         "rodboev": {
-          "total": 405,
-          "open": 24,
-          "recentCount": 0
+          "total": 412,
+          "open": 30,
+          "recentCount": 7
         },
         "franksong2702": {
           "total": 371,
@@ -123585,9 +123837,9 @@
           "recentCount": 0
         },
         "webtecnica": {
-          "total": 185,
-          "open": 110,
-          "recentCount": 16
+          "total": 189,
+          "open": 113,
+          "recentCount": 19
         },
         "bergeouss": {
           "total": 99,
@@ -123596,8 +123848,8 @@
         },
         "starship-s": {
           "total": 73,
-          "open": 14,
-          "recentCount": 4
+          "open": 13,
+          "recentCount": 2
         },
         "AJV20": {
           "total": 72,
@@ -123610,9 +123862,9 @@
           "recentCount": 0
         },
         "allenliang2022": {
-          "total": 41,
-          "open": 5,
-          "recentCount": 3
+          "total": 42,
+          "open": 6,
+          "recentCount": 2
         },
         "ruizanthony": {
           "total": 38,
@@ -123746,7 +123998,7 @@
         },
         "qxxaa": {
           "total": 10,
-          "open": 4,
+          "open": 3,
           "recentCount": 2
         },
         "cabluvsmkm2009-source": {
@@ -123829,6 +124081,11 @@
           "open": 0,
           "recentCount": 0
         },
+        "sheldon-im": {
+          "total": 7,
+          "open": 2,
+          "recentCount": 1
+        },
         "tomtong2015": {
           "total": 7,
           "open": 1,
@@ -123874,15 +124131,20 @@
           "open": 0,
           "recentCount": 0
         },
+        "carlotestor": {
+          "total": 6,
+          "open": 2,
+          "recentCount": 3
+        },
+        "sand01chi": {
+          "total": 6,
+          "open": 5,
+          "recentCount": 1
+        },
         "Paladin173": {
           "total": 6,
           "open": 1,
           "recentCount": 1
-        },
-        "sheldon-im": {
-          "total": 6,
-          "open": 1,
-          "recentCount": 0
         },
         "renheqiang": {
           "total": 6,
@@ -123913,11 +124175,6 @@
           "total": 6,
           "open": 0,
           "recentCount": 0
-        },
-        "sand01chi": {
-          "total": 5,
-          "open": 4,
-          "recentCount": 1
         },
         "samfoy": {
           "total": 5,
@@ -123984,11 +124241,6 @@
           "open": 4,
           "recentCount": 3
         },
-        "carlotestor": {
-          "total": 4,
-          "open": 1,
-          "recentCount": 1
-        },
         "ildunari": {
           "total": 4,
           "open": 3,
@@ -124021,7 +124273,7 @@
         },
         "sbe27": {
           "total": 4,
-          "open": 2,
+          "open": 1,
           "recentCount": 0
         },
         "sjungwon03": {
@@ -124093,6 +124345,16 @@
           "total": 4,
           "open": 0,
           "recentCount": 0
+        },
+        "X-Shihai": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 3
+        },
+        "keithah": {
+          "total": 3,
+          "open": 3,
+          "recentCount": 3
         },
         "dss539": {
           "total": 3,
@@ -124269,11 +124531,6 @@
           "open": 0,
           "recentCount": 0
         },
-        "keithah": {
-          "total": 2,
-          "open": 2,
-          "recentCount": 2
-        },
         "ashuio": {
           "total": 2,
           "open": 1,
@@ -124288,11 +124545,6 @@
           "total": 2,
           "open": 1,
           "recentCount": 1
-        },
-        "X-Shihai": {
-          "total": 2,
-          "open": 0,
-          "recentCount": 2
         },
         "Rogerthis": {
           "total": 2,
@@ -124659,6 +124911,11 @@
           "open": 0,
           "recentCount": 0
         },
+        "segator": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
         "fluxkapacitor": {
           "total": 1,
           "open": 1,
@@ -124732,12 +124989,12 @@
         "lucas-albers-lz4": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "Serph91P": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "randmars": {
           "total": 1,
@@ -126390,7 +126647,7 @@
         "franksong2702": 239,
         "ai-ag2026": 109,
         "Michaelyklam": 152,
-        "webtecnica": 13,
+        "webtecnica": 14,
         "bergeouss": 63,
         "starship-s": 27,
         "AJV20": 56,
@@ -126422,7 +126679,7 @@
         "Koraji95-coder": 1,
         "ccqqlo": 2,
         "rh-id": 3,
-        "qxxaa": 3,
+        "qxxaa": 4,
         "cabluvsmkm2009-source": 0,
         "Stacey2911": 5,
         "claw-io": 5,
@@ -126439,6 +126696,7 @@
         "bschmidy10": 0,
         "24601": 6,
         "NocGeek": 6,
+        "sheldon-im": 1,
         "tomtong2015": 1,
         "ChonSong": 0,
         "kaishi00": 3,
@@ -126448,15 +126706,15 @@
         "Charanis": 1,
         "espokaos-ops": 3,
         "armorbreak001": 7,
+        "carlotestor": 1,
+        "sand01chi": 1,
         "Paladin173": 1,
-        "sheldon-im": 1,
         "renheqiang": 3,
         "akay64": 1,
         "wirtsi": 3,
         "wtj-0527": 3,
         "cloudyun888": 5,
         "iRonin": 6,
-        "sand01chi": 1,
         "samfoy": 0,
         "rodrigogs": 1,
         "dirtydishes": 0,
@@ -126470,7 +126728,6 @@
         "fecolinhares": 1,
         "EdwardWason": 0,
         "aslater3": 0,
-        "carlotestor": 1,
         "ildunari": 0,
         "MinhoJJang": 1,
         "stefanpieter": 1,
@@ -126492,6 +126749,8 @@
         "frap129": 3,
         "pavolbiely": 2,
         "TaraTheStar": 0,
+        "X-Shihai": 1,
+        "keithah": 0,
         "dss539": 0,
         "rudidev08": 1,
         "waterWang": 0,
@@ -126527,11 +126786,9 @@
         "renatomott": 0,
         "Bobby9228": 0,
         "deboste": 3,
-        "keithah": 0,
         "ashuio": 1,
         "harsh2hell": 0,
         "ticketclosed-wontfix": 0,
-        "X-Shihai": 1,
         "Rogerthis": 0,
         "mintymac": 1,
         "martindell": 0,
@@ -126605,6 +126862,7 @@
         "gabogabucho": 0,
         "DavidSchuchert": 1,
         "thadreber-web": 1,
+        "segator": 0,
         "fluxkapacitor": 0,
         "jorgejiro": 0,
         "joa8270": 0,
@@ -143932,8 +144190,8 @@
       "releaseCreditMeta": null
     },
     "NVIDIA/SkillSpector|community-shipped-v4|all": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
-      "refreshedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
+      "refreshedAt": "2026-08-16T02:05:03.710118Z",
       "logins": [
         "rodboev",
         "mimran-khan",
@@ -144092,7 +144350,7 @@
         "weed33834": {
           "total": 2,
           "open": 2,
-          "recentCount": 1
+          "recentCount": 0
         },
         "ppcvote": {
           "total": 2,
@@ -144521,8 +144779,8 @@
       "releaseCreditMeta": null
     },
     "stablyai/orca|community-shipped-v4|all": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
-      "refreshedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
+      "refreshedAt": "2026-08-16T02:05:03.710118Z",
       "logins": [
         "bbingz",
         "innocarpe",
@@ -144549,28 +144807,28 @@
         "huhuhulululu",
         "robertnisipeanu",
         "Nikolatesla-lj",
+        "jeongph",
         "YuriNachos",
         "tomdebres",
         "mvanhorn",
         "smwbev",
-        "jeongph",
         "mathnogueira",
+        "kunsanglee",
+        "pythonstrup",
         "Jingyue-Wu",
         "sdhilip200",
         "devajmeireles",
         "mturac",
         "prateek",
         "carlosbaraza",
+        "erishforG",
         "EugeValeiras",
         "5Hyeons",
         "Pr1p",
         "makoto-developer",
-        "kunsanglee",
-        "pythonstrup",
         "s546126",
         "colinchambachan",
         "KayleeWilliams",
-        "erishforG",
         "rp0927",
         "Zuz666",
         "lvfen",
@@ -144593,6 +144851,8 @@
         "timothyjlaurent",
         "muddlebee",
         "AmoabaKelvin",
+        "ousugo",
+        "tonite31",
         "itisvincent",
         "zhigang1992",
         "AvichalDwivedi2205",
@@ -144607,7 +144867,6 @@
         "IamCoder18",
         "5hseok",
         "vcolombo",
-        "ousugo",
         "chucoding",
         "kazu-42",
         "stroland02",
@@ -144623,10 +144882,10 @@
         "P-de-Jong",
         "sasha-id",
         "ypatel2022",
+        "VXNCXNX",
         "euclodius",
         "guanbear",
         "5unnyWind",
-        "tonite31",
         "Boulea7",
         "LavyaTandel",
         "powtick",
@@ -144733,6 +144992,10 @@
         "shamounY",
         "mralexsaavedra",
         "xiaolai",
+        "tinhien11",
+        "darrentmorgan",
+        "Lunivo",
+        "jongoks",
         "JahyunBaek",
         "lulumeya",
         "blade035",
@@ -144887,6 +145150,17 @@
         "crilofer",
         "zerone0x",
         "aparusel",
+        "torarnv",
+        "admin-hubtop",
+        "coseto6125",
+        "VuHoi",
+        "686f6c61",
+        "nomuvan",
+        "jsk4581",
+        "ugoenyioha",
+        "yyar",
+        "grim-susemi",
+        "kayd-1337",
         "de1mat",
         "OrdinarySF",
         "yzxcj797",
@@ -144910,7 +145184,6 @@
         "Faridmurzone",
         "dandaka",
         "blueagler",
-        "tinhien11",
         "dchaudhari7177",
         "nnasaki",
         "DaQun",
@@ -144938,7 +145211,6 @@
         "huchister",
         "Pierre-Mike",
         "TintinDu",
-        "darrentmorgan",
         "ajchemist",
         "yulinlina",
         "higumalu",
@@ -145048,7 +145320,6 @@
         "JonesZeng",
         "doyoonear",
         "Iris-Fla",
-        "Lunivo",
         "kcfang",
         "shanchen97",
         "jongkyuu",
@@ -145089,7 +145360,6 @@
         "planderdev",
         "leokwon68",
         "Jeonous",
-        "jongoks",
         "dojineko",
         "hellokidder",
         "MinseongS",
@@ -145444,23 +145714,23 @@
       ],
       "stats": {
         "bbingz": {
-          "total": 200,
-          "open": 98,
-          "recentCount": 82
+          "total": 204,
+          "open": 100,
+          "recentCount": 36
         },
         "innocarpe": {
-          "total": 170,
-          "open": 119,
-          "recentCount": 10
+          "total": 185,
+          "open": 130,
+          "recentCount": 15
         },
         "rodboev": {
           "total": 109,
-          "open": 47,
+          "open": 45,
           "recentCount": 0
         },
         "gatsby74": {
           "total": 88,
-          "open": 48,
+          "open": 44,
           "recentCount": 2
         },
         "xianjianlf2": {
@@ -145530,7 +145800,7 @@
         },
         "fsdwen": {
           "total": 18,
-          "open": 5,
+          "open": 4,
           "recentCount": 1
         },
         "leynier": {
@@ -145546,7 +145816,7 @@
         "dcieslak19973": {
           "total": 16,
           "open": 13,
-          "recentCount": 3
+          "recentCount": 2
         },
         "LesleyMurfin": {
           "total": 16,
@@ -145568,6 +145838,11 @@
           "open": 6,
           "recentCount": 0
         },
+        "jeongph": {
+          "total": 12,
+          "open": 5,
+          "recentCount": 1
+        },
         "YuriNachos": {
           "total": 12,
           "open": 1,
@@ -145588,15 +145863,20 @@
           "open": 5,
           "recentCount": 2
         },
-        "jeongph": {
-          "total": 11,
-          "open": 4,
-          "recentCount": 0
-        },
         "mathnogueira": {
           "total": 11,
           "open": 0,
           "recentCount": 0
+        },
+        "kunsanglee": {
+          "total": 10,
+          "open": 3,
+          "recentCount": 1
+        },
+        "pythonstrup": {
+          "total": 10,
+          "open": 8,
+          "recentCount": 1
         },
         "Jingyue-Wu": {
           "total": 10,
@@ -145628,6 +145908,11 @@
           "open": 3,
           "recentCount": 0
         },
+        "erishforG": {
+          "total": 9,
+          "open": 5,
+          "recentCount": 8
+        },
         "EugeValeiras": {
           "total": 9,
           "open": 8,
@@ -145646,17 +145931,7 @@
         "makoto-developer": {
           "total": 9,
           "open": 6,
-          "recentCount": 2
-        },
-        "kunsanglee": {
-          "total": 9,
-          "open": 3,
-          "recentCount": 3
-        },
-        "pythonstrup": {
-          "total": 9,
-          "open": 8,
-          "recentCount": 0
+          "recentCount": 1
         },
         "s546126": {
           "total": 9,
@@ -145670,18 +145945,13 @@
         },
         "KayleeWilliams": {
           "total": 8,
-          "open": 1,
+          "open": 0,
           "recentCount": 1
-        },
-        "erishforG": {
-          "total": 8,
-          "open": 5,
-          "recentCount": 7
         },
         "rp0927": {
           "total": 8,
           "open": 8,
-          "recentCount": 8
+          "recentCount": 0
         },
         "Zuz666": {
           "total": 8,
@@ -145721,7 +145991,7 @@
         "manuaudio": {
           "total": 7,
           "open": 6,
-          "recentCount": 7
+          "recentCount": 1
         },
         "branben": {
           "total": 7,
@@ -145787,6 +146057,16 @@
           "total": 7,
           "open": 0,
           "recentCount": 0
+        },
+        "ousugo": {
+          "total": 6,
+          "open": 2,
+          "recentCount": 1
+        },
+        "tonite31": {
+          "total": 6,
+          "open": 5,
+          "recentCount": 6
         },
         "itisvincent": {
           "total": 6,
@@ -145856,11 +146136,6 @@
         "vcolombo": {
           "total": 5,
           "open": 4,
-          "recentCount": 0
-        },
-        "ousugo": {
-          "total": 5,
-          "open": 1,
           "recentCount": 0
         },
         "chucoding": {
@@ -145938,6 +146213,11 @@
           "open": 0,
           "recentCount": 0
         },
+        "VXNCXNX": {
+          "total": 4,
+          "open": 4,
+          "recentCount": 4
+        },
         "euclodius": {
           "total": 4,
           "open": 4,
@@ -145953,11 +146233,6 @@
           "open": 4,
           "recentCount": 1
         },
-        "tonite31": {
-          "total": 4,
-          "open": 4,
-          "recentCount": 4
-        },
         "Boulea7": {
           "total": 4,
           "open": 2,
@@ -145966,7 +146241,7 @@
         "LavyaTandel": {
           "total": 4,
           "open": 3,
-          "recentCount": 4
+          "recentCount": 2
         },
         "powtick": {
           "total": 4,
@@ -146235,7 +146510,7 @@
         },
         "BaeTab": {
           "total": 3,
-          "open": 3,
+          "open": 2,
           "recentCount": 0
         },
         "umi008": {
@@ -146488,6 +146763,26 @@
           "open": 0,
           "recentCount": 0
         },
+        "tinhien11": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2
+        },
+        "darrentmorgan": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 2
+        },
+        "Lunivo": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 1
+        },
+        "jongoks": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 1
+        },
         "JahyunBaek": {
           "total": 2,
           "open": 2,
@@ -146516,7 +146811,7 @@
         "DTSFO": {
           "total": 2,
           "open": 0,
-          "recentCount": 2
+          "recentCount": 1
         },
         "StillTogether": {
           "total": 2,
@@ -146606,22 +146901,22 @@
         "m8928": {
           "total": 2,
           "open": 2,
-          "recentCount": 2
+          "recentCount": 0
         },
         "dunzkoi": {
           "total": 2,
           "open": 2,
-          "recentCount": 1
+          "recentCount": 0
         },
         "tisohjung": {
           "total": 2,
           "open": 2,
-          "recentCount": 2
+          "recentCount": 0
         },
         "jibin7jose": {
           "total": 2,
           "open": 2,
-          "recentCount": 1
+          "recentCount": 0
         },
         "KevinZhangv5": {
           "total": 2,
@@ -146695,7 +146990,7 @@
         },
         "PPP-JH": {
           "total": 2,
-          "open": 2,
+          "open": 1,
           "recentCount": 0
         },
         "handlecusion": {
@@ -147258,6 +147553,61 @@
           "open": 0,
           "recentCount": 0
         },
+        "torarnv": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "admin-hubtop": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "coseto6125": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "VuHoi": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "686f6c61": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "nomuvan": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "jsk4581": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "ugoenyioha": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "yyar": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "grim-susemi": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "kayd-1337": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
         "de1mat": {
           "total": 1,
           "open": 1,
@@ -147373,11 +147723,6 @@
           "open": 1,
           "recentCount": 1
         },
-        "tinhien11": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 1
-        },
         "dchaudhari7177": {
           "total": 1,
           "open": 1,
@@ -147390,7 +147735,7 @@
         },
         "DaQun": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1
         },
         "HoonDongKang": {
@@ -147509,11 +147854,6 @@
           "recentCount": 1
         },
         "TintinDu": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 1
-        },
-        "darrentmorgan": {
           "total": 1,
           "open": 1,
           "recentCount": 1
@@ -147746,62 +148086,62 @@
         "homeshrawat": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "torykit": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "albarracin-jorge": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "portrah": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "zhang17-24": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "hungrytech": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "Cams626": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "ardakrt": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "svsyy": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "ZhouJian26": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "I1eanch": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "johnbindel": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "ifobos": {
           "total": 1,
@@ -148063,11 +148403,6 @@
           "open": 0,
           "recentCount": 0
         },
-        "Lunivo": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 0
-        },
         "kcfang": {
           "total": 1,
           "open": 0,
@@ -148264,11 +148599,6 @@
           "recentCount": 0
         },
         "Jeonous": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 0
-        },
-        "jongoks": {
           "total": 1,
           "open": 0,
           "recentCount": 0
@@ -150051,7 +150381,7 @@
         "kaynansc": 11,
         "OnlyYu1996": 7,
         "artile": 2,
-        "fsdwen": 9,
+        "fsdwen": 10,
         "leynier": 15,
         "BorjaLL": 9,
         "dcieslak19973": 1,
@@ -150059,28 +150389,28 @@
         "huhuhulululu": 7,
         "robertnisipeanu": 0,
         "Nikolatesla-lj": 4,
+        "jeongph": 2,
         "YuriNachos": 1,
         "tomdebres": 2,
         "mvanhorn": 7,
         "smwbev": 2,
-        "jeongph": 2,
         "mathnogueira": 11,
+        "kunsanglee": 0,
+        "pythonstrup": 1,
         "Jingyue-Wu": 8,
         "sdhilip200": 4,
         "devajmeireles": 8,
         "mturac": 8,
         "prateek": 5,
         "carlosbaraza": 6,
+        "erishforG": 3,
         "EugeValeiras": 1,
         "5Hyeons": 1,
         "Pr1p": 0,
         "makoto-developer": 2,
-        "kunsanglee": 0,
-        "pythonstrup": 0,
         "s546126": 3,
         "colinchambachan": 8,
         "KayleeWilliams": 6,
-        "erishforG": 3,
         "rp0927": 0,
         "Zuz666": 1,
         "lvfen": 4,
@@ -150103,6 +150433,8 @@
         "timothyjlaurent": 1,
         "muddlebee": 4,
         "AmoabaKelvin": 6,
+        "ousugo": 3,
+        "tonite31": 0,
         "itisvincent": 1,
         "zhigang1992": 2,
         "AvichalDwivedi2205": 3,
@@ -150117,7 +150449,6 @@
         "IamCoder18": 0,
         "5hseok": 1,
         "vcolombo": 0,
-        "ousugo": 3,
         "chucoding": 2,
         "kazu-42": 3,
         "stroland02": 1,
@@ -150133,10 +150464,10 @@
         "P-de-Jong": 5,
         "sasha-id": 2,
         "ypatel2022": 5,
+        "VXNCXNX": 0,
         "euclodius": 0,
         "guanbear": 0,
         "5unnyWind": 0,
-        "tonite31": 0,
         "Boulea7": 2,
         "LavyaTandel": 0,
         "powtick": 0,
@@ -150243,6 +150574,10 @@
         "shamounY": 2,
         "mralexsaavedra": 3,
         "xiaolai": 1,
+        "tinhien11": 0,
+        "darrentmorgan": 0,
+        "Lunivo": 0,
+        "jongoks": 0,
         "JahyunBaek": 0,
         "lulumeya": 0,
         "blade035": 0,
@@ -150397,6 +150732,17 @@
         "crilofer": 2,
         "zerone0x": 2,
         "aparusel": 1,
+        "torarnv": 0,
+        "admin-hubtop": 0,
+        "coseto6125": 0,
+        "VuHoi": 0,
+        "686f6c61": 0,
+        "nomuvan": 0,
+        "jsk4581": 0,
+        "ugoenyioha": 0,
+        "yyar": 0,
+        "grim-susemi": 0,
+        "kayd-1337": 0,
         "de1mat": 0,
         "OrdinarySF": 0,
         "yzxcj797": 0,
@@ -150420,10 +150766,9 @@
         "Faridmurzone": 0,
         "dandaka": 0,
         "blueagler": 0,
-        "tinhien11": 0,
         "dchaudhari7177": 0,
         "nnasaki": 0,
-        "DaQun": 0,
+        "DaQun": 1,
         "HoonDongKang": 1,
         "edenaion": 0,
         "kueitiwan-KTW": 0,
@@ -150448,7 +150793,6 @@
         "huchister": 0,
         "Pierre-Mike": 0,
         "TintinDu": 0,
-        "darrentmorgan": 0,
         "ajchemist": 0,
         "yulinlina": 0,
         "higumalu": 0,
@@ -150558,7 +150902,6 @@
         "JonesZeng": 0,
         "doyoonear": 1,
         "Iris-Fla": 0,
-        "Lunivo": 0,
         "kcfang": 0,
         "shanchen97": 1,
         "jongkyuu": 0,
@@ -150599,7 +150942,6 @@
         "planderdev": 1,
         "leokwon68": 0,
         "Jeonous": 0,
-        "jongoks": 0,
         "dojineko": 0,
         "hellokidder": 0,
         "MinseongS": 0,
@@ -156792,8 +157134,8 @@
       "releaseCreditMeta": null
     },
     "thedotmack/claude-mem|community-shipped-v4|all": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
-      "refreshedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
+      "refreshedAt": "2026-08-16T02:05:03.710118Z",
       "logins": [
         "rodboev",
         "ousamabenyounes",
@@ -156905,6 +157247,7 @@
         "iefnaf",
         "trevwilson",
         "dreamiurg",
+        "ntdatt812",
         "Marc-oss-hub",
         "HDK1218",
         "Bleed00",
@@ -157804,6 +158147,11 @@
           "open": 0,
           "recentCount": 0
         },
+        "ntdatt812": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
         "Marc-oss-hub": {
           "total": 1,
           "open": 1,
@@ -157847,12 +158195,12 @@
         "NiceLeader": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "saltoriousSIG": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "jkaizzol": {
           "total": 1,
@@ -159653,6 +160001,7 @@
         "iefnaf": 0,
         "trevwilson": 1,
         "dreamiurg": 2,
+        "ntdatt812": 0,
         "Marc-oss-hub": 0,
         "HDK1218": 0,
         "Bleed00": 0,
@@ -165039,8 +165388,8 @@
       }
     },
     "data-privacy-stack/presidio|community-shipped-v4|all": {
-      "cachedAt": "2026-08-15T01:18:00.808578Z",
-      "refreshedAt": "2026-08-15T01:18:00.808578Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
+      "refreshedAt": "2026-08-16T02:05:03.710118Z",
       "logins": [
         "omri374",
         "RonShakutai",
@@ -165092,6 +165441,7 @@
         "ammills01",
         "rabee333",
         "TianchengYangTR",
+        "Aryan-Pardeshi",
         "inesaranab",
         "Joey239716",
         "mturac",
@@ -165136,7 +165486,6 @@
         "fedeoliv",
         "danfiedler-msft",
         "overgoy",
-        "Aryan-Pardeshi",
         "fevziegeyurtsevenler",
         "arpitjain099",
         "WMOlsen",
@@ -165571,10 +165920,15 @@
           "open": 0,
           "recentCount": 0
         },
+        "Aryan-Pardeshi": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2
+        },
         "inesaranab": {
           "total": 2,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "Joey239716": {
           "total": 2,
@@ -165788,12 +166142,7 @@
         },
         "overgoy": {
           "total": 1,
-          "open": 1,
-          "recentCount": 1
-        },
-        "Aryan-Pardeshi": {
-          "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1
         },
         "fevziegeyurtsevenler": {
@@ -166758,6 +167107,7 @@
         "ammills01": 3,
         "rabee333": 3,
         "TianchengYangTR": 0,
+        "Aryan-Pardeshi": 0,
         "inesaranab": 2,
         "Joey239716": 0,
         "mturac": 1,
@@ -166802,7 +167152,6 @@
         "fedeoliv": 0,
         "danfiedler-msft": 0,
         "overgoy": 0,
-        "Aryan-Pardeshi": 0,
         "fevziegeyurtsevenler": 0,
         "arpitjain099": 0,
         "WMOlsen": 0,
@@ -169736,16 +170085,16 @@
       }
     },
     "mastra-ai/mastra|community-shipped-v4|all": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
-      "refreshedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
+      "refreshedAt": "2026-08-16T02:05:03.710118Z",
       "logins": [
         "wardpeet",
         "TheIsrael1",
         "mfrachet",
         "daneatmastra",
         "adeleke5140",
-        "DanielSLew",
         "damien-schneider",
+        "DanielSLew",
         "roaminro",
         "epinzur",
         "adeniyii",
@@ -169770,16 +170119,16 @@
         "tianma-if",
         "leoisadev1",
         "Sandy-1711",
-        "nehaaprasad",
-        "lawrence-millard",
         "abhay-codes07",
+        "nehaaprasad",
+        "hassnalalshaikh",
+        "lawrence-millard",
         "SaarthurR",
         "BillionClaw",
         "rodboev",
         "itskrishna21",
         "Piyush0049",
         "aisensiy",
-        "hassnalalshaikh",
         "devangpadhiyar",
         "Abuhaithem",
         "tsushanth",
@@ -169795,14 +170144,15 @@
         "VihaanAgarwal",
         "aadityakumarsah",
         "cmphilpot",
+        "uuzzrm",
         "iulspop",
         "KrishavRajSingh",
         "nickperry12",
-        "uuzzrm",
         "rohitsux",
         "JigyasuRajput",
         "guangyang1206",
         "vvatanabe",
+        "pggdev",
         "fzowl",
         "rares04",
         "ediskandarov",
@@ -169812,7 +170162,6 @@
         "RainerAtSpirit",
         "Morgan-Summer-Davis",
         "Mrinank-Bhowmick",
-        "pggdev",
         "VANSH3104",
         "petrchiriboga",
         "bkidy",
@@ -169895,6 +170244,7 @@
         "bowlofarugula",
         "daniel-trevino",
         "thomaslaberge",
+        "rajatnagda45",
         "Abdo-Eid",
         "Adarsh-9182",
         "wwlsy-nql",
@@ -169964,7 +170314,6 @@
         "EugeneChan00",
         "DenisCDev",
         "hamchowderr",
-        "rajatnagda45",
         "snova-kwasia",
         "daleselaji-dev",
         "xiangnuans",
@@ -170099,6 +170448,9 @@
         "justjavac",
         "pulkitsethi",
         "zinyando",
+        "MohDev212",
+        "CxHsin",
+        "Sunil-Meka",
         "sergical",
         "us",
         "Autonomy-Labs-Tech",
@@ -170663,15 +171015,15 @@
           "open": 0,
           "recentCount": 0
         },
+        "damien-schneider": {
+          "total": 395,
+          "open": 6,
+          "recentCount": 50
+        },
         "DanielSLew": {
           "total": 395,
           "open": 5,
           "recentCount": 6
-        },
-        "damien-schneider": {
-          "total": 394,
-          "open": 5,
-          "recentCount": 49
         },
         "roaminro": {
           "total": 374,
@@ -170696,7 +171048,7 @@
         "rphansen91": {
           "total": 231,
           "open": 8,
-          "recentCount": 12
+          "recentCount": 9
         },
         "PaulieScanlon": {
           "total": 204,
@@ -170759,9 +171111,9 @@
           "recentCount": 0
         },
         "CodingButter": {
-          "total": 36,
-          "open": 5,
-          "recentCount": 11
+          "total": 39,
+          "open": 8,
+          "recentCount": 14
         },
         "kosukeoya": {
           "total": 32,
@@ -170785,7 +171137,7 @@
         },
         "leoisadev1": {
           "total": 25,
-          "open": 2,
+          "open": 1,
           "recentCount": 5
         },
         "Sandy-1711": {
@@ -170793,20 +171145,25 @@
           "open": 1,
           "recentCount": 0
         },
+        "abhay-codes07": {
+          "total": 20,
+          "open": 2,
+          "recentCount": 2
+        },
         "nehaaprasad": {
           "total": 19,
           "open": 0,
           "recentCount": 0
         },
+        "hassnalalshaikh": {
+          "total": 18,
+          "open": 16,
+          "recentCount": 14
+        },
         "lawrence-millard": {
           "total": 18,
           "open": 11,
           "recentCount": 18
-        },
-        "abhay-codes07": {
-          "total": 18,
-          "open": 1,
-          "recentCount": 0
         },
         "SaarthurR": {
           "total": 18,
@@ -170837,11 +171194,6 @@
           "total": 14,
           "open": 0,
           "recentCount": 3
-        },
-        "hassnalalshaikh": {
-          "total": 14,
-          "open": 12,
-          "recentCount": 11
         },
         "devangpadhiyar": {
           "total": 14,
@@ -170881,7 +171233,7 @@
         "clementantonyk": {
           "total": 12,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "noahcrowley": {
           "total": 12,
@@ -170906,7 +171258,7 @@
         "VihaanAgarwal": {
           "total": 11,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "aadityakumarsah": {
           "total": 11,
@@ -170917,6 +171269,11 @@
           "total": 11,
           "open": 0,
           "recentCount": 0
+        },
+        "uuzzrm": {
+          "total": 10,
+          "open": 2,
+          "recentCount": 10
         },
         "iulspop": {
           "total": 10,
@@ -170932,11 +171289,6 @@
           "total": 10,
           "open": 0,
           "recentCount": 0
-        },
-        "uuzzrm": {
-          "total": 9,
-          "open": 2,
-          "recentCount": 9
         },
         "rohitsux": {
           "total": 9,
@@ -170957,6 +171309,11 @@
           "total": 9,
           "open": 0,
           "recentCount": 0
+        },
+        "pggdev": {
+          "total": 8,
+          "open": 2,
+          "recentCount": 8
         },
         "fzowl": {
           "total": 8,
@@ -171003,15 +171360,10 @@
           "open": 0,
           "recentCount": 0
         },
-        "pggdev": {
-          "total": 7,
-          "open": 1,
-          "recentCount": 7
-        },
         "VANSH3104": {
           "total": 7,
           "open": 0,
-          "recentCount": 5
+          "recentCount": 2
         },
         "petrchiriboga": {
           "total": 7,
@@ -171126,7 +171478,7 @@
         "pacocartones": {
           "total": 5,
           "open": 3,
-          "recentCount": 5
+          "recentCount": 4
         },
         "connorch": {
           "total": 5,
@@ -171206,7 +171558,7 @@
         "jal-co": {
           "total": 4,
           "open": 0,
-          "recentCount": 2
+          "recentCount": 1
         },
         "praveenrav": {
           "total": 4,
@@ -171221,12 +171573,12 @@
         "unfitcoder101": {
           "total": 4,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "edenbuilds": {
           "total": 4,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "LHMQ878": {
           "total": 4,
@@ -171417,6 +171769,11 @@
           "total": 4,
           "open": 0,
           "recentCount": 0
+        },
+        "rajatnagda45": {
+          "total": 3,
+          "open": 1,
+          "recentCount": 3
         },
         "Abdo-Eid": {
           "total": 3,
@@ -171762,11 +172119,6 @@
           "total": 2,
           "open": 1,
           "recentCount": 1
-        },
-        "rajatnagda45": {
-          "total": 2,
-          "open": 0,
-          "recentCount": 2
         },
         "snova-kwasia": {
           "total": 2,
@@ -172438,6 +172790,21 @@
           "open": 0,
           "recentCount": 0
         },
+        "MohDev212": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "CxHsin": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "Sunil-Meka": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
         "sergical": {
           "total": 1,
           "open": 0,
@@ -172496,22 +172863,22 @@
         "Shrutis3004": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "alex-leap": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "Retr0413": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "arimu1": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "hariharan-brucewayne220": {
           "total": 1,
@@ -175130,8 +175497,8 @@
         "mfrachet": 479,
         "daneatmastra": 442,
         "adeleke5140": 389,
-        "DanielSLew": 355,
         "damien-schneider": 341,
+        "DanielSLew": 355,
         "roaminro": 334,
         "epinzur": 243,
         "adeniyii": 242,
@@ -175154,18 +175521,18 @@
         "alliehowe29": 24,
         "axe312ger": 30,
         "tianma-if": 2,
-        "leoisadev1": 23,
+        "leoisadev1": 24,
         "Sandy-1711": 16,
-        "nehaaprasad": 5,
-        "lawrence-millard": 2,
         "abhay-codes07": 15,
+        "nehaaprasad": 5,
+        "hassnalalshaikh": 0,
+        "lawrence-millard": 2,
         "SaarthurR": 7,
         "BillionClaw": 0,
         "rodboev": 7,
         "itskrishna21": 5,
         "Piyush0049": 7,
         "aisensiy": 9,
-        "hassnalalshaikh": 0,
         "devangpadhiyar": 6,
         "Abuhaithem": 7,
         "tsushanth": 6,
@@ -175181,14 +175548,15 @@
         "VihaanAgarwal": 8,
         "aadityakumarsah": 2,
         "cmphilpot": 8,
+        "uuzzrm": 3,
         "iulspop": 7,
         "KrishavRajSingh": 3,
         "nickperry12": 10,
-        "uuzzrm": 3,
         "rohitsux": 5,
         "JigyasuRajput": 7,
         "guangyang1206": 6,
         "vvatanabe": 8,
+        "pggdev": 5,
         "fzowl": 2,
         "rares04": 7,
         "ediskandarov": 3,
@@ -175198,7 +175566,6 @@
         "RainerAtSpirit": 6,
         "Morgan-Summer-Davis": 5,
         "Mrinank-Bhowmick": 5,
-        "pggdev": 5,
         "VANSH3104": 3,
         "petrchiriboga": 5,
         "bkidy": 5,
@@ -175281,6 +175648,7 @@
         "bowlofarugula": 3,
         "daniel-trevino": 4,
         "thomaslaberge": 3,
+        "rajatnagda45": 2,
         "Abdo-Eid": 1,
         "Adarsh-9182": 0,
         "wwlsy-nql": 3,
@@ -175350,7 +175718,6 @@
         "EugeneChan00": 0,
         "DenisCDev": 2,
         "hamchowderr": 1,
-        "rajatnagda45": 2,
         "snova-kwasia": 0,
         "daleselaji-dev": 1,
         "xiangnuans": 1,
@@ -175485,6 +175852,9 @@
         "justjavac": 2,
         "pulkitsethi": 2,
         "zinyando": 2,
+        "MohDev212": 0,
+        "CxHsin": 0,
+        "Sunil-Meka": 0,
         "sergical": 1,
         "us": 0,
         "Autonomy-Labs-Tech": 0,
@@ -253021,7 +253391,7 @@
   },
   "releaseData": {
     "kenn-io/agentsview": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
       "releases": [
         {
           "tagName": "v0.40.1",
@@ -253545,7 +253915,7 @@
       "prToRelease": {}
     },
     "thedotmack/claude-mem": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
       "releases": [
         {
           "tagName": "v13.15.0",
@@ -255799,7 +256169,7 @@
       }
     },
     "headroomlabs-ai/headroom": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
       "releases": [
         {
           "tagName": "v0.35.0",
@@ -260211,7 +260581,7 @@
       }
     },
     "mem0ai/mem0": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
       "releases": [
         {
           "tagName": "n8n-nodes-mem0-v0.1.2",
@@ -272790,8 +273160,604 @@
       }
     },
     "stablyai/orca": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
       "releases": [
+        {
+          "tagName": "v1.4.183",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.183",
+          "publishedAt": "2026-08-15T03:53:53Z",
+          "credits": {
+            "Jinwoo-H": [
+              13750,
+              13796,
+              13797,
+              13814,
+              13857,
+              13866,
+              13867,
+              13876,
+              13885,
+              13909,
+              13922,
+              13927,
+              13939,
+              14000,
+              14023,
+              14100,
+              14117,
+              14119
+            ],
+            "AmethystLiang": [
+              12761,
+              13851,
+              13853,
+              13855,
+              13856,
+              13863,
+              13864,
+              13893,
+              13894,
+              13898,
+              13899,
+              13940,
+              13957,
+              14194,
+              14235,
+              14238,
+              14242,
+              14258,
+              14260,
+              14267,
+              14302,
+              14304,
+              14313
+            ],
+            "OrcaWin": [
+              13426,
+              13442,
+              13443,
+              13482,
+              13545,
+              13552,
+              13792,
+              13799,
+              13859,
+              13995,
+              14015,
+              14363
+            ],
+            "brennanb2025": [
+              13062,
+              13372,
+              13379,
+              13557,
+              13666,
+              13667,
+              13670,
+              13868,
+              13906,
+              13925,
+              13966,
+              14085,
+              14086,
+              14092,
+              14095,
+              14099,
+              14131,
+              14132,
+              14191,
+              14343
+            ],
+            "nwparker": [
+              5832,
+              13881,
+              13882,
+              13883,
+              13887,
+              13903,
+              13904,
+              13919,
+              13926,
+              13969,
+              13987,
+              14173
+            ],
+            "bbingz": [
+              12582
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43",
+          "publishedAt": "2026-08-15T02:35:26Z",
+          "credits": {
+            "brennanb2025": [
+              12611,
+              12840,
+              12849,
+              12963,
+              13014,
+              13061,
+              13062,
+              13155,
+              13159,
+              13164,
+              13248,
+              13258,
+              13372,
+              13377,
+              13378,
+              13379,
+              13382,
+              13383,
+              13384,
+              13388,
+              13389,
+              13393,
+              13398,
+              13407,
+              13411,
+              13430,
+              13432,
+              13503,
+              13523,
+              13531,
+              13557,
+              13646,
+              13647,
+              13649,
+              13651,
+              13652,
+              13657,
+              13658,
+              13662,
+              13666,
+              13667,
+              13669,
+              13670,
+              13675,
+              13677,
+              13680,
+              13682,
+              13685,
+              13714,
+              13745,
+              13751,
+              13754,
+              13759,
+              13868,
+              13906,
+              13925,
+              13966,
+              14085,
+              14086,
+              14087,
+              14091,
+              14092,
+              14095,
+              14099,
+              14120,
+              14128,
+              14131,
+              14132,
+              14162,
+              14166,
+              14177,
+              14179,
+              14189,
+              14191,
+              14192,
+              14193,
+              14196,
+              14197,
+              14244,
+              14247,
+              14256
+            ],
+            "AmethystLiang": [
+              12761,
+              12780,
+              13076,
+              13100,
+              13105,
+              13112,
+              13114,
+              13120,
+              13123,
+              13132,
+              13260,
+              13261,
+              13264,
+              13266,
+              13279,
+              13292,
+              13299,
+              13361,
+              13365,
+              13367,
+              13368,
+              13380,
+              13391,
+              13410,
+              13419,
+              13422,
+              13496,
+              13674,
+              13700,
+              13768,
+              13851,
+              13853,
+              13855,
+              13856,
+              13863,
+              13864,
+              13893,
+              13894,
+              13898,
+              13899,
+              13940,
+              13957,
+              13975,
+              14090,
+              14112,
+              14158,
+              14194,
+              14203,
+              14232,
+              14234,
+              14235,
+              14238,
+              14242,
+              14243,
+              14258,
+              14260,
+              14267,
+              14302,
+              14304,
+              14313
+            ],
+            "nwparker": [
+              5832,
+              11698,
+              12463,
+              12465,
+              12466,
+              12473,
+              12474,
+              12475,
+              12476,
+              12477,
+              12479,
+              12882,
+              13113,
+              13128,
+              13154,
+              13168,
+              13181,
+              13182,
+              13282,
+              13283,
+              13284,
+              13286,
+              13288,
+              13308,
+              13309,
+              13310,
+              13312,
+              13313,
+              13314,
+              13315,
+              13317,
+              13319,
+              13326,
+              13400,
+              13401,
+              13402,
+              13404,
+              13408,
+              13409,
+              13415,
+              13417,
+              13421,
+              13425,
+              13428,
+              13429,
+              13433,
+              13436,
+              13437,
+              13440,
+              13444,
+              13445,
+              13449,
+              13450,
+              13453,
+              13454,
+              13456,
+              13457,
+              13459,
+              13460,
+              13462,
+              13467,
+              13469,
+              13472,
+              13475,
+              13477,
+              13478,
+              13479,
+              13480,
+              13484,
+              13489,
+              13492,
+              13497,
+              13498,
+              13499,
+              13500,
+              13502,
+              13504,
+              13505,
+              13506,
+              13507,
+              13509,
+              13510,
+              13511,
+              13514,
+              13516,
+              13517,
+              13518,
+              13519,
+              13524,
+              13525,
+              13527,
+              13528,
+              13529,
+              13530,
+              13543,
+              13544,
+              13546,
+              13548,
+              13549,
+              13554,
+              13558,
+              13559,
+              13565,
+              13567,
+              13573,
+              13581,
+              13586,
+              13588,
+              13591,
+              13592,
+              13595,
+              13608,
+              13618,
+              13619,
+              13621,
+              13622,
+              13632,
+              13634,
+              13636,
+              13638,
+              13643,
+              13654,
+              13671,
+              13676,
+              13683,
+              13690,
+              13698,
+              13705,
+              13706,
+              13715,
+              13737,
+              13739,
+              13744,
+              13747,
+              13748,
+              13758,
+              13769,
+              13770,
+              13771,
+              13772,
+              13777,
+              13778,
+              13782,
+              13785,
+              13787,
+              13803,
+              13881,
+              13882,
+              13883,
+              13887,
+              13901,
+              13902,
+              13903,
+              13904,
+              13905,
+              13919,
+              13926,
+              13928,
+              13969,
+              13974,
+              13987,
+              14141,
+              14144,
+              14145,
+              14156,
+              14167,
+              14173,
+              14187,
+              14190,
+              14204,
+              14207,
+              14211,
+              14212,
+              14213,
+              14214,
+              14216,
+              14217,
+              14218,
+              14245,
+              14255,
+              14259,
+              14261
+            ],
+            "AvichalDwivedi2205": [
+              12896
+            ],
+            "bbingz": [
+              11674,
+              11676,
+              12582,
+              12602,
+              13710
+            ],
+            "OrcaWin": [
+              12710,
+              13106,
+              13107,
+              13139,
+              13207,
+              13265,
+              13418,
+              13420,
+              13426,
+              13442,
+              13443,
+              13451,
+              13482,
+              13483,
+              13485,
+              13545,
+              13552,
+              13792,
+              13798,
+              13799,
+              13859,
+              13995,
+              14015,
+              14180
+            ],
+            "Jinwoo-H": [
+              12972,
+              13012,
+              13094,
+              13096,
+              13108,
+              13109,
+              13135,
+              13158,
+              13356,
+              13369,
+              13376,
+              13412,
+              13414,
+              13427,
+              13431,
+              13470,
+              13508,
+              13693,
+              13708,
+              13718,
+              13727,
+              13730,
+              13750,
+              13796,
+              13797,
+              13814,
+              13857,
+              13866,
+              13867,
+              13876,
+              13885,
+              13909,
+              13922,
+              13927,
+              13939,
+              14000,
+              14009,
+              14023,
+              14027,
+              14100,
+              14105,
+              14106,
+              14117,
+              14119,
+              14142,
+              14161
+            ],
+            "ousugo": [
+              12881
+            ],
+            "innocarpe": [
+              10580,
+              11568,
+              12811
+            ],
+            "hyein-cbio": [
+              13104
+            ],
+            "ethznn": [
+              12879
+            ],
+            "smwbev": [
+              12935
+            ],
+            "plaonn": [
+              12652
+            ],
+            "makoto-developer": [
+              12934,
+              13124
+            ],
+            "chucoding": [
+              12057
+            ],
+            "taehwanis": [
+              12402
+            ],
+            "sei0": [
+              9714
+            ],
+            "doyoonear": [
+              12317
+            ],
+            "xianjianlf2": [
+              11670
+            ],
+            "shanchen97": [
+              12271
+            ],
+            "hwantage": [
+              10920
+            ],
+            "afifhaziq": [
+              12911
+            ],
+            "ax-dfcorp": [
+              11646
+            ],
+            "qiuyongjin": [
+              11585
+            ],
+            "bokjk": [
+              11476
+            ],
+            "socar-jian": [
+              13729
+            ],
+            "erishforG": [
+              14124
+            ],
+            "FurmaPanda": [
+              14114
+            ],
+            "PannenetsF": [
+              14240
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
         {
           "tagName": "v1.4.183-rc.0",
           "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.183-rc.0",
@@ -329976,12 +330942,407 @@
         "12582": {
           "tagName": "v1.4.183-rc.0",
           "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.183-rc.0"
+        },
+        "13061": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13407": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13432": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13531": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13652": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14087": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14091": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14120": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14128": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14162": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14166": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14177": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14179": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14189": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14192": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14193": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14196": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14197": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14244": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14247": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14256": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13419": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13496": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13975": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14090": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14112": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14158": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14203": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14232": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14234": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14243": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13326": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13400": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13401": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13408": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13409": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13415": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13417": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13425": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13428": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13449": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13469": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13516": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13519": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13544": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13549": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13554": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13565": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13573": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13592": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13595": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13632": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13787": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13803": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13901": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13902": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13905": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13928": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13974": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14141": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14144": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14145": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14156": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14167": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14187": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14190": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14204": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14207": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14211": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14212": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14213": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14214": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14216": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14217": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14218": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14245": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14255": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14259": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14261": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "11676": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13265": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "13798": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14180": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14009": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14027": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14105": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14106": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14142": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14161": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "12317": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "11670": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "12271": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "10920": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "12911": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14124": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14114": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
+        },
+        "14240": {
+          "tagName": "mobile-android-v0.0.43",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/mobile-android-v0.0.43"
         }
       }
     },
     "NVIDIA/SkillSpector": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
       "releases": [
+        {
+          "tagName": "v2.9.5",
+          "htmlUrl": "https://github.com/NVIDIA/SkillSpector/releases/tag/v2.9.5",
+          "publishedAt": "2026-08-15T21:03:32Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
         {
           "tagName": "v2.9.4",
           "htmlUrl": "https://github.com/NVIDIA/SkillSpector/releases/tag/v2.9.4",
@@ -330056,7 +331417,7 @@
       "prToRelease": {}
     },
     "NousResearch/hermes-agent": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
       "releases": [
         {
           "tagName": "v2026.8.13",
@@ -330237,7 +331598,7 @@
       "prToRelease": {}
     },
     "data-privacy-stack/presidio": {
-      "cachedAt": "2026-08-15T01:18:00.808578Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
       "releases": [
         {
           "tagName": "2.2.364",
@@ -353075,7 +354436,7 @@
       }
     },
     "mastra-ai/mastra": {
-      "cachedAt": "2026-08-15T01:04:01.879343Z",
+      "cachedAt": "2026-08-16T02:05:03.710118Z",
       "releases": [
         {
           "tagName": "@mastra/core@1.58.0",

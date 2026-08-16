@@ -39,13 +39,15 @@ Community boards rank third-party contributors only; owners, maintainers, bots (
 The board pipeline is split into a write side and a read side, both in `core/leaderboard.py`:
 
 - **Write**: `fetch_community_leaderboard` (called per active repo from `generate_report`, shielded against `GhRetryExhausted`) refreshes the cache entry `repo|community-shipped-v4|all` on a 24h TTL via paginated GraphQL over `repository.pullRequests` (100/page; a failed page or hitting the 200-page cap aborts the refresh and keeps the existing entry; an empty community still stamps the TTL). It updates only the keys it owns (`cachedAt`, `refreshedAt`, `logins`, `stats`, `shippedCounts`) and preserves everything else in the entry, notably `releaseCreditCounts`, which only the retired PS1 ever wrote. `shippedCounts` takes the max of the prior (possibly evidence-based) count and the fresh merged-PR proxy per login; logins absent from the fresh scan (deleted accounts) keep their prior counts.
-- **Read**: `cached_leaderboard_rows` (via `core/page.py`) renders whatever entry exists. The credit profile decides the credited column: hermes-webui (`changelog-release`) reads `releaseCreditCounts`; all other repos (`github-evidence`) read `shippedCounts`. hermes-webui's 5-source credit pipeline in `core/credit.py` serves the verify CLI paths; it does not populate the board entry.
+- **Read**: `cached_leaderboard_rows` (via `core/page.py`) renders whatever entry exists. The credit profile decides the credited column: hermes-webui (`changelog-release`) takes the per-login max of `releaseCreditCounts` and `shippedCounts`; all other repos (`github-evidence`) read `shippedCounts`. hermes-webui's 5-source credit pipeline in `core/credit.py` serves the verify CLI paths; it does not populate the board entry.
+
+The curated map is a floor, never a gate. It reads `releaseCreditCounts` first because that map counts absorbed and co-authored work the merged-PR proxy cannot see, but a login missing from it falls through to the merged count instead of rendering 0. Gating on it dropped every contributor who landed work after the map froze (2026-07-02) below all 218 credited logins and out of the 50-row cutoff; webtecnica, 14 merged PRs and 4 in upstream's own `CONTRIBUTORS.md`, ranked 219th at 0 credited.
 
 History: the PowerShell rewrite ported only the read side; boards kept rendering from PS1-era cache entries until a repo without one (unsloth) exposed the gap. The write side was added 2026-07-03, initially with `gh pr list --limit 1000` (truncated repos with more PRs and clobbered the credit keys); both were fixed the same day. Three unwired refresh helpers from the abandoned first port were removed too.
 
-Known gaps (2026-07-03):
+Known gaps (2026-07-03, revised 2026-08-15):
 
-- `releaseCreditCounts` has no Python writer, so hermes-webui's credited column is frozen at PS1-era values; new release credits require wiring `core/credit.py` output into the board entry.
+- `releaseCreditCounts` still has no Python writer, so its share of hermes-webui's credited column is frozen at PS1-era values. The merged-count fallback keeps new contributors on the board, but absorbed and co-authored credit earned since the freeze is invisible until `core/credit.py` output is wired into the board entry.
 - Evidence-based shipped counts are preserved, not recomputed; a login's evidence count only grows again if their merged-PR proxy overtakes it.
 
 ## Breakdown seed
