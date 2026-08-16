@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Triple Whale — Growth Engineer Prep</title>
+<link rel="stylesheet" href="triple-whale/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+</head>
+<body>
+<nav data-doc-nav>
+  <a class="sort-pill active" data-target="primer" href="#primer">The Tooling</a>
+  <a class="sort-pill" data-target="tw-stack" href="#tw-stack">TW's Stack</a>
+  <a class="sort-pill" data-target="experimentation" href="#experimentation">Experimentation</a>
+  <a class="sort-pill" data-target="instrumentation" href="#instrumentation">Instrumentation</a>
+  <a class="sort-pill" data-target="pql" href="#pql">PQL Scoring</a>
+  <a class="sort-pill" data-target="gating" href="#gating">Gating</a>
+  <a class="sort-pill" data-target="moby" href="#moby">Moby</a>
+  <a class="sort-pill" data-target="reference" href="#reference">Reference</a>
+</nav>
+<main>
+
+<h1>Triple Whale: Growth Engineer Prep</h1>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="primer">Analytics, Flags, Warehouses, and How They Connect</h2>
+
+<p>A growth engineer instruments a product, runs experiments on it, and measures what converts. The tooling for that breaks into five categories. They're often bundled (PostHog alone covers three of them), but they do different things.</p>
+
+<table>
+  <thead><tr><th>Layer</th><th>Job</th><th>Major players</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>CDP</strong><br><small>Customer Data Platform</small></td>
+      <td>Collects events from every source (web app, mobile, backend, third-party APIs), unifies identity across devices/sessions, and <strong>routes</strong> that unified stream to downstream destinations. The CDP doesn't analyze anything; it's a switchboard.</td>
+      <td>Segment, mParticle, RudderStack, Jitsu</td>
+    </tr>
+    <tr>
+      <td><strong>Product analytics</strong></td>
+      <td>Answers "what are users doing?" Funnels, retention curves, cohort analysis. Takes the event stream (often from the CDP) and makes it queryable without SQL.</td>
+      <td><em>PostHog</em>, Amplitude, Mixpanel, Heap</td>
+    </tr>
+    <tr>
+      <td><strong>Feature management<br>&amp; experimentation</strong></td>
+      <td>Controls <em>who sees what</em> at runtime. Feature flags for gradual rollout, A/B experiments for measuring impact. Deterministic assignment via consistent hashing so a user always sees the same variant.</td>
+      <td>LaunchDarkly, Statsig, Optimizely, <em>PostHog</em>, Eppo, GrowthBook</td>
+    </tr>
+    <tr>
+      <td><strong>Data warehouse</strong></td>
+      <td>The SQL-queryable store for <em>all</em> historical data. The CDP and analytics tools push data here. Data teams, ML pipelines, and complex queries run against the warehouse, not the analytics UI.</td>
+      <td>BigQuery, Snowflake, <em>ClickHouse</em>, Redshift, Databricks</td>
+    </tr>
+    <tr>
+      <td><strong>Session recording</strong></td>
+      <td>Records DOM mutations + mouse/scroll events, replays them as a video. For debugging, UX research, and understanding why a funnel step drops off.</td>
+      <td><em>PostHog</em>, FullStory, Hotjar, <em>Microsoft Clarity</em>, LogRocket</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>How they connect</h3>
+
+<div class="flow">
+  <div class="flow-box accent-blue">
+    <strong>Your app</strong>
+    <small>events fire on user actions</small>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box accent-green glow">
+    <strong>CDP</strong>
+    <small>Segment / RudderStack</small>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="fan-out">
+    <div class="flow-box">Product analytics <small>Amplitude, PostHog</small></div>
+    <div class="flow-box">Data warehouse <small>BigQuery, ClickHouse</small></div>
+    <div class="flow-box">CRM <small>HubSpot, Salesforce</small></div>
+    <div class="flow-box">Ad platforms <small>Google, Meta pixels</small></div>
+  </div>
+</div>
+
+<p>The canonical pattern: instrument once via the CDP's SDK (<code>segment.track()</code>), and the CDP replicates that event to every downstream tool. Swap Amplitude for Mixpanel? Change a toggle in Segment; don't touch your code.</p>
+
+<p><strong>PostHog's position is unusual.</strong> It spans product analytics, session recording, feature flags, and experiments in one tool. Companies that use PostHog as their primary analytics often skip the CDP entirely because PostHog is already receiving all the events directly. This is TW's situation: PostHog gets events directly from the app, no CDP in between.</p>
+
+<p>The tradeoff: without a CDP, events only go to PostHog. If you want the same events in BigQuery, HubSpot, and ad platforms, you either instrument each destination separately or build a custom fan-out. That's what Google Tag Manager (GTM) partially handles for TW's ad pixels, but it's not a unified approach.</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="tw-stack">Triple Whale's Internal Stack</h2>
+
+<p>All <code>tw-*</code> prefixed globals below are Triple Whale's namespace, not Twilio. They're <code>window</code> properties set on app load from the server.</p>
+
+<table>
+  <thead><tr><th>Layer</th><th>Technology</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Frontend</td><td>React + Vite + Mantine</td><td>Not Next.js. Mantine is the component library / design system. CDN: <code>cdn-app.triplewhale.com/master/assets/</code></td></tr>
+    <tr><td>Product analytics</td><td>PostHog</td><td>Session recording ON, flags empty, autocapture OFF</td></tr>
+    <tr><td>Session recording</td><td>PostHog + Microsoft Clarity</td><td>Both running</td></tr>
+    <tr><td>Marketing tags</td><td>GTM</td><td>Google Ads, Facebook, LinkedIn, Bing UET pixels</td></tr>
+    <tr><td>Billing</td><td>Stripe</td><td>Direct integration, no Chargebee</td></tr>
+    <tr><td>Subscription metrics</td><td>ProfitWell (Paddle)</td><td>MRR, churn, expansion revenue</td></tr>
+    <tr><td>AI analytics</td><td>oaiq (OpenAI)</td><td>Moby usage tracking, separate from PostHog</td></tr>
+    <tr><td>Toasts</td><td>react-toastify</td><td>npm package, not a platform</td></tr>
+    <tr><td>Support</td><td>Intercom</td><td>In-app widget</td></tr>
+    <tr><td>Feature requests</td><td>Canny</td><td>User-facing roadmap</td></tr>
+    <tr><td>CRM / Sales</td><td>HubSpot, Apollo.io, RevenueHero</td><td>Pipeline + prospecting + scheduling</td></tr>
+    <tr><td>Data pipeline</td><td>Pub/Sub + Kafka → Beam → ClickHouse</td><td>Self-hosted. Also MongoDB, Redis, Postgres, BigTable, Firestore.</td></tr>
+    <tr><td>AI models</td><td>Claude, GPT, Gemini via proxy</td><td>App version "3.0"</td></tr>
+    <tr><td>Feature gating</td><td>Custom <code>tw-features</code></td><td>No third-party flag platform</td></tr>
+    <tr><td>Customer data platform</td><td><strong>None</strong></td><td>Segment on Webflow marketing site only, not in the product</td></tr>
+  </tbody>
+</table>
+
+<h3>Window globals</h3>
+
+<table>
+  <thead><tr><th>Key</th><th>What it holds</th></tr></thead>
+  <tbody>
+    <tr><td><code>tw-features</code></td><td>Plan entitlement array: <code>["BASIC", "CONF_FREE_3", "PIXEL", "PROD_FREE"]</code></td></tr>
+    <tr><td><code>tw-subscription</code></td><td>Full billing state: contract_type, product, features, credits, force_upgrade_*, Stripe price IDs</td></tr>
+    <tr><td><code>tw-shop</code></td><td>Shop state: mspConnected, pixel_install_status, welcomeWizardData, enableNewMobyChat</td></tr>
+    <tr><td><code>tw-user</code></td><td>User profile and permissions</td></tr>
+    <tr><td><code>tw-global-config</code></td><td>Infra routing: adsOnClickhouse, forceCHDialect, forceSharded, pixelNexus, metricsNexus</td></tr>
+    <tr><td><code>tw-core-workspaces</code></td><td>Multi-workspace support</td></tr>
+    <tr><td><code>tw-shop-permissions</code></td><td>Role-based access within a shop</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="experimentation">Experimentation</h2>
+
+<h3>Tools the JD mentions vs what's running</h3>
+
+<p>The JD lists LaunchDarkly, Statsig, and Optimizely as examples, then adds "or building lightweight equivalents when needed."</p>
+
+<ul>
+  <li><strong>LaunchDarkly</strong> is a feature flag delivery service. You define flags and targeting rules in their dashboard, and their SDK evaluates them client-side or server-side. It's good at flag delivery and percentage rollouts but doesn't have built-in experiment analysis; you pair it with a separate analytics tool to measure results.</li>
+  <li><strong>Statsig</strong> (built by ex-Facebook engineers) covers the full experiment lifecycle: flags, A/B assignment, and statistical analysis in one product. It auto-calculates significance and handles mutual exclusion between experiments. Closer to what a growth team actually needs than a pure flag service.</li>
+  <li><strong>PostHog</strong> covers flags, experiments, and analytics together. TW already has it loaded, and it already knows about their users and shops. Its experiment feature flags are empty, meaning nobody has created experiments yet, but the SDK and analytics pipeline are already wired up. Starting here avoids adding a new vendor and a new SDK.</li>
+</ul>
+
+<h3>Where Statsig would help (and PostHog doesn't)</h3>
+
+<p>Three concrete gaps in PostHog's experiment system that Statsig handles natively:</p>
+
+<ol>
+  <li><strong>Sequential testing.</strong> PostHog uses fixed-horizon analysis: you pick a sample size, wait until it fills, then read results. Peeking early inflates false positives. Statsig uses sequential testing (always-valid p-values), so you can monitor results continuously without statistical penalty. For a growth team shipping weekly, this matters.</li>
+  <li><strong>Mutual exclusion layers.</strong> If two experiments run on the same user population and affect the same metric, their results confound each other. PostHog has no native mechanism to prevent overlap. Statsig lets you define exclusion layers: experiments in the same layer are mutually exclusive, experiments in different layers run independently.</li>
+  <li><strong>Guardrail metrics.</strong> PostHog tracks one primary metric per experiment. Statsig lets you define guardrail metrics (e.g., "don't tank session duration while optimizing upgrade rate") and auto-flags when a winning variant harms a secondary metric.</li>
+</ol>
+
+<p>PostHog is the right starting point because the SDK is already loaded and the analytics data is already there. Statsig becomes worth adding when the experiment volume is high enough that overlap and continuous monitoring become real problems.</p>
+
+<h3>Three layers of flags</h3>
+
+<ol>
+  <li><strong>Plan gating (<code>tw-features</code>)</strong>: deterministic. If your plan includes <code>"PIXEL"</code>, you get Pixel features. No randomization. This is billing logic.</li>
+  <li><strong>Infrastructure routing (<code>tw-global-config</code>)</strong>: operational. Routes queries to ClickHouse shards. Not user-facing.</li>
+  <li><strong>Experiments (PostHog)</strong>: probabilistic. A/B tests on upgrade copy, onboarding flows, gate types. <strong>Currently empty.</strong> This is what the role builds.</li>
+</ol>
+
+<div class="callout">
+  <p>PostHog has <code>$enabled_feature_flags</code> and <code>$feature_flag_payloads</code> in localStorage, both empty. The infrastructure exists; nobody has activated it.</p>
+</div>
+
+<p>Experiments layer <em>on top of</em> plan gating. You don't experiment with whether a user gets multi-touch attribution (that's a plan entitlement). You experiment with <em>how</em> you present the upgrade.</p>
+
+<h3>posthog-js SDK patterns</h3>
+
+<pre><code class="language-javascript">// Check which variant a user is in
+const variant = posthog.getFeatureFlag('upgrade-modal-experiment')
+
+if (variant === 'control') showHardGate()
+else if (variant === 'blurred-preview') showSoftGate()
+
+// Wait for flags to load (fetched async on init)
+posthog.onFeatureFlags(() => {
+  const flags = posthog.featureFlags.getFlagVariants()
+  renderGatedFeatures(flags)
+})
+
+// Track conversion tied to the experiment
+posthog.capture('plan_upgraded', {
+  from_plan: 'Free',
+  to_plan: 'Foundation',
+  trigger: 'moby_gate'
+})</code></pre>
+
+<h3>Group-level experiments</h3>
+
+<p>PostHog is configured with <code>shop</code> as a group key. All users from the same Shopify store see the same variant. This matters because TW sells to businesses, not individuals.</p>
+
+<h3>Experiments + <code>tw-features</code> together</h3>
+
+<pre><code class="language-javascript">const features = window['tw-features']
+const hasMultiTouch = features.includes('MULTI_TOUCH')
+
+if (!hasMultiTouch) {
+  // User lacks access. Experiment on how to present the upgrade:
+  const variant = posthog.getFeatureFlag('attribution-gate-style')
+
+  posthog.capture('gate_shown', {
+    feature: 'multi_touch',
+    variant,
+    user_plan: window['tw-subscription'].contract_type
+  })
+
+  if (variant === 'hard-gate') showPaywall()
+  else if (variant === 'blurred-preview') showBlurredDashboardWithUpgradeCTA()
+}</code></pre>
+
+<p><strong>Consistent hashing:</strong> PostHog uses MurmurHash on <code>distinct_id + flag_key</code> (user ID plus flag name) to assign variants deterministically. Same user, same variant, no DB lookup. With shop-level groups, it hashes <code>shop_id + flag_key</code> instead.</p>
+
+<h3>From capture to experiment result</h3>
+
+<p>PostHog's analytics pipeline is separate from TW's product data pipeline (Pub/Sub + Kafka → Beam → ClickHouse). The product pipeline processes merchant data: Shopify webhooks, ad platform pulls, Triple Pixel events. PostHog has its own ingestion path for product analytics events. The growth engineer reads from ClickHouse (for PQL scoring queries), but doesn't write to the product pipeline or configure it.</p>
+
+<div class="flow">
+  <div class="flow-box accent-blue">
+    <strong>PostHogProvider</strong>
+    <small>wraps app root, inits client</small>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box accent-green">
+    <strong>/decide</strong>
+    <small>fetches all flags once on init</small>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box accent-yellow">
+    <strong>Hook reads variant</strong>
+    <small>from cached flags, no request</small>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box accent-purple">
+    <strong>Component renders</strong>
+    <small>variant A or B</small>
+  </div>
+</div>
+<div class="flow">
+  <div class="flow-box accent-blue">
+    <strong>Handler captures event</strong>
+    <small>posthog.capture()</small>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box accent-green">
+    <strong>PostHog ingests</strong>
+    <small>HTTP POST to /capture endpoint</small>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box accent-yellow">
+    <strong>Experiment results</strong>
+    <small>conversion per variant + significance</small>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box accent-purple">
+    <strong>Human decides</strong>
+    <small>ship winner to 100%</small>
+  </div>
+</div>
+
+<h3>React integration</h3>
+
+<p>PostHog's React SDK (<code>posthog-js/react</code>) provides a <code>PostHogProvider</code> that wraps the app at the root. It initializes the PostHog client once and makes it available via context. Two interaction points follow from that.</p>
+
+<p><strong>Flag evaluation uses hooks, not effects.</strong> The PostHog client fetches all flag assignments on init (a single <code>/decide</code> call) and caches them in memory. Hooks like <code>useFeatureFlagVariantKey</code> read from that cache synchronously. No network request per render. If flags haven't loaded yet, the hook returns <code>undefined</code> and you render a default.</p>
+
+<pre><code class="language-javascript">function AttributionPanel() {
+  const variant = useFeatureFlagVariantKey('attribution-gate-style')
+
+  if (variant === 'blurred-preview') {
+    return &lt;BlurredPreview onUpgrade={handleUpgrade} /&gt;
+  }
+  return &lt;HardGate onUpgrade={handleUpgrade} /&gt;
+}</code></pre>
+
+<p><strong>Event capture goes in handlers, not effects.</strong> Call <code>usePostHog()</code> to get the client, then <code>posthog.capture()</code> in click handlers, form submissions, and callbacks.</p>
+
+<pre><code class="language-javascript">function HardGate({ onUpgrade }) {
+  const posthog = usePostHog()
+
+  const handleClick = () => {
+    posthog.capture('upgrade_cta_clicked', {
+      gate_type: 'hard',
+      feature: 'multi_touch_attribution',
+      plan: 'Free'
+    })
+    onUpgrade()
+  }
+
+  return &lt;button onClick={handleClick}&gt;Upgrade to unlock&lt;/button&gt;
+}</code></pre>
+
+<h4>Where useEffect matters</h4>
+
+<table>
+  <thead><tr><th>Purpose</th><th>When</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Group identification</strong></td><td>Once near the root: <code>posthog.group('shop', shopId, { plan, pixel_installed })</code>. After this call, every subsequent <code>capture()</code> includes the group association.</td></tr>
+    <tr><td><strong>User identification</strong></td><td>After login: <code>posthog.identify(userId, { email, role })</code></td></tr>
+    <tr><td><strong>Flag reload after plan change</strong></td><td>When <code>subscription.plan</code> changes: <code>posthog.reloadFeatureFlags()</code>. Without this, a user who just upgraded still sees the paywall until their next page load.</td></tr>
+  </tbody>
+</table>
+
+<pre><code class="language-javascript">// Group identification: ties all events to this shop
+useEffect(() => {
+  posthog.group('shop', shopId, {
+    plan: subscription.plan,
+    pixel_installed: shop.pixel_install_status === 'installed'
+  })
+}, [shopId])
+
+// Reload flags when plan changes so gates drop immediately
+useEffect(() => {
+  posthog.reloadFeatureFlags()
+}, [subscription.plan])</code></pre>
+
+<h4>What the experiment creation step looks like</h4>
+
+<p>A growth engineer creates an experiment in PostHog's UI, not in code. They define: a feature flag name (<code>attribution-gate-style</code>), variants (<code>hard-gate</code> vs <code>blurred-preview</code>), targeting rules (Free plan only, or <code>pql_score >= 60</code>), and the conversion event (<code>plan_upgraded</code>). The frontend code that checks <code>useFeatureFlagVariantKey('attribution-gate-style')</code> already exists at that point. PostHog handles assignment, exposure tracking, and statistical analysis. After enough data accumulates (usually 1-2 weeks), the results page shows conversion rates per variant with confidence intervals, and a human decides to ship the winner or iterate.</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="instrumentation">Instrumentation</h2>
+
+<p>PostHog is loaded but underutilized. Autocapture (PostHog's automatic click and pageview tracking) is OFF, so only explicitly instrumented events fire. You can't run experiments on funnels you aren't measuring.</p>
+
+<h3>First sprint: events to instrument</h3>
+
+<table>
+  <thead><tr><th>Event</th><th>Growth signal</th></tr></thead>
+  <tbody>
+    <tr><td><code>gate_shown</code></td><td>Which features hit the paywall? Which gates convert?</td></tr>
+    <tr><td><code>upgrade_modal_viewed</code></td><td>Impression count. Denominator for conversion rate.</td></tr>
+    <tr><td><code>upgrade_cta_clicked</code></td><td>Click-through. Measures intent.</td></tr>
+    <tr><td><code>plan_upgraded</code></td><td>The conversion event. Links to which gate/experiment drove it.</td></tr>
+    <tr><td><code>moby_gate_shown</code></td><td>Free user landed on /chat and saw the Moby 2 upgrade gate.</td></tr>
+    <tr><td><code>onboarding_step_completed</code></td><td>Activation funnel. Which steps drop off?</td></tr>
+  </tbody>
+</table>
+
+<h3>PostHog event patterns</h3>
+
+<pre><code class="language-javascript">posthog.capture('gate_shown', {
+  feature: 'multi_touch_attribution',
+  gate_type: 'hard',
+  user_plan: 'Free',
+  experiment_variant: 'control'
+})
+
+posthog.capture('plan_upgraded', {
+  from_plan: 'Free',
+  to_plan: 'Foundation',
+  monthly_price: 259,
+  trigger: 'attribution_gate',
+  $set: { plan: 'Foundation' }   // updates user profile in PostHog
+})
+
+// Super properties: sent with every subsequent event
+posthog.register({
+  plan: subscription.contract_type,
+  shop_id: shop.id,
+  has_pixel: features.includes('PIXEL'),
+  integrations_count: shop.connectedPlatforms?.length
+})</code></pre>
+
+<h3>GTM vs PostHog</h3>
+
+<div class="comparison">
+  <div class="comparison-card">
+    <h4 class="blue">GTM</h4>
+    <ul>
+      <li>Ad platform conversion pixels (Google, Meta, LinkedIn, Bing)</li>
+      <li>Marketing attribution for TW's own acquisition</li>
+    </ul>
+  </div>
+  <div class="comparison-card">
+    <h4 class="green">PostHog</h4>
+    <ul>
+      <li>Product analytics, funnels, retention</li>
+      <li>Session recording</li>
+      <li>Feature flags and experiments</li>
+    </ul>
+  </div>
+</div>
+
+<p>The growth engineer works in PostHog. GTM is marketing ops.</p>
+
+<h3>Schema enforcement</h3>
+
+<p>Analytics events break silently. Someone renames <code>trigger_type</code> to <code>triggerType</code> in a refactor, and a month of funnel data becomes unjoinable because the old events and new events have different property names. PostHog won't reject the event; it'll just show up as a new property. A TypeScript event map catches this at compile time by constraining both event names and their properties to a fixed contract:</p>
+
+<pre><code class="language-typescript">interface GrowthEvents {
+  gate_shown: {
+    feature: string
+    gate_type: 'hard' | 'blurred_preview' | 'contextual_nudge' | 'data_anchored'
+    user_plan: string
+    experiment_variant?: string
+  }
+  plan_upgraded: {
+    from_plan: string
+    to_plan: string
+    monthly_price: number
+    trigger: string
+  }
+}
+
+function capture&lt;K extends keyof GrowthEvents&gt;(
+  event: K, props: GrowthEvents[K]
+) {
+  posthog.capture(event, props)
+}</code></pre>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="pql">PQL Scoring</h2>
+
+<p>A PQL (Product Qualified Lead) score quantifies how ready a free-tier user is to convert, based on in-product behavior. The growth engineer builds the system that computes it, stores it, and triggers actions when thresholds are crossed.</p>
+
+<h3>Available signals (from window globals)</h3>
+
+<table>
+  <thead><tr><th>Source</th><th>Key</th><th>Signal</th><th>Weight</th></tr></thead>
+  <tbody>
+    <tr><td><code>tw-subscription</code></td><td><code>force_upgrade_*</code></td><td>Backend hard cutoff (likely GMV-based). Bypasses scoring entirely.</td><td>Short-circuit → 100</td></tr>
+    <tr><td><code>tw-shop</code></td><td><code>mspConnected</code></td><td>Connected ad platforms (≥3 = power user)</td><td>High</td></tr>
+    <tr><td><code>tw-shop</code></td><td><code>pixel_install_status</code></td><td>Pixel installed = activated</td><td>Baseline</td></tr>
+    <tr><td><code>tw-shop</code></td><td><code>welcomeWizardData</code></td><td>Onboarding completion</td><td>Baseline</td></tr>
+    <tr><td><code>tw-shop</code></td><td><code>featuresScheduler</code></td><td>Scheduled features (automation intent)</td><td>Medium</td></tr>
+    <tr><td>PostHog</td><td>login frequency</td><td>DAU stronger than WAU</td><td>Medium</td></tr>
+    <tr><td>PostHog</td><td>gate views</td><td>Repeatedly viewing paid features</td><td>High</td></tr>
+  </tbody>
+</table>
+
+<div class="callout tip">
+  <p>The <code>force_upgrade_*</code> fields on <code>tw-subscription</code> show that a rudimentary scoring system already exists on the backend, but it's hardcoded. The growth engineer replaces it with a data-driven, experiment-ready version.</p>
+</div>
+
+<h3>Scoring function</h3>
+
+<pre><code class="language-javascript">function computePqlScore(shop, subscription, userActivity) {
+  if (subscription.contract_type !== 'Free') return null
+  if (subscription.force_upgrade) return 100
+
+  let score = 0
+
+  // Moby is hard-gated on Free; repeated gate views signal intent
+  if (userActivity.mobyGateViews7d >= 5) score += 30
+  else if (userActivity.mobyGateViews7d >= 2) score += 15
+
+  const platforms = shop.mspConnected || 0
+  if (platforms >= 3) score += 15
+  else if (platforms >= 1) score += 5
+
+  if (shop.pixel_install_status === 'installed') score += 5
+  if (shop.welcomeWizardData?.completed) score += 5
+
+  if (userActivity.loginDays7d >= 5) score += 10
+  if (userActivity.teamInvites >= 2) score += 10
+  if (userActivity.gatedFeatureViews7d >= 3) score += 10
+
+  return Math.min(score, 100)
+}</code></pre>
+
+<h3>What the engineering actually looks like</h3>
+
+<p>This is a Node.js service with a database, a scheduled job, and a REST API. The day-to-day is writing the SQL that aggregates user behavior, the function that turns aggregates into a score, the API that serves it, and the React component that checks it before rendering an upgrade prompt.</p>
+
+<h4>1. Schema</h4>
+
+<p>A table (in MongoDB, since that's where TW's user/shop records already live, or in ClickHouse alongside the event data) storing the computed score per shop:</p>
+
+<pre><code class="language-javascript">// shop_pql_scores collection
+{
+  shop_id: "shop_abc123",
+  score: 75,
+  signals: {
+    moby_gate_views_7d: 5,
+    platforms_connected: 4,
+    login_days_7d: 6,
+    gate_views_7d: 8,
+    force_upgrade: false,
+    pixel_installed: true
+  },
+  computed_at: "2026-08-14T02:00:00Z",
+  plan: "Free"
+}</code></pre>
+
+<h4>2. Scheduled job</h4>
+
+<p>A cron or BullMQ job that runs hourly. For each free-tier shop, it queries ClickHouse for that shop's activity over the last 7 days, applies the scoring function from above, and writes the result:</p>
+
+<pre><code class="language-sql">SELECT
+  shop_id,
+  countIf(event = 'gate_shown') AS gate_views_7d,
+  countIf(event = 'gate_shown' AND properties.feature = 'moby') AS moby_gate_views_7d,
+  uniqExact(toDate(timestamp)) AS login_days_7d
+FROM posthog_events
+WHERE timestamp >= now() - INTERVAL 7 DAY
+GROUP BY shop_id</code></pre>
+
+<p>The scoring function (shown above) combines these ClickHouse aggregates with data from the shop and subscription records that are already in MongoDB. High-weight events like repeated Moby gate views could also trigger an immediate rescore outside the hourly cycle.</p>
+
+<h4>3. REST API</h4>
+
+<pre><code class="language-javascript">// GET /api/growth/pql/:shopId
+// Returns the current score and the signals that contributed to it
+{
+  score: 75,
+  signals: { moby_gate_views_7d: 5, platforms_connected: 4, ... },
+  threshold_actions: {
+    show_upgrade_prompt: true,   // score >= 80
+    enroll_in_experiment: true,  // score >= 60
+    notify_sales: false          // score >= 90
+  }
+}</code></pre>
+
+<h4>4. Frontend consumption</h4>
+
+<p>The React app calls this endpoint and uses the score to decide what to render. If the score is above 60, PostHog enrolls the user in an upgrade experiment. If above 80, the app shows an upgrade prompt directly. If above 90, the backend also sends a lead to HubSpot (which TW already uses for sales).</p>
+
+<h4>5. PostHog sync</h4>
+
+<p>After computing a score, push it as a user/group property to PostHog. This enables experiment targeting within PostHog's UI: create a feature flag that only activates for users with <code>pql_score >= 60</code>, without writing any targeting logic in the app code.</p>
+
+<h4>The iterative part</h4>
+
+<p>Product decides "users who connect 3+ ad platforms are more likely to upgrade." You write the ClickHouse query that counts platforms per shop, add it as a signal in the scoring function, deploy, and watch whether the score correlates with actual conversions over the next two weeks. If it does, increase the weight. If not, remove it. The weights start from intuition and get tuned by data.</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="gating">Gating &amp; Upgrades</h2>
+
+<h3>How <code>tw-features</code> works</h3>
+
+<p>Every user has <code>window['tw-features']</code>, an array of feature strings populated from the subscription record. This is plan entitlement, not a feature flag system.</p>
+
+<pre><code class="language-javascript">window['tw-features']
+// Free plan: ["BASIC", "CONF_FREE_3", "PIXEL", "PROD_FREE"]
+
+const features = window['tw-features']
+const canUseMultiTouch = features.includes('MULTI_TOUCH')
+const canUseAutomations = features.includes('AUTOMATIONS')</code></pre>
+
+<h3><code>tw-subscription</code> fields for gating</h3>
+
+<table>
+  <thead><tr><th>Field</th><th>Free plan value</th><th>Growth use</th></tr></thead>
+  <tbody>
+    <tr><td><code>contract_type</code></td><td><code>"Free"</code></td><td>Primary filter for upgrade targets</td></tr>
+    <tr><td><code>product</code></td><td><code>"Founders Dash"</code></td><td>Internal name. Stripe: <code>prod_OcKlAb9O0HQ5iq</code></td></tr>
+    <tr><td><code>credits</code></td><td>Field exists; value unverified</td><td>Paid tier usage tracking. Free has no Moby access.</td></tr>
+    <tr><td><code>force_upgrade_*</code></td><td>Boolean flags</td><td>Backend-determined upgrade prompt</td></tr>
+    <tr><td><code>generation</code></td><td>Pricing era ID</td><td>Distinguishes Oct 2023 vs Aug 2026 signups</td></tr>
+  </tbody>
+</table>
+
+<h3>Gate types (experiment variables)</h3>
+
+<div class="comparison">
+  <div class="comparison-card">
+    <h4 class="orange">Hard gate</h4>
+    <p>"Requires Foundation." Best for action features (automations) where there's nothing to preview.</p>
+  </div>
+  <div class="comparison-card">
+    <h4 class="blue">Soft gate (blurred preview)</h4>
+    <p>Show dashboard with real data, blurred. Best for data features (attribution, cohorts).</p>
+  </div>
+</div>
+<div class="comparison">
+  <div class="comparison-card">
+    <h4 class="green">Contextual nudge</h4>
+    <p>"You've connected 4 ad platforms. See how multi-touch attribution tracks them together." PQL-triggered, feels helpful.</p>
+  </div>
+  <div class="comparison-card">
+    <h4 class="purple">Data-anchored upsell</h4>
+    <p>Show a concrete delta: "Last-click says Meta drove $12K. Multi-touch says $18K." Specific to the merchant's own data.</p>
+  </div>
+</div>
+
+<pre><code class="language-javascript">function GatedFeature({ featureKey, children }) {
+  const features = window['tw-features']
+  if (features.includes(featureKey)) return children
+
+  const variant = posthog.getFeatureFlag('gate-style-' + featureKey)
+
+  posthog.capture('gate_shown', {
+    feature: featureKey,
+    gate_type: variant,
+    user_plan: window['tw-subscription'].contract_type
+  })
+
+  switch (variant) {
+    case 'hard':    return &lt;Paywall feature={featureKey} /&gt;
+    case 'blurred': return &lt;BlurredPreview feature={featureKey} /&gt;
+    case 'nudge':   return &lt;ContextualNudge feature={featureKey} /&gt;
+    default:        return &lt;Paywall feature={featureKey} /&gt;
+  }
+}</code></pre>
+
+<div class="callout warn">
+  <p>Gate check must also happen server-side. The React component controls the UI; the API must verify <code>tw-features</code> before returning gated data.</p>
+</div>
+
+<h3>Stripe upgrade flow</h3>
+
+<p>TW uses Stripe directly, no billing abstraction.</p>
+
+<div class="flow">
+  <div class="flow-box accent-blue">
+    <strong>"Upgrade"</strong>
+    <small>Gate modal or pricing page</small>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box accent-green">
+    <strong>Checkout Session</strong>
+    <small>Server creates with Stripe price ID</small>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box accent-yellow">
+    <strong>Stripe Checkout</strong>
+    <small>Hosted payment</small>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box accent-purple">
+    <strong>Webhook</strong>
+    <small>tw-features expands</small>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="moby">Moby</h2>
+
+<p>Moby is TW's AI layer (chat, creative gen, automations). The growth engineer doesn't build Moby's core but owns the conversion surfaces around it.</p>
+
+<h3>Moby 2 is hard-gated on Free</h3>
+
+<p>The free plan dashboard shows "Moby 2 — Available on Paid Plans — Upgrade." No credit meter, no trial allowance, just a gate. The pricing page lists "Moby Chat to search the web or knowledge base" for the free tier, but the full Moby 2 (analytics, agents, creative gen) requires a paid plan. TW doesn't publish specific credit amounts for any tier; paid plans say "Use Moby Daily" / "Run Moby at Scale."</p>
+
+<div class="callout">
+  <p>The default route for a free plan account is <code>/chat</code> (Moby). Users land directly on the thing they can't use. That makes the Moby gate the highest-traffic upgrade surface.</p>
+</div>
+
+<table>
+  <thead><tr><th>System</th><th>What it tracks</th></tr></thead>
+  <tbody>
+    <tr><td><strong>oaiq</strong> (OpenAI analytics)</td><td>Moby usage: queries, tokens, model. Separate analytics script, not PostHog.</td></tr>
+    <tr><td><strong><code>tw-subscription.credits</code></strong></td><td>Field exists. Applies to paid tier usage tracking only; free tier has no Moby access.</td></tr>
+    <tr><td><strong><code>CONF_CREDITS_FREE</code></strong></td><td>Feature string in <code>tw-features</code>. May relate to limited web/knowledge base access on the free tier.</td></tr>
+  </tbody>
+</table>
+
+<h3>Growth surfaces (free→paid)</h3>
+
+<p>The primary upgrade lever isn't Moby. It's the attribution model ceiling.</p>
+
+<div class="comparison">
+  <div class="comparison-card">
+    <h4 class="green">A. Attribution value gap (primary)</h4>
+    <p>Free users see first/last-click attribution. As their ad spend and channel mix grow, single-touch becomes visibly wrong: last-click credits the final touchpoint and ignores the awareness campaign that started the journey. The gap between what they see and what multi-touch would show them is a natural upgrade trigger. The experiment variable is <em>how</em> you surface that gap: blurred multi-touch preview, side-by-side comparison, or a percentage-delta callout anchored to the merchant's own data.</p>
+  </div>
+</div>
+<div class="comparison">
+  <div class="comparison-card">
+    <h4 class="blue">B. Moby trial (secondary)</h4>
+    <p>Give free users 3 days of Moby access. Accounts are tied to real Shopify domains, preventing throwaway signups. A cheaper model (Luna) could serve the trial at lower marginal cost. The growth engineer instruments the trial, measures conversion to Foundation within 7/14/30 days, and A/B tests trial duration (3 vs 5 vs 7 days).</p>
+  </div>
+  <div class="comparison-card">
+    <h4 class="purple">C. Sonar contextual upsell (tertiary)</h4>
+    <p>When a Free user views attribution data showing Klaviyo as a channel, surface a Mantine drawer: "You have 200 identified visitors who didn't buy. Sonar pushes these to Klaviyo automatically." Contextual, data-grounded, specific to the merchant's store. Gated on a PostHog flag, no external in-app messaging tool needed.</p>
+  </div>
+</div>
+
+<p>Option A is the strongest because it's organic: the gap emerges naturally from the merchant's own growth. No artificial wall needed. Options B and C are testable supplements.</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="reference">Quick Reference</h2>
+
+<h3>Pricing history</h3>
+
+<table>
+  <thead><tr><th>Date</th><th>Tiers</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Pre-Oct 2023</td><td>Growth / Pro / Enterprise</td><td>No free tier</td></tr>
+    <tr><td>Oct 2023</td><td>Founders Dash (free) / Growth / Pro / Enterprise</td><td>Free tier launched. "Founders Dash" still used in <code>tw-subscription.product</code>.</td></tr>
+    <tr><td>Jan 2025</td><td>Growth / Pro / Premium / Enterprise</td><td>Renamed</td></tr>
+    <tr><td>Apr 2025</td><td>Free / Starter / Advanced / Enterprise</td><td>Renamed</td></tr>
+    <tr><td>Aug 2026</td><td>Free / Foundation / Automate / Enterprise</td><td>Current. $259/mo Foundation, $899/mo Automate (monthly). ~15% off annual.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <p>Four tier renames in three years. The free tier is three years old, not new. The growth <em>function</em> is new.</p>
+</div>
+
+<h3>Plan tiers (current)</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th></th>
+      <th class="center">Free<br><small>$0</small></th>
+      <th class="center">Foundation<br><small>$259/mo</small></th>
+      <th class="center">Automate<br><small>$899/mo</small></th>
+      <th class="center">Enterprise</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>Attribution</td><td class="center">First / Last click only</td><td class="center">Multi-touch (7 models)</td><td class="center">Multi-touch</td><td class="center">Multi-touch</td></tr>
+    <tr><td>Moby 2</td><td class="center"><span class="cross">✗</span></td><td class="center">"Use Moby Daily"</td><td class="center">"Run Moby at Scale"</td><td class="center">Custom</td></tr>
+    <tr><td>Custom dashboards, segments, SQL</td><td class="center"><span class="cross">✗</span></td><td class="center"><span class="check">✓</span></td><td class="center"><span class="check">✓</span></td><td class="center"><span class="check">✓</span></td></tr>
+    <tr><td>Sonar (first-party activation)</td><td class="center"><span class="cross">✗</span></td><td class="center"><span class="check">✓</span></td><td class="center"><span class="check">✓</span></td><td class="center"><span class="check">✓</span></td></tr>
+    <tr><td>Automations &amp; Specialists</td><td class="center"><span class="cross">✗</span></td><td class="center"><span class="cross">✗</span></td><td class="center"><span class="check">✓</span></td><td class="center"><span class="check">✓</span></td></tr>
+    <tr><td>Compass (MMM / incrementality)</td><td class="center" colspan="4">$4,800/mo add-on. Bayesian MMM, GeoLift, dedicated data science team.</td></tr>
+    <tr><td>Seats</td><td class="center">10</td><td class="center">∞</td><td class="center">∞</td><td class="center">∞</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <p>The marketing page and in-app dashboard disagree on feature placement. Marketing puts custom dashboards and SQL in Automate; the dashboard puts them in Foundation. Marketing shows $219/$749 (annual pricing); the dashboard shows $259/$899 (monthly). Marketing says 10 seats on Free; the dashboard says 2. The table above follows the dashboard (source of truth for existing users), except seats where 10 appears to be the more recent number.</p>
+</div>
+
+<p>Prices scale with GMV (gross merchandise volume). A $5M/yr brand pays more than a $250K/yr brand on the same tier.</p>
+
+<h3>Competitor PLG status</h3>
+
+<table>
+  <thead><tr><th>Company</th><th>Model</th></tr></thead>
+  <tbody>
+    <tr><td>Northbeam</td><td>Fully sales-led. No self-serve.</td></tr>
+    <tr><td>Rockerbox</td><td>Free tool exists, paid tiers sales-gated.</td></tr>
+    <tr><td>Polar Analytics</td><td>Demo-gated. Must talk to sales.</td></tr>
+    <tr><td>Measured</td><td>Enterprise only.</td></tr>
+    <tr><td>Graas</td><td>Only real PLG analog. Free tier with self-serve upgrades.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout tip">
+  <p>TW running PLG in e-commerce analytics is unusual. Most competitors are sales-led; the buyer is a CMO or VP of marketing. TW bets that bottom-up adoption by media buyers and DTC (direct-to-consumer) founders drives expansion into larger accounts.</p>
+</div>
+
+<h3>Sonar: first-party data activation</h3>
+
+<p>TW's Triple Pixel identifies visitors via a first-party identity graph, resolving anonymous browsers to known profiles even before they give an email. Sonar pushes that identity data to external platforms.</p>
+
+<div class="comparison">
+  <div class="comparison-card">
+    <h4 class="green">Sonar Send (for shops → Klaviyo)</h4>
+    <p>Pushes identity-resolved visitor profiles to Klaviyo. Without Sonar, Klaviyo only reaches people who explicitly gave their email (newsletter signup, started checkout). With Sonar, Klaviyo can fire browse-abandonment flows to visitors who were identified by the pixel but never gave their email. Grows Klaviyo's addressable audience substantially.</p>
+  </div>
+  <div class="comparison-card">
+    <h4 class="blue">Sonar Optimize (for ad platforms)</h4>
+    <p>Builds first-party audience segments (e.g., "high-LTV repeat buyers, no purchase in 60 days") and syncs them to Meta, Google, and TikTok as Custom Audiences for lookalike targeting or retargeting. Without Sonar, Meta only knows what its own pixel observed. With Sonar, Meta gets TW's richer, cross-channel view of the customer.</p>
+  </div>
+</div>
+
+<p>The dashboard lists both under one Foundation feature: "First-party data activation: Meta, Google, TikTok, Klaviyo." The marketing page splits them across tiers, but the dashboard doesn't.</p>
+
+<h3>Compass: MMM and incrementality</h3>
+
+<p>$4,800/mo add-on, not a plan tier feature. Compass is a managed data science service: Bayesian marketing mix models that decompose total revenue into per-channel incremental contributions, with train/test evaluation splits, saturation curves per channel, marginal lift analysis, and GeoLift incrementality testing (randomized geographic holdout experiments that require pausing real ad spend in test regions). Backed by a dedicated Marketing Data Science Team. 7+ internal ClickHouse tables power the system. This is irrelevant to growth engineering but worth knowing exists.</p>
+
+<h3>The differentiator</h3>
+
+<p>Attribution is the foundation, but every competitor does attribution. TW's differentiator is being both the analytics layer <em>and</em> the execution layer: Moby takes actions in ad accounts (pause ads, adjust budgets, generate creative). Whether that claim holds depends on Moby adoption, which is why AI growth surfaces (the Moby gate, upgrade prompts, onboarding into paid AI features) are central to this role.</p>
+
+<h3>Company vitals</h3>
+
+<div class="metrics-row">
+  <div class="metric-card">
+    <div class="value">2021</div>
+    <div class="label">Founded</div>
+  </div>
+  <div class="metric-card">
+    <div class="value">$22M</div>
+    <div class="label">ARR</div>
+  </div>
+  <div class="metric-card">
+    <div class="value">~200</div>
+    <div class="label">Headcount</div>
+  </div>
+  <div class="metric-card">
+    <div class="value">60K+</div>
+    <div class="label">Brands</div>
+  </div>
+</div>
+
+<table>
+  <tbody>
+    <tr><td><strong>Founders</strong></td><td>AJ Orbach, Maxx Blank, Ivan Chernykh (CTO)</td></tr>
+    <tr><td><strong>HQ</strong></td><td>Columbus, OH (nominal). Engineering: Jerusalem. NYC: ~10–11 people.</td></tr>
+    <tr><td><strong>Funding</strong></td><td>Series B, $25M at $300M valuation (Feb 2023). No raise since. Shopify is equity participant.</td></tr>
+    <tr><td><strong>Layoffs</strong></td><td>~25% cut Sept 2023, seven months post-Series B</td></tr>
+  </tbody>
+</table>
+
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+<script>hljs.highlightAll();</script>
+<script src="doc-nav.js"></script>
+</body>
+</html>

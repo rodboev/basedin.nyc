@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Triple Whale — Interview &amp; Company Intelligence</title>
+<link rel="stylesheet" href="triple-whale/style.css">
+</head>
+<body>
+<nav data-doc-nav>
+  <a class="sort-pill active" data-target="process" href="#process">Process</a>
+  <a class="sort-pill" data-target="dylan" href="#dylan">Dylan</a>
+  <a class="sort-pill" data-target="questions" href="#questions">Questions</a>
+  <a class="sort-pill" data-target="compensation" href="#compensation">Compensation</a>
+  <a class="sort-pill" data-target="reviews" href="#reviews">Reviews</a>
+  <a class="sort-pill" data-target="benefits" href="#benefits">Benefits</a>
+  <a class="sort-pill" data-target="moby-gates" href="#moby-gates">Moby Gates</a>
+  <a class="sort-pill" data-target="sources" href="#sources">Sources</a>
+</nav>
+<main>
+
+<h1>Triple Whale: Interview &amp; Company Intelligence</h1>
+<p>Compiled Aug 2026 from Glassdoor, Levels.fyi, Scoutify, Himalayas, BuiltIn, and the recruiter screen with Marie.</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="process">Interview Process</h2>
+
+<div class="flow">
+  <div class="flow-box accent-green">
+    <strong>1. Recruiter</strong>
+    <small>Marie. Done.</small>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box accent-blue">
+    <strong>2. Dylan (30 min)</strong>
+    <small>Head of AI Visibility. Hiring manager.</small>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box accent-yellow">
+    <strong>3. Dir. of Engineering</strong>
+    <small>Technical interview</small>
+  </div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box accent-purple">
+    <strong>4. Product Marketing Mgr</strong>
+    <small>Cross-functional fit</small>
+  </div>
+</div>
+
+<h3>From Glassdoor (21 interview reviews)</h3>
+
+<table>
+  <tbody>
+    <tr><td><strong>Average difficulty</strong></td><td>2.5 / 5</td></tr>
+    <tr><td><strong>Positive experience</strong></td><td>52%</td></tr>
+    <tr><td><strong>Average duration</strong></td><td>11 days end-to-end (15 data points)</td></tr>
+    <tr><td><strong>Easiest roles</strong></td><td>Data Engineer, Marketing Specialist</td></tr>
+    <tr><td><strong>Hardest roles</strong></td><td>Account Executive, Marketing</td></tr>
+  </tbody>
+</table>
+
+<h3>Candidate descriptions</h3>
+
+<ul>
+  <li>"Screening call with HR, followed by a writing test and three interviews with team members. Process took about 2 weeks, moved very fast. Clear, focused, and genuine." (Sep 2025)</li>
+  <li>"5-stage process including initial call with Head of Talent and a technical assessment, over 2 weeks. The most efficient and enjoyable interview process I had undertaken. Feedback provided promptly after each stage." (Sep 2025)</li>
+  <li>"Smooth process with consistent and timely communication. Well structured and expectations set and met throughout. Knew where I was in the process at all times."</li>
+</ul>
+
+<h3>From Scoutify (process model)</h3>
+
+<table>
+  <thead><tr><th>Stage</th><th>Duration</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td>1. Recruiter Screen</td><td>30 min</td><td>Background, role fit, logistics</td></tr>
+    <tr><td>2. Technical Interview</td><td>45–60 min</td><td>Coding and/or system design questions relevant to the role</td></tr>
+    <tr><td>3. Behavioral Interview</td><td>45 min</td><td>Past experiences, teamwork, problem-solving. STAR format recommended.</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="dylan">Dylan Round</h2>
+
+<h3>Who he is</h3>
+<p>Dylan Gifford founded <strong>Anteater</strong>, an AI search visibility startup that tracked how LLMs (ChatGPT, Perplexity, Gemini, Claude) surface brands in AI-generated answers: mentions, citations, sentiment, competitor rankings. TW acquired Anteater in late 2025 (their first acquisition). He reports directly to CEO Maxx Blank. His public content focuses on AI Engine Optimization (AEO), the idea that brands need to optimize for LLM discovery the way they used to optimize for Google. Key data point he cites: 424K LLM-referred orders in Q4 2025, 59x growth vs all of 2024. Technical founder, not just a manager.</p>
+
+<p>LinkedIn: <a href="https://www.linkedin.com/in/dylan-gifford-994a65149/">linkedin.com/in/dylan-gifford-994a65149</a></p>
+
+<h3>10 likely questions</h3>
+
+<h4>1. What would your first 30/60/90 days look like?</h4>
+<p><strong>First 30: instrument.</strong> Define the event taxonomy for growth surfaces. Add <code>posthog.capture()</code> calls to the React app for gate views, upgrade CTA clicks, plan changes. Enrich the <code>posthog.group('shop', shopId, {...})</code> call with plan tier, connected platforms, and pixel status from the <code>tw-subscription</code> and <code>tw-shop</code> globals. Ship the first PostHog experiment on a single gate variant.</p>
+<p><strong>Next 30: measure.</strong> Build the free→Foundation funnel in PostHog: <code>signup_completed → pixel_installed → ad_platform_connected → gate_shown → upgrade_cta_clicked → plan_upgraded</code>. Identify the highest drop-off step. Stand up the PQL scoring service (Node.js scheduled job, ClickHouse aggregation, MongoDB write-back, PostHog group property sync).</p>
+<p><strong>Next 30: experiment.</strong> Run 2-3 experiments on the highest-impact gate surface. First candidate: the attribution report, showing first/last-click with a blurred multi-touch comparison. Measure conversion lift to Foundation within 7 and 14 days.</p>
+
+<h4>2. How would you identify the highest-impact growth lever for free→Foundation?</h4>
+<p>The attribution ceiling. Free users have the Triple Pixel collecting multi-touch data but can only view first/last-click. As ad spend grows across multiple channels, single-touch attribution becomes visibly inadequate because Google and Meta both claim credit for the same sale. The gap between what they see and what multi-touch would show them is a natural, self-evident upgrade trigger. The growth engineer's job is making that moment visible (blurred multi-touch preview, side-by-side comparison showing channel credit double-counting) and the upgrade path frictionless (Stripe Checkout, one click from the gate).</p>
+
+<h4>3. How would you decide what to experiment on first?</h4>
+<p>Can't decide without data. PostHog is loaded but autocapture is off and no growth events exist. First priority: instrument the free→Foundation funnel to see where users drop off. The first experiment should target the single highest-drop step with a simple A/B variant (different gate format, CTA copy, or timing). Measure conversion to Foundation within 7 and 14 days. Use PostHog's built-in experiment analysis. Consider Statsig later if overlapping experiments need mutual exclusion layers or if peeking at results before statistical significance becomes a problem (PostHog doesn't do sequential testing; Statsig does).</p>
+
+<h4>4. What would you improve about Moby's current UX?</h4>
+<p><em>[To fill in after using the paid product.]</em></p>
+
+<h4>5. How would you set up experimentation infrastructure?</h4>
+<p>PostHog is already loaded with session recording on, but feature flags are empty and autocapture is off. The <code>tw-features</code> array handles plan-based entitlements (static strings per tier, checked via <code>features.includes()</code>). PostHog experiments layer on top: they control <em>how</em> a gate is presented (hard wall vs blurred preview), not <em>whether</em> the feature is gated. First step: activate PostHog's experimentation module. Use <code>posthog.getFeatureFlag()</code> in React components, <code>posthog.capture()</code> for exposure and conversion events. Consistent hashing (MurmurHash on <code>shop_id + flag_key</code>) gives deterministic assignment at the shop level via PostHog's group analytics. If experiment volume grows past 10+ concurrent, evaluate Statsig for sequential testing (safe to peek at results without inflating false positives), mutual exclusion layers (prevent two experiments from confounding each other), and guardrail metrics (auto-flag when a winning variant harms retention or activation).</p>
+
+<h4>6. Tell me about a time you shipped a change that moved a business metric.</h4>
+<p>Kim Seybert, Shopify e-commerce. Brought in session replay tooling where none existed, instrumented the purchase funnel, ran CRO based on what the data showed. Conversion rates reached 234% above the e-commerce industry average. Revenue up 42% year-over-year. The approach: instrument first, watch sessions to understand why users drop off, test changes, measure. Same pipeline applies here: instrument PostHog, watch sessions (already running via PostHog + Clarity), experiment on gates, measure conversions.</p>
+
+<h4>7. How would you approach building growth surfaces around Moby?</h4>
+<p>Two gate designs, both producing PQL signals. (1) <strong>Answer truncation:</strong> Moby generates full responses via structured output with <code>preview</code> and <code>full</code> fields; free users see a truncated answer that ends at a natural data cliffhanger after a quantity-limited number of queries. (2) <strong>Time-boxed trial:</strong> free users get read-only Moby access for N days, controlled by a <code>MOBY_TRIAL</code> entitlement + <code>moby_trial_expires_at</code> on the subscription document in MongoDB. Both feed the PQL scoring pipeline via event aggregates from ClickHouse. See <a href="#moby-gates">Moby Gates</a> for architecture.</p>
+
+<h4>8. How do you work with product and design when you're the only engineer on a surface?</h4>
+<p>At Kim Seybert and Cosgrove/Barclays, I was the sole technical person interfacing with non-technical stakeholders (store owner, agency clients, account managers). The pattern: build a working version fast, put it in front of the stakeholder, iterate from their feedback. With Mantine as the design system, visual consistency comes from the component library, so the decisions are about flow, timing, and copy rather than pixels. For growth surfaces specifically, I'd propose variants grounded in data (session recordings, funnel analysis, PQL signals) and bring those to product for prioritization. The experiment framework makes this concrete: "I want to test variant A vs B on this gate; here's why, here's the conversion event, here's how long we need to run it."</p>
+
+<h4>9. Why Triple Whale?</h4>
+<p>Domain fit. E-commerce analytics is where my career has been, from the advertiser side (Victoria's Secret, Kim Seybert) to the agency side (Cosgrove/Barclays). The difference is first-party vs third-party: I've been the user of tools like Triple Whale, I know what the person on the other end of the growth surface needs. The PLG motion is unusual in this category; most competitors (Northbeam, Rockerbox, Polar) are sales-led. The role is building the growth function from scratch, which matches how I work best (Kim Seybert CRO from zero, Liberty Pest scheduling from zero). The AI adjacency through Moby is a genuine interest; my OSS contributions are to AI projects, and I'm the top external contributor on most of them.</p>
+
+<h4>10. What are you optimizing for in your next role?</h4>
+<p>A domain that makes intuitive sense (I've been on both sides of e-commerce analytics), impact I can see directly (growth metrics are unambiguous), and the autonomy of building a function from scratch as the first growth engineer. Soho hybrid works, and the team size means decisions happen fast.</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="questions">Interview Questions</h2>
+
+<h3>Common questions from Glassdoor</h3>
+
+<ul>
+  <li>"Why do you want to join this company?"</li>
+  <li>Asked to provide many examples of certain projects worked on</li>
+</ul>
+
+<h3>Scoutify question bank (19 questions)</h3>
+
+<p>These are a mix of real candidate-reported questions and role-inferred questions. Mostly behavioral/general; only two are product-specific.</p>
+
+<h4>Behavioral / general</h4>
+<ol>
+  <li>Cross-functional team collaboration challenges</li>
+  <li>Difficult client/customer management</li>
+  <li>Complex data analysis for business decisions</li>
+  <li>Strategic decision-making approaches</li>
+  <li>Personal values alignment with company mission</li>
+  <li>Reasons for joining Triple Whale</li>
+  <li>AI/ML experience in data analysis</li>
+  <li>Multi-department project leadership</li>
+  <li>Customer success metrics in e-commerce</li>
+  <li>Converting customer feedback to actionable insights</li>
+  <li>Prioritizing multiple competing tasks</li>
+  <li>Data analysis tools and methodologies</li>
+  <li>Explaining data accuracy importance to skeptics</li>
+  <li>AI/ML evolution in e-commerce analytics</li>
+  <li>Key performance metrics for brands</li>
+  <li>Core values alignment</li>
+</ol>
+
+<h4>Product management</h4>
+<ol start="17">
+  <li>Integrating new data sources into platforms</li>
+  <li>Data integration tools experience</li>
+</ol>
+
+<div class="callout tip">
+  <p>Scoutify recommends the STAR format with responses of 60–90 seconds and one concrete metric per answer.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="compensation">Compensation</h2>
+
+<h3>Levels.fyi salary data</h3>
+
+<table>
+  <thead><tr><th>Role</th><th>Median Total Comp</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Sales</td><td>$270,300</td><td>Highest reported</td></tr>
+    <tr><td>Marketing</td><td>$186,930</td><td></td></tr>
+    <tr><td>Software Engineer</td><td>$131,304</td><td>Limited data (&lt;3 US submissions). Israel-based data: ₪335K–₪459K</td></tr>
+    <tr><td>Product Manager</td><td>$116,970</td><td></td></tr>
+    <tr><td>Sales Engineer</td><td>$87,560</td><td>Lowest reported</td></tr>
+  </tbody>
+</table>
+
+<p>Overall median across all roles: $148,962. Data last updated Aug 2026.</p>
+
+<h3>Job posting salary ranges</h3>
+
+<table>
+  <tbody>
+    <tr><td><strong>Scoutify (from JD postings)</strong></td><td>$120K–$145K base</td></tr>
+    <tr><td><strong>Glassdoor</strong></td><td>28 salaries across 18 job titles. Compensation rated 4.3/5.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout">
+  <p>The SWE salary data on Levels.fyi is thin (fewer than 3 US submissions, mostly Israel-based). The $131K median likely underrepresents a US-based growth engineering role. The JD-posted range of $120K–$145K base is probably more accurate for base, with equity on top.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="reviews">Employee Reviews</h2>
+
+<h3>Glassdoor overview (40 reviews)</h3>
+
+<table>
+  <tbody>
+    <tr><td><strong>Overall rating</strong></td><td>4.5 / 5</td></tr>
+    <tr><td><strong>Recommend to a friend</strong></td><td>92%</td></tr>
+    <tr><td><strong>Compensation &amp; benefits</strong></td><td>4.3 / 5</td></tr>
+  </tbody>
+</table>
+
+<h3>Pros (aggregated from multiple reviews)</h3>
+<ul>
+  <li>Constantly shipping products, engineering new things</li>
+  <li>Experienced technical ICs paired with smart leaders on marketing/sales side</li>
+  <li>Truly supportive team culture; "being rude or unkind simply doesn't fly here"</li>
+  <li>Remote-first with flexibility for parents</li>
+  <li>Transparent and easy-to-calculate pay</li>
+  <li>Leadership transparency: weekly 30-min all-hands</li>
+  <li>Room for growth, product that makes a difference</li>
+  <li>Fast-paced, fun environment</li>
+</ul>
+
+<h3>Cons (aggregated)</h3>
+<ul>
+  <li>"Due to so many products being released, some might be half baked (but at least innovation is happening)"</li>
+  <li>Working remotely can sometimes feel disconnected from Columbus and Jerusalem offices</li>
+  <li>One reviewer: "compensation is ok" but overall experience was disappointing</li>
+</ul>
+
+<h3>Selected reviews</h3>
+
+<div class="callout tip">
+  <p><strong>Feb 2026 (current employee):</strong> Praised constantly shipping products, wealth of experienced ICs, supportive culture, remote work, transparent pay, and weekly all-hands. Con: some products released half-baked.</p>
+</div>
+
+<div class="callout tip">
+  <p><strong>2025 (current employee):</strong> "Amazing place to work. Culture is supportive, fast-paced, and full of smart, passionate people who care about what they do."</p>
+</div>
+
+<div class="callout warn">
+  <p><strong>2024 (former employee):</strong> "Looks promising, disappointing is an understatement." Minority opinion; 92% recommend overall.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="benefits">Benefits &amp; Perks</h2>
+
+<table>
+  <thead><tr><th>Category</th><th>Detail</th></tr></thead>
+  <tbody>
+    <tr><td><strong>PTO</strong></td><td>30 days/year + 10-day carryover</td></tr>
+    <tr><td><strong>Sick leave</strong></td><td>5 paid sick days/year</td></tr>
+    <tr><td><strong>Holidays</strong></td><td>9 paid holidays</td></tr>
+    <tr><td><strong>Parental leave</strong></td><td>4 weeks parental + 8 weeks additional medical for birthing parent (12 weeks total)</td></tr>
+    <tr><td><strong>Health insurance</strong></td><td>Medical, dental, vision. TW covers 61% of premiums.</td></tr>
+    <tr><td><strong>Retirement</strong></td><td>401(k) with 3% company match</td></tr>
+    <tr><td><strong>Equity</strong></td><td>Every employee gets equity</td></tr>
+    <tr><td><strong>Life insurance</strong></td><td>Offered</td></tr>
+    <tr><td><strong>Remote</strong></td><td>Remote-first. Hybrid 2 days/week for NYC roles (Soho office).</td></tr>
+  </tbody>
+</table>
+
+<p>Sources: Himalayas.app, BuiltIn, Glassdoor, Marie's recruiter screen.</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="moby-gates">Moby Gates</h2>
+
+<p>Two gate architectures for Moby on the free tier. Both follow the same pattern: an entitlement string in <code>tw-features</code> controls access, a PostHog flag controls the gate's presentation variant, the backend enforces the boundary, and the gate produces a PQL signal.</p>
+
+<h3>Gate A: Answer Truncation</h3>
+
+<p>Free users get a fixed number of Moby queries (e.g., 10). Moby answers each one, but the answers are truncated at a natural breakpoint. The user doesn't know answers are truncated until they see it. This creates a two-stage conversion funnel: the quantity limit creates scarcity (users spend their queries carefully), and the truncation creates desire for completeness once they see that Moby's partial answers are already valuable.</p>
+
+<h4>Structured output</h4>
+<p>The Moby system prompt for free-tier requests instructs the LLM to return structured output with two fields:</p>
+
+<pre><code class="language-json">{
+  "preview": "Your top 3 channels by ROAS: Google Shopping (4.2x),
+              Meta Prospecting (3.1x), TikTok Spark Ads (2.8x).
+              Two channels are underperforming relative to spend...",
+  "full": "Your top 3 channels by ROAS: Google Shopping (4.2x),
+           Meta Prospecting (3.1x), TikTok Spark Ads (2.8x).
+           Two channels are underperforming relative to spend:
+           Meta Retargeting is at 0.9x (below breakeven) and
+           Google Performance Max dropped from 3.1x to 1.4x
+           over the last 14 days. Recommended reallocation: ..."
+}</code></pre>
+
+<p>The LLM already generates the full analysis via <code>run_sql</code>. Asking it to produce a natural-sounding cliffhanger alongside the full response is a prompt-level change, not infrastructure. The backend stores both; the API returns only <code>preview</code> for free-tier requests. No second model call, no added latency.</p>
+
+<h4>Entitlements and schema</h4>
+<ul>
+  <li><code>MOBY_PREVIEW</code> in <code>tw-features</code></li>
+  <li><code>tw-subscription.moby_queries_remaining: number</code> (decremented per query, initialized at signup)</li>
+  <li>API response shape: <code>{ preview: string, full: string | null, truncated: boolean, queries_remaining: number }</code></li>
+  <li><code>full</code> is <code>null</code> for free-tier responses. The frontend never receives the complete answer.</li>
+</ul>
+
+<h4>Backend</h4>
+<p>The Moby tool-use router checks the shop's entitlement and query balance before executing. If <code>MOBY_PREVIEW</code> is present and <code>queries_remaining &gt; 0</code>: run the query, decrement the counter, return the <code>preview</code> field only. If <code>queries_remaining === 0</code>: return a gate payload with upgrade CTA. The counter lives on the shop document in MongoDB, same as other subscription state.</p>
+
+<h4>React</h4>
+<pre><code class="language-jsx">function MobyResponse({ response }) {
+  const posthog = usePostHog()
+
+  if (response.truncated) {
+    posthog.capture('moby_preview_shown', {
+      queries_remaining: response.queries_remaining
+    })
+    return (
+      &lt;&gt;
+        &lt;ChatBubble text={response.preview} /&gt;
+        &lt;UpgradeGate
+          message={`See the full analysis (${response.queries_remaining} queries left)`}
+          trigger="moby_truncation"
+        /&gt;
+      &lt;/&gt;
+    )
+  }
+  return &lt;ChatBubble text={response.full} /&gt;
+}</code></pre>
+
+<h4>PostHog experiment</h4>
+<p>Flag <code>moby-preview-depth</code>, variants: <code>3-items</code> (truncate after 3 data points), <code>summary-only</code> (one-line summary, no detail). The variant is passed to the system prompt so the LLM adjusts the preview's natural breakpoint accordingly. Conversion event: <code>plan_upgraded</code> within 14 days.</p>
+
+<h4>PQL signal</h4>
+<p><code>moby_previews_viewed_7d</code>. Repeated engagement with truncated answers signals the user finds value but hits the ceiling. Weight: high. Combine with <code>queries_remaining === 0</code> for the strongest signal.</p>
+
+<h3>Gate B: Time-Boxed Trial</h3>
+
+<p>Free users get full read-only Moby access (data questions via <code>run_sql</code>, no action tools) for N days after signup. After expiry, Moby responds with an upgrade gate. The trial is tied to the shop's domain, so creating new accounts doesn't reset it.</p>
+
+<h4>Entitlements and schema</h4>
+<ul>
+  <li><code>MOBY_TRIAL</code> in <code>tw-features</code>, added at signup</li>
+  <li><code>tw-subscription.moby_trial_expires_at: ISO timestamp</code></li>
+  <li>Backend checks both: entitlement present AND <code>now &lt; expires_at</code></li>
+  <li>After expiry: remove <code>MOBY_TRIAL</code> from the entitlement array, or leave it and let the timestamp gate</li>
+</ul>
+
+<h4>Backend</h4>
+<p>The Moby tool-use router already checks plan tier before executing tools. Add a branch: if <code>MOBY_TRIAL</code> present and not expired, allow read tools (<code>run_sql</code>, <code>table_schema</code>, <code>sql_examples</code>). Reject action tools (<code>automations.draft_automation</code>, Meta connector, GeoLift) regardless of trial status; those are Foundation/Automate entitlements. On expiry, return a gate payload with the upgrade CTA and a summary of what the user asked during the trial ("You asked Moby 14 questions about your ad performance. Upgrade to keep going.").</p>
+
+<h4>PostHog experiment</h4>
+<p>Flag <code>moby-trial-duration</code>, variants: <code>3d</code>, <code>5d</code>, <code>7d</code>. Backend reads the variant at account creation via <code>posthog.getFeatureFlag()</code> (server-side SDK) and sets <code>moby_trial_expires_at</code> accordingly. Conversion event: <code>plan_upgraded</code> within 14 days of trial expiry. Exposure event: <code>moby_trial_started</code>.</p>
+
+<h4>PQL signal</h4>
+<p><code>moby_trial_query_count</code>. High query count + expired trial + no upgrade = high-intent lead. Weight: very high.</p>
+
+<h3>Skill scoping</h3>
+<p>Moby skills are gated by plan tier at the tool-call layer. Free users can reach data-analysis (read-only SQL queries). Foundation unlocks Moby Specialists (media buying, creative, CRO agents). Automate unlocks automations-operator. Enterprise add-ons like Compass (Bayesian MMM, $4,800/mo, dedicated data science team) are gated separately. Users don't see skill names or routing; they type a question and Moby routes it. When a free user's question would route to a gated skill, Moby answers the diagnostic part (read tools allowed) and gates the action part: "I can tell you your Meta CPA increased 34% because your top creative fatigued. To adjust your budget allocation, upgrade to Foundation."</p>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<h2 class="doc-nav-target" id="sources">Sources</h2>
+
+<table>
+  <thead><tr><th>Source</th><th>What it covers</th><th>URL</th></tr></thead>
+  <tbody>
+    <tr><td>Glassdoor (Interviews)</td><td>21 interview reviews, difficulty ratings, process descriptions</td><td><a href="https://www.glassdoor.com/Interview/Triple-Whale-Interview-Questions-E7015366.htm">glassdoor.com/.../Interview</a></td></tr>
+    <tr><td>Glassdoor (Reviews)</td><td>40 employee reviews, 4.5/5 rating, pros/cons</td><td><a href="https://www.glassdoor.com/Reviews/Triple-Whale-Reviews-E7015366.htm">glassdoor.com/.../Reviews</a></td></tr>
+    <tr><td>Glassdoor (Salaries)</td><td>28 salaries across 18 titles, 4.3/5 comp rating</td><td><a href="https://www.glassdoor.com/Salary/Triple-Whale-Salaries-E7015366.htm">glassdoor.com/.../Salaries</a></td></tr>
+    <tr><td>Levels.fyi (Salaries)</td><td>Total comp by role, limited SWE data</td><td><a href="https://www.levels.fyi/companies/triple-whale/salaries">levels.fyi/.../salaries</a></td></tr>
+    <tr><td>Levels.fyi (SWE)</td><td>Software engineer comp, mostly Israel data</td><td><a href="https://www.levels.fyi/companies/triple-whale/salaries/software-engineer">levels.fyi/.../software-engineer</a></td></tr>
+    <tr><td>Levels.fyi (Benefits)</td><td>No data yet (insufficient submissions)</td><td><a href="https://www.levels.fyi/companies/triple-whale/benefits">levels.fyi/.../benefits</a></td></tr>
+    <tr><td>Scoutify</td><td>19 interview questions, process stages, salary range</td><td><a href="https://scoutify.com/companies/triple-whale">scoutify.com/.../triple-whale</a></td></tr>
+    <tr><td>Himalayas.app</td><td>Benefits detail (PTO, equity, 401k, parental)</td><td><a href="https://himalayas.app/companies/triple-whale/benefits">himalayas.app/.../benefits</a></td></tr>
+    <tr><td>BuiltIn</td><td>Benefits, headcount (141), open roles</td><td><a href="https://builtin.com/company/triple-whale/benefits">builtin.com/.../benefits</a></td></tr>
+  </tbody>
+</table>
+
+<div class="callout warn">
+  <p>Glassdoor blocks direct page fetches (403). The data above comes from search result snippets and individual review URLs that the search engine surfaced. Some detail behind Glassdoor's soft walls may not be captured here.</p>
+</div>
+
+</main>
+<script src="doc-nav.js"></script>
+</body>
+</html>
