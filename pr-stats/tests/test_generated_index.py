@@ -16,6 +16,11 @@ from core.timeline import (
 )
 
 
+CLAUDE_MEM = "thedotmack/claude-mem"
+HERMES_AGENT = "NousResearch/hermes-agent"
+HERMES_WEBUI = "nesquena/hermes-webui"
+
+
 def _read_index(repo_root: Path) -> str:
     return (repo_root / "index.html").read_text(encoding="utf-8")
 
@@ -30,9 +35,15 @@ def _script_array(content: str, name: str) -> Any:
     return json.loads(match.group(1))
 
 
-def _single_pr(items: list[dict[str, Any]], number: int) -> dict[str, Any]:
-    matches = [item for item in items if item.get("number") == number]
-    assert len(matches) == 1, f"Expected exactly one PR_DATA entry for #{number}, found {len(matches)}."
+def _prs_in_repo(items: list[dict[str, Any]], repo: str, number: int) -> list[dict[str, Any]]:
+    # PR numbers restart per repo, so a bare number matches across repos: agentsview
+    # and claude-mem both have a #1085, and eleven other numbers collide today.
+    return [item for item in items if item.get("number") == number and item.get("repo") == repo]
+
+
+def _single_pr(items: list[dict[str, Any]], repo: str, number: int) -> dict[str, Any]:
+    matches = _prs_in_repo(items, repo, number)
+    assert len(matches) == 1, f"Expected exactly one PR_DATA entry for {repo}#{number}, found {len(matches)}."
     return matches[0]
 
 
@@ -138,23 +149,35 @@ def test_timeline_repo_labels_use_repo_names(repo_root: Path) -> None:
 def test_specific_pr_classifications_from_generated_data(repo_root: Path) -> None:
     items = _pr_data(_read_index(repo_root))
 
-    if not any(item.get("number") in {39391, 40144} for item in items):
+    if not _prs_in_repo(items, HERMES_AGENT, 39391) and not _prs_in_repo(items, HERMES_AGENT, 40144):
         pytest.skip("Legacy hermes-agent PR fixtures are outside the current generated report window.")
-    assert _single_pr(items, 39391)["statusKey"] == "lost"
-    assert _single_pr(items, 40144)["statusKey"] == "withdrawn"
-    assert _single_pr(items, 3563)["statusKey"] == "superseded"
+    assert _single_pr(items, HERMES_AGENT, 39391)["statusKey"] == "lost"
+    assert _single_pr(items, HERMES_AGENT, 40144)["statusKey"] == "withdrawn"
+    assert _single_pr(items, HERMES_WEBUI, 3563)["statusKey"] == "superseded"
 
-    optional_1085 = [item for item in items if item.get("number") == 1085]
+    optional_1085 = _prs_in_repo(items, CLAUDE_MEM, 1085)
     assert len(optional_1085) <= 1
     if optional_1085:
         assert optional_1085[0]["statusKey"] == "superseded"
+
+
+def test_pr_data_is_keyed_by_repo_and_number_not_number_alone(repo_root: Path) -> None:
+    """The invariant every _single_pr lookup rests on.
+
+    A bare number is not a key: agentsview#1085 (shipped) and claude-mem#1085
+    (superseded) coexist, and pinning a classification by number alone matched both.
+    """
+    items = _pr_data(_read_index(repo_root))
+    keys = [(item.get("repo"), item.get("number")) for item in items]
+
+    assert len(keys) == len(set(keys))
 
 
 def test_claude_mem_indirect_landings_roll_up_under_shipped(repo_root: Path) -> None:
     items = _pr_data(_read_index(repo_root))
 
     for number in (2848, 2850, 2851, 2852):
-        pr = _single_pr(items, number)
+        pr = _single_pr(items, CLAUDE_MEM, number)
         assert pr["statusKey"] == "shipped"
         assert pr["releaseLabel"] == "indirect"
         assert pr["viaLabel"] == "#2862"
