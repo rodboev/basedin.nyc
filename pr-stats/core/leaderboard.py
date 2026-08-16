@@ -127,10 +127,13 @@ class LeaderboardRefresh:
     status: str
     pages: int = 0
     reason: str = ""
+    advanced: bool = False
 
     @property
     def cache_updated(self) -> bool:
-        return self.status in {"refreshed", "partial", "failed"}
+        # A resume whose first page fails rewrites the identical scan entry; saying the
+        # cache changed there rewrites the whole file for nothing.
+        return self.status == "refreshed" or (self.status in {"partial", "failed"} and self.advanced)
 
 
 @dataclass(frozen=True)
@@ -144,6 +147,7 @@ class LeaderboardPage:
 class LeaderboardScan:
     cursor: str = ""
     pages: int = 0
+    runs: int = 0
     startedAt: str = ""
     totals: dict[str, int] = field(default_factory=dict)
     opens: dict[str, int] = field(default_factory=dict)
@@ -315,10 +319,13 @@ def _author_recent_count(
 ) -> int | None:
     if created_ats is None:
         return None
-    # Anchored to cachedAt, not now: every other login's recentCount was counted against the
+    # Anchored to the scan, not now: every other login's recentCount was counted against the
     # window that ran when the board was scanned, so the author's has to use the same one to
-    # stay comparable in the leaderboard's rate column.
-    cached_at = _parse_datetime(_string_value(entry.get("cachedAt")))
+    # stay comparable in the leaderboard's rate column. recentAnchor is that instant; it is
+    # the scan's start, which is cachedAt only when the scan finished in one run.
+    cached_at = _parse_datetime(_string_value(entry.get("recentAnchor"))) or _parse_datetime(
+        _string_value(entry.get("cachedAt")),
+    )
     if cached_at is None:
         return None
     cutoff = cached_at - timedelta(days=window_days)
@@ -346,7 +353,12 @@ def leaderboard_staleness(entry: Mapping[str, object], *, now: datetime) -> tupl
     cached_time = _parse_datetime(_string_value(entry.get("cachedAt")))
     if cached_time is None:
         return None
-    return (now - cached_time).total_seconds(), float(leaderboard_ttl_seconds(int_value(entry.get("scanPages"))))
+    ttl = leaderboard_ttl_seconds(int_value(entry.get("scanPages")))
+    if entry.get("scanResumed") is True:
+        # Missing whatever landed while it was building, so it gets the floor, not the
+        # scaled TTL. Newest-first means the next scan sees those PRs on its first page.
+        ttl = min(ttl, LEADERBOARD_BASE_TTL_SECONDS)
+    return (now - cached_time).total_seconds(), float(ttl)
 
 
 def warn_stale_leaderboards(repos: Iterable[str], cache: Cache, *, now: datetime) -> list[str]:
@@ -384,30 +396,36 @@ def fetch_community_leaderboard(repo: str, cache: Cache, *, now: datetime) -> Le
     if resumed is None and existing is not None and not _leaderboard_entry_expired(existing, now=now):
         return LeaderboardRefresh(repo=repo, status="fresh")
 
+    if resumed is None and _in_backstop_cooldown(existing, now=now):
+        # Not "fresh". The board is expired and known-broken; saying nothing here is the
+        # exact silence that let hermes-agent rot, just on a 24h clock instead of forever.
+        return LeaderboardRefresh(
+            repo=repo,
+            status="cooldown",
+            reason=f"held off after hitting the {LEADERBOARD_MAX_TOTAL_PAGES}-page backstop",
+        )
+
     scan = resumed if resumed is not None else _new_scan(now)
+    scan.runs += 1
+    started_pages = scan.pages
     exclusions = configured_repo_leaderboard_exclusions(repo)
     # Anchored to the scan's own start, not each chunk's clock, so a scan spread over
     # several runs counts one 7-day window rather than a different one per chunk.
     recent_cutoff = (_parse_datetime(scan.startedAt) or now).timestamp() - 7 * 86_400
-    budget = min(LEADERBOARD_PAGES_PER_RUN, LEADERBOARD_MAX_TOTAL_PAGES - scan.pages)
-    if budget <= 0:
-        cache.leaderboards[cache_key] = _entry_without_scan(existing)
-        return LeaderboardRefresh(
-            repo=repo,
-            status="failed",
-            pages=scan.pages,
-            reason=f"exceeded the {LEADERBOARD_MAX_TOTAL_PAGES}-page backstop without reaching the end",
-        )
 
-    for _page in range(budget):
+    for _page in range(min(LEADERBOARD_PAGES_PER_RUN, LEADERBOARD_MAX_TOTAL_PAGES - scan.pages)):
         page = _fetch_community_pr_page(repo, cursor=scan.cursor)
         if page.error:
             # Keep the pages already walked so the next run resumes instead of restarting.
-            cache.leaderboards[cache_key] = _entry_with_scan(existing, scan)
+            # A run that walked none has nothing to bank: writing a cursorless scan key
+            # leaves an entry _resumable_scan will never accept.
+            if scan.pages > started_pages:
+                cache.leaderboards[cache_key] = _entry_with_scan(existing, scan)
             return LeaderboardRefresh(
                 repo=repo,
                 status="failed",
                 pages=scan.pages,
+                advanced=scan.pages > started_pages,
                 reason=f"page {scan.pages + 1} failed: {page.error}",
             )
         scan.pages += 1
@@ -416,9 +434,22 @@ def fetch_community_leaderboard(repo: str, cache: Cache, *, now: datetime) -> Le
             break
         scan.cursor = page.cursor
     else:
+        # Out of budget with pages left. Resume next run, unless the backstop is what
+        # stopped us, in which case resuming just rebuilds the same doomed scan forever.
+        if scan.pages >= LEADERBOARD_MAX_TOTAL_PAGES:
+            entry = _entry_without_scan(existing)
+            entry["scanFailedAt"] = now.isoformat().replace("+00:00", "Z")
+            cache.leaderboards[cache_key] = entry
+            return LeaderboardRefresh(
+                repo=repo,
+                status="failed",
+                pages=scan.pages,
+                advanced=True,
+                reason=f"hit the {LEADERBOARD_MAX_TOTAL_PAGES}-page backstop without reaching the end",
+            )
         cache.leaderboards[cache_key] = _entry_with_scan(existing, scan)
         print(f"  Leaderboard scan for {repo} paused at {scan.pages} pages; resumes next run", file=sys.stderr)
-        return LeaderboardRefresh(repo=repo, status="partial", pages=scan.pages)
+        return LeaderboardRefresh(repo=repo, status="partial", pages=scan.pages, advanced=True)
 
     # An empty community is still a complete scan; stamp the entry so the TTL
     # prevents re-paging the whole repo on every run.
@@ -427,10 +458,19 @@ def fetch_community_leaderboard(repo: str, cache: Cache, *, now: datetime) -> Le
     # Merge into the existing entry: PS1-era boards carry releaseCreditCounts and
     # other credit keys that Python has no writer for and must not destroy.
     entry = _entry_without_scan(existing)
+    entry.pop("scanFailedAt", None)
     entry.update({
         "cachedAt": now_str,
         "refreshedAt": now_str,
+        # The window every recentCount above was counted against. cachedAt is the
+        # completion time, which drifts from it whenever a scan spans runs, and the
+        # read side has to anchor the author's window on the same instant to compare.
+        "recentAnchor": scan.startedAt or now_str,
         "scanPages": scan.pages,
+        # A scan spread over runs resumed from a cursor fixed on the first run, so PRs
+        # opened after that never entered the walk. The board is complete as of the
+        # first run, not of cachedAt, which is why it does not earn the full TTL.
+        "scanResumed": scan.runs > 1,
         "logins": logins,
         "stats": {
             login: {"total": scan.totals[login], "open": scan.opens.get(login, 0),
@@ -494,6 +534,20 @@ def _leaderboard_entry_expired(entry: Mapping[str, object], *, now: datetime) ->
     return age >= ttl
 
 
+def _in_backstop_cooldown(entry: Mapping[str, object] | None, *, now: datetime) -> bool:
+    """Bound the damage from a repo that genuinely cannot be scanned inside the backstop.
+
+    Without this, a repo past the backstop restarts a doomed full scan on every run,
+    burning the entire page budget each time.
+    """
+    if entry is None:
+        return False
+    failed_at = _parse_datetime(_string_value(entry.get("scanFailedAt")))
+    if failed_at is None:
+        return False
+    return (now - failed_at).total_seconds() < LEADERBOARD_BASE_TTL_SECONDS
+
+
 def _new_scan(now: datetime) -> LeaderboardScan:
     return LeaderboardScan(startedAt=now.isoformat().replace("+00:00", "Z"))
 
@@ -508,6 +562,7 @@ def _resumable_scan(entry: Mapping[str, object] | None) -> LeaderboardScan | Non
     scan = LeaderboardScan(
         cursor=cursor,
         pages=int_value(raw.get("pages")),
+        runs=int_value(raw.get("runs")),
         startedAt=_string_value(raw.get("startedAt")),
     )
     tallies = raw.get("tallies")
@@ -531,6 +586,7 @@ def _entry_with_scan(existing: Mapping[str, object] | None, scan: LeaderboardSca
     entry["scan"] = {
         "cursor": scan.cursor,
         "pages": scan.pages,
+        "runs": scan.runs,
         "startedAt": scan.startedAt,
         "tallies": {
             login: [total, scan.opens.get(login, 0), scan.merged.get(login, 0), scan.recents.get(login, 0)]

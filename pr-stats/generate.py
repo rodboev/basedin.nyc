@@ -292,8 +292,8 @@ def generate_report(
     for repo in repos:
         try:
             refresh = fetch_community_leaderboard(repo, cache, now=now)
-            if refresh.status == "failed":
-                print(f"WARNING: leaderboard refresh failed for {repo}: {refresh.reason}", file=sys.stderr)
+            if refresh.status in {"failed", "cooldown"}:
+                print(f"WARNING: leaderboard refresh {refresh.status} for {repo}: {refresh.reason}", file=sys.stderr)
             if refresh.cache_updated:
                 cache_updated_early = True
         except GhRetryExhausted as exc:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from pytest import MonkeyPatch
@@ -18,6 +18,7 @@ from core.leaderboard import (
     is_leaderboard_bot,
     is_leaderboard_excluded_login,
     leaderboard_cache_key,
+    leaderboard_staleness,
     leaderboard_ttl_seconds,
     new_leaderboard_stat,
     repo_leaderboard_exclusions,
@@ -304,21 +305,139 @@ def test_fetch_community_leaderboard_resumes_a_scan_that_ran_out_of_pages(monkey
     assert stats["bob"]["total"] == 1
 
 
-def test_fetch_community_leaderboard_fails_loudly_at_the_runaway_backstop(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+def test_multi_run_scan_anchors_every_recent_window_on_the_scan_start(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    _use_overlay_dir(monkeypatch, tmp_path)
+    monkeypatch.setattr(leaderboard_mod, "LEADERBOARD_PAGES_PER_RUN", 1)
+    pages = [
+        _graphql_page([_pr_node("alice", created_at="2026-01-02T12:00:00Z")], has_next=True, cursor="CUR1"),
+        _graphql_page([_pr_node("bob", created_at="2025-12-01T00:00:00Z")]),
+    ]
+    calls: list[tuple[str, ...]] = []
+
+    def _fake_run_gh(*args: str, **_kwargs: object) -> str:
+        calls.append(args)
+        return pages[len(calls) - 1]
+
+    monkeypatch.setattr(leaderboard_mod, "run_gh", _fake_run_gh)
+    cache = Cache()
+    key = leaderboard_cache_key("owner/repo", None)
+
+    fetch_community_leaderboard("owner/repo", cache, now=datetime(2026, 1, 8, tzinfo=timezone.utc))
+    fetch_community_leaderboard("owner/repo", cache, now=datetime(2026, 1, 10, tzinfo=timezone.utc))
+
+    entry = cache.leaderboards[key]
+    stats = entry["stats"]
+    assert isinstance(stats, dict)
+    # Counted against the 7 days before the scan started, not before it finished.
+    assert stats["alice"]["recentCount"] == 1
+    assert entry["cachedAt"] == "2026-01-10T00:00:00Z"
+    assert entry["recentAnchor"] == "2026-01-08T00:00:00Z"
+    # The author's window has to land on the same instant or the rate column is nonsense.
+    rows = cached_leaderboard_rows(
+        cache=cache,
+        repo="owner/repo",
+        exclusions=repo_leaderboard_exclusions(owner="owner"),
+        rate_window_days=7,
+        author_login="alice",
+        author_credited=1,
+        author_open=0,
+        author_recent_created=["2026-01-02T12:00:00Z"],
+    )
+    assert next(row for row in rows if row.login == "alice").rate == round(1 / 7, 1)
+
+
+def test_backstop_failure_does_not_restart_the_same_doomed_scan_every_run(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     _use_overlay_dir(monkeypatch, tmp_path)
     monkeypatch.setattr(leaderboard_mod, "LEADERBOARD_MAX_TOTAL_PAGES", 2)
     monkeypatch.setattr(leaderboard_mod, "LEADERBOARD_PAGES_PER_RUN", 2)
     now = datetime(2026, 7, 3, tzinfo=timezone.utc)
     page = _graphql_page([_pr_node("alice")], has_next=True, cursor="CUR")
-    monkeypatch.setattr(leaderboard_mod, "run_gh", lambda *_args, **_kwargs: page)
+    calls: list[tuple[str, ...]] = []
+
+    def _fake_run_gh(*args: str, **_kwargs: object) -> str:
+        calls.append(args)
+        return page
+
+    monkeypatch.setattr(leaderboard_mod, "run_gh", _fake_run_gh)
     cache = Cache()
 
-    assert fetch_community_leaderboard("owner/repo", cache, now=now).status == "partial"
+    first = fetch_community_leaderboard("owner/huge", cache, now=now)
+    assert first.status == "failed"
+    assert "backstop" in first.reason
+    assert calls == calls[:2]
+
+    # Inside the cooldown the doomed scan is not attempted again, but it stays reported:
+    # a held-off board is expired and broken, not fresh.
+    second = fetch_community_leaderboard("owner/huge", cache, now=now + timedelta(hours=6))
+    assert second.status == "cooldown"
+    assert "backstop" in second.reason
+    assert second.cache_updated is False
+    assert len(calls) == 2
+
+    third = fetch_community_leaderboard("owner/huge", cache, now=now + timedelta(hours=25))
+    assert third.status == "failed"
+    assert len(calls) == 4
+
+
+def test_a_scan_spread_over_runs_gets_the_ttl_floor_not_the_scaled_ttl(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    _use_overlay_dir(monkeypatch, tmp_path)
+    monkeypatch.setattr(leaderboard_mod, "LEADERBOARD_PAGES_PER_RUN", 1)
+    pages = [
+        _graphql_page([_pr_node("alice")], has_next=True, cursor="CUR1"),
+        _graphql_page([_pr_node("bob")]),
+    ]
+    calls: list[tuple[str, ...]] = []
+
+    def _fake_run_gh(*args: str, **_kwargs: object) -> str:
+        calls.append(args)
+        return pages[len(calls) - 1]
+
+    monkeypatch.setattr(leaderboard_mod, "run_gh", _fake_run_gh)
+    cache = Cache()
+    key = leaderboard_cache_key("owner/repo", None)
+    start = datetime(2026, 7, 3, tzinfo=timezone.utc)
+
+    fetch_community_leaderboard("owner/repo", cache, now=start)
+    fetch_community_leaderboard("owner/repo", cache, now=start + timedelta(days=1))
+
+    entry = cache.leaderboards[key]
+    # It resumed from a cursor fixed a day earlier, so it never saw anything opened since.
+    assert entry["scanResumed"] is True
+    age, ttl = leaderboard_staleness(entry, now=start + timedelta(days=1)) or (0.0, 0.0)
+    assert ttl == float(leaderboard_mod.LEADERBOARD_BASE_TTL_SECONDS)
+    assert age == 0.0
+
+
+def test_a_single_run_scan_keeps_its_scaled_ttl(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    _use_overlay_dir(monkeypatch, tmp_path)
+    now = datetime(2026, 7, 3, tzinfo=timezone.utc)
+    monkeypatch.setattr(leaderboard_mod, "run_gh", lambda *_args, **_kwargs: _graphql_page([_pr_node("alice")]))
+    cache = Cache()
+
+    fetch_community_leaderboard("owner/repo", cache, now=now)
+
+    entry = cache.leaderboards[leaderboard_cache_key("owner/repo", None)]
+    assert entry["scanResumed"] is False
+    assert (leaderboard_staleness(entry, now=now) or (0.0, 0.0))[1] == float(leaderboard_ttl_seconds(1))
+
+
+def test_failed_resume_that_walked_no_pages_does_not_dirty_the_cache(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    _use_overlay_dir(monkeypatch, tmp_path)
+    now = datetime(2026, 7, 3, tzinfo=timezone.utc)
+    key = leaderboard_cache_key("owner/repo", None)
+    cache = Cache()
+    cache.leaderboards[key] = {
+        "cachedAt": "2026-01-01T00:00:00Z",
+        "scan": {"cursor": "CUR1", "pages": 1, "startedAt": "2026-07-01T00:00:00Z", "tallies": {"alice": [1, 0, 1, 0]}},
+    }
+    before = json.loads(json.dumps(cache.leaderboards[key]))
+    monkeypatch.setattr(leaderboard_mod, "run_gh", lambda *_args, **_kwargs: "")
+
     outcome = fetch_community_leaderboard("owner/repo", cache, now=now)
+
     assert outcome.status == "failed"
-    assert "backstop" in outcome.reason
-    # The doomed scan state is dropped rather than retried forever.
-    assert "scan" not in cache.leaderboards[leaderboard_cache_key("owner/repo", None)]
+    assert outcome.cache_updated is False
+    assert cache.leaderboards[key] == before
 
 
 def test_leaderboard_ttl_scales_with_pages_scanned() -> None:
