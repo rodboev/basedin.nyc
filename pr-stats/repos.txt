@@ -2,18 +2,21 @@
 # Comment a line out to deactivate it.
 nesquena/hermes-webui
 kenn-io/agentsview
+kenn-io/roborev
+kenn-io/msgvault
+kenn-io/docbank
 thedotmack/claude-mem
 headroomlabs-ai/headroom
 mem0ai/mem0
 stablyai/orca
 NVIDIA/SkillSpector
-microsoft/presidio
-NousResearch/hermes-agent
+# microsoft/presidio
+# NousResearch/hermes-agent
 # unslothai/unsloth
 # cline/cline
 # continuedev/continue
 # CopilotKit/CopilotKit
 # MemPalace/mempalace
-mastra-ai/mastra
+# mastra-ai/mastra
 # github/github-mcp-server
 # lsdefine/GenericAgent

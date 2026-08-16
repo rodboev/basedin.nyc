@@ -33,7 +33,7 @@
     <tr>
       <td><strong>CDP</strong><br><small>Customer Data Platform</small></td>
       <td>Collects events from every source (web app, mobile, backend, third-party APIs), unifies identity across devices/sessions, and <strong>routes</strong> that unified stream to downstream destinations. The CDP doesn't analyze anything; it's a switchboard.</td>
-      <td>Segment, mParticle, RudderStack, Jitsu</td>
+      <td>Segment, mParticle, RudderStack, Jitsu, PostHog CDP</td>
     </tr>
     <tr>
       <td><strong>Product analytics</strong></td>
@@ -669,25 +669,236 @@ const canUseAutomations = features.includes('AUTOMATIONS')</code></pre>
 
 <p>Option A is the strongest because it's organic: the gap emerges naturally from the merchant's own growth. No artificial wall needed. Options B and C are testable supplements.</p>
 
+<h3>D. Cross-channel profit gate (Moby forward projection)</h3>
+
+<p>Value prop in one line: same ad budget, more net profit. Not lower spend, not vanity ROAS &mdash; more profit dollars after COGS and shipping, from money already being spent.</p>
+
+<ul>
+  <li><strong>Free (backward, realized):</strong> over a rolling 72h window, replay the merchant's own per-channel profit-per-dollar against their actual spend. Output one honest sentence: "Had your $5,000 followed the split that performed best, you'd have earned ~$900 more (+$0.18 per dollar)." Arithmetic on data already synced; no model, no projection, no incremental cost.</li>
+  <li><strong>Paid (forward, blurred):</strong> Moby projects the next 72h from recent performance and shows the budget moves plus profit delta, blurred. Upgrade reveals the numbers and, on approval, applies them.</li>
+  <li><strong>Why 72h:</strong> Meta resets the learning phase on budget changes &gt;~20% inside 48h; safe scaling spaces changes 3&ndash;4 days apart. 72h is both the shortest reliable signal window and the safe cadence to act, so Moby optimizes on the rhythm Meta rewards instead of thrashing it. Sub-$5M founders log in on roughly this cadence anyway.</li>
+  <li><strong>Baseline:</strong> use the merchant's own realized spend. The $5k illustration maps to a ~$1M brand at ~30% of revenue (~$25k/mo) &mdash; TW's own stated upgrade threshold, i.e. the shop on the cusp of paying.</li>
+</ul>
+
+<p>Grounding (patterns already in this doc):</p>
+
+<ul>
+  <li>Backward card is a per-shop batch job over synced spend + contribution profit; stores one row per shop.</li>
+  <li>Reveal attempt fires <code>posthog.capture('gate_shown', { feature: 'profit-spread', gate_type: 'blurred', user_plan })</code>; the server verifies <code>tw-features</code> before returning any forward numbers, same contract as the <code>GatedFeature</code> pattern above.</li>
+  <li>The backward uplift doubles as a PQL signal: a large spread triggers the contextual nudge (see PQL scoring). Moby usage meters through <code>oaiq</code> / <code>tw-subscription.credits</code> once unlocked.</li>
+</ul>
+
+<div class="callout warn">
+  <p>The reallocation math (move cap, per-channel profit attribution, how the forward estimate is formed) is unspecified here on purpose. It's arithmetic to decompose, not code. Placeholder until we spec it.</p>
+</div>
+
+<p>Per-shop computation (math to decompose, not code):</p>
+
+<ul>
+  <li><strong>Per channel, rolling 72h:</strong> <code>POAS_c = contribution_profit_c / ad_spend_c</code>, where contribution profit = attributed revenue &minus; COGS &minus; shipping &minus; payment fees. This is the "Profit/$1" shown in the cards.</li>
+  <li><strong>Blended:</strong> <code>pMER = &Sigma; profit / &Sigma; spend</code> (profit marketing-efficiency ratio; the revenue-only version is MER / CROAS). Spread = best POAS_c &minus; worst POAS_c.</li>
+  <li><strong>Backward uplift:</strong> hold total budget <code>B = &Sigma; spend_c</code> fixed, reallocate toward higher POAS_c, then <code>uplift = &Sigma;(profit at new split) &minus; &Sigma;(profit actual)</code>, per-$1 = uplift / B. Two flavors: an "optimal initial split" (uncapped, since a day-0 budget carries no learning penalty) vs a "safe live move" (capped ~20% per channel, which is the forward case).</li>
+  <li><strong>Forward:</strong> same function with recent POAS_c as the estimate; blur the exact moves and total until <code>tw-features</code> unlocks, then apply via ad-platform APIs in &le;20% steps on approval.</li>
+  <li><strong>Store &amp; signal:</strong> one row per shop <code>{ backward_uplift, backward_per_$1, spread }</code>; emit backward_uplift as a PQL signal (big spread &rarr; contextual nudge).</li>
+  <li><strong>To resolve:</strong> which attribution model assigns per-channel revenue; how to dampen the counterfactual for saturation so the backward number isn't hindsight-inflated.</li>
+</ul>
+
+<style>
+.gate-demo { border:1px solid var(--border, #2a2a35); border-radius:10px; padding:1rem 1.1rem; margin:1rem 0; }
+.gate-pills { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; }
+.gate-pill { font:inherit; font-size:.8rem; padding:.3rem .75rem; border-radius:999px; border:1px solid var(--text-tertiary); background:transparent; color:var(--text-secondary); cursor:pointer; }
+.gate-pill.active { border-color:var(--blue); color:var(--blue); box-shadow:0 0 0 1px var(--blue); }
+.gate-panel { display:none; }
+.gate-panel.active { display:block; }
+.gate-card { border:1px solid var(--text-tertiary); border-radius:8px; padding:1rem; }
+.gate-blur { filter:blur(6px); user-select:none; pointer-events:none; }
+.gate-cta { display:inline-block; margin-top:.8rem; padding:.4rem .8rem; border-radius:6px; background:var(--blue); color:#fff; font-size:.82rem; font-weight:600; }
+.gate-eyebrow { font-size:.78rem; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.05em; }
+.gate-moves { list-style:none; padding:0; margin:.5rem 0; font-size:.9rem; }
+.gate-moves li { display:flex; justify-content:space-between; padding:.25rem 0; border-bottom:1px solid rgba(127,127,127,.18); }
+.gate-up { color:var(--green); } .gate-down { color:var(--red); }
+.gate-subtoggle { display:inline-flex; gap:.3rem; }
+.gate-view-btn { font:inherit; font-size:.72rem; padding:.12rem .5rem; border-radius:999px; border:1px solid var(--text-tertiary); background:transparent; color:var(--text-secondary); cursor:pointer; text-transform:none; letter-spacing:0; }
+.gate-view-btn.active { border-color:var(--blue); color:var(--blue); }
+.gate-view { display:none; }
+.gate-view.active { display:block; }
+.gate-move { white-space:nowrap; }
+.gate-foot { display:flex; justify-content:space-between; align-items:baseline; gap:1rem; margin-top:.6rem; padding-top:.5rem; border-top:1px solid rgba(127,127,127,.25); }
+.gate-foot .big { font-size:1.15rem; font-weight:700; }
+.gate-foot .lbl { font-size:.72rem; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:.04em; display:block; }
+.gate-bars { margin:.6rem 0 .2rem; }
+.gate-bar-head { margin-bottom:.15rem; }
+.gate-bar-head .gate-bar-track { background:transparent; height:auto; }
+.gate-bar-head .gate-bar-val, .gate-bar-head .gate-bar-move { font-size:.68rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--text-tertiary); }
+.gate-bar-row { display:flex; align-items:center; gap:.6rem; margin:.5rem 0; }
+.gate-bar-label { width:56px; flex:none; font-size:.85rem; color:var(--text-secondary); }
+.gate-bar-track { position:relative; flex:1; height:20px; background:rgba(127,127,127,.12); border-radius:4px; }
+.gate-bar-fill { display:block; height:100%; border-radius:4px; }
+.gate-bar-be { position:absolute; top:-4px; bottom:-4px; left:50%; width:2px; background:var(--text-secondary); }
+.gate-bar-val { width:46px; flex:none; text-align:right; font-size:.82rem; font-weight:600; color:var(--text-secondary); }
+.gate-bar-move { width:74px; flex:none; text-align:right; font-size:.82rem; }
+.gate-be-cap { font-size:.72rem; color:var(--text-tertiary); margin:.2rem 0 0 62px; }
+.gate-pql-h { font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--text-tertiary); margin:.85rem 0 .2rem; }
+.gate-pql { font-size:.8rem; color:var(--text-secondary); margin:0; padding-left:1.1rem; }
+.gate-pql li { margin:.15rem 0; }
+.gate-demo table { margin:.4rem 0; }
+.gate-proj { background:rgba(88,166,255,.08); }
+.gate-proj-l { background:rgba(88,166,255,.08); border-left:2px solid rgba(127,127,127,.45); }
+</style>
+
+<div class="gate-demo">
+  <div class="gate-pills" role="tablist">
+    <button class="gate-pill active" data-tab="0">1 &middot; Free: what you left</button>
+    <button class="gate-pill" data-tab="1">2 &middot; Gate: last 3 &rarr; next 3</button>
+    <button class="gate-pill" data-tab="2">3 &middot; Efficiency tile</button>
+  </div>
+
+  <div class="gate-panel active" data-panel="0">
+    <div class="gate-card">
+      <div class="metrics-row">
+        <div class="metric-card"><div class="value" style="font-size:1.05rem">$5,000 &rarr; $6,300 <span style="color:var(--text-tertiary)">(126%)</span></div><div class="label">A &middot; your actual split</div></div>
+        <div class="metric-card"><div class="value" style="font-size:1.05rem;color:var(--green)">$5,000 &rarr; $7,200 <span style="color:var(--text-tertiary)">(144%)</span></div><div class="label">B &middot; best split, same spend</div></div>
+        <div class="metric-card"><div class="value" style="color:var(--green)">+$900 <span style="font-size:.9rem;color:var(--text-tertiary)">(+18%)</span></div><div class="label">C &middot; left on the table (B&minus;A)</div></div>
+      </div>
+      <div class="gate-eyebrow" style="display:flex;justify-content:space-between;align-items:center">
+        <span>Same $5,000, two ways to split it</span>
+        <span class="gate-subtoggle">
+          <button class="gate-view-btn active" data-view="compact">Compact</button>
+          <button class="gate-view-btn" data-view="detailed">Detailed</button>
+        </span>
+      </div>
+      <div class="gate-view active" data-view="compact">
+        <table>
+          <thead><tr><th>Channel</th><th>Profit/$1</th><th>Actual (A)</th><th class="gate-proj-l">Best split (B)</th></tr></thead>
+          <tbody>
+            <tr><td>Google</td><td>$2.00</td><td>$1,500 &rarr; $3,000</td><td class="gate-proj-l">$2,250 &rarr; $4,500</td></tr>
+            <tr><td>Meta</td><td>$1.20</td><td>$2,000 &rarr; $2,400</td><td class="gate-proj-l">$1,750 &rarr; $2,100</td></tr>
+            <tr><td>TikTok</td><td>$0.60</td><td>$1,500 &rarr; $900</td><td class="gate-proj-l">$1,000 &rarr; $600</td></tr>
+          </tbody>
+          <tfoot><tr><td><strong>Total</strong></td><td></td><td><strong>$5,000 &rarr; $6,300</strong></td><td class="gate-proj-l"><strong>$5,000 &rarr; $7,200</strong></td></tr></tfoot>
+        </table>
+      </div>
+      <div class="gate-view" data-view="detailed">
+        <table>
+          <thead>
+            <tr><th></th><th></th><th colspan="2">Your actual (A)</th><th colspan="2" class="gate-proj-l">Best split (B)</th></tr>
+            <tr><th>Channel</th><th>Profit/$1</th><th>Spend</th><th>Profit</th><th class="gate-proj-l">Spend</th><th class="gate-proj">Profit</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Google</td><td>$2.00</td><td>$1,500</td><td>$3,000</td><td class="gate-proj-l">$2,250</td><td class="gate-proj">$4,500</td></tr>
+            <tr><td>Meta</td><td>$1.20</td><td>$2,000</td><td>$2,400</td><td class="gate-proj-l">$1,750</td><td class="gate-proj">$2,100</td></tr>
+            <tr><td>TikTok</td><td>$0.60</td><td>$1,500</td><td>$900</td><td class="gate-proj-l">$1,000</td><td class="gate-proj">$600</td></tr>
+          </tbody>
+          <tfoot><tr><td><strong>Total</strong></td><td></td><td><strong>$5,000</strong></td><td><strong>$6,300</strong></td><td class="gate-proj-l"><strong>$5,000</strong></td><td class="gate-proj"><strong>$7,200</strong></td></tr></tfoot>
+        </table>
+      </div>
+      <span class="gate-cta">See the next 3 days with Moby &rarr;</span>
+      <div class="gate-pql-h">PQL signals from this view</div>
+      <ul class="gate-pql">
+        <li><code>backward_uplift</code> ($ left on the table) &mdash; bigger = higher fit / intent</li>
+        <li><code>spread</code> (best &minus; worst Profit/$1) &mdash; size of the opportunity</li>
+        <li>card expanded / dwell time &mdash; engagement</li>
+        <li>"See next 3 days" click &mdash; high-intent action</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="gate-panel" data-panel="1">
+    <div class="gate-card">
+      <div class="gate-eyebrow">Last 3 days (real) &nbsp;&rarr;&nbsp; next 3 days (Moby projection)</div>
+      <table>
+        <thead><tr><th>Channel</th><th>Spend / 3d</th><th>Profit &middot; last 3</th><th class="gate-proj-l">Profit &middot; next 3</th><th class="gate-proj">Change</th></tr></thead>
+        <tbody>
+          <tr><td>Google</td><td>$1,500</td><td>$3,000</td><td class="gate-proj-l">$<span class="gate-blur">4,400</span></td><td class="gate-proj gate-move gate-up">&uarr; +$<span class="gate-blur">1,400 (+47</span>%)</td></tr>
+          <tr><td>Meta</td><td>$2,000</td><td>$2,400</td><td class="gate-proj-l">$<span class="gate-blur">1,920</span></td><td class="gate-proj gate-move gate-down">&darr; &minus;$<span class="gate-blur">480 (&minus;20</span>%)</td></tr>
+          <tr><td>TikTok</td><td>$1,500</td><td>$900</td><td class="gate-proj-l">$<span class="gate-blur">720</span></td><td class="gate-proj gate-move gate-down">&darr; &minus;$<span class="gate-blur">180 (&minus;20</span>%)</td></tr>
+        </tbody>
+        <tfoot><tr><td><strong>Total</strong></td><td><strong>$5,000</strong></td><td><strong>$6,300</strong></td><td class="gate-proj-l"><strong>$<span class="gate-blur">7,040</span></strong></td><td class="gate-proj gate-move gate-up"><strong>&uarr; +$<span class="gate-blur">740 (+12</span>%)</strong></td></tr></tfoot>
+      </table>
+      <span class="gate-cta">Upgrade to reveal the next-3-day projection + auto-apply &rarr;</span>
+      <p style="font-size:.78rem;color:var(--text-tertiary);margin:.5rem 0 0">Spend and last-3 profit are your real numbers; next-3 profit is Moby's projection at the same $5,000 total spend.</p>
+      <div class="gate-pql-h">PQL signals from this view</div>
+      <ul class="gate-pql">
+        <li><code>gate_shown</code> (forward projection impression)</li>
+        <li><code>projected_gain</code> (next-3 change) &mdash; value at stake</li>
+        <li>hover / tap on a blurred figure &mdash; curiosity</li>
+        <li>"Upgrade to reveal" click &mdash; strongest buy signal</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="gate-panel" data-panel="2">
+    <div class="gate-card">
+      <div class="gate-eyebrow" style="display:flex;justify-content:space-between;align-items:center">
+        <span>Channel efficiency &mdash; profit per $1 (POAS), rolling 3d</span>
+        <span class="gate-subtoggle">
+          <button class="gate-view-btn active" data-view="table">Table</button>
+          <button class="gate-view-btn" data-view="bars">Bars</button>
+        </span>
+      </div>
+      <div class="gate-view active" data-view="table">
+        <table>
+          <thead><tr><th>Channel</th><th>Spend</th><th>Profit/$1</th><th>vs prior 3d</th><th>Next move</th></tr></thead>
+          <tbody>
+            <tr><td>Google</td><td>$1,500</td><td>$2.00</td><td class="gate-up">&#9650; 8%</td><td class="gate-move gate-up">&uarr; +$<span class="gate-blur">700</span></td></tr>
+            <tr><td>Meta</td><td>$2,000</td><td>$1.20</td><td class="gate-down">&#9660; 14%</td><td class="gate-move gate-down">&darr; &minus;$<span class="gate-blur">400</span></td></tr>
+            <tr><td>TikTok</td><td>$1,500</td><td>$0.60</td><td class="gate-down">&#9660; 5%</td><td class="gate-move gate-down">&darr; &minus;$<span class="gate-blur">300</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="gate-view" data-view="bars">
+        <div class="gate-bars">
+          <div class="gate-bar-row gate-bar-head"><span class="gate-bar-label"></span><span class="gate-bar-track" style="background:transparent"></span><span class="gate-bar-val">Profit/$1</span><span class="gate-bar-move">Next 3d</span></div>
+          <div class="gate-bar-row"><span class="gate-bar-label">Google</span><span class="gate-bar-track"><span class="gate-bar-be"></span><span class="gate-bar-fill" style="width:100%;background:var(--green)"></span></span><span class="gate-bar-val">$2.00</span><span class="gate-bar-move gate-up">&uarr; +$<span class="gate-blur">700</span></span></div>
+          <div class="gate-bar-row"><span class="gate-bar-label">Meta</span><span class="gate-bar-track"><span class="gate-bar-be"></span><span class="gate-bar-fill" style="width:60%;background:var(--blue)"></span></span><span class="gate-bar-val">$1.20</span><span class="gate-bar-move gate-down">&darr; &minus;$<span class="gate-blur">400</span></span></div>
+          <div class="gate-bar-row"><span class="gate-bar-label">TikTok</span><span class="gate-bar-track"><span class="gate-bar-be"></span><span class="gate-bar-fill" style="width:30%;background:var(--red)"></span></span><span class="gate-bar-val">$0.60</span><span class="gate-bar-move gate-down">&darr; &minus;$<span class="gate-blur">300</span></span></div>
+        </div>
+        <div class="gate-be-cap">Bar length = profit per $1 (POAS) &middot; vertical line = break-even ($1.00), above earns / below loses &middot; right column = Moby's recommended budget move for the next 3 days (blurred).</div>
+      </div>
+      <div class="gate-foot">
+        <span><span class="lbl">Spread (best &minus; worst /$1)</span><span class="big">$1.40 /$1</span></span>
+        <span style="text-align:right"><span class="lbl">Profit in reach &middot; 3d</span><span class="big" style="color:var(--green)">$900</span></span>
+      </div>
+      <span class="gate-cta">Upgrade to reveal your recoverable profit &rarr;</span>
+      <div class="gate-pql-h">PQL signals from this view</div>
+      <ul class="gate-pql">
+        <li>tile views per week &mdash; recurring engagement / frequency</li>
+        <li><code>spread</code> trend (widening over days) &mdash; rising opportunity</li>
+        <li>Table &harr; Bars toggle used &mdash; depth of engagement</li>
+        <li>consecutive days with positive spread &mdash; sustained fit</li>
+        <li>"reveal recoverable profit" click &mdash; intent</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.gate-demo').forEach(function (demo) {
+  var pills = demo.querySelectorAll('.gate-pill');
+  var panels = demo.querySelectorAll('.gate-panel');
+  pills.forEach(function (pill) {
+    pill.addEventListener('click', function () {
+      var i = pill.getAttribute('data-tab');
+      pills.forEach(function (p) { p.classList.toggle('active', p === pill); });
+      panels.forEach(function (panel) { panel.classList.toggle('active', panel.getAttribute('data-panel') === i); });
+    });
+  });
+  demo.querySelectorAll('.gate-panel').forEach(function (panel) {
+    var viewBtns = panel.querySelectorAll('.gate-view-btn');
+    var views = panel.querySelectorAll('.gate-view');
+    viewBtns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var v = btn.getAttribute('data-view');
+        viewBtns.forEach(function (b) { b.classList.toggle('active', b === btn); });
+        views.forEach(function (view) { view.classList.toggle('active', view.getAttribute('data-view') === v); });
+      });
+    });
+  });
+});
+</script>
+
 <!-- ═══════════════════════════════════════════════════════ -->
 <h2 class="doc-nav-target" id="reference">Quick Reference</h2>
-
-<h3>Pricing history</h3>
-
-<table>
-  <thead><tr><th>Date</th><th>Tiers</th><th>Notes</th></tr></thead>
-  <tbody>
-    <tr><td>Pre-Oct 2023</td><td>Growth / Pro / Enterprise</td><td>No free tier</td></tr>
-    <tr><td>Oct 2023</td><td>Founders Dash (free) / Growth / Pro / Enterprise</td><td>Free tier launched. "Founders Dash" still used in <code>tw-subscription.product</code>.</td></tr>
-    <tr><td>Jan 2025</td><td>Growth / Pro / Premium / Enterprise</td><td>Renamed</td></tr>
-    <tr><td>Apr 2025</td><td>Free / Starter / Advanced / Enterprise</td><td>Renamed</td></tr>
-    <tr><td>Aug 2026</td><td>Free / Foundation / Automate / Enterprise</td><td>Current. $259/mo Foundation, $899/mo Automate (monthly). ~15% off annual.</td></tr>
-  </tbody>
-</table>
-
-<div class="callout">
-  <p>Four tier renames in three years. The free tier is three years old, not new. The growth <em>function</em> is new.</p>
-</div>
 
 <h3>Plan tiers (current)</h3>
 
@@ -707,7 +918,7 @@ const canUseAutomations = features.includes('AUTOMATIONS')</code></pre>
     <tr><td>Custom dashboards, segments, SQL</td><td class="center"><span class="cross">✗</span></td><td class="center"><span class="check">✓</span></td><td class="center"><span class="check">✓</span></td><td class="center"><span class="check">✓</span></td></tr>
     <tr><td>Sonar (first-party activation)</td><td class="center"><span class="cross">✗</span></td><td class="center"><span class="check">✓</span></td><td class="center"><span class="check">✓</span></td><td class="center"><span class="check">✓</span></td></tr>
     <tr><td>Automations &amp; Specialists</td><td class="center"><span class="cross">✗</span></td><td class="center"><span class="cross">✗</span></td><td class="center"><span class="check">✓</span></td><td class="center"><span class="check">✓</span></td></tr>
-    <tr><td>Compass (MMM / incrementality)</td><td class="center" colspan="4">$4,800/mo add-on. Bayesian MMM, GeoLift, dedicated data science team.</td></tr>
+    <tr><td>Compass (MMM / incrementality)</td><td class="center" colspan="4">Paid add-on beyond base plans, custom-quoted. Bayesian MMM, GeoLift, dedicated data science team.</td></tr>
     <tr><td>Seats</td><td class="center">10</td><td class="center">∞</td><td class="center">∞</td><td class="center">∞</td></tr>
   </tbody>
 </table>
@@ -716,7 +927,29 @@ const canUseAutomations = features.includes('AUTOMATIONS')</code></pre>
   <p>The marketing page and in-app dashboard disagree on feature placement. Marketing puts custom dashboards and SQL in Automate; the dashboard puts them in Foundation. Marketing shows $219/$749 (annual pricing); the dashboard shows $259/$899 (monthly). Marketing says 10 seats on Free; the dashboard says 2. The table above follows the dashboard (source of truth for existing users), except seats where 10 appears to be the more recent number.</p>
 </div>
 
-<p>Prices scale with GMV (gross merchandise volume). A $5M/yr brand pays more than a $250K/yr brand on the same tier.</p>
+<p>Prices scale with GMV (gross merchandise volume). A $5M/yr brand pays more than a $250K/yr brand on the same tier. Crossing a GMV threshold mid-contract jumps you to the next band's full price (no prorated overage).</p>
+
+<h3>GMV bands (approximate, from aggregated reports)</h3>
+
+<table>
+  <thead><tr><th>Annual GMV</th><th>Approximate price range</th></tr></thead>
+  <tbody>
+    <tr><td>&lt;$1M</td><td>Entry pricing ($219/mo Foundation)</td></tr>
+    <tr><td>$1M–$10M</td><td>~$299/mo</td></tr>
+    <tr><td>$10M–$30M</td><td>~$499/mo+</td></tr>
+    <tr><td>$30M+</td><td>Custom/enterprise, $1,500–3,000+</td></tr>
+  </tbody>
+</table>
+
+<h3>Feature pricing vs competitors</h3>
+
+<ul>
+  <li><strong>Basic attribution (first / last-click):</strong> free on TW and Polar; Northbeam and Rockerbox have no free tier.</li>
+  <li><strong>Multi-touch:</strong> TW Foundation ($219/mo), Polar ~$300/mo; Northbeam and Rockerbox sales-gated near $1,000/mo.</li>
+  <li><strong>First-party pixel:</strong> in TW Foundation ($219/mo) and Polar from ~$400/mo; Northbeam only inside its $1,500/mo floor.</li>
+  <li><strong>AI agent / execution (Moby):</strong> Foundation includes Moby as operator; Automate ($749/mo) adds automations, specialists, creative gen, campaign actions. GoMarble standalone at $99–299/mo; Madgicx folds it into its plans.</li>
+  <li><strong>MMM:</strong> TW Compass included on Enterprise (contact sales), available as add-on on lower tiers; Polar bundles MMM from ~$400/mo; Northbeam gates MMM+ near $2,500/mo, Rockerbox to enterprise ($500–2,000+/mo).</li>
+</ul>
 
 <h3>Competitor PLG status</h3>
 
@@ -725,9 +958,8 @@ const canUseAutomations = features.includes('AUTOMATIONS')</code></pre>
   <tbody>
     <tr><td>Northbeam</td><td>Fully sales-led. No self-serve.</td></tr>
     <tr><td>Rockerbox</td><td>Free tool exists, paid tiers sales-gated.</td></tr>
-    <tr><td>Polar Analytics</td><td>Demo-gated. Must talk to sales.</td></tr>
+    <tr><td>Polar Analytics</td><td>Closest PLG analog. Free Starter tier, self-serve upgrades.</td></tr>
     <tr><td>Measured</td><td>Enterprise only.</td></tr>
-    <tr><td>Graas</td><td>Only real PLG analog. Free tier with self-serve upgrades.</td></tr>
   </tbody>
 </table>
 
@@ -754,11 +986,11 @@ const canUseAutomations = features.includes('AUTOMATIONS')</code></pre>
 
 <h3>Compass: MMM and incrementality</h3>
 
-<p>$4,800/mo add-on, not a plan tier feature. Compass is a managed data science service: Bayesian marketing mix models that decompose total revenue into per-channel incremental contributions, with train/test evaluation splits, saturation curves per channel, marginal lift analysis, and GeoLift incrementality testing (randomized geographic holdout experiments that require pausing real ad spend in test regions). Backed by a dedicated Marketing Data Science Team. 7+ internal ClickHouse tables power the system. This is irrelevant to growth engineering but worth knowing exists.</p>
+<p>A paid add-on beyond base plans, custom-quoted; TW doesn't publish a fixed price. Not a plan tier feature. Compass is a managed data science service: Bayesian marketing mix models that decompose total revenue into per-channel incremental contributions, with train/test evaluation splits, saturation curves per channel, marginal lift analysis, and GeoLift incrementality testing (randomized geographic holdout experiments that require pausing real ad spend in test regions). Backed by a dedicated Marketing Data Science Team. 7+ internal ClickHouse tables power the system. This is irrelevant to growth engineering but worth knowing exists.</p>
 
 <h3>The differentiator</h3>
 
-<p>Attribution is the foundation, but every competitor does attribution. TW's differentiator is being both the analytics layer <em>and</em> the execution layer: Moby takes actions in ad accounts (pause ads, adjust budgets, generate creative). Whether that claim holds depends on Moby adoption, which is why AI growth surfaces (the Moby gate, upgrade prompts, onboarding into paid AI features) are central to this role.</p>
+<p>Attribution is the foundation, and every competitor does it. Execution is matched too: GoMarble stages the same approval-gated ad-account actions Moby does (Moby queues pauses, budget changes, and creative for a human to approve, not autonomous execution). The real gap is what the agent optimizes to. GoMarble and most ad-native tools act on ad metrics alone; their own docs define ROAS as media-spend-only, blind to COGS and shipping. Moby sits on top of TW's profit P&L (net profit after COGS, shipping, fees, and spend), so it can optimize to unit economics, not just ROAS. Madgicx is the partial exception, surfacing net profit as a report rather than a line-item P&L. Pair that with PLG delivery (the full bundle self-serve while rivals stay sales-gated, Graas the only close analog) and the growth-engineering role is real: the product has to sell and expand itself, so the AI growth surfaces (the Moby gate, upgrade prompts, onboarding into paid AI features) are the job.</p>
 
 <h3>Company vitals</h3>
 

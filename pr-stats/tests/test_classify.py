@@ -120,13 +120,53 @@ def test_silent_author_close_over_maintainer_comment_is_withdrawn(
     assert result.evidence_kind == "author-withdrawn"
 
 
-def test_third_party_competitor_still_beats_author_close(
+@pytest.mark.parametrize("body", [None, "Thanks for the PR", "Duplicate of #22", "Shipped in v1.2.3", "Superseded by #22", "Closing this PR"])
+@pytest.mark.parametrize("comment_author", ["rodboev", "maintainer", "roborev-ci[bot]"])
+def test_author_close_is_withdrawn_regardless_of_comments(
+    body: str | None,
+    comment_author: str,
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_ref: Callable[..., PullRequestRef],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
+    pr = make_pr()
+    release = make_ref(number=22, title="Release v1.2.3")
+    evidence = make_evidence(
+        comments=[] if body is None else [make_comment(body=body, author={"login": comment_author})],
+        timeline_items=[make_event(actor={"login": "maintainer"}), make_event(actor={"login": "RODBOEV"}, closer=release)],
+        reference_text_by_pr={22: "Shipped #10 in v1.2.3"},
+        pull_states_by_pr={22: release},
+    )
+
+    result = classify_closed_pr(pr, evidence)
+
+    assert result.classification == "withdrawn"
+    assert result.evidence_kind == "author-withdrawn"
+    assert result.via_label == ""
+
+
+def test_latest_maintainer_close_continues_classification(
     make_pr: Callable[..., PullRequest],
     make_comment: Callable[..., Comment],
     make_event: Callable[..., TimelineEvent],
     make_evidence: Callable[..., Evidence],
 ) -> None:
-    # Closing your own PR after a competitor's landed is still a loss, not a withdrawal.
+    evidence = make_evidence(
+        comments=[make_comment(body="Duplicate of the work already merged")],
+        timeline_items=[make_event(actor={"login": "rodboev"}), make_event(actor={"login": "maintainer"})],
+    )
+
+    assert classify_closed_pr(make_pr(), evidence).classification == "lost"
+
+
+def test_author_close_with_competitor_is_withdrawn(
+    make_pr: Callable[..., PullRequest],
+    make_comment: Callable[..., Comment],
+    make_event: Callable[..., TimelineEvent],
+    make_evidence: Callable[..., Evidence],
+) -> None:
     pr = make_pr()
     evidence = make_evidence(
         comments=[make_comment(body="Duplicate of the work already merged", author={"login": "maintainer"}, authorAssociation="COLLABORATOR")],
@@ -135,7 +175,8 @@ def test_third_party_competitor_still_beats_author_close(
 
     result = classify_closed_pr(pr, evidence)
 
-    assert result.classification == "lost"
+    assert result.classification == "withdrawn"
+    assert result.evidence_kind == "author-withdrawn"
 
 
 def test_accepted_sibling_branch(
@@ -952,15 +993,13 @@ def test_closing_because_with_third_party_replacement_is_lost(
     assert "competing" in result.log_label
 
 
-def test_author_close_in_favor_of_credited_takeover_is_accepted_indirect(
+def test_author_close_in_favor_of_credited_takeover_is_withdrawn(
     make_pr: Callable[..., PullRequest],
     make_ref: Callable[..., PullRequestRef],
     make_comment: Callable[..., Comment],
     make_event: Callable[..., TimelineEvent],
     make_evidence: Callable[..., Evidence],
 ) -> None:
-    # orca#8942: the author closed his own PR in favor of a takeover PR whose body
-    # names him at the reference site; the credited replacement outranks the close.
     pr = make_pr()
     replacement = make_ref(
         number=9103,
@@ -979,8 +1018,9 @@ def test_author_close_in_favor_of_credited_takeover_is_accepted_indirect(
 
     result = classify_closed_pr(pr, evidence)
 
-    assert result.classification == "accepted-indirect"
-    assert result.via_label == "#9103"
+    assert result.classification == "withdrawn"
+    assert result.evidence_kind == "author-withdrawn"
+    assert result.via_label == ""
 
 
 def test_markdown_author_link_in_takeover_body_counts_as_credit(
@@ -1006,7 +1046,7 @@ def test_markdown_author_link_in_takeover_body_counts_as_credit(
     )
     evidence = make_evidence(
         comments=[make_comment(body="Closing in favor of #9109.", author={"login": "rodboev"}, authorAssociation="CONTRIBUTOR")],
-        timeline_items=[make_event(actor={"login": "rodboev"})],
+        timeline_items=[make_event(actor={"login": "maintainer"})],
         pull_states_by_pr={9109: replacement},
     )
 
@@ -1023,8 +1063,6 @@ def test_unmerged_takeover_with_credit_stays_withdrawn(
     make_event: Callable[..., TimelineEvent],
     make_evidence: Callable[..., Evidence],
 ) -> None:
-    # Body credit on an open takeover is a promise, not a ship; the recheck window
-    # upgrades the entry once the replacement merges.
     pr = make_pr()
     replacement = make_ref(
         number=9103,

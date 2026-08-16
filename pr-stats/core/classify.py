@@ -68,6 +68,8 @@ class SupersededEvidence:
 
 
 def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationResult:
+    if is_author_closed(pr, evidence):
+        return ClassificationResult(classification="withdrawn", evidence_kind="author-withdrawn", log_label="withdrawn (author closed it)")
     comments = get_non_bot_comment_text(evidence)
     closed_event = next((item for item in evidence.timeline_items if item.typename == "ClosedEvent"), None)
     merged_release_closer: PullRequestRef | None = None
@@ -188,10 +190,7 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
         return ClassificationResult(classification="shipped", release=release, evidence_kind="comment", log_label="shipped")
 
     if credited_replacement is not None:
-        # A merged replacement whose own body credits the author (@author named with
-        # attribution vocabulary at the reference to this PR) is an indirect ship,
-        # and it outranks the author's close: closing in favor of a credited
-        # takeover is handing the work off, not withdrawing it.
+        # A merged replacement must credit this author at the reference to this PR.
         return ClassificationResult(
             classification="accepted-indirect",
             release=release,
@@ -282,10 +281,6 @@ def classify_closed_pr(pr: PullRequest, evidence: Evidence) -> ClassificationRes
         return ClassificationResult(classification="lost", release=release, evidence_kind="lost", log_label="lost (superseded without maintainer credit)")
     if not comments or not comments.strip():
         return ClassificationResult(classification="withdrawn", release=release, evidence_kind="withdrawn", log_label="withdrawn (no maintainer interaction)")
-    if is_author_closed(pr, evidence):
-        # Nothing above found a competitor, a replacement, or a maintainer verdict, so
-        # the only decision on record is the author's own close: a withdrawal, not a loss.
-        return ClassificationResult(classification="withdrawn", release=release, evidence_kind="author-withdrawn", log_label="withdrawn (author closed it)")
     return ClassificationResult(classification="lost", release=release, evidence_kind="lost", log_label="lost")
 
 
