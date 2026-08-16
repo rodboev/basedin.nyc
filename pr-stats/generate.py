@@ -55,7 +55,7 @@ from pathlib import Path
 from jinja2 import TemplateError
 
 from core.cache import classification_cache_key, load_cache, save_cache, set_cached_closed_classification
-from core.leaderboard import CHANGELOG_RELEASE_PROFILE, DEFAULT_OVERLAY_CONFIG_DIR, fetch_community_leaderboard, repo_credit_profile, set_overlay_config_dir
+from core.leaderboard import CHANGELOG_RELEASE_PROFILE, DEFAULT_OVERLAY_CONFIG_DIR, fetch_community_leaderboard, repo_credit_profile, set_overlay_config_dir, warn_stale_leaderboards
 from core.classify import ClassificationResult, classify_closed_pr
 from core.classification_rebuild import CacheRebuildInterrupted, live_evidence, rebuild_classification_cache, write_pr_classification_progress
 from core.models import Cache, ClassificationEntry, PullRequest, UserRef, int_value
@@ -291,10 +291,14 @@ def generate_report(
             pass
     for repo in repos:
         try:
-            if fetch_community_leaderboard(repo, cache, now=now):
+            refresh = fetch_community_leaderboard(repo, cache, now=now)
+            if refresh.status == "failed":
+                print(f"WARNING: leaderboard refresh failed for {repo}: {refresh.reason}", file=sys.stderr)
+            if refresh.cache_updated:
                 cache_updated_early = True
         except GhRetryExhausted as exc:
             print(f"WARNING: leaderboard refresh failed for {repo}: {exc}", file=sys.stderr)
+    warn_stale_leaderboards(repos, cache, now=now)
     try:
         typed_items, cache_updated = report_items_from_live_pull_requests(live_prs, cache, now=now)
     except (OSError, ValueError, json.JSONDecodeError) as exc:

@@ -4,7 +4,7 @@ import json
 import re
 import sys
 from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -13,7 +13,13 @@ from core.models import Cache, int_value
 from core.releases import release_credit_counts
 
 LEADERBOARD_CACHE_KEY_VERSION = "community-shipped-v4"
-LEADERBOARD_TTL_SECONDS = 24 * 3600
+# TTL scales with the work the last scan cost: 24h floor, one extra hour per 4 pages,
+# 72h ceiling. A 15-page repo refreshes daily; hermes-agent's 651 pages every 3 days.
+LEADERBOARD_BASE_TTL_SECONDS = 24 * 3600
+LEADERBOARD_MAX_TTL_SECONDS = 72 * 3600
+LEADERBOARD_TTL_SECONDS_PER_PAGE = 900
+# Boards older than this are reported at render time whatever the cause.
+LEADERBOARD_STALE_FACTOR = 3.0
 CHANGELOG_RELEASE_PROFILE = "changelog-release"
 GITHUB_EVIDENCE_PROFILE = "github-evidence"
 REPO_CREDIT_PROFILES = {
@@ -22,7 +28,12 @@ REPO_CREDIT_PROFILES = {
     "thedotmack/claude-mem": GITHUB_EVIDENCE_PROFILE,
 }
 LEADERBOARD_PAGE_SIZE = 100
-LEADERBOARD_MAX_PAGES = 200
+# Per-run chunk, not a functional limit: a scan that runs out of budget saves its cursor
+# and resumes next run. Sized so every repo in repos.txt finishes in one run, since a
+# multi-run build stretches the effective refresh period by however long it takes.
+LEADERBOARD_PAGES_PER_RUN = 700
+# Runaway-cursor backstop across all chunks of one scan. Reached, it fails loudly.
+LEADERBOARD_MAX_TOTAL_PAGES = 10_000
 COMMUNITY_PR_QUERY = """\
 query($owner: String!, $name: String!, $pageSize: Int!, $cursor: String) {
   repository(owner: $owner, name: $name) {
@@ -107,6 +118,38 @@ class LeaderboardStat:
     rate: float
     estimated: bool = False
     shippedClassified: bool = False
+
+@dataclass(frozen=True)
+class LeaderboardRefresh:
+    """Outcome of one refresh attempt. `fresh` and `failed` used to be the same `False`."""
+
+    repo: str
+    status: str
+    pages: int = 0
+    reason: str = ""
+
+    @property
+    def cache_updated(self) -> bool:
+        return self.status in {"refreshed", "partial", "failed"}
+
+
+@dataclass(frozen=True)
+class LeaderboardPage:
+    nodes: list[dict[str, object]] = field(default_factory=list)
+    cursor: str = ""
+    error: str = ""
+
+
+@dataclass
+class LeaderboardScan:
+    cursor: str = ""
+    pages: int = 0
+    startedAt: str = ""
+    totals: dict[str, int] = field(default_factory=dict)
+    opens: dict[str, int] = field(default_factory=dict)
+    merged: dict[str, int] = field(default_factory=dict)
+    recents: dict[str, int] = field(default_factory=dict)
+
 
 @dataclass(frozen=True)
 class CachedLeaderboardRow:
@@ -290,22 +333,134 @@ def _author_recent_count(
     return count
 
 
-def fetch_community_leaderboard(repo: str, cache: Cache, *, now: datetime) -> bool:
+def leaderboard_ttl_seconds(pages: int) -> int:
+    scanned = max(0, pages)
+    return min(
+        LEADERBOARD_MAX_TTL_SECONDS,
+        LEADERBOARD_BASE_TTL_SECONDS + scanned * LEADERBOARD_TTL_SECONDS_PER_PAGE,
+    )
+
+
+def leaderboard_staleness(entry: Mapping[str, object], *, now: datetime) -> tuple[float, float] | None:
+    """Age of a board and the TTL it was due to refresh at, both in seconds."""
+    cached_time = _parse_datetime(_string_value(entry.get("cachedAt")))
+    if cached_time is None:
+        return None
+    return (now - cached_time).total_seconds(), float(leaderboard_ttl_seconds(int_value(entry.get("scanPages"))))
+
+
+def warn_stale_leaderboards(repos: Iterable[str], cache: Cache, *, now: datetime) -> list[str]:
+    """Report boards well past their TTL whatever the cause, including causes not yet known.
+
+    hermes-agent's board sat frozen for two months because every refresh aborted on the
+    page cap and returned the same value a fresh board returns. An age check catches that
+    class of bug without having to anticipate the mechanism.
+    """
+    warnings: list[str] = []
+    for repo in repos:
+        entry = cache.leaderboards.get(leaderboard_cache_key(repo, None))
+        if entry is None:
+            warnings.append(f"WARNING: {repo} has no community leaderboard entry")
+            continue
+        staleness = leaderboard_staleness(entry, now=now)
+        if staleness is None:
+            warnings.append(f"WARNING: {repo} leaderboard has no readable cachedAt")
+            continue
+        age, ttl = staleness
+        if age >= ttl * LEADERBOARD_STALE_FACTOR:
+            warnings.append(
+                f"WARNING: {repo} leaderboard is {age / 86_400:.1f} days old"
+                f" against a {ttl / 3600:.0f}h TTL",
+            )
+    for warning in warnings:
+        print(warning, file=sys.stderr)
+    return warnings
+
+
+def fetch_community_leaderboard(repo: str, cache: Cache, *, now: datetime) -> LeaderboardRefresh:
     cache_key = leaderboard_cache_key(repo, None)
     existing = cache.leaderboards.get(cache_key)
-    if existing is not None and not _leaderboard_entry_expired(existing, now=now):
-        return False
-    nodes = _fetch_community_pr_nodes(repo)
-    if nodes is None:
-        return False
+    resumed = _resumable_scan(existing)
+    if resumed is None and existing is not None and not _leaderboard_entry_expired(existing, now=now):
+        return LeaderboardRefresh(repo=repo, status="fresh")
 
+    scan = resumed if resumed is not None else _new_scan(now)
     exclusions = configured_repo_leaderboard_exclusions(repo)
-    recent_cutoff = now.timestamp() - 7 * 86_400
-    totals: dict[str, int] = {}
-    opens: dict[str, int] = {}
-    merged: dict[str, int] = {}
-    recents: dict[str, int] = {}
+    # Anchored to the scan's own start, not each chunk's clock, so a scan spread over
+    # several runs counts one 7-day window rather than a different one per chunk.
+    recent_cutoff = (_parse_datetime(scan.startedAt) or now).timestamp() - 7 * 86_400
+    budget = min(LEADERBOARD_PAGES_PER_RUN, LEADERBOARD_MAX_TOTAL_PAGES - scan.pages)
+    if budget <= 0:
+        cache.leaderboards[cache_key] = _entry_without_scan(existing)
+        return LeaderboardRefresh(
+            repo=repo,
+            status="failed",
+            pages=scan.pages,
+            reason=f"exceeded the {LEADERBOARD_MAX_TOTAL_PAGES}-page backstop without reaching the end",
+        )
 
+    for _page in range(budget):
+        page = _fetch_community_pr_page(repo, cursor=scan.cursor)
+        if page.error:
+            # Keep the pages already walked so the next run resumes instead of restarting.
+            cache.leaderboards[cache_key] = _entry_with_scan(existing, scan)
+            return LeaderboardRefresh(
+                repo=repo,
+                status="failed",
+                pages=scan.pages,
+                reason=f"page {scan.pages + 1} failed: {page.error}",
+            )
+        scan.pages += 1
+        _tally_page(page.nodes, scan=scan, exclusions=exclusions, recent_cutoff=recent_cutoff)
+        if not page.cursor:
+            break
+        scan.cursor = page.cursor
+    else:
+        cache.leaderboards[cache_key] = _entry_with_scan(existing, scan)
+        print(f"  Leaderboard scan for {repo} paused at {scan.pages} pages; resumes next run", file=sys.stderr)
+        return LeaderboardRefresh(repo=repo, status="partial", pages=scan.pages)
+
+    # An empty community is still a complete scan; stamp the entry so the TTL
+    # prevents re-paging the whole repo on every run.
+    logins = sorted(scan.totals, key=lambda login: scan.totals[login], reverse=True)
+    now_str = now.isoformat().replace("+00:00", "Z")
+    # Merge into the existing entry: PS1-era boards carry releaseCreditCounts and
+    # other credit keys that Python has no writer for and must not destroy.
+    entry = _entry_without_scan(existing)
+    entry.update({
+        "cachedAt": now_str,
+        "refreshedAt": now_str,
+        "scanPages": scan.pages,
+        "logins": logins,
+        "stats": {
+            login: {"total": scan.totals[login], "open": scan.opens.get(login, 0),
+                    "recentCount": scan.recents.get(login, 0)}
+            for login in logins
+        },
+        "shippedCounts": _merged_shipped_counts(
+            existing,
+            logins=logins,
+            merged=scan.merged,
+            release_credited=release_credit_counts(cache, repo) if repo_credit_profile(repo) != CHANGELOG_RELEASE_PROFILE else None,
+        ),
+    })
+    cache.leaderboards[cache_key] = entry
+    ttl_hours = leaderboard_ttl_seconds(scan.pages) / 3600
+    print(
+        f"  Built leaderboard for {repo}: {scan.pages} pages, {len(logins)} contributors,"
+        f" next refresh in {ttl_hours:.0f}h",
+        file=sys.stderr,
+    )
+    return LeaderboardRefresh(repo=repo, status="refreshed", pages=scan.pages)
+
+
+def _tally_page(
+    nodes: Iterable[Mapping[str, object]],
+    *,
+    scan: LeaderboardScan,
+    exclusions: LeaderboardExclusions,
+    recent_cutoff: float,
+) -> None:
     for node in nodes:
         author_raw = node.get("author")
         if not isinstance(author_raw, dict):
@@ -318,92 +473,106 @@ def fetch_community_leaderboard(repo: str, cache: Cache, *, now: datetime) -> bo
             continue
         state = node.get("state", "")
         created_at = str(node.get("createdAt", ""))
-        totals[login] = totals.get(login, 0) + 1
+        scan.totals[login] = scan.totals.get(login, 0) + 1
         if state == "OPEN":
-            opens[login] = opens.get(login, 0) + 1
+            scan.opens[login] = scan.opens.get(login, 0) + 1
         if state == "MERGED":
-            merged[login] = merged.get(login, 0) + 1
+            scan.merged[login] = scan.merged.get(login, 0) + 1
         if created_at:
             try:
                 if datetime.fromisoformat(created_at.replace("Z", "+00:00")).timestamp() >= recent_cutoff:
-                    recents[login] = recents.get(login, 0) + 1
+                    scan.recents[login] = scan.recents.get(login, 0) + 1
             except ValueError:
                 pass
 
-    # An empty community is still a complete scan; stamp the entry so the TTL
-    # prevents re-paging the whole repo on every run.
-    logins = sorted(totals, key=lambda login: totals[login], reverse=True)
-    now_str = now.isoformat().replace("+00:00", "Z")
-    # Merge into the existing entry: PS1-era boards carry releaseCreditCounts and
-    # other credit keys that Python has no writer for and must not destroy.
-    entry: dict[str, object] = dict(existing) if existing is not None else {}
-    entry.update({
-        "cachedAt": now_str,
-        "refreshedAt": now_str,
-        "logins": logins,
-        "stats": {
-            login: {"total": totals[login], "open": opens.get(login, 0),
-                    "recentCount": recents.get(login, 0)}
-            for login in logins
-        },
-        "shippedCounts": _merged_shipped_counts(
-            existing,
-            logins=logins,
-            merged=merged,
-            release_credited=release_credit_counts(cache, repo) if repo_credit_profile(repo) != CHANGELOG_RELEASE_PROFILE else None,
-        ),
-    })
-    cache.leaderboards[cache_key] = entry
-    print(f"  Built leaderboard for {repo}: {len(nodes)} PRs, {len(logins)} contributors", file=sys.stderr)
-    return True
-
 
 def _leaderboard_entry_expired(entry: Mapping[str, object], *, now: datetime) -> bool:
-    cached_at = entry.get("cachedAt")
-    if not isinstance(cached_at, str) or not cached_at:
+    staleness = leaderboard_staleness(entry, now=now)
+    if staleness is None:
         return True
-    cached_time = _parse_datetime(cached_at)
-    if cached_time is None:
-        return True
-    return (now - cached_time).total_seconds() >= LEADERBOARD_TTL_SECONDS
+    age, ttl = staleness
+    return age >= ttl
 
 
-def _fetch_community_pr_nodes(repo: str) -> list[dict[str, object]] | None:
+def _new_scan(now: datetime) -> LeaderboardScan:
+    return LeaderboardScan(startedAt=now.isoformat().replace("+00:00", "Z"))
+
+
+def _resumable_scan(entry: Mapping[str, object] | None) -> LeaderboardScan | None:
+    raw = entry.get("scan") if entry is not None else None
+    if not isinstance(raw, dict):
+        return None
+    cursor = _string_value(raw.get("cursor"))
+    if not cursor:
+        return None
+    scan = LeaderboardScan(
+        cursor=cursor,
+        pages=int_value(raw.get("pages")),
+        startedAt=_string_value(raw.get("startedAt")),
+    )
+    tallies = raw.get("tallies")
+    if isinstance(tallies, dict):
+        for login, counts in tallies.items():
+            if not isinstance(login, str) or not isinstance(counts, list) or len(counts) != 4:
+                continue
+            total, open_count, merged, recent = (int_value(value) for value in counts)
+            scan.totals[login] = total
+            if open_count:
+                scan.opens[login] = open_count
+            if merged:
+                scan.merged[login] = merged
+            if recent:
+                scan.recents[login] = recent
+    return scan
+
+
+def _entry_with_scan(existing: Mapping[str, object] | None, scan: LeaderboardScan) -> dict[str, object]:
+    entry: dict[str, object] = dict(existing) if existing is not None else {}
+    entry["scan"] = {
+        "cursor": scan.cursor,
+        "pages": scan.pages,
+        "startedAt": scan.startedAt,
+        "tallies": {
+            login: [total, scan.opens.get(login, 0), scan.merged.get(login, 0), scan.recents.get(login, 0)]
+            for login, total in scan.totals.items()
+        },
+    }
+    return entry
+
+
+def _entry_without_scan(existing: Mapping[str, object] | None) -> dict[str, object]:
+    entry: dict[str, object] = dict(existing) if existing is not None else {}
+    entry.pop("scan", None)
+    return entry
+
+
+def _fetch_community_pr_page(repo: str, *, cursor: str) -> LeaderboardPage:
     owner, _, name = repo.partition("/")
-    nodes: list[dict[str, object]] = []
-    cursor = ""
-    for _page in range(LEADERBOARD_MAX_PAGES):
-        args = [
-            "api", "graphql",
-            "-f", f"query={COMMUNITY_PR_QUERY}",
-            "-F", f"owner={owner}",
-            "-F", f"name={name}",
-            "-F", f"pageSize={LEADERBOARD_PAGE_SIZE}",
-        ]
-        if cursor:
-            args.extend(["-F", f"cursor={cursor}"])
-        raw = run_gh(*args, suppress_errors=True)
-        if not raw:
-            # A failed page would truncate the board; keep the existing entry instead.
-            return None
-        try:
-            payload = json.loads(raw)
-        except json.JSONDecodeError:
-            return None
-        connection = _pull_request_connection(payload)
-        if connection is None:
-            return None
-        page_nodes = connection.get("nodes")
-        if isinstance(page_nodes, list):
-            nodes.extend(node for node in page_nodes if isinstance(node, dict))
-        page_info = connection.get("pageInfo")
-        if not isinstance(page_info, dict) or not page_info.get("hasNextPage"):
-            return nodes
-        cursor = str(page_info.get("endCursor") or "")
-        if not cursor:
-            return nodes
-    # Cap exhausted with pages remaining: abort rather than store a truncated board.
-    return None
+    args = [
+        "api", "graphql",
+        "-f", f"query={COMMUNITY_PR_QUERY}",
+        "-F", f"owner={owner}",
+        "-F", f"name={name}",
+        "-F", f"pageSize={LEADERBOARD_PAGE_SIZE}",
+    ]
+    if cursor:
+        args.extend(["-F", f"cursor={cursor}"])
+    raw = run_gh(*args, suppress_errors=True)
+    if not raw:
+        return LeaderboardPage(error="gh returned no output")
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError:
+        return LeaderboardPage(error="response was not valid JSON")
+    connection = _pull_request_connection(payload)
+    if connection is None:
+        return LeaderboardPage(error="response carried no pullRequests connection")
+    raw_nodes = connection.get("nodes")
+    nodes = [node for node in raw_nodes if isinstance(node, dict)] if isinstance(raw_nodes, list) else []
+    page_info = connection.get("pageInfo")
+    if not isinstance(page_info, dict) or not page_info.get("hasNextPage"):
+        return LeaderboardPage(nodes=nodes)
+    return LeaderboardPage(nodes=nodes, cursor=str(page_info.get("endCursor") or ""))
 
 
 def _pull_request_connection(payload: object) -> dict[str, object] | None:

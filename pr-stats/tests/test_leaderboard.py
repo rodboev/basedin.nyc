@@ -18,8 +18,10 @@ from core.leaderboard import (
     is_leaderboard_bot,
     is_leaderboard_excluded_login,
     leaderboard_cache_key,
+    leaderboard_ttl_seconds,
     new_leaderboard_stat,
     repo_leaderboard_exclusions,
+    warn_stale_leaderboards,
 )
 from core.models import Cache
 from core.report import repo_label
@@ -120,7 +122,7 @@ def test_fetch_community_leaderboard_skips_fresh_entry_within_ttl(monkeypatch: M
 
     monkeypatch.setattr(leaderboard_mod, "run_gh", _fail)
 
-    assert fetch_community_leaderboard("owner/repo", cache, now=now) is False
+    assert fetch_community_leaderboard("owner/repo", cache, now=now).status == "fresh"
 
 
 def test_fetch_community_leaderboard_preserves_credit_keys_and_evidence_counts(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
@@ -147,7 +149,7 @@ def test_fetch_community_leaderboard_preserves_credit_keys_and_evidence_counts(m
     )
     monkeypatch.setattr(leaderboard_mod, "run_gh", lambda *_args, **_kwargs: page)
 
-    assert fetch_community_leaderboard("owner/repo", cache, now=now) is True
+    assert fetch_community_leaderboard("owner/repo", cache, now=now).status == "refreshed"
 
     entry = cache.leaderboards[key]
     assert entry["releaseCreditCounts"] == {"alice": 7}
@@ -176,7 +178,7 @@ def test_fetch_community_leaderboard_paginates_past_first_page(monkeypatch: Monk
     monkeypatch.setattr(leaderboard_mod, "run_gh", _fake_run_gh)
     cache = Cache()
 
-    assert fetch_community_leaderboard("owner/repo", cache, now=now) is True
+    assert fetch_community_leaderboard("owner/repo", cache, now=now).status == "refreshed"
 
     assert len(calls) == 2
     assert "cursor=CUR1" in calls[1]
@@ -203,8 +205,16 @@ def test_fetch_community_leaderboard_keeps_existing_entry_on_partial_fetch(monke
     stale_entry = {"cachedAt": "2026-06-01T00:00:00Z", "stats": {"alice": {"total": 9}}}
     cache.leaderboards[key] = dict(stale_entry)
 
-    assert fetch_community_leaderboard("owner/repo", cache, now=now) is False
-    assert cache.leaderboards[key] == stale_entry
+    outcome = fetch_community_leaderboard("owner/repo", cache, now=now)
+    assert outcome.status == "failed"
+    assert "page 2 failed" in outcome.reason
+    entry = cache.leaderboards[key]
+    # The rendered keys survive untouched; only the resume state is added.
+    assert {key_name: entry[key_name] for key_name in stale_entry} == stale_entry
+    scan = entry["scan"]
+    assert isinstance(scan, dict)
+    assert scan["cursor"] == "CUR1"
+    assert scan["pages"] == 1
 
 
 def test_fetch_community_leaderboard_excludes_bots_owner_and_members(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
@@ -227,7 +237,7 @@ def test_fetch_community_leaderboard_excludes_bots_owner_and_members(monkeypatch
     monkeypatch.setattr(leaderboard_mod, "run_gh", lambda *_args, **_kwargs: page)
     cache = Cache()
 
-    assert fetch_community_leaderboard("owner/repo", cache, now=now) is True
+    assert fetch_community_leaderboard("owner/repo", cache, now=now).status == "refreshed"
 
     entry = cache.leaderboards[leaderboard_cache_key("owner/repo", None)]
     assert entry["logins"] == ["carol"]
@@ -246,25 +256,98 @@ def test_fetch_community_leaderboard_caches_empty_community_scan(monkeypatch: Mo
     monkeypatch.setattr(leaderboard_mod, "run_gh", _fake_run_gh)
     cache = Cache()
 
-    assert fetch_community_leaderboard("owner/repo", cache, now=now) is True
+    assert fetch_community_leaderboard("owner/repo", cache, now=now).status == "refreshed"
 
     entry = cache.leaderboards[leaderboard_cache_key("owner/repo", None)]
     assert entry["logins"] == []
     assert entry["cachedAt"] == "2026-07-03T00:00:00Z"
-    assert fetch_community_leaderboard("owner/repo", cache, now=now) is False
+    assert fetch_community_leaderboard("owner/repo", cache, now=now).status == "fresh"
     assert len(calls) == 1
 
 
-def test_fetch_community_leaderboard_aborts_at_page_cap_instead_of_truncating(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+def test_fetch_community_leaderboard_resumes_a_scan_that_ran_out_of_pages(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     _use_overlay_dir(monkeypatch, tmp_path)
-    monkeypatch.setattr(leaderboard_mod, "LEADERBOARD_MAX_PAGES", 2)
+    monkeypatch.setattr(leaderboard_mod, "LEADERBOARD_PAGES_PER_RUN", 2)
+    now = datetime(2026, 7, 3, tzinfo=timezone.utc)
+    pages = [
+        _graphql_page([_pr_node("alice")], has_next=True, cursor="CUR1"),
+        _graphql_page([_pr_node("alice")], has_next=True, cursor="CUR2"),
+        _graphql_page([_pr_node("bob")]),
+    ]
+    calls: list[tuple[str, ...]] = []
+
+    def _fake_run_gh(*args: str, **_kwargs: object) -> str:
+        calls.append(args)
+        return pages[len(calls) - 1]
+
+    monkeypatch.setattr(leaderboard_mod, "run_gh", _fake_run_gh)
+    cache = Cache()
+    key = leaderboard_cache_key("owner/repo", None)
+
+    first = fetch_community_leaderboard("owner/repo", cache, now=now)
+    assert first.status == "partial"
+    assert first.pages == 2
+    # Nothing renderable yet, but the two pages already walked are banked.
+    assert "stats" not in cache.leaderboards[key]
+
+    second = fetch_community_leaderboard("owner/repo", cache, now=now)
+    assert second.status == "refreshed"
+    assert second.pages == 3
+    assert len(calls) == 3
+    assert "cursor=CUR2" in calls[2]
+    entry = cache.leaderboards[key]
+    assert "scan" not in entry
+    stats = entry["stats"]
+    assert isinstance(stats, dict)
+    # Both chunks counted: alice's two PRs came from the first run.
+    assert stats["alice"]["total"] == 2
+    assert stats["bob"]["total"] == 1
+
+
+def test_fetch_community_leaderboard_fails_loudly_at_the_runaway_backstop(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    _use_overlay_dir(monkeypatch, tmp_path)
+    monkeypatch.setattr(leaderboard_mod, "LEADERBOARD_MAX_TOTAL_PAGES", 2)
+    monkeypatch.setattr(leaderboard_mod, "LEADERBOARD_PAGES_PER_RUN", 2)
     now = datetime(2026, 7, 3, tzinfo=timezone.utc)
     page = _graphql_page([_pr_node("alice")], has_next=True, cursor="CUR")
     monkeypatch.setattr(leaderboard_mod, "run_gh", lambda *_args, **_kwargs: page)
     cache = Cache()
 
-    assert fetch_community_leaderboard("owner/repo", cache, now=now) is False
-    assert cache.leaderboards == {}
+    assert fetch_community_leaderboard("owner/repo", cache, now=now).status == "partial"
+    outcome = fetch_community_leaderboard("owner/repo", cache, now=now)
+    assert outcome.status == "failed"
+    assert "backstop" in outcome.reason
+    # The doomed scan state is dropped rather than retried forever.
+    assert "scan" not in cache.leaderboards[leaderboard_cache_key("owner/repo", None)]
+
+
+def test_leaderboard_ttl_scales_with_pages_scanned() -> None:
+    assert leaderboard_ttl_seconds(0) == 24 * 3600
+    assert leaderboard_ttl_seconds(15) == 24 * 3600 + 15 * 900
+    assert leaderboard_ttl_seconds(53) == 24 * 3600 + 53 * 900
+    # 651 pages (hermes-agent) lands on the 72h ceiling.
+    assert leaderboard_ttl_seconds(651) == 72 * 3600
+    assert leaderboard_ttl_seconds(10_000) == 72 * 3600
+
+
+def test_warn_stale_leaderboards_reports_a_board_stuck_past_its_ttl() -> None:
+    now = datetime(2026, 8, 16, tzinfo=timezone.utc)
+    cache = Cache()
+    cache.leaderboards[leaderboard_cache_key("owner/fresh", None)] = {
+        "cachedAt": "2026-08-15T00:00:00Z",
+        "scanPages": 15,
+    }
+    cache.leaderboards[leaderboard_cache_key("owner/frozen", None)] = {
+        "cachedAt": "2026-06-24T00:00:00Z",
+        "scanPages": 651,
+    }
+
+    warnings = warn_stale_leaderboards(["owner/fresh", "owner/frozen", "owner/missing"], cache, now=now)
+
+    assert len(warnings) == 2
+    assert "owner/frozen" in warnings[0]
+    assert "53.0 days old" in warnings[0]
+    assert "no community leaderboard entry" in warnings[1]
 
 
 def test_fetch_community_leaderboard_keeps_shipped_counts_for_deleted_accounts(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
@@ -280,7 +363,7 @@ def test_fetch_community_leaderboard_keeps_shipped_counts_for_deleted_accounts(m
     page = _graphql_page([_pr_node("alice")])
     monkeypatch.setattr(leaderboard_mod, "run_gh", lambda *_args, **_kwargs: page)
 
-    assert fetch_community_leaderboard("owner/repo", cache, now=now) is True
+    assert fetch_community_leaderboard("owner/repo", cache, now=now).status == "refreshed"
     assert cache.leaderboards[key]["shippedCounts"] == {"ghost": 3, "alice": 1}
 
 
