@@ -83311,7 +83311,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-06T14:26:29.868022Z"
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
     },
     "NVIDIA/SkillSpector#276": {
       "classification": "withdrawn",
@@ -83319,7 +83319,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-06T14:26:29.868022Z"
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
     },
     "kenn-io/agentsview#1507": {
       "classification": "shipped",
@@ -83359,7 +83359,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-06T14:26:29.868022Z"
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
     },
     "kenn-io/agentsview#1543": {
       "classification": "shipped",
@@ -83399,7 +83399,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-06T14:26:29.868022Z"
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
     },
     "stablyai/orca#9287": {
       "classification": "withdrawn",
@@ -83407,7 +83407,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-06T14:26:29.868022Z"
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
     },
     "kenn-io/agentsview#1602": {
       "classification": "shipped",
@@ -83463,7 +83463,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-06T14:26:29.868022Z"
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
     },
     "stablyai/orca#7790": {
       "classification": "withdrawn",
@@ -83471,7 +83471,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-06T14:26:29.868022Z"
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
     },
     "stablyai/orca#8944": {
       "classification": "withdrawn",
@@ -83479,7 +83479,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-06T14:26:29.868022Z"
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
     },
     "stablyai/orca#10231": {
       "classification": "withdrawn",
@@ -83487,7 +83487,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-06T14:26:29.868022Z"
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
     },
     "stablyai/orca#11847": {
       "classification": "withdrawn",
@@ -83495,7 +83495,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-06T14:26:29.868022Z"
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
     },
     "stablyai/orca#11863": {
       "classification": "withdrawn",
@@ -83503,7 +83503,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-06T14:26:29.868022Z"
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
     },
     "stablyai/orca#12024": {
       "classification": "withdrawn",
@@ -83511,7 +83511,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-06T14:26:29.868022Z"
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
     },
     "stablyai/orca#8618": {
       "classification": "withdrawn",
@@ -83519,7 +83519,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-06T14:26:29.868022Z"
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
     },
     "kenn-io/roborev#1139": {
       "classification": "shipped",
@@ -83632,6 +83632,166 @@
       "viaUrl": "https://github.com/kenn-io/docbank/pull/293",
       "evidenceKind": "direct-merge",
       "cachedAt": "2026-09-06T15:08:46.031577Z"
+    },
+    "kenn-io/agentsview#1640": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1640",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/agentsview#1639": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1639",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/roborev#1140": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/roborev/pull/1140",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/roborev#1135": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/roborev/pull/1135",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/roborev#1131": {
+      "classification": "withdrawn",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "author-withdrawn",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/msgvault#778": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/msgvault/pull/778",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/msgvault#758": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/msgvault/pull/758",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/msgvault#757": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/msgvault/pull/757",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/msgvault#773": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/msgvault/pull/773",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/docbank#279": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/docbank/pull/279",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/docbank#278": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/docbank/pull/278",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/docbank#262": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/docbank/pull/262",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/docbank#284": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/docbank/pull/284",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/docbank#281": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/docbank/pull/281",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/docbank#280": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/docbank/pull/280",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/docbank#261": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/docbank/pull/261",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/docbank#282": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/docbank/pull/282",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/docbank#285": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/docbank/pull/285",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/docbank#277": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/docbank/pull/277",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
+    },
+    "kenn-io/docbank#276": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/docbank/pull/276",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-07T02:26:05.637970Z"
     }
   },
   "authorPulls": {
@@ -100471,16 +100631,16 @@
       "state": "OPEN",
       "title": "fix(editor): preserve Diff View undo history after save (#9204)",
       "createdAt": "2026-08-01T00:17:37Z",
-      "updatedAt": "2026-09-06T05:54:38Z",
+      "updatedAt": "2026-09-06T16:22:16Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/diff-undo-model-identity",
       "author": {
         "login": "rodboev"
       },
-      "additions": 481,
-      "deletions": 72,
-      "changedFiles": 12,
+      "additions": 403,
+      "deletions": 83,
+      "changedFiles": 18,
       "url": "https://github.com/stablyai/orca/pull/11849"
     },
     "headroomlabs-ai/headroom#2699": {
@@ -102991,7 +103151,7 @@
       "state": "OPEN",
       "title": "fix(security): reject unauthenticated public proxy binds",
       "createdAt": "2026-08-27T20:59:57Z",
-      "updatedAt": "2026-09-04T14:33:43Z",
+      "updatedAt": "2026-09-07T01:58:13Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/3283-secure-public-bind",
@@ -103063,7 +103223,7 @@
       "state": "OPEN",
       "title": "feat(wrap): support 1m context in vscode claude",
       "createdAt": "2026-08-30T22:35:27Z",
-      "updatedAt": "2026-09-04T14:32:25Z",
+      "updatedAt": "2026-09-07T02:14:54Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/3360-vscode-claude-1m-context",
@@ -103071,7 +103231,7 @@
         "login": "rodboev"
       },
       "additions": 614,
-      "deletions": 51,
+      "deletions": 50,
       "changedFiles": 10,
       "url": "https://github.com/headroomlabs-ai/headroom/pull/3361"
     },
@@ -103186,19 +103346,19 @@
     "kenn-io/roborev#1140": {
       "repo": "kenn-io/roborev",
       "number": 1140,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(tui): select agent for job reruns",
       "createdAt": "2026-09-05T15:59:47Z",
-      "updatedAt": "2026-09-05T17:25:40Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T23:54:54Z",
+      "closedAt": "2026-09-06T23:54:45Z",
+      "mergedAt": "2026-09-06T23:54:45Z",
       "headRefName": "pr/tui-rerun-agent",
       "author": {
         "login": "rodboev"
       },
-      "additions": 1034,
-      "deletions": 23,
-      "changedFiles": 25,
+      "additions": 765,
+      "deletions": 96,
+      "changedFiles": 26,
       "url": "https://github.com/kenn-io/roborev/pull/1140"
     },
     "kenn-io/roborev#1139": {
@@ -103223,64 +103383,64 @@
       "repo": "kenn-io/roborev",
       "number": 1137,
       "state": "OPEN",
-      "title": "fix(prompt): state reviewed subject and file counts in review prompts",
+      "title": "feat(review): record and display review file coverage",
       "createdAt": "2026-09-04T21:10:26Z",
-      "updatedAt": "2026-09-04T21:15:45Z",
+      "updatedAt": "2026-09-06T23:44:18Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/1011-reviewed-content",
       "author": {
         "login": "rodboev"
       },
-      "additions": 444,
-      "deletions": 33,
-      "changedFiles": 28,
+      "additions": 1201,
+      "deletions": 42,
+      "changedFiles": 32,
       "url": "https://github.com/kenn-io/roborev/pull/1137"
     },
     "kenn-io/roborev#1136": {
       "repo": "kenn-io/roborev",
       "number": 1136,
       "state": "OPEN",
-      "title": "fix(prompt): include prior same-base range reviews in branch prompts",
+      "title": "fix(prompt): offer prior same-base range reviews as optional file context",
       "createdAt": "2026-09-04T21:10:00Z",
-      "updatedAt": "2026-09-04T22:08:51Z",
+      "updatedAt": "2026-09-06T23:50:51Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/767-range-review-context",
       "author": {
         "login": "rodboev"
       },
-      "additions": 293,
-      "deletions": 2,
-      "changedFiles": 8,
+      "additions": 623,
+      "deletions": 37,
+      "changedFiles": 13,
       "url": "https://github.com/kenn-io/roborev/pull/1136"
     },
     "kenn-io/roborev#1135": {
       "repo": "kenn-io/roborev",
       "number": 1135,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(tui): show reasoning effort across TUI review surfaces",
       "createdAt": "2026-09-04T21:10:00Z",
-      "updatedAt": "2026-09-04T21:14:19Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T17:28:12Z",
+      "closedAt": "2026-09-06T17:28:12Z",
+      "mergedAt": "2026-09-06T17:28:12Z",
       "headRefName": "pr/706-reasoning-tui",
       "author": {
         "login": "rodboev"
       },
-      "additions": 103,
-      "deletions": 7,
+      "additions": 132,
+      "deletions": 20,
       "changedFiles": 8,
       "url": "https://github.com/kenn-io/roborev/pull/1135"
     },
     "kenn-io/roborev#1131": {
       "repo": "kenn-io/roborev",
       "number": 1131,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "feat(config): support git-local data directory",
       "createdAt": "2026-09-03T21:13:32Z",
-      "updatedAt": "2026-09-04T01:31:02Z",
-      "closedAt": null,
+      "updatedAt": "2026-09-06T15:21:18Z",
+      "closedAt": "2026-09-06T15:21:17Z",
       "mergedAt": null,
       "headRefName": "pr/1109-git-local-data-dir",
       "author": {
@@ -103297,16 +103457,16 @@
       "state": "OPEN",
       "title": "fix(skills): recover unfetched remote refs in review-branch validation",
       "createdAt": "2026-09-03T21:13:11Z",
-      "updatedAt": "2026-09-03T21:36:17Z",
+      "updatedAt": "2026-09-07T00:26:36Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "fix/442-review-branch-remote-ref",
       "author": {
         "login": "rodboev"
       },
-      "additions": 410,
+      "additions": 417,
       "deletions": 12,
-      "changedFiles": 6,
+      "changedFiles": 7,
       "url": "https://github.com/kenn-io/roborev/pull/1130"
     },
     "kenn-io/msgvault#779": {
@@ -103330,19 +103490,19 @@
     "kenn-io/msgvault#778": {
       "repo": "kenn-io/msgvault",
       "number": 778,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(tui): scope views by named collections",
       "createdAt": "2026-09-04T23:32:10Z",
-      "updatedAt": "2026-09-06T12:38:14Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-07T01:41:28Z",
+      "closedAt": "2026-09-07T01:41:28Z",
+      "mergedAt": "2026-09-07T01:41:28Z",
       "headRefName": "pr/526-tui-collection-scope",
       "author": {
         "login": "rodboev"
       },
-      "additions": 2233,
-      "deletions": 228,
-      "changedFiles": 39,
+      "additions": 2474,
+      "deletions": 301,
+      "changedFiles": 56,
       "url": "https://github.com/kenn-io/msgvault/pull/778"
     },
     "kenn-io/msgvault#777": {
@@ -103351,16 +103511,16 @@
       "state": "OPEN",
       "title": "fix(sync): replay failed Gmail fetches from the last completed incremental run",
       "createdAt": "2026-09-04T23:02:09Z",
-      "updatedAt": "2026-09-06T12:38:51Z",
+      "updatedAt": "2026-09-07T02:01:51Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/260-replay-gmail-fetch-errors",
       "author": {
         "login": "rodboev"
       },
-      "additions": 701,
-      "deletions": 5,
-      "changedFiles": 5,
+      "additions": 825,
+      "deletions": 133,
+      "changedFiles": 6,
       "url": "https://github.com/kenn-io/msgvault/pull/777"
     },
     "kenn-io/msgvault#776": {
@@ -103420,12 +103580,12 @@
     "kenn-io/msgvault#773": {
       "repo": "kenn-io/msgvault",
       "number": 773,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "refactor(people): derive provider profile projections from one schema",
       "createdAt": "2026-09-04T21:59:37Z",
-      "updatedAt": "2026-09-06T13:52:11Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T18:41:21Z",
+      "closedAt": "2026-09-06T18:41:21Z",
+      "mergedAt": "2026-09-06T18:41:21Z",
       "headRefName": "pr/740-provider-profile",
       "author": {
         "login": "rodboev"
@@ -103459,16 +103619,16 @@
       "state": "OPEN",
       "title": "fix(cli): stage the deletable subset of mixed-query deletions",
       "createdAt": "2026-09-04T21:31:10Z",
-      "updatedAt": "2026-09-06T12:38:31Z",
+      "updatedAt": "2026-09-07T02:02:51Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/768-stage-query",
       "author": {
         "login": "rodboev"
       },
-      "additions": 735,
-      "deletions": 80,
-      "changedFiles": 16,
+      "additions": 850,
+      "deletions": 147,
+      "changedFiles": 27,
       "url": "https://github.com/kenn-io/msgvault/pull/771"
     },
     "kenn-io/msgvault#764": {
@@ -103477,7 +103637,7 @@
       "state": "OPEN",
       "title": "docs: document embeddings upgrade behavior for existing users",
       "createdAt": "2026-09-04T02:29:13Z",
-      "updatedAt": "2026-09-04T05:01:15Z",
+      "updatedAt": "2026-09-06T23:38:52Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/embeddings-upgrade-docs",
@@ -103546,12 +103706,12 @@
     "kenn-io/msgvault#758": {
       "repo": "kenn-io/msgvault",
       "number": 758,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(store): version migration ledger entries",
       "createdAt": "2026-09-03T20:56:21Z",
-      "updatedAt": "2026-09-06T13:49:26Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T18:42:17Z",
+      "closedAt": "2026-09-06T18:42:17Z",
+      "mergedAt": "2026-09-06T18:42:17Z",
       "headRefName": "pr/316-migration-ledger-versioning",
       "author": {
         "login": "rodboev"
@@ -103582,12 +103742,12 @@
     "kenn-io/msgvault#757": {
       "repo": "kenn-io/msgvault",
       "number": 757,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(store): enforce case-folded uniqueness for account identities",
       "createdAt": "2026-09-03T20:56:21Z",
-      "updatedAt": "2026-09-06T13:14:23Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T18:42:06Z",
+      "closedAt": "2026-09-06T18:42:06Z",
+      "mergedAt": "2026-09-06T18:42:06Z",
       "headRefName": "pr/311-account-identity-address-key",
       "author": {
         "login": "rodboev"
@@ -103636,37 +103796,37 @@
     "kenn-io/docbank#285": {
       "repo": "kenn-io/docbank",
       "number": 285,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(store): keep visual-preview heads from moving to older generations",
       "createdAt": "2026-09-04T04:15:59Z",
-      "updatedAt": "2026-09-04T04:31:16Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T19:07:38Z",
+      "closedAt": "2026-09-06T19:07:38Z",
+      "mergedAt": "2026-09-06T19:07:38Z",
       "headRefName": "visual-preview-head-monotonicity",
       "author": {
         "login": "rodboev"
       },
-      "additions": 124,
-      "deletions": 7,
-      "changedFiles": 2,
+      "additions": 214,
+      "deletions": 18,
+      "changedFiles": 5,
       "url": "https://github.com/kenn-io/docbank/pull/285"
     },
     "kenn-io/docbank#284": {
       "repo": "kenn-io/docbank",
       "number": 284,
-      "state": "OPEN",
-      "title": "fix(store): keep source-metadata heads from moving to older generations",
+      "state": "MERGED",
+      "title": "test: preserve source metadata across extractor rollbacks",
       "createdAt": "2026-09-04T04:15:33Z",
-      "updatedAt": "2026-09-04T04:31:15Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T23:14:48Z",
+      "closedAt": "2026-09-06T23:11:15Z",
+      "mergedAt": "2026-09-06T23:11:15Z",
       "headRefName": "source-metadata-head-monotonicity",
       "author": {
         "login": "rodboev"
       },
-      "additions": 85,
-      "deletions": 6,
-      "changedFiles": 2,
+      "additions": 121,
+      "deletions": 3,
+      "changedFiles": 5,
       "url": "https://github.com/kenn-io/docbank/pull/284"
     },
     "kenn-io/docbank#283": {
@@ -103675,7 +103835,7 @@
       "state": "OPEN",
       "title": "fix(store): derive current-schema column expectations from the applied schema",
       "createdAt": "2026-09-04T04:15:21Z",
-      "updatedAt": "2026-09-04T22:32:17Z",
+      "updatedAt": "2026-09-06T23:09:15Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "derive-current-schema-columns",
@@ -103690,71 +103850,71 @@
     "kenn-io/docbank#282": {
       "repo": "kenn-io/docbank",
       "number": 282,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(backup): render blob authority from the shared reachability list",
       "createdAt": "2026-09-04T04:14:39Z",
-      "updatedAt": "2026-09-04T04:35:56Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T19:08:20Z",
+      "closedAt": "2026-09-06T19:08:19Z",
+      "mergedAt": "2026-09-06T19:08:19Z",
       "headRefName": "backup-blob-authority",
       "author": {
         "login": "rodboev"
       },
-      "additions": 130,
-      "deletions": 40,
-      "changedFiles": 9,
+      "additions": 134,
+      "deletions": 50,
+      "changedFiles": 10,
       "url": "https://github.com/kenn-io/docbank/pull/282"
     },
     "kenn-io/docbank#281": {
       "repo": "kenn-io/docbank",
       "number": 281,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(bridge): align schema limits with evidence validation",
       "createdAt": "2026-09-04T04:14:25Z",
-      "updatedAt": "2026-09-04T04:35:55Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T23:12:30Z",
+      "closedAt": "2026-09-06T23:12:30Z",
+      "mergedAt": "2026-09-06T23:12:30Z",
       "headRefName": "bridge-schema-bounds",
       "author": {
         "login": "rodboev"
       },
-      "additions": 115,
-      "deletions": 3,
-      "changedFiles": 2,
+      "additions": 281,
+      "deletions": 24,
+      "changedFiles": 3,
       "url": "https://github.com/kenn-io/docbank/pull/281"
     },
     "kenn-io/docbank#280": {
       "repo": "kenn-io/docbank",
       "number": 280,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "Add a direct SQLite adapter parity oracle",
       "createdAt": "2026-09-04T03:49:10Z",
-      "updatedAt": "2026-09-04T03:52:44Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T23:12:17Z",
+      "closedAt": "2026-09-06T23:12:17Z",
+      "mergedAt": "2026-09-06T23:12:17Z",
       "headRefName": "pr/271-adapter-parity-oracle",
       "author": {
         "login": "rodboev"
       },
-      "additions": 458,
+      "additions": 461,
       "deletions": 0,
-      "changedFiles": 2,
+      "changedFiles": 3,
       "url": "https://github.com/kenn-io/docbank/pull/280"
     },
     "kenn-io/docbank#279": {
       "repo": "kenn-io/docbank",
       "number": 279,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "Stabilize visual preview processor fingerprints",
       "createdAt": "2026-09-04T03:49:00Z",
-      "updatedAt": "2026-09-04T03:51:28Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-07T02:21:56Z",
+      "closedAt": "2026-09-07T02:21:55Z",
+      "mergedAt": "2026-09-07T02:21:55Z",
       "headRefName": "pr/270-3-runtime-stable-preview-fingerprint",
       "author": {
         "login": "rodboev"
       },
-      "additions": 90,
+      "additions": 96,
       "deletions": 11,
       "changedFiles": 5,
       "url": "https://github.com/kenn-io/docbank/pull/279"
@@ -103762,30 +103922,30 @@
     "kenn-io/docbank#278": {
       "repo": "kenn-io/docbank",
       "number": 278,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "Persist the store-owned rendition role order in backups",
       "createdAt": "2026-09-04T03:48:48Z",
-      "updatedAt": "2026-09-04T04:08:43Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-07T00:35:59Z",
+      "closedAt": "2026-09-07T00:35:59Z",
+      "mergedAt": "2026-09-07T00:35:59Z",
       "headRefName": "pr/268-derivative-role-coupling",
       "author": {
         "login": "rodboev"
       },
-      "additions": 76,
-      "deletions": 32,
+      "additions": 78,
+      "deletions": 37,
       "changedFiles": 6,
       "url": "https://github.com/kenn-io/docbank/pull/278"
     },
     "kenn-io/docbank#277": {
       "repo": "kenn-io/docbank",
       "number": 277,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "docs: correct backup.md blob reference description",
       "createdAt": "2026-09-04T02:09:55Z",
-      "updatedAt": "2026-09-04T14:43:38Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T18:57:58Z",
+      "closedAt": "2026-09-06T18:57:57Z",
+      "mergedAt": "2026-09-06T18:57:57Z",
       "headRefName": "docs/264-backup-referenced-blobs",
       "author": {
         "login": "rodboev"
@@ -103798,12 +103958,12 @@
     "kenn-io/docbank#276": {
       "repo": "kenn-io/docbank",
       "number": 276,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "docs: correct locking.md mutation return codes",
       "createdAt": "2026-09-04T02:06:18Z",
-      "updatedAt": "2026-09-04T14:43:36Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T17:49:06Z",
+      "closedAt": "2026-09-06T17:49:06Z",
+      "mergedAt": "2026-09-06T17:49:06Z",
       "headRefName": "docs/263-locking-maintenance-503",
       "author": {
         "login": "rodboev"
@@ -103837,7 +103997,7 @@
       "state": "OPEN",
       "title": "feat(ingest): add a replace mode to local add",
       "createdAt": "2026-09-04T00:40:11Z",
-      "updatedAt": "2026-09-05T16:53:22Z",
+      "updatedAt": "2026-09-06T23:33:14Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/200-add-reconciliation",
@@ -103873,7 +104033,7 @@
       "state": "OPEN",
       "title": "feat(store): append provenance after ingest",
       "createdAt": "2026-09-04T00:27:41Z",
-      "updatedAt": "2026-09-05T14:33:51Z",
+      "updatedAt": "2026-09-06T23:33:15Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/218-writable-provenance",
@@ -103888,36 +104048,36 @@
     "kenn-io/docbank#262": {
       "repo": "kenn-io/docbank",
       "number": 262,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(search): allow bounded queryless filtered search",
       "createdAt": "2026-09-03T21:24:19Z",
-      "updatedAt": "2026-09-04T04:13:23Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-07T00:21:04Z",
+      "closedAt": "2026-09-07T00:21:03Z",
+      "mergedAt": "2026-09-07T00:21:03Z",
       "headRefName": "pr/200-queryless-search",
       "author": {
         "login": "rodboev"
       },
-      "additions": 215,
-      "deletions": 9,
-      "changedFiles": 17,
+      "additions": 329,
+      "deletions": 16,
+      "changedFiles": 19,
       "url": "https://github.com/kenn-io/docbank/pull/262"
     },
     "kenn-io/docbank#261": {
       "repo": "kenn-io/docbank",
       "number": 261,
-      "state": "OPEN",
-      "title": "feat(rendition): authorize bounded non-PDF Mistral OCR inputs",
+      "state": "MERGED",
+      "title": "feat(rendition): carry local unit counts through Mistral OCR",
       "createdAt": "2026-09-03T18:48:58Z",
-      "updatedAt": "2026-09-04T04:13:24Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T23:11:28Z",
+      "closedAt": "2026-09-06T23:11:28Z",
+      "mergedAt": "2026-09-06T23:11:28Z",
       "headRefName": "pr/175-mistral-bounded-nonpdf",
       "author": {
         "login": "rodboev"
       },
-      "additions": 173,
-      "deletions": 23,
+      "additions": 172,
+      "deletions": 19,
       "changedFiles": 6,
       "url": "https://github.com/kenn-io/docbank/pull/261"
     },
@@ -103925,29 +104085,29 @@
       "repo": "kenn-io/agentsview",
       "number": 1641,
       "state": "OPEN",
-      "title": "fix(db): bound SQLite pool close waits while retaining ownership",
+      "title": "test(sync): reduce large archive fixture setup cost",
       "createdAt": "2026-09-06T02:23:35Z",
-      "updatedAt": "2026-09-06T14:21:38Z",
+      "updatedAt": "2026-09-06T22:30:57Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/1599-windows-sqlite-close",
       "author": {
         "login": "rodboev"
       },
-      "additions": 1280,
-      "deletions": 109,
-      "changedFiles": 3,
+      "additions": 109,
+      "deletions": 18,
+      "changedFiles": 1,
       "url": "https://github.com/kenn-io/agentsview/pull/1641"
     },
     "kenn-io/agentsview#1640": {
       "repo": "kenn-io/agentsview",
       "number": 1640,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(frontend): defer analytics burst until sidebar hydration starts",
       "createdAt": "2026-09-06T02:23:22Z",
-      "updatedAt": "2026-09-06T03:09:48Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T17:26:53Z",
+      "closedAt": "2026-09-06T17:26:53Z",
+      "mergedAt": "2026-09-06T17:26:53Z",
       "headRefName": "pr/1592-dashboard-loading",
       "author": {
         "login": "rodboev"
@@ -103960,12 +104120,12 @@
     "kenn-io/agentsview#1639": {
       "repo": "kenn-io/agentsview",
       "number": 1639,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "perf(analytics): filter tool and skill calls before aggregation",
       "createdAt": "2026-09-06T02:23:12Z",
-      "updatedAt": "2026-09-06T02:58:57Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-06T16:24:54Z",
+      "closedAt": "2026-09-06T16:24:54Z",
+      "mergedAt": "2026-09-06T16:24:54Z",
       "headRefName": "pr/1592-analytics-sql",
       "author": {
         "login": "rodboev"
@@ -103981,16 +104141,16 @@
       "state": "OPEN",
       "title": "feat(people): apply curated names to analytics, search, and exports",
       "createdAt": "2026-09-06T03:32:59Z",
-      "updatedAt": "2026-09-06T11:31:53Z",
+      "updatedAt": "2026-09-07T01:55:39Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/532-person-profile-read-side",
       "author": {
         "login": "rodboev"
       },
-      "additions": 947,
-      "deletions": 34,
-      "changedFiles": 35,
+      "additions": 1063,
+      "deletions": 40,
+      "changedFiles": 36,
       "url": "https://github.com/kenn-io/msgvault/pull/782"
     },
     "kenn-io/msgvault#783": {
@@ -103999,16 +104159,16 @@
       "state": "OPEN",
       "title": "feat(beeper): retain transcript metadata and repair classifications",
       "createdAt": "2026-09-06T04:31:52Z",
-      "updatedAt": "2026-09-06T14:57:35Z",
+      "updatedAt": "2026-09-07T00:00:51Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/route-beeper-media",
       "author": {
         "login": "rodboev"
       },
-      "additions": 526,
-      "deletions": 80,
-      "changedFiles": 12,
+      "additions": 863,
+      "deletions": 123,
+      "changedFiles": 13,
       "url": "https://github.com/kenn-io/msgvault/pull/783"
     },
     "kenn-io/docbank#295": {
@@ -104017,7 +104177,7 @@
       "state": "OPEN",
       "title": "feat(document): build evidence from supplied transcripts",
       "createdAt": "2026-09-06T14:39:28Z",
-      "updatedAt": "2026-09-06T15:00:26Z",
+      "updatedAt": "2026-09-06T22:30:58Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/294-supplied-transcript",
@@ -104032,37 +104192,37 @@
   },
   "authorPullScanMeta": {
     "kenn-io/agentsview": {
-      "scannedAt": "2026-09-06T15:08:46.031577Z",
+      "scannedAt": "2026-09-07T02:26:05.637970Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "thedotmack/claude-mem": {
-      "scannedAt": "2026-09-06T15:08:46.031577Z",
+      "scannedAt": "2026-09-07T02:26:05.637970Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "headroomlabs-ai/headroom": {
-      "scannedAt": "2026-09-06T15:08:46.031577Z",
+      "scannedAt": "2026-09-07T02:26:05.637970Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "nesquena/hermes-webui": {
-      "scannedAt": "2026-09-06T15:08:46.031577Z",
+      "scannedAt": "2026-09-07T02:26:05.637970Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "stablyai/orca": {
-      "scannedAt": "2026-09-06T15:08:46.031577Z",
+      "scannedAt": "2026-09-07T02:26:05.637970Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "mem0ai/mem0": {
-      "scannedAt": "2026-09-06T15:08:46.031577Z",
+      "scannedAt": "2026-09-07T02:26:05.637970Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "NVIDIA/SkillSpector": {
-      "scannedAt": "2026-09-06T15:08:46.031577Z",
+      "scannedAt": "2026-09-07T02:26:05.637970Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
@@ -104092,17 +104252,17 @@
       "lookbackHours": 48
     },
     "kenn-io/roborev": {
-      "scannedAt": "2026-09-06T15:08:46.031577Z",
+      "scannedAt": "2026-09-07T02:26:05.637970Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "kenn-io/msgvault": {
-      "scannedAt": "2026-09-06T15:08:46.031577Z",
+      "scannedAt": "2026-09-07T02:26:05.637970Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "kenn-io/docbank": {
-      "scannedAt": "2026-09-06T15:08:46.031577Z",
+      "scannedAt": "2026-09-07T02:26:05.637970Z",
       "source": "graphql-search",
       "lookbackHours": 48
     }
@@ -107105,8 +107265,8 @@
       "releaseCreditMeta": null
     },
     "headroomlabs-ai/headroom|community-shipped-v4|all": {
-      "cachedAt": "2026-09-05T09:11:54.265692Z",
-      "refreshedAt": "2026-09-05T09:11:54.265692Z",
+      "cachedAt": "2026-09-06T15:12:00.356445Z",
+      "refreshedAt": "2026-09-06T15:12:00.356445Z",
       "logins": [
         "abhay-codes07",
         "rodboev",
@@ -107127,17 +107287,17 @@
         "Eyalm321",
         "axelray-dev",
         "ketpatil77",
+        "dex0shubham",
         "ashishpatel26",
         "superdiaodiao",
         "ousamabenyounes",
-        "dex0shubham",
+        "gingeekrishna",
         "Thermi",
         "pratikbin",
         "khaosdoctor",
         "RTCartist",
         "mvanhorn",
         "C0sm0cats",
-        "gingeekrishna",
         "jerviscui",
         "ingmarkruschHF",
         "KennethWKZ",
@@ -107158,6 +107318,7 @@
         "Lakshya77089",
         "RubenAAA",
         "twistedmelonman",
+        "connectsudhindra-gif",
         "rajatnagda45",
         "slxng1758",
         "zealgoswami-lab",
@@ -107170,7 +107331,6 @@
         "pacifio",
         "trs-80",
         "Sabeekhann",
-        "connectsudhindra-gif",
         "mactonicaaron",
         "Zenjibad",
         "SulimanAbdulrazzaq",
@@ -107540,7 +107700,7 @@
         "abhay-codes07": {
           "total": 213,
           "open": 45,
-          "recentCount": 4
+          "recentCount": 0
         },
         "rodboev": {
           "total": 121,
@@ -107548,9 +107708,9 @@
           "recentCount": 1
         },
         "gglucass": {
-          "total": 84,
-          "open": 21,
-          "recentCount": 6
+          "total": 85,
+          "open": 22,
+          "recentCount": 7
         },
         "Parideboy": {
           "total": 67,
@@ -107632,6 +107792,11 @@
           "open": 1,
           "recentCount": 0
         },
+        "dex0shubham": {
+          "total": 11,
+          "open": 3,
+          "recentCount": 3
+        },
         "ashishpatel26": {
           "total": 11,
           "open": 1,
@@ -107647,9 +107812,9 @@
           "open": 1,
           "recentCount": 0
         },
-        "dex0shubham": {
-          "total": 10,
-          "open": 2,
+        "gingeekrishna": {
+          "total": 9,
+          "open": 4,
           "recentCount": 2
         },
         "Thermi": {
@@ -107680,12 +107845,7 @@
         "C0sm0cats": {
           "total": 7,
           "open": 7,
-          "recentCount": 7
-        },
-        "gingeekrishna": {
-          "total": 7,
-          "open": 2,
-          "recentCount": 0
+          "recentCount": 4
         },
         "jerviscui": {
           "total": 7,
@@ -107787,6 +107947,11 @@
           "open": 0,
           "recentCount": 0
         },
+        "connectsudhindra-gif": {
+          "total": 4,
+          "open": 2,
+          "recentCount": 1
+        },
         "rajatnagda45": {
           "total": 4,
           "open": 4,
@@ -107845,11 +108010,6 @@
         "Sabeekhann": {
           "total": 3,
           "open": 3,
-          "recentCount": 0
-        },
-        "connectsudhindra-gif": {
-          "total": 3,
-          "open": 1,
           "recentCount": 0
         },
         "mactonicaaron": {
@@ -107994,13 +108154,13 @@
         },
         "zeroasterisk": {
           "total": 2,
-          "open": 2,
+          "open": 1,
           "recentCount": 1
         },
         "Ctrl-Creeper": {
           "total": 2,
           "open": 2,
-          "recentCount": 2
+          "recentCount": 0
         },
         "failsafesecurity": {
           "total": 2,
@@ -108549,7 +108709,7 @@
         },
         "eeshsaxena": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0
         },
         "Inference1": {
@@ -109697,17 +109857,17 @@
         "Eyalm321": 10,
         "axelray-dev": 8,
         "ketpatil77": 4,
+        "dex0shubham": 4,
         "ashishpatel26": 5,
         "superdiaodiao": 9,
         "ousamabenyounes": 10,
-        "dex0shubham": 4,
+        "gingeekrishna": 3,
         "Thermi": 0,
         "pratikbin": 6,
         "khaosdoctor": 6,
         "RTCartist": 7,
         "mvanhorn": 6,
         "C0sm0cats": 0,
-        "gingeekrishna": 3,
         "jerviscui": 3,
         "ingmarkruschHF": 7,
         "KennethWKZ": 4,
@@ -109728,6 +109888,7 @@
         "Lakshya77089": 5,
         "RubenAAA": 2,
         "twistedmelonman": 5,
+        "connectsudhindra-gif": 1,
         "rajatnagda45": 0,
         "slxng1758": 0,
         "zealgoswami-lab": 0,
@@ -109740,7 +109901,6 @@
         "pacifio": 2,
         "trs-80": 0,
         "Sabeekhann": 0,
-        "connectsudhindra-gif": 1,
         "mactonicaaron": 0,
         "Zenjibad": 0,
         "SulimanAbdulrazzaq": 3,
@@ -109769,7 +109929,7 @@
         "longtngo": 3,
         "prakersh": 3,
         "mosatch": 2,
-        "zeroasterisk": 0,
+        "zeroasterisk": 1,
         "Ctrl-Creeper": 0,
         "failsafesecurity": 0,
         "r3bb1t": 0,
@@ -110109,7 +110269,7 @@
       "commentShippedCounts": {},
       "releaseCreditCounts": {},
       "releaseCreditMeta": null,
-      "recentAnchor": "2026-09-05T09:11:54.265692Z",
+      "recentAnchor": "2026-09-06T15:12:00.356445Z",
       "scanPages": 24,
       "scanResumed": false
     },
@@ -113235,8 +113395,8 @@
       "releaseCreditMeta": null
     },
     "mem0ai/mem0|community-shipped-v4|all": {
-      "cachedAt": "2026-09-05T09:11:54.265692Z",
-      "refreshedAt": "2026-09-05T09:11:54.265692Z",
+      "cachedAt": "2026-09-07T02:26:05.637970Z",
+      "refreshedAt": "2026-09-07T02:26:05.637970Z",
       "logins": [
         "Dev-Khant",
         "whysosaket",
@@ -113472,6 +113632,8 @@
         "SerSamgy",
         "KapilM26",
         "aalmuarik",
+        "ktz03",
+        "Java123456com",
         "88lin",
         "KhanCold",
         "Alphaxiaoteng",
@@ -113663,7 +113825,9 @@
         "jonasiwnl",
         "amjadraza",
         "Rayhanpatel",
-        "ktz03",
+        "jianyx1",
+        "lycaos",
+        "santhoshravindran7",
         "Obila34",
         "Huang-404-Q",
         "honghaifeng",
@@ -114605,7 +114769,7 @@
         "krishna231122-del": {
           "total": 23,
           "open": 5,
-          "recentCount": 1
+          "recentCount": 0
         },
         "spike-spiegel-21": {
           "total": 23,
@@ -115667,6 +115831,16 @@
           "open": 0,
           "recentCount": 0
         },
+        "ktz03": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 2
+        },
+        "Java123456com": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 2
+        },
         "88lin": {
           "total": 2,
           "open": 2,
@@ -115700,12 +115874,12 @@
         "kunalchikte": {
           "total": 2,
           "open": 0,
-          "recentCount": 2
+          "recentCount": 0
         },
         "Ethanz11-creat": {
           "total": 2,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "noQbot": {
           "total": 2,
@@ -116622,9 +116796,19 @@
           "open": 0,
           "recentCount": 0
         },
-        "ktz03": {
+        "jianyx1": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "lycaos": {
           "total": 1,
           "open": 0,
+          "recentCount": 1
+        },
+        "santhoshravindran7": {
+          "total": 1,
+          "open": 1,
           "recentCount": 1
         },
         "Obila34": {
@@ -116655,32 +116839,32 @@
         "Unmesh100": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "bluefishforsale": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "Serena-Peng29": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "katsugtgz": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "fnapinfai": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "teddiesloco": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "fred0m": {
           "total": 1,
@@ -116884,7 +117068,7 @@
         },
         "eeshsaxena": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0
         },
         "agarwalpranav0711": {
@@ -121029,6 +121213,8 @@
         "SerSamgy": 2,
         "KapilM26": 2,
         "aalmuarik": 0,
+        "ktz03": 0,
+        "Java123456com": 0,
         "88lin": 0,
         "KhanCold": 0,
         "Alphaxiaoteng": 0,
@@ -121220,7 +121406,9 @@
         "jonasiwnl": 2,
         "amjadraza": 1,
         "Rayhanpatel": 2,
-        "ktz03": 0,
+        "jianyx1": 0,
+        "lycaos": 0,
+        "santhoshravindran7": 0,
         "Obila34": 0,
         "Huang-404-Q": 0,
         "honghaifeng": 0,
@@ -122056,7 +122244,7 @@
       "commentShippedCounts": {},
       "releaseCreditCounts": {},
       "releaseCreditMeta": null,
-      "recentAnchor": "2026-09-05T09:11:54.265692Z",
+      "recentAnchor": "2026-09-07T02:26:05.637970Z",
       "scanPages": 48,
       "scanResumed": false
     },
@@ -126676,8 +126864,8 @@
       "releaseCreditMeta": null
     },
     "nesquena/hermes-webui|community-shipped-v4|all": {
-      "cachedAt": "2026-09-05T09:11:54.265692Z",
-      "refreshedAt": "2026-09-05T09:11:54.265692Z",
+      "cachedAt": "2026-09-07T02:26:05.637970Z",
+      "refreshedAt": "2026-09-07T02:26:05.637970Z",
       "logins": [
         "rodboev",
         "franksong2702",
@@ -126728,13 +126916,13 @@
         "akrhin",
         "v2psv",
         "mibrohimsulaeman-a11y",
+        "carlotestor",
         "zicochaos",
         "CharlesMcquade",
         "jkobject",
         "bschmidy10",
         "24601",
         "NocGeek",
-        "carlotestor",
         "sheldon-im",
         "tomtong2015",
         "ChonSong",
@@ -126832,6 +127020,12 @@
         "renatomott",
         "Bobby9228",
         "deboste",
+        "Thireus",
+        "breckenreed",
+        "MuhammadUsamaMX",
+        "xuhaonan013",
+        "SayHell0W0rld",
+        "sportsculture",
         "evgenyponomarev",
         "MoBluey",
         "Chevron7Locked",
@@ -126926,21 +127120,21 @@
         "gabogabucho",
         "DavidSchuchert",
         "thadreber-web",
+        "dgzap111",
+        "Guts1005",
+        "atchisonbrent",
         "georgeatparallel",
         "red4711",
         "elight",
-        "SayHell0W0rld",
         "Astraljack",
         "taljeon",
         "nomadjames",
-        "sportsculture",
         "BinarySpecter",
         "jamesrweaver",
         "ArushKhasru",
         "jmogainz",
         "StephenZ06",
         "GeniaShumakov",
-        "Thireus",
         "shramee",
         "jatinbharadia",
         "ericwooley",
@@ -126959,7 +127153,6 @@
         "yd-hwang",
         "michaldziwisz",
         "ptichalouf",
-        "xuhaonan013",
         "krishna3554",
         "MauriceAK",
         "leonardsellem",
@@ -127327,8 +127520,8 @@
         },
         "webtecnica": {
           "total": 221,
-          "open": 128,
-          "recentCount": 13
+          "open": 127,
+          "recentCount": 10
         },
         "ai-ag2026": {
           "total": 207,
@@ -127356,9 +127549,9 @@
           "recentCount": 0
         },
         "ruizanthony": {
-          "total": 58,
-          "open": 35,
-          "recentCount": 0
+          "total": 60,
+          "open": 37,
+          "recentCount": 2
         },
         "allenliang2022": {
           "total": 46,
@@ -127373,7 +127566,7 @@
         "b3nw": {
           "total": 32,
           "open": 6,
-          "recentCount": 1
+          "recentCount": 0
         },
         "happy5318": {
           "total": 30,
@@ -127560,6 +127753,11 @@
           "open": 0,
           "recentCount": 0
         },
+        "carlotestor": {
+          "total": 8,
+          "open": 2,
+          "recentCount": 2
+        },
         "zicochaos": {
           "total": 8,
           "open": 6,
@@ -127589,11 +127787,6 @@
           "total": 8,
           "open": 0,
           "recentCount": 0
-        },
-        "carlotestor": {
-          "total": 7,
-          "open": 1,
-          "recentCount": 1
         },
         "sheldon-im": {
           "total": 7,
@@ -128080,6 +128273,36 @@
           "open": 0,
           "recentCount": 0
         },
+        "Thireus": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 1
+        },
+        "breckenreed": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 2
+        },
+        "MuhammadUsamaMX": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2
+        },
+        "xuhaonan013": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 1
+        },
+        "SayHell0W0rld": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2
+        },
+        "sportsculture": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2
+        },
         "evgenyponomarev": {
           "total": 2,
           "open": 2,
@@ -128103,12 +128326,12 @@
         "BruceAi66": {
           "total": 2,
           "open": 2,
-          "recentCount": 2
+          "recentCount": 0
         },
         "Oidaladn0": {
           "total": 2,
           "open": 2,
-          "recentCount": 2
+          "recentCount": 0
         },
         "Manny7717": {
           "total": 2,
@@ -128550,6 +128773,21 @@
           "open": 0,
           "recentCount": 0
         },
+        "dgzap111": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "Guts1005": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "atchisonbrent": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
         "georgeatparallel": {
           "total": 1,
           "open": 1,
@@ -128565,11 +128803,6 @@
           "open": 1,
           "recentCount": 1
         },
-        "SayHell0W0rld": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 1
-        },
         "Astraljack": {
           "total": 1,
           "open": 1,
@@ -128581,11 +128814,6 @@
           "recentCount": 1
         },
         "nomadjames": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 1
-        },
-        "sportsculture": {
           "total": 1,
           "open": 1,
           "recentCount": 1
@@ -128618,37 +128846,32 @@
         "GeniaShumakov": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
-        },
-        "Thireus": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "shramee": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "jatinbharadia": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "ericwooley": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "SR0725": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "bderenzi": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "hnevky": {
           "total": 1,
@@ -128713,11 +128936,6 @@
         "ptichalouf": {
           "total": 1,
           "open": 1,
-          "recentCount": 0
-        },
-        "xuhaonan013": {
-          "total": 1,
-          "open": 0,
           "recentCount": 0
         },
         "krishna3554": {
@@ -130543,13 +130761,13 @@
         "akrhin": 4,
         "v2psv": 3,
         "mibrohimsulaeman-a11y": 0,
+        "carlotestor": 1,
         "zicochaos": 1,
         "CharlesMcquade": 1,
         "jkobject": 1,
         "bschmidy10": 0,
         "24601": 6,
         "NocGeek": 6,
-        "carlotestor": 1,
         "sheldon-im": 1,
         "tomtong2015": 1,
         "ChonSong": 0,
@@ -130647,6 +130865,12 @@
         "renatomott": 0,
         "Bobby9228": 0,
         "deboste": 3,
+        "Thireus": 0,
+        "breckenreed": 0,
+        "MuhammadUsamaMX": 0,
+        "xuhaonan013": 1,
+        "SayHell0W0rld": 0,
+        "sportsculture": 0,
         "evgenyponomarev": 0,
         "MoBluey": 0,
         "Chevron7Locked": 0,
@@ -130741,21 +130965,21 @@
         "gabogabucho": 0,
         "DavidSchuchert": 1,
         "thadreber-web": 1,
+        "dgzap111": 0,
+        "Guts1005": 0,
+        "atchisonbrent": 0,
         "georgeatparallel": 0,
         "red4711": 0,
         "elight": 0,
-        "SayHell0W0rld": 0,
         "Astraljack": 0,
         "taljeon": 0,
         "nomadjames": 0,
-        "sportsculture": 0,
         "BinarySpecter": 0,
         "jamesrweaver": 0,
         "ArushKhasru": 0,
         "jmogainz": 0,
         "StephenZ06": 0,
         "GeniaShumakov": 0,
-        "Thireus": 0,
         "shramee": 0,
         "jatinbharadia": 0,
         "ericwooley": 0,
@@ -130774,7 +130998,6 @@
         "yd-hwang": 0,
         "michaldziwisz": 0,
         "ptichalouf": 0,
-        "xuhaonan013": 1,
         "krishna3554": 0,
         "MauriceAK": 0,
         "leonardsellem": 0,
@@ -131359,7 +131582,7 @@
         "builtAt": "2026-07-02T13:51:48.1650008-04:00",
         "pairCount": 1468.0
       },
-      "recentAnchor": "2026-09-05T09:11:54.265692Z",
+      "recentAnchor": "2026-09-07T02:26:05.637970Z",
       "scanPages": 55,
       "scanResumed": false
     },
@@ -482402,7 +482625,7 @@
       }
     },
     "kenn-io/roborev": {
-      "cachedAt": "2026-09-06T02:18:57.035465Z",
+      "cachedAt": "2026-09-07T02:26:05.637970Z",
       "releases": [
         {
           "tagName": "v0.67.0",
@@ -484235,7 +484458,7 @@
       }
     },
     "kenn-io/msgvault": {
-      "cachedAt": "2026-09-06T02:18:57.035465Z",
+      "cachedAt": "2026-09-07T02:26:05.637970Z",
       "releases": [
         {
           "tagName": "v0.19.3",
@@ -484833,7 +485056,7 @@
       }
     },
     "kenn-io/docbank": {
-      "cachedAt": "2026-09-06T02:18:57.035465Z",
+      "cachedAt": "2026-09-07T02:26:05.637970Z",
       "releases": [
         {
           "tagName": "v0.14.0",
