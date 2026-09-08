@@ -152,7 +152,7 @@ def test_breakdown_seed_reads_the_seed_window_not_the_all_time_totals() -> None:
     # Today is in progress, so updateBreakdown() drops it from the tally and rolls the range end
     # back to the previous active day. Diverge here and bd-days-label snaps on the final frame.
     assert seed.activity.time_span == "2 days"
-    assert seed.activity.time_range == "Active days from Jul 13 - Jul 14"
+    assert seed.activity.time_range == "Active days from Jul 12 - Jul 14"
 
 
 def test_breakdown_seed_takes_only_its_rate_from_the_wider_window() -> None:

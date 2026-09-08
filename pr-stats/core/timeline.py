@@ -14,7 +14,7 @@ SHIPPED_CLASSIFICATIONS = {"shipped", "accepted-indirect"}
 EASTERN = ZoneInfo("America/New_York")
 
 # Mirrors BD_LOAD_RANGES in timeline.js: the windows the load animation walks, in order.
-BD_LOAD_RANGES = (2, 7, 14, 30, 0)
+BD_LOAD_RANGES = (2, 7, 14, 30)
 
 # The static breakdown is rendered at the first window. Not 1: a 1-day window is the only one in the
 # data that closed nothing but shipped work, so its rate is a 0-denominator 100% that drops to 84%
@@ -257,7 +257,7 @@ def breakdown_seed(chart_data: list[TimelineDay], today: str) -> BreakdownSeed:
         ),
         activity=ReportActivitySummary(
             time_span="1 day" if display_days == 1 else f"{display_days} days",
-            time_range=_active_days_label(first_active, last_active),
+            time_range=_active_days_label(first_active, last_active, BD_LOAD_SEED_RANGE),
         ),
         avg_prs=str(int(opened / opened_divisor + 0.5)),
         avg_loc=f"{raw_avg_loc / 1000:.1f}k" if raw_avg_loc >= 1000 else str(raw_avg_loc),
@@ -272,11 +272,12 @@ def _window_acceptance_rate(chart_data: list[TimelineDay], days: int) -> float:
     return (shipped / closed * 100) if closed > 0 else 0.0
 
 
-def _active_days_label(first_active: str, last_active: str) -> str:
+def _active_days_label(first_active: str, last_active: str, days: int = 0) -> str:
     """Port of the bd-days-label branch in updateBreakdown(); an all-today window has no range."""
     if not first_active or not last_active:
         return "No active days in range"
-    first, last = date.fromisoformat(first_active), date.fromisoformat(last_active)
+    last = date.fromisoformat(last_active)
+    first = last - timedelta(days=days) if days else date.fromisoformat(first_active)
     return f"Active days from {first.strftime('%b')} {first.day} - {last.strftime('%b')} {last.day}"
 
 

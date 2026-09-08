@@ -435,14 +435,7 @@ function updateBreakdown(r) {
   if (el = document.getElementById('bd-rate-label')) el.textContent = 'Acceptance rate (' + superseded + ' superseded, ' + lost + ' lost)';
   var dayStr = displayDays === 1 ? '1 day' : displayDays + ' days';
   if (el = document.getElementById('bd-days')) el.textContent = dayStr;
-  if (firstDate && lastDate) {
-    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var fp = firstDate.split('-'), lp = lastDate.split('-');
-    if (el = document.getElementById('bd-days-label')) el.textContent =
-      'Active days from ' + months[+fp[1]-1] + ' ' + +fp[2] + ' - ' + months[+lp[1]-1] + ' ' + +lp[2];
-  } else {
-    if (el = document.getElementById('bd-days-label')) el.textContent = 'No active days in range';
-  }
+  if (el = document.getElementById('bd-days-label')) el.textContent = bdRangeLabel({firstDate:firstDate, lastDate:lastDate, range:r});
   var avgPrs = activeDays > 0 ? String(Math.round(opened / activeDays)) : '0';
   var rawAvgLoc = locDays > 0 ? Math.round(totalLoc / locDays) : 0;
   var avgLoc = rawAvgLoc >= 1000 ? (rawAvgLoc / 1000).toFixed(1) + 'k' : String(rawAvgLoc);
@@ -478,7 +471,7 @@ function updateBreakdown(r) {
   syncRangeLabels(r);
 }
 
-var range = 0, dChart, cChart, animId = 0, transId = 0;
+var range = 30, dChart, cChart, animId = 0, transId = 0;
 function cleanupAnim() {
   if (!dChart || !cChart) return;
   dChart._barScales = null; cChart._barScales = null;
@@ -590,7 +583,7 @@ function build(r) {
 }
 // Load animation walks these ranges in order; the first is the frame the static markup is built at
 // and must match BD_LOAD_SEED_RANGE in core/timeline.py. See the note there for why it is not 1 or 0.
-var BD_LOAD_RANGES = [2, 7, 14, 30, 0];
+var BD_LOAD_RANGES = [2, 7, 14, 30];
 function bdStats(r) {
   var sl = sliceData(r);
   var op = 0, s = 0, o = 0, sp = 0, l = 0, loc = 0, ad = 0, ld = 0;
@@ -612,7 +605,7 @@ function bdStats(r) {
   // which is about what was written per day; Avg LOC/day reads merged code per day it landed, so
   // it tracks days with shipped work, not days with opened PRs.
   return {total:s+o+sp+l, opened:op, shipped:s, open:o, sup:sp, lost:l, loc:loc, activeDays:ad,
-    locDays:ld, displayDays:dd, firstDate:firstDate, lastDate:lastDate};
+    locDays:ld, displayDays:dd, range:r, firstDate:firstDate, lastDate:lastDate};
 }
 function bdDisplay(b) {
   var ls = b.lost + b.sup, cd = b.shipped + b.lost + b.sup;
@@ -622,18 +615,19 @@ function bdDisplay(b) {
   var bT = b.total || 1;
   return {total:b.total, shipped:b.shipped, open:b.open, sup:b.sup, lost:b.lost, lostSup:ls,
     rate:rate, activeDays:ad, locDays:lad, displayDays:b.displayDays, avgPrs:avgPrs, avgLoc:avgLoc,
-    firstDate:b.firstDate, lastDate:b.lastDate,
+    firstDate:b.firstDate, lastDate:b.lastDate, range:b.range,
     barSh:b.shipped/bT*100, barSp:b.sup/bT*100, barL:b.lost/bT*100, barO:b.open/bT*100};
 }
 var BD_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function bdDateMs(iso) { var p = iso.split('-'); return new Date(+p[0], +p[1]-1, +p[2]).getTime(); }
 function bdMonthDay(ms) { var d = new Date(ms); return BD_MONTHS[d.getMonth()] + ' ' + d.getDate(); }
-// Both labels ride the same lerp as the cards they sit under; left out, they snap at the very end.
-function bdRangeLabel(oD, nD, et) {
-  if (!oD.firstDate || !nD.firstDate) return 'No active days in range';
-  var lerpMs = function(a, b) { return bdDateMs(a) + et * (bdDateMs(b) - bdDateMs(a)); };
-  return 'Active days from ' + bdMonthDay(lerpMs(oD.firstDate, nD.firstDate)) +
-    ' - ' + bdMonthDay(lerpMs(oD.lastDate, nD.lastDate));
+// Dates name the destination's actual active days throughout the count animation.
+function bdRangeLabel(b) {
+  if (!b.firstDate || !b.lastDate) return 'No active days in range';
+  var start = new Date(bdDateMs(b.range ? b.lastDate : b.firstDate));
+  if (b.range) start.setDate(start.getDate() - b.range);
+  return 'Active days from ' + bdMonthDay(start.getTime()) +
+    ' - ' + bdMonthDay(bdDateMs(b.lastDate));
 }
 function renderBdFrame(oD, nD, et) {
   var cT = Math.round(oD.total+et*(nD.total-oD.total));
@@ -656,7 +650,7 @@ function renderBdFrame(oD, nD, et) {
   if (el = document.getElementById('bd-avg-prs')) el.textContent = Math.round(cAp);
   if (el = document.getElementById('bd-avg-loc')) el.textContent = rL >= 1000 ? (rL/1000).toFixed(1)+'k' : rL;
   if (el = document.getElementById('bd-days')) el.textContent = cDd === 1 ? '1 day' : cDd + ' days';
-  if (el = document.getElementById('bd-days-label')) el.textContent = bdRangeLabel(oD, nD, et);
+  if (el = document.getElementById('bd-days-label')) el.textContent = bdRangeLabel(nD);
   [['bd-bar-shipped',cSh,oD.barSh,nD.barSh],['bd-bar-superseded',cSp,oD.barSp,nD.barSp],
    ['bd-bar-lost',cL,oD.barL,nD.barL],['bd-bar-open',cO,oD.barO,nD.barO]].forEach(function(s) {
     var el = document.getElementById(s[0]); if (!el) return;
@@ -930,8 +924,8 @@ build(range);
       dChart.config._config.options.scales.x.ticks.color = C.text;
       cChart.config._config.options.scales.x.ticks.color = C.text;
       dChart.update('none'); cChart.update('none');
-      updateBreakdown(0);
-      pills.forEach(function(p) { p.classList.toggle('active', p.getAttribute('data-range') === '0'); });
+      updateBreakdown(range);
+      pills.forEach(function(p) { p.classList.toggle('active', p.getAttribute('data-range') === String(range)); });
     }
   });
 })();
