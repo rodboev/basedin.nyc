@@ -83359,7 +83359,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-09T01:33:37.620689Z"
+      "cachedAt": "2026-09-10T02:39:29.718925Z"
     },
     "kenn-io/agentsview#1543": {
       "classification": "shipped",
@@ -83399,7 +83399,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-09T01:33:37.620689Z"
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
     },
     "stablyai/orca#9287": {
       "classification": "withdrawn",
@@ -83407,7 +83407,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-09T01:33:37.620689Z"
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
     },
     "kenn-io/agentsview#1602": {
       "classification": "shipped",
@@ -83463,7 +83463,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-09T01:33:37.620689Z"
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
     },
     "stablyai/orca#7790": {
       "classification": "withdrawn",
@@ -83471,7 +83471,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-09T01:33:37.620689Z"
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
     },
     "stablyai/orca#8944": {
       "classification": "withdrawn",
@@ -83479,7 +83479,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-09T01:33:37.620689Z"
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
     },
     "stablyai/orca#10231": {
       "classification": "withdrawn",
@@ -83487,7 +83487,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-09T01:33:37.620689Z"
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
     },
     "stablyai/orca#11847": {
       "classification": "withdrawn",
@@ -83495,7 +83495,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-09T01:33:37.620689Z"
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
     },
     "stablyai/orca#11863": {
       "classification": "withdrawn",
@@ -83503,7 +83503,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-09T01:33:37.620689Z"
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
     },
     "stablyai/orca#12024": {
       "classification": "withdrawn",
@@ -83511,7 +83511,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-09T01:33:37.620689Z"
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
     },
     "stablyai/orca#8618": {
       "classification": "withdrawn",
@@ -83519,7 +83519,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-09T01:33:37.620689Z"
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
     },
     "kenn-io/roborev#1139": {
       "classification": "shipped",
@@ -83671,7 +83671,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-09-09T01:33:37.620689Z"
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
     },
     "kenn-io/msgvault#778": {
       "classification": "shipped",
@@ -83976,6 +83976,166 @@
       "viaUrl": "https://github.com/kenn-io/agentsview/pull/1655",
       "evidenceKind": "direct-merge",
       "cachedAt": "2026-09-09T06:41:53.218732Z"
+    },
+    "kenn-io/agentsview#1664": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1664",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-10T02:39:29.718925Z"
+    },
+    "kenn-io/agentsview#1663": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1663",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-10T02:39:29.718925Z"
+    },
+    "kenn-io/agentsview#1659": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1659",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-10T02:39:29.718925Z"
+    },
+    "kenn-io/agentsview#1678": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1678",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-10T02:39:29.718925Z"
+    },
+    "kenn-io/msgvault#811": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/msgvault/pull/811",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-10T02:39:29.718925Z"
+    },
+    "kenn-io/msgvault#813": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/msgvault/pull/813",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-10T02:39:29.718925Z"
+    },
+    "kenn-io/agentsview#1660": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1660",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
+    },
+    "kenn-io/agentsview#1710": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1710",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
+    },
+    "kenn-io/agentsview#1709": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1709",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
+    },
+    "kenn-io/agentsview#1701": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1701",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
+    },
+    "kenn-io/agentsview#1696": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1696",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
+    },
+    "kenn-io/agentsview#1693": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1693",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
+    },
+    "kenn-io/agentsview#1677": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1677",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
+    },
+    "kenn-io/agentsview#1691": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1691",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
+    },
+    "kenn-io/agentsview#1692": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/1692",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
+    },
+    "kenn-io/msgvault#827": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/msgvault/pull/827",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
+    },
+    "kenn-io/msgvault#826": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/msgvault/pull/826",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
+    },
+    "kenn-io/msgvault#807": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/msgvault/pull/807",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
+    },
+    "thedotmack/claude-mem#3363": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/thedotmack/claude-mem/pull/3363",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
+    },
+    "thedotmack/claude-mem#3473": {
+      "classification": "superseded",
+      "release": "",
+      "viaLabel": "",
+      "viaUrl": "",
+      "evidenceKind": "superseded",
+      "cachedAt": "2026-09-11T03:15:00.394336Z"
     }
   },
   "authorPulls": {
@@ -99642,12 +99802,12 @@
     "thedotmack/claude-mem#3363": {
       "repo": "thedotmack/claude-mem",
       "number": 3363,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(worker): salvage prose-only observations instead of dropping them (closes #3351)",
       "createdAt": "2026-07-22T17:41:16Z",
-      "updatedAt": "2026-08-17T05:46:30Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-11T03:13:04Z",
+      "closedAt": "2026-09-11T03:13:04Z",
+      "mergedAt": "2026-09-11T03:13:04Z",
       "headRefName": "fix/3351-observation-prose-salvage",
       "author": {
         "login": "rodboev"
@@ -101013,16 +101173,16 @@
       "state": "OPEN",
       "title": "feat(proxy): add an opt-in pre-forward context budget guard",
       "createdAt": "2026-08-01T11:13:35Z",
-      "updatedAt": "2026-09-08T19:30:40Z",
+      "updatedAt": "2026-09-10T20:17:56Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/2649-final-context-limit-guard",
       "author": {
         "login": "rodboev"
       },
-      "additions": 1512,
+      "additions": 1507,
       "deletions": 1,
-      "changedFiles": 7,
+      "changedFiles": 6,
       "url": "https://github.com/headroomlabs-ai/headroom/pull/2704"
     },
     "nesquena/hermes-webui#6677": {
@@ -101049,7 +101209,7 @@
       "state": "OPEN",
       "title": "fix(#4085): expose dirty install recovery",
       "createdAt": "2026-08-01T10:36:48Z",
-      "updatedAt": "2026-08-26T08:10:31Z",
+      "updatedAt": "2026-09-09T08:46:38Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/4085-dirty-install-recovery",
@@ -101190,11 +101350,11 @@
     "thedotmack/claude-mem#3473": {
       "repo": "thedotmack/claude-mem",
       "number": 3473,
-      "state": "OPEN",
+      "state": "CLOSED",
       "title": "fix(sqlite): repair stamped discovery_tokens drift (refs #3446)",
       "createdAt": "2026-08-01T15:37:28Z",
-      "updatedAt": "2026-08-17T05:49:43Z",
-      "closedAt": null,
+      "updatedAt": "2026-09-11T03:00:16Z",
+      "closedAt": "2026-09-11T03:00:16Z",
       "mergedAt": null,
       "headRefName": "fix/3446-discovery-token-repair",
       "author": {
@@ -102435,7 +102595,7 @@
       "state": "OPEN",
       "title": "feat(#6840): fork when editing an older user prompt",
       "createdAt": "2026-08-16T02:06:36Z",
-      "updatedAt": "2026-08-18T09:17:11Z",
+      "updatedAt": "2026-09-10T21:18:49Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/6840-fork-on-edit",
@@ -102669,16 +102829,16 @@
       "state": "OPEN",
       "title": "fix(#7239): mark out-of-workspace artifacts as display-only",
       "createdAt": "2026-08-23T11:16:51Z",
-      "updatedAt": "2026-09-04T18:18:00Z",
+      "updatedAt": "2026-09-10T00:13:10Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/7239-artifact-workspace-boundary",
       "author": {
         "login": "rodboev"
       },
-      "additions": 365,
-      "deletions": 29,
-      "changedFiles": 5,
+      "additions": 716,
+      "deletions": 44,
+      "changedFiles": 19,
       "url": "https://github.com/nesquena/hermes-webui/pull/7250"
     },
     "nesquena/hermes-webui#7247": {
@@ -102705,15 +102865,15 @@
       "state": "OPEN",
       "title": "fix(#7193): roll back rejected chat starts transactionally",
       "createdAt": "2026-08-23T11:16:51Z",
-      "updatedAt": "2026-08-24T19:03:14Z",
+      "updatedAt": "2026-09-10T11:26:06Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/7193-chat-start-transaction",
       "author": {
         "login": "rodboev"
       },
-      "additions": 1107,
-      "deletions": 331,
+      "additions": 1570,
+      "deletions": 330,
       "changedFiles": 18,
       "url": "https://github.com/nesquena/hermes-webui/pull/7249"
     },
@@ -103209,7 +103369,7 @@
       "state": "OPEN",
       "title": "feat(#7303): show cron responses before run diagnostics",
       "createdAt": "2026-08-27T15:09:10Z",
-      "updatedAt": "2026-08-28T21:14:46Z",
+      "updatedAt": "2026-09-10T02:36:58Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/7303-cron-response-first",
@@ -103335,16 +103495,16 @@
       "state": "OPEN",
       "title": "fix(security): reject unauthenticated public proxy binds",
       "createdAt": "2026-08-27T20:59:57Z",
-      "updatedAt": "2026-09-08T17:07:29Z",
+      "updatedAt": "2026-09-10T18:53:41Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/3283-secure-public-bind",
       "author": {
         "login": "rodboev"
       },
-      "additions": 675,
+      "additions": 670,
       "deletions": 41,
-      "changedFiles": 27,
+      "changedFiles": 26,
       "url": "https://github.com/headroomlabs-ai/headroom/pull/3316"
     },
     "headroomlabs-ai/headroom#3317": {
@@ -103353,7 +103513,7 @@
       "state": "OPEN",
       "title": "feat(code): add Ruby to CodeAwareCompressor",
       "createdAt": "2026-08-27T20:59:57Z",
-      "updatedAt": "2026-09-08T14:38:05Z",
+      "updatedAt": "2026-09-10T20:26:52Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/3241-ruby-code-aware",
@@ -103407,16 +103567,16 @@
       "state": "OPEN",
       "title": "feat(wrap): support 1m context in vscode claude",
       "createdAt": "2026-08-30T22:35:27Z",
-      "updatedAt": "2026-09-08T17:07:27Z",
+      "updatedAt": "2026-09-10T20:01:57Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/3360-vscode-claude-1m-context",
       "author": {
         "login": "rodboev"
       },
-      "additions": 632,
+      "additions": 627,
       "deletions": 49,
-      "changedFiles": 11,
+      "changedFiles": 10,
       "url": "https://github.com/headroomlabs-ai/headroom/pull/3361"
     },
     "thedotmack/claude-mem#3806": {
@@ -104412,37 +104572,37 @@
     "kenn-io/agentsview#1660": {
       "repo": "kenn-io/agentsview",
       "number": 1660,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(parser): support Open Code Review sessions",
       "createdAt": "2026-09-08T01:45:44Z",
-      "updatedAt": "2026-09-08T20:18:20Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-10T23:06:59Z",
+      "closedAt": "2026-09-10T23:06:59Z",
+      "mergedAt": "2026-09-10T23:06:59Z",
       "headRefName": "pr/1612-open-code-review",
       "author": {
         "login": "rodboev"
       },
-      "additions": 1069,
-      "deletions": 1,
-      "changedFiles": 16,
+      "additions": 1157,
+      "deletions": 0,
+      "changedFiles": 17,
       "url": "https://github.com/kenn-io/agentsview/pull/1660"
     },
     "kenn-io/agentsview#1659": {
       "repo": "kenn-io/agentsview",
       "number": 1659,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(parser): preserve Cursor legacy tool results",
       "createdAt": "2026-09-08T00:33:00Z",
-      "updatedAt": "2026-09-09T02:00:06Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-09T17:44:35Z",
+      "closedAt": "2026-09-09T17:44:35Z",
+      "mergedAt": "2026-09-09T17:44:35Z",
       "headRefName": "pr/1627-cursor-legacy-tool-results",
       "author": {
         "login": "rodboev"
       },
-      "additions": 242,
-      "deletions": 19,
-      "changedFiles": 8,
+      "additions": 331,
+      "deletions": 22,
+      "changedFiles": 10,
       "url": "https://github.com/kenn-io/agentsview/pull/1659"
     },
     "kenn-io/agentsview#1656": {
@@ -104556,35 +104716,35 @@
     "kenn-io/agentsview#1663": {
       "repo": "kenn-io/agentsview",
       "number": 1663,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(db): add tool-result image retention and db strip --images",
       "createdAt": "2026-09-08T05:47:48Z",
-      "updatedAt": "2026-09-08T22:12:09Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-09T20:46:00Z",
+      "closedAt": "2026-09-09T20:46:00Z",
+      "mergedAt": "2026-09-09T20:46:00Z",
       "headRefName": "pr/1622-strip-images",
       "author": {
         "login": "rodboev"
       },
-      "additions": 2695,
+      "additions": 3099,
       "deletions": 83,
-      "changedFiles": 35,
+      "changedFiles": 36,
       "url": "https://github.com/kenn-io/agentsview/pull/1663"
     },
     "kenn-io/agentsview#1664": {
       "repo": "kenn-io/agentsview",
       "number": 1664,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(parser): read Cursor CLI store.db transcripts",
       "createdAt": "2026-09-08T06:46:57Z",
-      "updatedAt": "2026-09-09T01:11:20Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-09T23:54:47Z",
+      "closedAt": "2026-09-09T23:54:47Z",
+      "mergedAt": "2026-09-09T23:54:47Z",
       "headRefName": "pr/1627-cursor-cli-store-db",
       "author": {
         "login": "rodboev"
       },
-      "additions": 2256,
+      "additions": 2579,
       "deletions": 19,
       "changedFiles": 8,
       "url": "https://github.com/kenn-io/agentsview/pull/1664"
@@ -104595,27 +104755,27 @@
       "state": "OPEN",
       "title": "fix(frontend): add preformatted rendering for unknown XML blocks (#1672)",
       "createdAt": "2026-09-09T00:03:53Z",
-      "updatedAt": "2026-09-09T06:33:00Z",
+      "updatedAt": "2026-09-11T03:05:31Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/1672-unknown-xml-preformatted",
       "author": {
         "login": "rodboev"
       },
-      "additions": 802,
-      "deletions": 32,
-      "changedFiles": 19,
+      "additions": 1492,
+      "deletions": 36,
+      "changedFiles": 20,
       "url": "https://github.com/kenn-io/agentsview/pull/1679"
     },
     "kenn-io/agentsview#1678": {
       "repo": "kenn-io/agentsview",
       "number": 1678,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(sidebar): let agent names use available row width",
       "createdAt": "2026-09-08T23:22:06Z",
-      "updatedAt": "2026-09-09T01:14:23Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-09T14:19:26Z",
+      "closedAt": "2026-09-09T14:19:25Z",
+      "mergedAt": "2026-09-09T14:19:25Z",
       "headRefName": "pr/sidebar-agent-names",
       "author": {
         "login": "rodboev"
@@ -104628,19 +104788,19 @@
     "kenn-io/agentsview#1677": {
       "repo": "kenn-io/agentsview",
       "number": 1677,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(sessions): show reasoning effort beside the model",
       "createdAt": "2026-09-08T22:00:23Z",
-      "updatedAt": "2026-09-09T00:21:54Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-10T15:30:15Z",
+      "closedAt": "2026-09-10T15:30:15Z",
+      "mergedAt": "2026-09-10T15:30:14Z",
       "headRefName": "pr/session-reasoning-effort",
       "author": {
         "login": "rodboev"
       },
-      "additions": 806,
-      "deletions": 110,
-      "changedFiles": 44,
+      "additions": 870,
+      "deletions": 122,
+      "changedFiles": 47,
       "url": "https://github.com/kenn-io/agentsview/pull/1677"
     },
     "kenn-io/msgvault#814": {
@@ -104649,50 +104809,50 @@
       "state": "OPEN",
       "title": "feat(gvoice): store voicemail audio from takeout exports (#728)",
       "createdAt": "2026-09-09T00:52:57Z",
-      "updatedAt": "2026-09-09T04:08:01Z",
+      "updatedAt": "2026-09-11T00:53:11Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/728-gvoice-voicemail-audio",
       "author": {
         "login": "rodboev"
       },
-      "additions": 1070,
-      "deletions": 15,
-      "changedFiles": 19,
+      "additions": 1072,
+      "deletions": 14,
+      "changedFiles": 20,
       "url": "https://github.com/kenn-io/msgvault/pull/814"
     },
     "kenn-io/msgvault#813": {
       "repo": "kenn-io/msgvault",
       "number": 813,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "fix(whatsapp): import Apple ChatStorage message type 7",
       "createdAt": "2026-09-08T23:56:06Z",
-      "updatedAt": "2026-09-09T01:47:46Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-09T17:45:08Z",
+      "closedAt": "2026-09-09T17:45:08Z",
+      "mergedAt": "2026-09-09T17:45:08Z",
       "headRefName": "pr/370-apple-type-7-text",
       "author": {
         "login": "rodboev"
       },
-      "additions": 174,
-      "deletions": 3,
+      "additions": 173,
+      "deletions": 2,
       "changedFiles": 3,
       "url": "https://github.com/kenn-io/msgvault/pull/813"
     },
     "kenn-io/msgvault#811": {
       "repo": "kenn-io/msgvault",
       "number": 811,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(people): add person directory for recent-contact CLI browsing",
       "createdAt": "2026-09-08T22:05:42Z",
-      "updatedAt": "2026-09-09T01:50:38Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-09T20:09:44Z",
+      "closedAt": "2026-09-09T20:09:44Z",
+      "mergedAt": "2026-09-09T20:09:44Z",
       "headRefName": "pr/people-directory-cli",
       "author": {
         "login": "rodboev"
       },
-      "additions": 614,
+      "additions": 615,
       "deletions": 1,
       "changedFiles": 6,
       "url": "https://github.com/kenn-io/msgvault/pull/811"
@@ -104700,17 +104860,17 @@
     "kenn-io/msgvault#807": {
       "repo": "kenn-io/msgvault",
       "number": 807,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(imap): create reply drafts",
       "createdAt": "2026-09-08T17:31:27Z",
-      "updatedAt": "2026-09-09T01:57:45Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-09-10T13:41:25Z",
+      "closedAt": "2026-09-10T13:41:25Z",
+      "mergedAt": "2026-09-10T13:41:25Z",
       "headRefName": "pr/666-1-imap-reply-draft",
       "author": {
         "login": "rodboev"
       },
-      "additions": 1930,
+      "additions": 2216,
       "deletions": 22,
       "changedFiles": 24,
       "url": "https://github.com/kenn-io/msgvault/pull/807"
@@ -104732,41 +104892,311 @@
       "deletions": 29,
       "changedFiles": 17,
       "url": "https://github.com/kenn-io/msgvault/pull/805"
+    },
+    "kenn-io/roborev#1159": {
+      "repo": "kenn-io/roborev",
+      "number": 1159,
+      "state": "OPEN",
+      "title": "feat(tui): show finding severity counts in the review queue",
+      "createdAt": "2026-09-10T00:22:31Z",
+      "updatedAt": "2026-09-11T02:58:23Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/findings-1014",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 1341,
+      "deletions": 248,
+      "changedFiles": 35,
+      "url": "https://github.com/kenn-io/roborev/pull/1159"
+    },
+    "kenn-io/agentsview#1692": {
+      "repo": "kenn-io/agentsview",
+      "number": 1692,
+      "state": "MERGED",
+      "title": "fix(parser): keep Hermes session activity timestamps current",
+      "createdAt": "2026-09-10T02:31:06Z",
+      "updatedAt": "2026-09-10T13:41:11Z",
+      "closedAt": "2026-09-10T13:41:11Z",
+      "mergedAt": "2026-09-10T13:41:11Z",
+      "headRefName": "pr/1675-hermes-open-session-endedat",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 592,
+      "deletions": 10,
+      "changedFiles": 5,
+      "url": "https://github.com/kenn-io/agentsview/pull/1692"
+    },
+    "kenn-io/agentsview#1691": {
+      "repo": "kenn-io/agentsview",
+      "number": 1691,
+      "state": "MERGED",
+      "title": "fix(parser): skip NULL cursorDiskKV values instead of failing the cursor-ide pass",
+      "createdAt": "2026-09-10T02:31:01Z",
+      "updatedAt": "2026-09-10T15:00:25Z",
+      "closedAt": "2026-09-10T15:00:25Z",
+      "mergedAt": "2026-09-10T15:00:25Z",
+      "headRefName": "pr/1676-cursor-ide-null-value",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 570,
+      "deletions": 3,
+      "changedFiles": 6,
+      "url": "https://github.com/kenn-io/agentsview/pull/1691"
+    },
+    "kenn-io/msgvault#827": {
+      "repo": "kenn-io/msgvault",
+      "number": 827,
+      "state": "MERGED",
+      "title": "fix(discord): preserve voice message metadata",
+      "createdAt": "2026-09-09T20:56:50Z",
+      "updatedAt": "2026-09-10T23:03:43Z",
+      "closedAt": "2026-09-10T23:03:43Z",
+      "mergedAt": "2026-09-10T23:03:43Z",
+      "headRefName": "pr/discord-voice-metadata",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 960,
+      "deletions": 62,
+      "changedFiles": 18,
+      "url": "https://github.com/kenn-io/msgvault/pull/827"
+    },
+    "kenn-io/msgvault#826": {
+      "repo": "kenn-io/msgvault",
+      "number": 826,
+      "state": "MERGED",
+      "title": "test(eval): publish synthetic media retrieval corpus and judgments",
+      "createdAt": "2026-09-09T20:55:19Z",
+      "updatedAt": "2026-09-10T17:14:10Z",
+      "closedAt": "2026-09-10T17:14:10Z",
+      "mergedAt": "2026-09-10T17:14:10Z",
+      "headRefName": "pr/728-4-eval-media-corpus",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 105,
+      "deletions": 0,
+      "changedFiles": 5,
+      "url": "https://github.com/kenn-io/msgvault/pull/826"
+    },
+    "kenn-io/docbank#304": {
+      "repo": "kenn-io/docbank",
+      "number": 304,
+      "state": "OPEN",
+      "title": "feat(document): index supplied audio with its provider transcript",
+      "createdAt": "2026-09-09T21:52:30Z",
+      "updatedAt": "2026-09-10T18:11:18Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/240-2-supplied-audio-transcript",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 91895,
+      "deletions": 3004,
+      "changedFiles": 338,
+      "url": "https://github.com/kenn-io/docbank/pull/304"
+    },
+    "kenn-io/msgvault#833": {
+      "repo": "kenn-io/msgvault",
+      "number": 833,
+      "state": "OPEN",
+      "title": "feat(api): restricted agent access for reply drafts",
+      "createdAt": "2026-09-11T02:23:36Z",
+      "updatedAt": "2026-09-11T02:42:52Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/666-2-restricted-agent-access",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 7346,
+      "deletions": 2795,
+      "changedFiles": 56,
+      "url": "https://github.com/kenn-io/msgvault/pull/833"
+    },
+    "kenn-io/agentsview#1711": {
+      "repo": "kenn-io/agentsview",
+      "number": 1711,
+      "state": "OPEN",
+      "title": "feat(db): offload tool-result images to the asset store at ingest",
+      "createdAt": "2026-09-10T22:49:01Z",
+      "updatedAt": "2026-09-11T01:43:31Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/1622-3-offload-on-ingest",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 1524,
+      "deletions": 125,
+      "changedFiles": 33,
+      "url": "https://github.com/kenn-io/agentsview/pull/1711"
+    },
+    "kenn-io/agentsview#1708": {
+      "repo": "kenn-io/agentsview",
+      "number": 1708,
+      "state": "OPEN",
+      "title": "test(cli): convert convertible cmd/agentsview timing waits to testing/synctest",
+      "createdAt": "2026-09-10T21:22:51Z",
+      "updatedAt": "2026-09-11T03:05:12Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/1702-cmd-agentsview-synctest",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 613,
+      "deletions": 584,
+      "changedFiles": 7,
+      "url": "https://github.com/kenn-io/agentsview/pull/1708"
+    },
+    "kenn-io/agentsview#1694": {
+      "repo": "kenn-io/agentsview",
+      "number": 1694,
+      "state": "OPEN",
+      "title": "feat(data): add tool-result image cleanup endpoints and panel",
+      "createdAt": "2026-09-10T02:48:35Z",
+      "updatedAt": "2026-09-11T01:27:30Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/data-image-cleanup-ui",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 2461,
+      "deletions": 30,
+      "changedFiles": 23,
+      "url": "https://github.com/kenn-io/agentsview/pull/1694"
+    },
+    "kenn-io/agentsview#1710": {
+      "repo": "kenn-io/agentsview",
+      "number": 1710,
+      "state": "MERGED",
+      "title": "test(timing): convert remaining in-process timing waits to testing/synctest",
+      "createdAt": "2026-09-10T21:23:44Z",
+      "updatedAt": "2026-09-10T22:00:02Z",
+      "closedAt": "2026-09-10T22:00:02Z",
+      "mergedAt": "2026-09-10T22:00:02Z",
+      "headRefName": "pr/1702-remaining-synctest",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 752,
+      "deletions": 682,
+      "changedFiles": 4,
+      "url": "https://github.com/kenn-io/agentsview/pull/1710"
+    },
+    "kenn-io/agentsview#1709": {
+      "repo": "kenn-io/agentsview",
+      "number": 1709,
+      "state": "MERGED",
+      "title": "test(sync): convert convertible internal/sync timing waits to testing/synctest",
+      "createdAt": "2026-09-10T21:23:29Z",
+      "updatedAt": "2026-09-10T21:59:56Z",
+      "closedAt": "2026-09-10T21:59:55Z",
+      "mergedAt": "2026-09-10T21:59:55Z",
+      "headRefName": "pr/1702-internal-sync-synctest",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 1202,
+      "deletions": 1062,
+      "changedFiles": 5,
+      "url": "https://github.com/kenn-io/agentsview/pull/1709"
+    },
+    "kenn-io/agentsview#1701": {
+      "repo": "kenn-io/agentsview",
+      "number": 1701,
+      "state": "MERGED",
+      "title": "test(pricing): use the shared wait budget for pricing schedule tests",
+      "createdAt": "2026-09-10T16:41:55Z",
+      "updatedAt": "2026-09-10T21:49:41Z",
+      "closedAt": "2026-09-10T21:49:40Z",
+      "mergedAt": "2026-09-10T21:49:40Z",
+      "headRefName": "pr/1700-pricing-schedule-test-timeout",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 10,
+      "deletions": 7,
+      "changedFiles": 1,
+      "url": "https://github.com/kenn-io/agentsview/pull/1701"
+    },
+    "kenn-io/agentsview#1696": {
+      "repo": "kenn-io/agentsview",
+      "number": 1696,
+      "state": "MERGED",
+      "title": "feat(db): add db migrate --images to move tool-result images into the asset store",
+      "createdAt": "2026-09-10T04:13:43Z",
+      "updatedAt": "2026-09-10T17:34:44Z",
+      "closedAt": "2026-09-10T17:34:44Z",
+      "mergedAt": "2026-09-10T17:34:44Z",
+      "headRefName": "pr/db-migrate-images",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 2492,
+      "deletions": 161,
+      "changedFiles": 18,
+      "url": "https://github.com/kenn-io/agentsview/pull/1696"
+    },
+    "kenn-io/agentsview#1693": {
+      "repo": "kenn-io/agentsview",
+      "number": 1693,
+      "state": "MERGED",
+      "title": "feat(settings): add tool-result image retention control",
+      "createdAt": "2026-09-10T02:48:31Z",
+      "updatedAt": "2026-09-10T17:12:02Z",
+      "closedAt": "2026-09-10T17:12:02Z",
+      "mergedAt": "2026-09-10T17:12:02Z",
+      "headRefName": "pr/settings-tool-result-images",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 644,
+      "deletions": 21,
+      "changedFiles": 23,
+      "url": "https://github.com/kenn-io/agentsview/pull/1693"
     }
   },
   "authorPullScanMeta": {
     "kenn-io/agentsview": {
-      "scannedAt": "2026-09-09T06:41:53.218732Z",
+      "scannedAt": "2026-09-11T03:15:00.394336Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "thedotmack/claude-mem": {
-      "scannedAt": "2026-09-09T06:41:53.218732Z",
+      "scannedAt": "2026-09-11T03:15:00.394336Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "headroomlabs-ai/headroom": {
-      "scannedAt": "2026-09-09T06:41:53.218732Z",
+      "scannedAt": "2026-09-11T03:15:00.394336Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "nesquena/hermes-webui": {
-      "scannedAt": "2026-09-09T06:41:53.218732Z",
+      "scannedAt": "2026-09-11T03:15:00.394336Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "stablyai/orca": {
-      "scannedAt": "2026-09-09T06:41:53.218732Z",
+      "scannedAt": "2026-09-11T03:15:00.394336Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "mem0ai/mem0": {
-      "scannedAt": "2026-09-09T06:41:53.218732Z",
+      "scannedAt": "2026-09-11T03:15:00.394336Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "NVIDIA/SkillSpector": {
-      "scannedAt": "2026-09-09T06:41:53.218732Z",
+      "scannedAt": "2026-09-11T03:15:00.394336Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
@@ -104796,17 +105226,17 @@
       "lookbackHours": 48
     },
     "kenn-io/roborev": {
-      "scannedAt": "2026-09-09T06:41:53.218732Z",
+      "scannedAt": "2026-09-11T03:15:00.394336Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "kenn-io/msgvault": {
-      "scannedAt": "2026-09-09T06:41:53.218732Z",
+      "scannedAt": "2026-09-11T03:15:00.394336Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "kenn-io/docbank": {
-      "scannedAt": "2026-09-09T06:41:53.218732Z",
+      "scannedAt": "2026-09-11T03:15:00.394336Z",
       "source": "graphql-search",
       "lookbackHours": 48
     }
@@ -107809,8 +108239,8 @@
       "releaseCreditMeta": null
     },
     "headroomlabs-ai/headroom|community-shipped-v4|all": {
-      "cachedAt": "2026-09-08T02:55:25.187475Z",
-      "refreshedAt": "2026-09-08T02:55:25.187475Z",
+      "cachedAt": "2026-09-10T02:39:29.718925Z",
+      "refreshedAt": "2026-09-10T02:39:29.718925Z",
       "logins": [
         "abhay-codes07",
         "rodboev",
@@ -107826,8 +108256,8 @@
         "neogenix",
         "tenderdeve",
         "peterlodri-sec",
-        "nangsontay",
         "rNoz",
+        "nangsontay",
         "Eyalm321",
         "trs-80",
         "axelray-dev",
@@ -107874,6 +108304,8 @@
         "SuperMarioYL",
         "falkoro",
         "pacifio",
+        "aniruddhaadak80",
+        "anupamme",
         "Sabeekhann",
         "mactonicaaron",
         "Zenjibad",
@@ -107902,6 +108334,8 @@
         "withsivram",
         "longtngo",
         "prakersh",
+        "willgao-dev",
+        "syamsulalam",
         "njchae",
         "atirna",
         "mosatch",
@@ -107914,7 +108348,6 @@
         "GilKorzen",
         "msoleimanip",
         "probepark",
-        "anupamme",
         "aashishtamsya",
         "davdittrich",
         "fculpo",
@@ -107968,8 +108401,17 @@
         "mbluecoder2",
         "nicolabeghin",
         "pythoninthegrass",
+        "no1fret-spec",
+        "Spoint",
+        "jeremyunck-finix",
+        "lorenzozanee",
+        "hktitof",
+        "t-miller",
+        "bernardopg",
+        "GenorTG",
+        "ishita531",
+        "RajeshPandey057",
         "wakqasahmed",
-        "willgao-dev",
         "dajiaohuang",
         "chrisflippen",
         "tern",
@@ -108246,7 +108688,7 @@
       "stats": {
         "abhay-codes07": {
           "total": 213,
-          "open": 45,
+          "open": 43,
           "recentCount": 0
         },
         "rodboev": {
@@ -108255,8 +108697,8 @@
           "recentCount": 0
         },
         "gglucass": {
-          "total": 86,
-          "open": 23,
+          "total": 91,
+          "open": 21,
           "recentCount": 8
         },
         "Parideboy": {
@@ -108311,17 +108753,17 @@
         },
         "peterlodri-sec": {
           "total": 18,
-          "open": 9,
-          "recentCount": 0
-        },
-        "nangsontay": {
-          "total": 17,
           "open": 7,
           "recentCount": 0
         },
         "rNoz": {
-          "total": 16,
+          "total": 17,
           "open": 8,
+          "recentCount": 1
+        },
+        "nangsontay": {
+          "total": 17,
+          "open": 7,
           "recentCount": 0
         },
         "Eyalm321": {
@@ -108330,13 +108772,13 @@
           "recentCount": 1
         },
         "trs-80": {
-          "total": 13,
-          "open": 12,
+          "total": 14,
+          "open": 13,
           "recentCount": 11
         },
         "axelray-dev": {
           "total": 12,
-          "open": 2,
+          "open": 1,
           "recentCount": 0
         },
         "ketpatil77": {
@@ -108366,7 +108808,7 @@
         },
         "gingeekrishna": {
           "total": 10,
-          "open": 5,
+          "open": 4,
           "recentCount": 3
         },
         "Thermi": {
@@ -108427,7 +108869,7 @@
         "UniversePeak": {
           "total": 6,
           "open": 4,
-          "recentCount": 6
+          "recentCount": 3
         },
         "Ayushraj06-bit": {
           "total": 6,
@@ -108554,9 +108996,19 @@
           "open": 1,
           "recentCount": 0
         },
+        "aniruddhaadak80": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 3
+        },
+        "anupamme": {
+          "total": 3,
+          "open": 2,
+          "recentCount": 1
+        },
         "Sabeekhann": {
           "total": 3,
-          "open": 3,
+          "open": 2,
           "recentCount": 0
         },
         "mactonicaaron": {
@@ -108566,7 +109018,7 @@
         },
         "Zenjibad": {
           "total": 3,
-          "open": 3,
+          "open": 2,
           "recentCount": 0
         },
         "SulimanAbdulrazzaq": {
@@ -108694,6 +109146,16 @@
           "open": 0,
           "recentCount": 0
         },
+        "willgao-dev": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 2
+        },
+        "syamsulalam": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2
+        },
         "njchae": {
           "total": 2,
           "open": 2,
@@ -108754,11 +109216,6 @@
           "open": 2,
           "recentCount": 0
         },
-        "anupamme": {
-          "total": 2,
-          "open": 1,
-          "recentCount": 0
-        },
         "aashishtamsya": {
           "total": 2,
           "open": 0,
@@ -108786,7 +109243,7 @@
         },
         "sangemaru": {
           "total": 2,
-          "open": 2,
+          "open": 1,
           "recentCount": 0
         },
         "suvenkatesh97": {
@@ -109024,12 +109481,57 @@
           "open": 0,
           "recentCount": 0
         },
-        "wakqasahmed": {
+        "no1fret-spec": {
           "total": 1,
           "open": 1,
           "recentCount": 1
         },
-        "willgao-dev": {
+        "Spoint": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "jeremyunck-finix": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1
+        },
+        "lorenzozanee": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "hktitof": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "t-miller": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1
+        },
+        "bernardopg": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "GenorTG": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "ishita531": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1
+        },
+        "RajeshPandey057": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "wakqasahmed": {
           "total": 1,
           "open": 1,
           "recentCount": 1
@@ -109057,17 +109559,17 @@
         "Hubujiu": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "clementgbcn": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "ewassef": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "AmirF194": {
           "total": 1,
@@ -109106,7 +109608,7 @@
         },
         "Hughhhhcoder": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0
         },
         "GrabbyGrabby": {
@@ -109131,7 +109633,7 @@
         },
         "Dessalines39394": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0
         },
         "glatinone": {
@@ -110031,7 +110533,7 @@
         },
         "angelogalanti": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0
         },
         "gabiudrescu": {
@@ -110400,9 +110902,9 @@
         "brandonrubico": 1,
         "Abdelakil": 1,
         "smartwatermelon": 5,
-        "abhay-codes07": 145,
+        "abhay-codes07": 146,
         "rodboev": 97,
-        "gglucass": 55,
+        "gglucass": 61,
         "Parideboy": 53,
         "oxura": 3,
         "MrAshRhodes": 31,
@@ -110414,11 +110916,11 @@
         "neogenix": 12,
         "tenderdeve": 14,
         "peterlodri-sec": 3,
+        "rNoz": 8,
         "nangsontay": 5,
-        "rNoz": 7,
         "Eyalm321": 10,
         "trs-80": 0,
-        "axelray-dev": 8,
+        "axelray-dev": 9,
         "ketpatil77": 4,
         "dex0shubham": 4,
         "ashishpatel26": 5,
@@ -110462,6 +110964,8 @@
         "SuperMarioYL": 4,
         "falkoro": 0,
         "pacifio": 2,
+        "aniruddhaadak80": 0,
+        "anupamme": 0,
         "Sabeekhann": 0,
         "mactonicaaron": 0,
         "Zenjibad": 0,
@@ -110490,6 +110994,8 @@
         "withsivram": 0,
         "longtngo": 3,
         "prakersh": 3,
+        "willgao-dev": 0,
+        "syamsulalam": 0,
         "njchae": 0,
         "atirna": 0,
         "mosatch": 2,
@@ -110502,7 +111008,6 @@
         "GilKorzen": 1,
         "msoleimanip": 0,
         "probepark": 0,
-        "anupamme": 0,
         "aashishtamsya": 1,
         "davdittrich": 0,
         "fculpo": 2,
@@ -110556,8 +111061,17 @@
         "mbluecoder2": 0,
         "nicolabeghin": 2,
         "pythoninthegrass": 2,
+        "no1fret-spec": 0,
+        "Spoint": 0,
+        "jeremyunck-finix": 0,
+        "lorenzozanee": 0,
+        "hktitof": 0,
+        "t-miller": 0,
+        "bernardopg": 0,
+        "GenorTG": 0,
+        "ishita531": 0,
+        "RajeshPandey057": 0,
         "wakqasahmed": 0,
-        "willgao-dev": 0,
         "dajiaohuang": 0,
         "chrisflippen": 1,
         "tern": 0,
@@ -110834,13 +111348,13 @@
       "commentShippedCounts": {},
       "releaseCreditCounts": {},
       "releaseCreditMeta": null,
-      "recentAnchor": "2026-09-08T02:55:25.187475Z",
+      "recentAnchor": "2026-09-10T02:39:29.718925Z",
       "scanPages": 24,
       "scanResumed": false
     },
     "kenn-io/agentsview|community-shipped-v4|all": {
-      "cachedAt": "2026-09-09T06:41:53.218732Z",
-      "refreshedAt": "2026-09-09T06:41:53.218732Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
+      "refreshedAt": "2026-09-11T03:15:00.394336Z",
       "logins": [
         "rodboev",
         "mjacobs",
@@ -110853,14 +111367,15 @@
         "salmonumbrella",
         "tlmaloney",
         "icatw",
-        "anhermon",
         "scross01",
+        "anhermon",
+        "jzila",
         "aaronflorey",
+        "naveenspark",
         "berenddeboer",
         "arbing",
         "asotov-zen",
         "obra",
-        "naveenspark",
         "durandom",
         "dpanbug",
         "bangddong",
@@ -110870,6 +111385,7 @@
         "charlieviettq",
         "vikram",
         "zerone0x",
+        "srosro",
         "BUKOWSKIREAL",
         "mslynch",
         "machow",
@@ -110899,12 +111415,13 @@
         "sinnet3000",
         "cdeil",
         "thellert",
+        "hughdbrown",
+        "primshnick",
         "aashish00021",
         "yaner-here",
         "MaxFreedomPollard",
         "gtheys",
         "danielhernik",
-        "srosro",
         "iiiusky",
         "bferanmi806-sketch",
         "clementguarino06510-glitch",
@@ -110999,9 +111516,9 @@
       ],
       "stats": {
         "rodboev": {
-          "total": 137,
-          "open": 7,
-          "recentCount": 17
+          "total": 147,
+          "open": 4,
+          "recentCount": 25
         },
         "mjacobs": {
           "total": 69,
@@ -111010,8 +111527,8 @@
         },
         "dqtz5vpvj9-create": {
           "total": 19,
-          "open": 2,
-          "recentCount": 3
+          "open": 1,
+          "recentCount": 1
         },
         "tpn": {
           "total": 15,
@@ -111025,7 +111542,7 @@
         },
         "prateek": {
           "total": 11,
-          "open": 1,
+          "open": 0,
           "recentCount": 1
         },
         "MCBoarder289": {
@@ -111040,33 +111557,43 @@
         },
         "salmonumbrella": {
           "total": 8,
-          "open": 1,
-          "recentCount": 1
+          "open": 0,
+          "recentCount": 0
         },
         "tlmaloney": {
           "total": 7,
           "open": 0,
-          "recentCount": 2
+          "recentCount": 0
         },
         "icatw": {
           "total": 7,
           "open": 0,
           "recentCount": 0
         },
+        "scross01": {
+          "total": 6,
+          "open": 1,
+          "recentCount": 1
+        },
         "anhermon": {
           "total": 6,
           "open": 0,
           "recentCount": 0
         },
-        "scross01": {
+        "jzila": {
           "total": 5,
-          "open": 0,
-          "recentCount": 0
+          "open": 5,
+          "recentCount": 5
         },
         "aaronflorey": {
           "total": 5,
           "open": 0,
           "recentCount": 0
+        },
+        "naveenspark": {
+          "total": 4,
+          "open": 1,
+          "recentCount": 1
         },
         "berenddeboer": {
           "total": 4,
@@ -111087,11 +111614,6 @@
           "total": 3,
           "open": 0,
           "recentCount": 1
-        },
-        "naveenspark": {
-          "total": 3,
-          "open": 1,
-          "recentCount": 0
         },
         "durandom": {
           "total": 3,
@@ -111138,15 +111660,20 @@
           "open": 0,
           "recentCount": 0
         },
+        "srosro": {
+          "total": 2,
+          "open": 0,
+          "recentCount": 1
+        },
         "BUKOWSKIREAL": {
           "total": 2,
           "open": 0,
-          "recentCount": 2
+          "recentCount": 1
         },
         "mslynch": {
           "total": 2,
-          "open": 2,
-          "recentCount": 2
+          "open": 1,
+          "recentCount": 1
         },
         "machow": {
           "total": 2,
@@ -111283,6 +111810,16 @@
           "open": 0,
           "recentCount": 0
         },
+        "hughdbrown": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "primshnick": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1
+        },
         "aashish00021": {
           "total": 1,
           "open": 0,
@@ -111301,14 +111838,9 @@
         "gtheys": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
-        },
-        "danielhernik": {
-          "total": 1,
-          "open": 0,
           "recentCount": 0
         },
-        "srosro": {
+        "danielhernik": {
           "total": 1,
           "open": 0,
           "recentCount": 0
@@ -111771,25 +112303,26 @@
       },
       "shippedCounts": {
         "leejuhanKr": 1,
-        "rodboev": 118,
+        "rodboev": 131,
         "mjacobs": 66,
-        "dqtz5vpvj9-create": 10,
+        "dqtz5vpvj9-create": 11,
         "tpn": 14,
         "userFRM": 12,
-        "prateek": 6,
+        "prateek": 7,
         "MCBoarder289": 8,
         "clkao": 8,
-        "salmonumbrella": 7,
+        "salmonumbrella": 8,
         "tlmaloney": 5,
         "icatw": 7,
-        "anhermon": 5,
         "scross01": 5,
+        "anhermon": 5,
+        "jzila": 0,
         "aaronflorey": 5,
+        "naveenspark": 3,
         "berenddeboer": 2,
         "arbing": 4,
         "asotov-zen": 1,
         "obra": 3,
-        "naveenspark": 2,
         "durandom": 2,
         "dpanbug": 3,
         "bangddong": 2,
@@ -111799,6 +112332,7 @@
         "charlieviettq": 3,
         "vikram": 2,
         "zerone0x": 3,
+        "srosro": 2,
         "BUKOWSKIREAL": 2,
         "mslynch": 0,
         "machow": 2,
@@ -111828,12 +112362,13 @@
         "sinnet3000": 2,
         "cdeil": 2,
         "thellert": 2,
+        "hughdbrown": 0,
+        "primshnick": 1,
         "aashish00021": 1,
         "yaner-here": 0,
         "MaxFreedomPollard": 1,
         "gtheys": 1,
         "danielhernik": 1,
-        "srosro": 1,
         "iiiusky": 0,
         "bferanmi806-sketch": 1,
         "clementguarino06510-glitch": 0,
@@ -111929,7 +112464,7 @@
       "commentShippedCounts": {},
       "releaseCreditCounts": {},
       "releaseCreditMeta": null,
-      "recentAnchor": "2026-09-09T06:41:53.218732Z",
+      "recentAnchor": "2026-09-11T03:15:00.394336Z",
       "scanPages": 13,
       "scanResumed": false
     },
@@ -113981,8 +114516,8 @@
       "releaseCreditMeta": null
     },
     "mem0ai/mem0|community-shipped-v4|all": {
-      "cachedAt": "2026-09-09T01:33:37.620689Z",
-      "refreshedAt": "2026-09-09T01:33:37.620689Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
+      "refreshedAt": "2026-09-11T03:15:00.394336Z",
       "logins": [
         "Dev-Khant",
         "whysosaket",
@@ -114002,9 +114537,9 @@
         "Diwak4r",
         "tomatotomata",
         "Himanshu-Sangshetti",
+        "harshgupta-mem0",
         "ly-wang19",
         "Itz-Antaripa",
-        "harshgupta-mem0",
         "krishna231122-del",
         "spike-spiegel-21",
         "PHclaw",
@@ -114220,6 +114755,7 @@
         "SerSamgy",
         "KapilM26",
         "aalmuarik",
+        "linhongyu510",
         "Java123456com",
         "88lin",
         "KhanCold",
@@ -114412,10 +114948,10 @@
         "jonasiwnl",
         "amjadraza",
         "Rayhanpatel",
+        "aetna000",
+        "debanshd",
         "holistis",
         "FRFlo",
-        "linhongyu510",
-        "lapaca",
         "jrlprost",
         "aishwary-dongre",
         "jianyx1",
@@ -114989,7 +115525,7 @@
         "fdojose",
         "grikomsn",
         "xiehust",
-        "theagenticguy",
+        "laithalsaadoon",
         "gajazlikovac",
         "SanjoDeundiak",
         "mustafagumustas",
@@ -115339,9 +115875,14 @@
           "recentCount": 0
         },
         "Himanshu-Sangshetti": {
-          "total": 26,
-          "open": 3,
-          "recentCount": 0
+          "total": 27,
+          "open": 4,
+          "recentCount": 1
+        },
+        "harshgupta-mem0": {
+          "total": 25,
+          "open": 1,
+          "recentCount": 1
         },
         "ly-wang19": {
           "total": 25,
@@ -115350,11 +115891,6 @@
         },
         "Itz-Antaripa": {
           "total": 25,
-          "open": 0,
-          "recentCount": 0
-        },
-        "harshgupta-mem0": {
-          "total": 24,
           "open": 0,
           "recentCount": 0
         },
@@ -116433,6 +116969,11 @@
           "open": 0,
           "recentCount": 0
         },
+        "linhongyu510": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 2
+        },
         "Java123456com": {
           "total": 2,
           "open": 0,
@@ -116446,17 +116987,17 @@
         "KhanCold": {
           "total": 2,
           "open": 0,
-          "recentCount": 2
+          "recentCount": 0
         },
         "Alphaxiaoteng": {
           "total": 2,
           "open": 0,
-          "recentCount": 2
+          "recentCount": 0
         },
         "ProgrammerPlus1998": {
           "total": 2,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "JasonYeYuhe": {
           "total": 2,
@@ -117393,6 +117934,16 @@
           "open": 0,
           "recentCount": 0
         },
+        "aetna000": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "debanshd": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1
+        },
         "holistis": {
           "total": 1,
           "open": 0,
@@ -117401,16 +117952,6 @@
         "FRFlo": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
-        },
-        "linhongyu510": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 1
-        },
-        "lapaca": {
-          "total": 1,
-          "open": 1,
           "recentCount": 1
         },
         "jrlprost": {
@@ -117441,22 +117982,22 @@
         "Obila34": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "Huang-404-Q": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "honghaifeng": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "z2Ace0107": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "xinghewumeng": {
           "total": 1,
@@ -120278,7 +120819,7 @@
           "open": 0,
           "recentCount": 0
         },
-        "theagenticguy": {
+        "laithalsaadoon": {
           "total": 1,
           "open": 0,
           "recentCount": 0
@@ -121601,6 +122142,8 @@
         "just-local-apps": 0,
         "HarshaSai1234": 0,
         "divyansh-1009": 1,
+        "lapaca": 0,
+        "theagenticguy": 1,
         "Dev-Khant": 414,
         "whysosaket": 167,
         "cachho": 98,
@@ -121619,9 +122162,9 @@
         "Diwak4r": 1,
         "tomatotomata": 1,
         "Himanshu-Sangshetti": 18,
+        "harshgupta-mem0": 19,
         "ly-wang19": 6,
         "Itz-Antaripa": 25,
-        "harshgupta-mem0": 19,
         "krishna231122-del": 2,
         "spike-spiegel-21": 15,
         "PHclaw": 4,
@@ -121837,6 +122380,7 @@
         "SerSamgy": 2,
         "KapilM26": 2,
         "aalmuarik": 0,
+        "linhongyu510": 0,
         "Java123456com": 0,
         "88lin": 0,
         "KhanCold": 0,
@@ -122029,10 +122573,10 @@
         "jonasiwnl": 2,
         "amjadraza": 1,
         "Rayhanpatel": 2,
+        "aetna000": 0,
+        "debanshd": 0,
         "holistis": 0,
         "FRFlo": 0,
-        "linhongyu510": 0,
-        "lapaca": 0,
         "jrlprost": 0,
         "aishwary-dongre": 0,
         "jianyx1": 0,
@@ -122606,7 +123150,7 @@
         "fdojose": 0,
         "grikomsn": 0,
         "xiehust": 0,
-        "theagenticguy": 1,
+        "laithalsaadoon": 1,
         "gajazlikovac": 1,
         "SanjoDeundiak": 0,
         "mustafagumustas": 0,
@@ -122872,7 +123416,7 @@
       "commentShippedCounts": {},
       "releaseCreditCounts": {},
       "releaseCreditMeta": null,
-      "recentAnchor": "2026-09-09T01:33:37.620689Z",
+      "recentAnchor": "2026-09-11T03:15:00.394336Z",
       "scanPages": 48,
       "scanResumed": false
     },
@@ -127492,8 +128036,8 @@
       "releaseCreditMeta": null
     },
     "nesquena/hermes-webui|community-shipped-v4|all": {
-      "cachedAt": "2026-09-09T01:33:37.620689Z",
-      "refreshedAt": "2026-09-09T01:33:37.620689Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
+      "refreshedAt": "2026-09-11T03:15:00.394336Z",
       "logins": [
         "rodboev",
         "franksong2702",
@@ -127512,6 +128056,7 @@
         "jasonjcwu",
         "Hinotoi-agent",
         "santastabber",
+        "CharlesMcquade",
         "nankingjing",
         "dobby-d-elf",
         "bsgdigital",
@@ -127527,13 +128072,13 @@
         "aronprins",
         "TomBanksAU",
         "mysoul12138",
+        "Stacey2911",
         "rh-id",
         "george-andraws",
         "Koraji95-coder",
         "ccqqlo",
         "qxxaa",
         "cabluvsmkm2009-source",
-        "Stacey2911",
         "claw-io",
         "mccxj",
         "mvanhorn",
@@ -127546,7 +128091,6 @@
         "mibrohimsulaeman-a11y",
         "carlotestor",
         "zicochaos",
-        "CharlesMcquade",
         "jkobject",
         "bschmidy10",
         "24601",
@@ -127561,6 +128105,7 @@
         "Charanis",
         "espokaos-ops",
         "armorbreak001",
+        "rodrigogs",
         "samfoy",
         "sand01chi",
         "Paladin173",
@@ -127572,7 +128117,6 @@
         "iRonin",
         "laitekin",
         "alanjds",
-        "rodrigogs",
         "dirtydishes",
         "koshikai",
         "enihcam",
@@ -127607,6 +128151,7 @@
         "frap129",
         "pavolbiely",
         "TaraTheStar",
+        "martindell",
         "LeonardoLGDS",
         "aniruddhaadak80",
         "trevornk",
@@ -127682,7 +128227,6 @@
         "ticketclosed-wontfix",
         "Rogerthis",
         "mintymac",
-        "martindell",
         "jin89ho",
         "asorourx",
         "AbdelHamdyGhanem",
@@ -127751,6 +128295,12 @@
         "gabogabucho",
         "DavidSchuchert",
         "thadreber-web",
+        "adityawaghamare04",
+        "pepestal",
+        "HarukiTakehata",
+        "totalitarian",
+        "thedexless",
+        "babbangida",
         "leecyno1",
         "portavales",
         "dgzap111",
@@ -128140,7 +128690,7 @@
       "stats": {
         "rodboev": {
           "total": 427,
-          "open": 39,
+          "open": 38,
           "recentCount": 0
         },
         "franksong2702": {
@@ -128149,8 +128699,8 @@
           "recentCount": 0
         },
         "webtecnica": {
-          "total": 222,
-          "open": 124,
+          "total": 227,
+          "open": 128,
           "recentCount": 7
         },
         "ai-ag2026": {
@@ -128169,9 +128719,9 @@
           "recentCount": 0
         },
         "starship-s": {
-          "total": 80,
+          "total": 81,
           "open": 16,
-          "recentCount": 0
+          "recentCount": 1
         },
         "AJV20": {
           "total": 72,
@@ -128180,7 +128730,7 @@
         },
         "ruizanthony": {
           "total": 60,
-          "open": 35,
+          "open": 34,
           "recentCount": 2
         },
         "allenliang2022": {
@@ -128222,6 +128772,11 @@
           "total": 23,
           "open": 1,
           "recentCount": 0
+        },
+        "CharlesMcquade": {
+          "total": 17,
+          "open": 12,
+          "recentCount": 9
         },
         "nankingjing": {
           "total": 17,
@@ -128298,9 +128853,14 @@
           "open": 0,
           "recentCount": 0
         },
+        "Stacey2911": {
+          "total": 11,
+          "open": 1,
+          "recentCount": 1
+        },
         "rh-id": {
           "total": 11,
-          "open": 3,
+          "open": 2,
           "recentCount": 0
         },
         "george-andraws": {
@@ -128326,11 +128886,6 @@
         "cabluvsmkm2009-source": {
           "total": 10,
           "open": 6,
-          "recentCount": 0
-        },
-        "Stacey2911": {
-          "total": 10,
-          "open": 0,
           "recentCount": 0
         },
         "claw-io": {
@@ -128385,17 +128940,12 @@
         },
         "carlotestor": {
           "total": 8,
-          "open": 2,
-          "recentCount": 2
+          "open": 1,
+          "recentCount": 1
         },
         "zicochaos": {
           "total": 8,
-          "open": 4,
-          "recentCount": 1
-        },
-        "CharlesMcquade": {
-          "total": 8,
-          "open": 5,
+          "open": 1,
           "recentCount": 0
         },
         "jkobject": {
@@ -128468,9 +129018,14 @@
           "open": 0,
           "recentCount": 0
         },
+        "rodrigogs": {
+          "total": 6,
+          "open": 3,
+          "recentCount": 1
+        },
         "samfoy": {
           "total": 6,
-          "open": 5,
+          "open": 4,
           "recentCount": 0
         },
         "sand01chi": {
@@ -128521,11 +129076,6 @@
         "alanjds": {
           "total": 5,
           "open": 4,
-          "recentCount": 0
-        },
-        "rodrigogs": {
-          "total": 5,
-          "open": 3,
           "recentCount": 0
         },
         "dirtydishes": {
@@ -128580,7 +129130,7 @@
         },
         "lowlandsheperd": {
           "total": 4,
-          "open": 3,
+          "open": 2,
           "recentCount": 0
         },
         "maksym-mishchenko": {
@@ -128698,10 +129248,15 @@
           "open": 0,
           "recentCount": 0
         },
+        "martindell": {
+          "total": 3,
+          "open": 2,
+          "recentCount": 1
+        },
         "LeonardoLGDS": {
           "total": 3,
           "open": 2,
-          "recentCount": 3
+          "recentCount": 1
         },
         "aniruddhaadak80": {
           "total": 3,
@@ -128946,12 +129501,12 @@
         "sportsculture": {
           "total": 2,
           "open": 2,
-          "recentCount": 2
+          "recentCount": 1
         },
         "evgenyponomarev": {
           "total": 2,
           "open": 1,
-          "recentCount": 2
+          "recentCount": 1
         },
         "MoBluey": {
           "total": 2,
@@ -129040,7 +129595,7 @@
         },
         "hrdwdmrbl": {
           "total": 2,
-          "open": 2,
+          "open": 1,
           "recentCount": 0
         },
         "Dandandad": {
@@ -129071,11 +129626,6 @@
         "mintymac": {
           "total": 2,
           "open": 1,
-          "recentCount": 0
-        },
-        "martindell": {
-          "total": 2,
-          "open": 2,
           "recentCount": 0
         },
         "jin89ho": {
@@ -129418,6 +129968,36 @@
           "open": 0,
           "recentCount": 0
         },
+        "adityawaghamare04": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1
+        },
+        "pepestal": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "HarukiTakehata": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "totalitarian": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "thedexless": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "babbangida": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
         "leecyno1": {
           "total": 1,
           "open": 1,
@@ -129461,27 +130041,27 @@
         "taljeon": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "nomadjames": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "BinarySpecter": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "jamesrweaver": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "ArushKhasru": {
           "total": 1,
-          "open": 1,
-          "recentCount": 1
+          "open": 0,
+          "recentCount": 0
         },
         "jmogainz": {
           "total": 1,
@@ -129885,7 +130465,7 @@
         },
         "zhoushimiaov": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0
         },
         "ya1yi2fa3": {
@@ -131354,7 +131934,7 @@
         "kriptoburak": 0,
         "rodboev": 267,
         "franksong2702": 239,
-        "webtecnica": 20,
+        "webtecnica": 21,
         "ai-ag2026": 109,
         "Michaelyklam": 152,
         "bergeouss": 63,
@@ -131369,6 +131949,7 @@
         "jasonjcwu": 18,
         "Hinotoi-agent": 23,
         "santastabber": 9,
+        "CharlesMcquade": 1,
         "nankingjing": 4,
         "dobby-d-elf": 17,
         "bsgdigital": 4,
@@ -131384,13 +131965,13 @@
         "aronprins": 4,
         "TomBanksAU": 1,
         "mysoul12138": 10,
-        "rh-id": 3,
+        "Stacey2911": 5,
+        "rh-id": 4,
         "george-andraws": 7,
         "Koraji95-coder": 1,
         "ccqqlo": 2,
         "qxxaa": 4,
         "cabluvsmkm2009-source": 1,
-        "Stacey2911": 5,
         "claw-io": 5,
         "mccxj": 6,
         "mvanhorn": 3,
@@ -131401,9 +131982,8 @@
         "akrhin": 4,
         "v2psv": 3,
         "mibrohimsulaeman-a11y": 0,
-        "carlotestor": 1,
-        "zicochaos": 2,
-        "CharlesMcquade": 1,
+        "carlotestor": 2,
+        "zicochaos": 4,
         "jkobject": 1,
         "bschmidy10": 0,
         "24601": 6,
@@ -131418,6 +131998,7 @@
         "Charanis": 1,
         "espokaos-ops": 3,
         "armorbreak001": 7,
+        "rodrigogs": 2,
         "samfoy": 0,
         "sand01chi": 1,
         "Paladin173": 1,
@@ -131429,7 +132010,6 @@
         "iRonin": 6,
         "laitekin": 0,
         "alanjds": 1,
-        "rodrigogs": 1,
         "dirtydishes": 0,
         "koshikai": 4,
         "enihcam": 2,
@@ -131464,6 +132044,7 @@
         "frap129": 3,
         "pavolbiely": 2,
         "TaraTheStar": 0,
+        "martindell": 1,
         "LeonardoLGDS": 1,
         "aniruddhaadak80": 0,
         "trevornk": 0,
@@ -131539,7 +132120,6 @@
         "ticketclosed-wontfix": 0,
         "Rogerthis": 0,
         "mintymac": 1,
-        "martindell": 0,
         "jin89ho": 0,
         "asorourx": 1,
         "AbdelHamdyGhanem": 0,
@@ -131608,6 +132188,12 @@
         "gabogabucho": 0,
         "DavidSchuchert": 1,
         "thadreber-web": 1,
+        "adityawaghamare04": 0,
+        "pepestal": 0,
+        "HarukiTakehata": 0,
+        "totalitarian": 0,
+        "thedexless": 0,
+        "babbangida": 0,
         "leecyno1": 0,
         "portavales": 0,
         "dgzap111": 0,
@@ -131620,7 +132206,7 @@
         "nomadjames": 0,
         "BinarySpecter": 0,
         "jamesrweaver": 0,
-        "ArushKhasru": 0,
+        "ArushKhasru": 1,
         "jmogainz": 0,
         "StephenZ06": 0,
         "GeniaShumakov": 0,
@@ -132224,7 +132810,7 @@
         "builtAt": "2026-07-02T13:51:48.1650008-04:00",
         "pairCount": 1468.0
       },
-      "recentAnchor": "2026-09-09T01:33:37.620689Z",
+      "recentAnchor": "2026-09-11T03:15:00.394336Z",
       "scanPages": 56,
       "scanResumed": false
     },
@@ -261235,31 +261821,33 @@
       "scanResumed": true
     },
     "NVIDIA/SkillSpector|community-shipped-v4|all": {
-      "cachedAt": "2026-09-09T06:41:53.218732Z",
-      "refreshedAt": "2026-09-09T06:41:53.218732Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
+      "refreshedAt": "2026-09-11T03:15:00.394336Z",
       "logins": [
         "rodboev",
         "mimran-khan",
         "rng1995",
         "CharmingGroot",
         "Mark2Mac",
+        "mohgupta-ship-it",
         "deepujain",
         "wernerkasselman-au",
         "AbhiramDwivedi",
         "tcconnally",
+        "chrisknvidia",
         "kevin9327",
-        "mohgupta-ship-it",
         "koriyoshi2041",
         "Shrotriya-lalit",
         "Spectorian",
         "smoy",
-        "chrisknvidia",
         "MohammedAlkindi",
         "AmirF194",
         "andrewwhitecdw",
         "array-cat",
         "zied-jlassi",
         "asadbekXodjayev",
+        "eitanch228",
+        "yashrajp22",
         "KodeCharya",
         "rioyu123",
         "benedictkwok",
@@ -261272,6 +261860,8 @@
         "tuanaiseo",
         "rcha0s",
         "nyxst4ck",
+        "goodhee",
+        "FacaHD",
         "bytemare",
         "malinfossum",
         "atirna",
@@ -261286,7 +261876,6 @@
         "tarang-tj",
         "Patrick-Erichsen",
         "Tomauskasz",
-        "yashrajp22",
         "bevanjkay",
         "rootkiller6788",
         "green3sf",
@@ -261371,6 +261960,11 @@
           "open": 0,
           "recentCount": 0
         },
+        "mohgupta-ship-it": {
+          "total": 12,
+          "open": 6,
+          "recentCount": 9
+        },
         "deepujain": {
           "total": 10,
           "open": 5,
@@ -261391,15 +261985,15 @@
           "open": 0,
           "recentCount": 0
         },
+        "chrisknvidia": {
+          "total": 6,
+          "open": 4,
+          "recentCount": 3
+        },
         "kevin9327": {
           "total": 6,
           "open": 6,
           "recentCount": 6
-        },
-        "mohgupta-ship-it": {
-          "total": 6,
-          "open": 3,
-          "recentCount": 3
         },
         "koriyoshi2041": {
           "total": 6,
@@ -261421,14 +262015,9 @@
           "open": 1,
           "recentCount": 0
         },
-        "chrisknvidia": {
-          "total": 4,
-          "open": 2,
-          "recentCount": 1
-        },
         "MohammedAlkindi": {
-          "total": 3,
-          "open": 3,
+          "total": 4,
+          "open": 4,
           "recentCount": 1
         },
         "AmirF194": {
@@ -261455,6 +262044,16 @@
           "total": 3,
           "open": 0,
           "recentCount": 0
+        },
+        "eitanch228": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2
+        },
+        "yashrajp22": {
+          "total": 2,
+          "open": 1,
+          "recentCount": 1
         },
         "KodeCharya": {
           "total": 2,
@@ -261516,6 +262115,16 @@
           "open": 0,
           "recentCount": 0
         },
+        "goodhee": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "FacaHD": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
         "bytemare": {
           "total": 1,
           "open": 1,
@@ -261549,7 +262158,7 @@
         "evgenyt-res": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "agentsope": {
           "total": 1,
@@ -261582,11 +262191,6 @@
           "recentCount": 0
         },
         "Tomauskasz": {
-          "total": 1,
-          "open": 1,
-          "recentCount": 0
-        },
-        "yashrajp22": {
           "total": 1,
           "open": 1,
           "recentCount": 0
@@ -261848,7 +262452,7 @@
         },
         "serval-frenchie": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 0
         },
         "lrecknagel": {
@@ -261887,23 +262491,25 @@
         "rng1995": 12,
         "CharmingGroot": 12,
         "Mark2Mac": 10,
+        "mohgupta-ship-it": 6,
         "deepujain": 5,
         "wernerkasselman-au": 3,
         "AbhiramDwivedi": 7,
         "tcconnally": 7,
+        "chrisknvidia": 2,
         "kevin9327": 0,
-        "mohgupta-ship-it": 3,
         "koriyoshi2041": 4,
         "Shrotriya-lalit": 5,
         "Spectorian": 1,
         "smoy": 4,
-        "chrisknvidia": 2,
         "MohammedAlkindi": 0,
         "AmirF194": 1,
         "andrewwhitecdw": 3,
         "array-cat": 1,
         "zied-jlassi": 2,
         "asadbekXodjayev": 2,
+        "eitanch228": 0,
+        "yashrajp22": 1,
         "KodeCharya": 0,
         "rioyu123": 0,
         "benedictkwok": 2,
@@ -261916,6 +262522,8 @@
         "tuanaiseo": 2,
         "rcha0s": 2,
         "nyxst4ck": 1,
+        "goodhee": 0,
+        "FacaHD": 0,
         "bytemare": 0,
         "malinfossum": 0,
         "atirna": 0,
@@ -261930,7 +262538,6 @@
         "tarang-tj": 0,
         "Patrick-Erichsen": 0,
         "Tomauskasz": 0,
-        "yashrajp22": 0,
         "bevanjkay": 1,
         "rootkiller6788": 0,
         "green3sf": 1,
@@ -261992,7 +262599,7 @@
       "commentShippedCounts": {},
       "releaseCreditCounts": {},
       "releaseCreditMeta": null,
-      "recentAnchor": "2026-09-09T06:41:53.218732Z",
+      "recentAnchor": "2026-09-11T03:15:00.394336Z",
       "scanPages": 4,
       "scanResumed": false
     },
@@ -276973,8 +277580,8 @@
       "releaseCreditMeta": null
     },
     "thedotmack/claude-mem|community-shipped-v4|all": {
-      "cachedAt": "2026-09-08T02:55:25.187475Z",
-      "refreshedAt": "2026-09-08T02:55:25.187475Z",
+      "cachedAt": "2026-09-10T02:39:29.718925Z",
+      "refreshedAt": "2026-09-10T02:39:29.718925Z",
       "logins": [
         "rodboev",
         "ousamabenyounes",
@@ -276987,10 +277594,11 @@
         "YOMXXX",
         "mguttmann",
         "laihenyi",
-        "jayvenn21",
         "dajiaohuang",
+        "jayvenn21",
         "ChenglinWei97",
         "rajivsinclair",
+        "lorenzozanee",
         "michelhelsdingen",
         "ixnaswang",
         "pg-adm1n",
@@ -277003,6 +277611,8 @@
         "Regis-RCR",
         "zerone0x",
         "influenist",
+        "L4XB",
+        "chris-yyau",
         "Retengart",
         "Iyanuoluwa007",
         "Sheldenshi",
@@ -277012,6 +277622,7 @@
         "faustbrian",
         "ToxMox",
         "basher83",
+        "nasif-naseef",
         "matthewdnye",
         "yetanotherflo",
         "aniruddhaadak80",
@@ -277023,7 +277634,6 @@
         "Steaeavean",
         "antfleet-ops",
         "Soundman-Coder",
-        "chris-yyau",
         "mohitpatell",
         "GigiTiti-Kai",
         "umut-polat",
@@ -277101,6 +277711,10 @@
         "iefnaf",
         "trevwilson",
         "dreamiurg",
+        "AntonioCoppe",
+        "ZIFeIYUuuuuuu",
+        "rorar",
+        "stephan-nb",
         "gfreschi",
         "weiconghe",
         "sanztheo",
@@ -277526,14 +278140,14 @@
           "open": 1,
           "recentCount": 0
         },
+        "dajiaohuang": {
+          "total": 11,
+          "open": 11,
+          "recentCount": 1
+        },
         "jayvenn21": {
           "total": 11,
           "open": 0,
-          "recentCount": 0
-        },
-        "dajiaohuang": {
-          "total": 10,
-          "open": 10,
           "recentCount": 0
         },
         "ChenglinWei97": {
@@ -277545,6 +278159,11 @@
           "total": 8,
           "open": 0,
           "recentCount": 0
+        },
+        "lorenzozanee": {
+          "total": 7,
+          "open": 7,
+          "recentCount": 7
         },
         "michelhelsdingen": {
           "total": 7,
@@ -277606,6 +278225,16 @@
           "open": 0,
           "recentCount": 0
         },
+        "L4XB": {
+          "total": 4,
+          "open": 4,
+          "recentCount": 4
+        },
+        "chris-yyau": {
+          "total": 4,
+          "open": 1,
+          "recentCount": 1
+        },
         "Retengart": {
           "total": 4,
           "open": 1,
@@ -277650,6 +278279,11 @@
           "total": 4,
           "open": 0,
           "recentCount": 0
+        },
+        "nasif-naseef": {
+          "total": 3,
+          "open": 3,
+          "recentCount": 3
         },
         "matthewdnye": {
           "total": 3,
@@ -277704,11 +278338,6 @@
         "Soundman-Coder": {
           "total": 3,
           "open": 1,
-          "recentCount": 0
-        },
-        "chris-yyau": {
-          "total": 3,
-          "open": 0,
           "recentCount": 0
         },
         "mohitpatell": {
@@ -277803,7 +278432,7 @@
         },
         "JiataiWang": {
           "total": 2,
-          "open": 2,
+          "open": 1,
           "recentCount": 0
         },
         "desmonna": {
@@ -278096,6 +278725,26 @@
           "open": 0,
           "recentCount": 0
         },
+        "AntonioCoppe": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "ZIFeIYUuuuuuu": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "rorar": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "stephan-nb": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
         "gfreschi": {
           "total": 1,
           "open": 1,
@@ -278124,12 +278773,12 @@
         "ARosentiehl24": {
           "total": 1,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "jazmd": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "cleroglu": {
           "total": 1,
@@ -279954,10 +280603,11 @@
         "YOMXXX": 4,
         "mguttmann": 0,
         "laihenyi": 1,
-        "jayvenn21": 3,
         "dajiaohuang": 0,
+        "jayvenn21": 3,
         "ChenglinWei97": 4,
         "rajivsinclair": 3,
+        "lorenzozanee": 0,
         "michelhelsdingen": 2,
         "ixnaswang": 1,
         "pg-adm1n": 0,
@@ -279970,6 +280620,8 @@
         "Regis-RCR": 0,
         "zerone0x": 1,
         "influenist": 0,
+        "L4XB": 0,
+        "chris-yyau": 1,
         "Retengart": 1,
         "Iyanuoluwa007": 0,
         "Sheldenshi": 0,
@@ -279979,6 +280631,7 @@
         "faustbrian": 0,
         "ToxMox": 2,
         "basher83": 1,
+        "nasif-naseef": 0,
         "matthewdnye": 0,
         "yetanotherflo": 0,
         "aniruddhaadak80": 0,
@@ -279990,7 +280643,6 @@
         "Steaeavean": 1,
         "antfleet-ops": 2,
         "Soundman-Coder": 0,
-        "chris-yyau": 1,
         "mohitpatell": 2,
         "GigiTiti-Kai": 3,
         "umut-polat": 3,
@@ -280068,6 +280720,10 @@
         "iefnaf": 0,
         "trevwilson": 1,
         "dreamiurg": 2,
+        "AntonioCoppe": 0,
+        "ZIFeIYUuuuuuu": 0,
+        "rorar": 0,
+        "stephan-nb": 0,
         "gfreschi": 0,
         "weiconghe": 0,
         "sanztheo": 0,
@@ -280440,8 +281096,8 @@
       "commentShippedCounts": {},
       "releaseCreditCounts": {},
       "releaseCreditMeta": null,
-      "recentAnchor": "2026-09-08T02:55:25.187475Z",
-      "scanPages": 16,
+      "recentAnchor": "2026-09-10T02:39:29.718925Z",
+      "scanPages": 17,
       "scanResumed": false
     },
     "thedotmack/claude-mem|community-shipped-v5|all": {
@@ -296692,9 +297348,9 @@
       "scanResumed": false
     },
     "kenn-io/roborev|community-shipped-v4|all": {
-      "cachedAt": "2026-09-09T06:41:53.218732Z",
-      "refreshedAt": "2026-09-09T06:41:53.218732Z",
-      "recentAnchor": "2026-09-09T06:41:53.218732Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
+      "refreshedAt": "2026-09-11T03:15:00.394336Z",
+      "recentAnchor": "2026-09-11T03:15:00.394336Z",
       "scanPages": 9,
       "scanResumed": false,
       "logins": [
@@ -296760,9 +297416,9 @@
       ],
       "stats": {
         "rodboev": {
-          "total": 8,
-          "open": 0,
-          "recentCount": 8
+          "total": 9,
+          "open": 1,
+          "recentCount": 7
         },
         "hughdbrown": {
           "total": 8,
@@ -297118,9 +297774,9 @@
       }
     },
     "kenn-io/msgvault|community-shipped-v4|all": {
-      "cachedAt": "2026-09-09T06:41:53.218732Z",
-      "refreshedAt": "2026-09-09T06:41:53.218732Z",
-      "recentAnchor": "2026-09-09T06:41:53.218732Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
+      "refreshedAt": "2026-09-11T03:15:00.394336Z",
+      "recentAnchor": "2026-09-11T03:15:00.394336Z",
       "scanPages": 6,
       "scanResumed": false,
       "logins": [
@@ -297131,9 +297787,9 @@
         "jesserobbins",
         "cpcloud",
         "sweenzor",
+        "hansn74",
         "exactmike",
         "robelkin",
-        "hansn74",
         "endolith",
         "webgress",
         "EconoBen",
@@ -297182,14 +297838,14 @@
       ],
       "stats": {
         "salmonumbrella": {
-          "total": 88,
-          "open": 2,
-          "recentCount": 16
+          "total": 90,
+          "open": 1,
+          "recentCount": 14
         },
         "rodboev": {
-          "total": 27,
-          "open": 4,
-          "recentCount": 27
+          "total": 30,
+          "open": 2,
+          "recentCount": 22
         },
         "hughdbrown": {
           "total": 19,
@@ -297216,18 +297872,18 @@
           "open": 0,
           "recentCount": 0
         },
+        "hansn74": {
+          "total": 10,
+          "open": 0,
+          "recentCount": 3
+        },
         "exactmike": {
           "total": 10,
           "open": 0,
-          "recentCount": 5
+          "recentCount": 1
         },
         "robelkin": {
           "total": 10,
-          "open": 0,
-          "recentCount": 0
-        },
-        "hansn74": {
-          "total": 7,
           "open": 0,
           "recentCount": 0
         },
@@ -297308,7 +297964,7 @@
         },
         "ValentinViennot": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1
         },
         "mikemikimike": {
@@ -297458,16 +298114,16 @@
         }
       },
       "shippedCounts": {
-        "salmonumbrella": 79,
-        "rodboev": 23,
+        "salmonumbrella": 82,
+        "rodboev": 28,
         "hughdbrown": 14,
         "danshapiro": 16,
         "jesserobbins": 11,
         "cpcloud": 11,
         "sweenzor": 9,
+        "hansn74": 10,
         "exactmike": 7,
         "robelkin": 6,
-        "hansn74": 7,
         "endolith": 6,
         "webgress": 6,
         "EconoBen": 3,
@@ -297483,7 +298139,7 @@
         "bjabes": 2,
         "sternryan": 0,
         "schlabrendorff": 1,
-        "ValentinViennot": 0,
+        "ValentinViennot": 1,
         "mikemikimike": 1,
         "JinhaoSong322": 0,
         "css521": 1,
@@ -297516,9 +298172,9 @@
       }
     },
     "kenn-io/docbank|community-shipped-v4|all": {
-      "cachedAt": "2026-09-09T06:41:53.218732Z",
-      "refreshedAt": "2026-09-09T06:41:53.218732Z",
-      "recentAnchor": "2026-09-09T06:41:53.218732Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
+      "refreshedAt": "2026-09-11T03:15:00.394336Z",
+      "recentAnchor": "2026-09-11T03:15:00.394336Z",
       "scanPages": 3,
       "scanResumed": false,
       "logins": [
@@ -297529,14 +298185,14 @@
       ],
       "stats": {
         "salmonumbrella": {
-          "total": 59,
+          "total": 67,
           "open": 15,
-          "recentCount": 4
+          "recentCount": 12
         },
         "rodboev": {
-          "total": 18,
-          "open": 0,
-          "recentCount": 18
+          "total": 19,
+          "open": 1,
+          "recentCount": 11
         },
         "Joi": {
           "total": 1,
@@ -297550,7 +298206,7 @@
         }
       },
       "shippedCounts": {
-        "salmonumbrella": 42,
+        "salmonumbrella": 50,
         "rodboev": 18,
         "Joi": 1,
         "mjacobs": 1
@@ -374553,7 +375209,7 @@
   },
   "releaseData": {
     "kenn-io/agentsview": {
-      "cachedAt": "2026-09-09T06:41:53.218732Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
       "releases": [
         {
           "tagName": "v0.42.0",
@@ -375098,8 +375754,36 @@
       "prToRelease": {}
     },
     "thedotmack/claude-mem": {
-      "cachedAt": "2026-09-09T06:41:53.218732Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
       "releases": [
+        {
+          "tagName": "v13.24.8",
+          "htmlUrl": "https://github.com/thedotmack/claude-mem/releases/tag/v13.24.8",
+          "publishedAt": "2026-09-11T02:11:56Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v13.24.7",
+          "htmlUrl": "https://github.com/thedotmack/claude-mem/releases/tag/v13.24.7",
+          "publishedAt": "2026-09-11T01:24:22Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v13.24.6",
+          "htmlUrl": "https://github.com/thedotmack/claude-mem/releases/tag/v13.24.6",
+          "publishedAt": "2026-09-11T00:28:22Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "v13.24.5",
+          "htmlUrl": "https://github.com/thedotmack/claude-mem/releases/tag/v13.24.5",
+          "publishedAt": "2026-09-09T16:36:28Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
         {
           "tagName": "v13.24.1",
           "htmlUrl": "https://github.com/thedotmack/claude-mem/releases/tag/v13.24.1",
@@ -377478,7 +378162,7 @@
       }
     },
     "headroomlabs-ai/headroom": {
-      "cachedAt": "2026-09-09T06:41:53.218732Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
       "releases": [
         {
           "tagName": "v0.37.0",
@@ -381939,8 +382623,36 @@
       }
     },
     "mem0ai/mem0": {
-      "cachedAt": "2026-09-09T06:41:53.218732Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
       "releases": [
+        {
+          "tagName": "pi-agent-v0.3.0",
+          "htmlUrl": "https://github.com/mem0ai/mem0/releases/tag/pi-agent-v0.3.0",
+          "publishedAt": "2026-09-09T14:40:27Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "opencode-v0.3.0",
+          "htmlUrl": "https://github.com/mem0ai/mem0/releases/tag/opencode-v0.3.0",
+          "publishedAt": "2026-09-09T14:38:44Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "openclaw-v1.1.0",
+          "htmlUrl": "https://github.com/mem0ai/mem0/releases/tag/openclaw-v1.1.0",
+          "publishedAt": "2026-09-09T14:34:30Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
+        {
+          "tagName": "deepseek-plugin-v0.3.0",
+          "htmlUrl": "https://github.com/mem0ai/mem0/releases/tag/deepseek-plugin-v0.3.0",
+          "publishedAt": "2026-09-09T14:36:49Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
         {
           "tagName": "v2.0.20",
           "htmlUrl": "https://github.com/mem0ai/mem0/releases/tag/v2.0.20",
@@ -394616,8 +395328,243 @@
       }
     },
     "stablyai/orca": {
-      "cachedAt": "2026-09-09T06:41:53.218732Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
       "releases": [
+        {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199",
+          "publishedAt": "2026-09-09T18:45:22Z",
+          "credits": {
+            "AmethystLiang": [
+              19005,
+              19021,
+              19036,
+              19313,
+              19326,
+              19329,
+              19332,
+              19375,
+              19381,
+              19435,
+              19448,
+              19523,
+              19530,
+              19535,
+              19547
+            ],
+            "nwparker": [
+              18126,
+              18555,
+              18881,
+              18882,
+              18904,
+              18910,
+              18922,
+              18924,
+              18925,
+              18932,
+              18934,
+              18952,
+              18961,
+              18965,
+              18972,
+              18982,
+              18983,
+              18995,
+              19000,
+              19001,
+              19002,
+              19003,
+              19006,
+              19022,
+              19026,
+              19057,
+              19058,
+              19059,
+              19060,
+              19061,
+              19063,
+              19068,
+              19071,
+              19075,
+              19112,
+              19113,
+              19115,
+              19142,
+              19145,
+              19146,
+              19150,
+              19157,
+              19165,
+              19172,
+              19174,
+              19175,
+              19186,
+              19189,
+              19190,
+              19197,
+              19214,
+              19246,
+              19250,
+              19279,
+              19351,
+              19352,
+              19357,
+              19360,
+              19364,
+              19365,
+              19366,
+              19398,
+              19409,
+              19415,
+              19521,
+              19533,
+              19566
+            ],
+            "kiendle": [
+              19170
+            ],
+            "Jinwoo-H": [
+              16904,
+              18554,
+              18724,
+              19052,
+              19109,
+              19118,
+              19121,
+              19126,
+              19128,
+              19203,
+              19225,
+              19231,
+              19232,
+              19233,
+              19236,
+              19238,
+              19239,
+              19241,
+              19243,
+              19245,
+              19251,
+              19253,
+              19258,
+              19260,
+              19262,
+              19265,
+              19266,
+              19268,
+              19274,
+              19275,
+              19280,
+              19281,
+              19307,
+              19308,
+              19348,
+              19349,
+              19542,
+              19544,
+              19551
+            ],
+            "brohoya": [
+              11756
+            ],
+            "OrcaWin": [
+              18589,
+              19361,
+              19362,
+              19369,
+              19377,
+              19378,
+              19380,
+              19382,
+              19407,
+              19437,
+              19438,
+              19444,
+              19457,
+              19458,
+              19460,
+              19463,
+              19472,
+              19474,
+              19476,
+              19477,
+              19478,
+              19483,
+              19484,
+              19485,
+              19486,
+              19488,
+              19489,
+              19490,
+              19491,
+              19502,
+              19504,
+              19505
+            ],
+            "brennanb2025": [
+              18519,
+              18590,
+              18700,
+              18741,
+              18751,
+              18773,
+              18827,
+              18986,
+              19044,
+              19055,
+              19114,
+              19117,
+              19122,
+              19123,
+              19127,
+              19130,
+              19136,
+              19137,
+              19138,
+              19140,
+              19144,
+              19147,
+              19149,
+              19153,
+              19164,
+              19176,
+              19218,
+              19223,
+              19226,
+              19228,
+              19235,
+              19237,
+              19300,
+              19321,
+              19328,
+              19372,
+              19390
+            ],
+            "mmarabel": [
+              18836
+            ],
+            "weekbin": [
+              14929
+            ],
+            "TimothyVang": [
+              17936
+            ],
+            "Aladex": [
+              18634
+            ],
+            "bbingz": [
+              13178
+            ],
+            "shaharmor": [
+              19065
+            ],
+            "blade035": [
+              17731
+            ]
+          },
+          "unattributedAuthorPrs": []
+        },
         {
           "tagName": "v1.4.198",
           "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.198",
@@ -463166,12 +464113,815 @@
         "12772": {
           "tagName": "v1.4.198",
           "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.198"
+        },
+        "19005": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19021": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19036": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19313": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19326": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19329": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19332": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19375": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19381": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19435": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19448": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19523": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19530": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19535": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19547": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18126": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18555": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18881": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18882": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18904": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18910": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18922": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18924": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18925": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18932": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18934": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18952": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18961": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18965": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18972": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18982": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18983": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18995": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19000": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19001": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19002": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19003": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19006": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19022": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19026": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19057": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19058": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19059": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19060": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19061": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19063": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19068": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19071": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19075": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19112": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19113": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19115": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19142": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19145": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19146": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19150": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19157": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19165": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19172": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19174": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19175": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19186": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19189": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19190": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19197": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19214": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19246": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19250": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19279": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19351": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19352": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19357": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19360": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19364": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19365": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19366": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19398": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19409": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19415": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19521": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19533": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19566": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19170": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "16904": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18554": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18724": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19052": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19109": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19118": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19121": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19126": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19128": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19203": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19225": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19231": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19232": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19233": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19236": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19238": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19239": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19241": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19243": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19245": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19251": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19253": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19258": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19260": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19262": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19265": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19266": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19268": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19274": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19275": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19280": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19281": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19307": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19308": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19348": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19349": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19542": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19544": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19551": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "11756": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18589": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19361": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19362": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19369": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19377": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19378": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19380": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19382": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19407": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19437": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19438": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19444": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19457": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19458": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19460": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19463": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19472": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19474": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19476": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19477": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19478": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19483": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19484": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19485": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19486": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19488": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19489": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19490": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19491": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19502": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19504": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19505": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18519": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18590": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18700": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18741": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18751": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18773": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18827": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18986": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19044": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19055": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19114": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19117": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19122": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19123": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19127": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19130": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19136": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19137": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19138": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19140": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19144": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19147": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19149": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19153": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19164": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19176": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19218": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19223": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19226": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19228": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19235": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19237": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19300": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19321": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19328": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19372": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19390": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18836": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "14929": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "17936": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "18634": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "13178": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "19065": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
+        },
+        "17731": {
+          "tagName": "v1.4.199",
+          "htmlUrl": "https://github.com/stablyai/orca/releases/tag/v1.4.199"
         }
       }
     },
     "NVIDIA/SkillSpector": {
-      "cachedAt": "2026-09-09T06:41:53.218732Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
       "releases": [
+        {
+          "tagName": "v2.11.2",
+          "htmlUrl": "https://github.com/NVIDIA/SkillSpector/releases/tag/v2.11.2",
+          "publishedAt": "2026-09-09T20:27:37Z",
+          "credits": {},
+          "unattributedAuthorPrs": []
+        },
         {
           "tagName": "v2.11.1",
           "htmlUrl": "https://github.com/NVIDIA/SkillSpector/releases/tag/v2.11.1",
@@ -487139,7 +488889,7 @@
       }
     },
     "kenn-io/roborev": {
-      "cachedAt": "2026-09-09T06:41:53.218732Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
       "releases": [
         {
           "tagName": "v0.67.0",
@@ -488972,7 +490722,7 @@
       }
     },
     "kenn-io/msgvault": {
-      "cachedAt": "2026-09-09T06:41:53.218732Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
       "releases": [
         {
           "tagName": "v0.19.3",
@@ -489570,7 +491320,7 @@
       }
     },
     "kenn-io/docbank": {
-      "cachedAt": "2026-09-09T06:41:53.218732Z",
+      "cachedAt": "2026-09-11T03:15:00.394336Z",
       "releases": [
         {
           "tagName": "v0.14.0",
