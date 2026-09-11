@@ -31,7 +31,7 @@ def test_default_output_is_the_homepage_and_accepts_an_override(repo_root: Path,
 
     monkeypatch.setattr(generate, "generate_report", capture_report)
     monkeypatch.chdir(tmp_path)
-    assert generate.main(["--silent"]) == 0
+    assert generate.main([]) == 0
     assert generate.main(["--silent", "--out-file", "preview.html"]) == 0
     assert outputs == [repo_root.parent / "index.html", Path("preview.html")]
 

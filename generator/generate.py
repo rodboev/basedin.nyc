@@ -20,7 +20,7 @@ Options:
                              (default: repos.txt).
     --author LOGIN           GitHub login whose PRs are reported (default: rodboev).
     --force-write            Write the page even if the sanity checks reject it.
-    --silent                 Suppress progress output and the end-of-run pause.
+    --silent                 Suppress progress output.
     --workers N              Thread pool size for PR fetches (default: 4).
     --overlay-config-dir DIR pr-sweep overlay bundle root feeding maintainer lists
                              and leaderboard exclusions.
@@ -159,7 +159,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--contributors-file", type=Path, default=None)
     parser.add_argument("--force-write", action="store_true")
     parser.add_argument("--overlay-config-dir", type=Path, default=DEFAULT_OVERLAY_CONFIG_DIR)
-    parser.add_argument("--silent", action="store_true", help="suppress progress output and end-of-run pause")
+    parser.add_argument("--silent", action="store_true", help="suppress progress output")
     args = parser.parse_args(argv)
 
     set_overlay_config_dir(args.overlay_config_dir)
@@ -182,7 +182,7 @@ def main(argv: list[str] | None = None) -> int:
             promote_output=args.out_cache_file is None,
         )
 
-    rc = generate_report(
+    return generate_report(
         cache_file=args.cache_file,
         template_file=args.template_file,
         out_file=args.out_file or DEFAULT_OUTPUT_FILE,
@@ -192,12 +192,6 @@ def main(argv: list[str] | None = None) -> int:
         silent=args.silent,
         workers=args.workers,
     )
-    if not args.silent:
-        try:
-            input("\nPress Enter to exit...")
-        except (EOFError, KeyboardInterrupt):
-            pass
-    return rc
 
 def classify_cache(
     *,

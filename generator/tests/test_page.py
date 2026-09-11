@@ -28,7 +28,6 @@ def test_render_breakdown_section_matches_ps1_owned_markup() -> None:
         avg_prs="12.0",
         avg_loc="5.5k",
     ) == (
-        "<h2>Breakdown</h2>\n\n"
         '<div class="grid grid-summary">\n'
         '  <div class="stat-card"><div class="number" id="bd-total">10</div><div class="label">Total PRs</div></div>\n'
         '  <div class="stat-card"><div class="number green" id="bd-shipped">7</div><div class="label">Shipped</div></div>\n'

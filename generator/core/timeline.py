@@ -14,7 +14,7 @@ SHIPPED_CLASSIFICATIONS = {"shipped", "accepted-indirect"}
 EASTERN = ZoneInfo("America/New_York")
 
 # Mirrors BD_LOAD_RANGES in timeline.js: the windows the load animation walks, in order.
-BD_LOAD_RANGES = (2, 7, 14, 30)
+BD_LOAD_RANGES = (2, 7, 14, 30, 60)
 
 # The static breakdown is rendered at the first window. Not 1: a 1-day window is the only one in the
 # data that closed nothing but shipped work, so its rate is a 0-denominator 100% that drops to 84%
