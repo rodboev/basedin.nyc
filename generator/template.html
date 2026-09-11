@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>LGTM Leaderboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="darkreader-lock" />
+    <meta name="description" content="650+ PRs across OSS AI projects: provider infrastructure, agent UX, reliability, streaming, and release-linked production work." />
+    <meta property="og:title" content="LGTM Leaderboard">
+    <meta property="og:description" content="650+ PRs across OSS AI projects: provider infrastructure, agent UX, reliability, streaming, and release-linked production work.">
+    <meta property="og:image" content="https://basedin.nyc/assets/share.jpg">
+    <meta property="og:url" content="https://basedin.nyc/">
+    <meta property="og:type" content="website">
+    <link rel="canonical" href="https://basedin.nyc/">
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="white">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="/style.css">
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+  </head>
+<body class="pr">
+
+<div class="top-row">
+  <h1>LGTM Leaderboard</h1>
+  <nav class="nav-links">
+    <a class="current" href="/" aria-current="page">Stats</a>
+    <span class="nav-sep">/</span>
+    <a href="/resume/">Resume</a>
+    <span class="nav-sep">/</span>
+    <a href="/recommendations/">Recommendations</a>
+    <span class="nav-sep">/</span>
+    <span class="nav-links-icons">
+      <a href="https://github.com/rodboev" class="nav-link--icon" aria-label="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+      <a href="https://linkedin.com/in/rodboev" class="nav-link--icon" aria-label="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><defs><mask id="linkedin-inverted"><rect width="24" height="24" fill="white"/><path fill="black" d="M6.94 8.98H3.67V19.5h3.27V8.98zM5.31 7.54c1.05 0 1.91-.86 1.91-1.91 0-1.06-.86-1.91-1.91-1.91S3.4 4.57 3.4 5.63c0 1.05.86 1.91 1.91 1.91zM20.6 19.5h-3.27v-5.12c0-1.22-.02-2.79-1.7-2.79-1.7 0-1.96 1.33-1.96 2.7v5.21H10.4V8.98h3.14v1.44h.04c.44-.83 1.5-1.7 3.1-1.7 3.31 0 3.92 2.18 3.92 5.02v5.76z"/></mask></defs><rect width="24" height="24" rx="2.75" fill="currentColor" mask="url(#linkedin-inverted)"/></svg></a>
+    </span>
+  </nav>
+</div>
+
+
+{{ breakdown }}
+
+<!-- timeline-chart -->
+<div class="landscape-row" style="margin-top:2rem;position:static">
+  <div class="pr-filter-group pr-filter-group-left">
+    <h2>Progress</h2>
+    <div class="sort-pills" id="tl-view-pills">
+    <div class="sort-pill active" data-view="daily">Daily</div>
+    <div class="sort-pill" data-view="cumulative"><span class="cumul-full">Cumulative</span><span class="cumul-short">Cum.</span></div>
+    </div>
+  </div>
+  <div class="pr-filter-group pr-filter-group-right">
+    <div class="sort-pills" id="bd-range-pills">
+      <div class="sort-pill" data-range="7">7d</div>
+      <div class="sort-pill" data-range="14">14d</div>
+      <div class="sort-pill active" data-range="30">30d</div>
+      <div class="sort-pill" data-range="60">60d</div>
+      <div class="sort-pill" data-range="90">90d</div>
+      <div class="sort-pill" data-range="0">All</div>
+    </div>
+  </div>
+</div>
+<div id="tl-daily-wrap"><canvas id="tlDailyChart"></canvas></div>
+<div id="tl-cumulative-wrap" style="display:none"><canvas id="tlCumulativeChart"></canvas></div>
+<div class="sort-pills tl-repo-pills" id="tl-repo-pills"></div>
+
+<script>
+{{ timeline_bootstrap }}
+</script>
+<script src="/assets/timeline.js?v={{ today }}"></script>
+<!-- timeline-chart -->
+
+{{ repo_matrix }}
+
+{{ leaderboard_sections }}
+
+{{ pr_controls }}
+
+<h2>Methodology</h2>
+<div class="section methodology-section">
+  <p>Shipped counts work a maintainer accepted through a merge, cherry-pick, release reference, or another PR that credits the original contribution.</p>
+  <p>Withdrawn means the author pulled the work. Superseded means a maintainer replaced it. Lost means competing work prevailed. PRs appear newest first, using close time for closed PRs and creation time for open PRs.</p>
+  <p>Leaderboards rank outside contributors, excluding owners, employees, collaborators with write access, and bots. Each board shows up to five contributors and expands to the top 20. Contributor lists combine recent activity, cached records, and hermes-webui's CONTRIBUTORS.md.</p>
+  <p>hermes-webui counts distinct PRs credited in release notes, eligible merges, and coauthored release commits. Other repos use acceptance evidence for their top 10 contributors and merge counts below that.</p>
+</div>
+
+<p class="footer">Generated {{ generated_date }} from GitHub API. Source: <a href="https://github.com/rodboev/pr-sweep">rodboev/pr-sweep</a></p>
+
+<script src="/assets/script.js"></script>
+<script>
+{{ pr_bootstrap }}
+
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+function prDateCell(dateLabel) {
+  if (!dateLabel) return '';
+  var shortDate = dateLabel.replace(/\s+\d{1,2}:\d{2}\s*[AP]M$/i, '');
+  return '<span class="pr-date-full">' + escapeHtml(dateLabel) + '</span>' +
+    '<span class="pr-date-short">' + escapeHtml(shortDate) + '</span>';
+}
+function syncLandscapeStickyOffset() {
+  var row = document.getElementById('pr-landscape-row');
+  if (!row) return;
+  document.body.style.setProperty('--landscape-row-offset', row.getBoundingClientRect().height + 'px');
+}
+function setCollapsibleCollapsed(block, shouldCollapse) {
+  if (!block) return;
+  block.classList.toggle('collapsed', shouldCollapse);
+  syncTopCollapsedRows(block);
+  syncBottomCollapsedRows(block);
+}
+function updateCollapsedOverlays() {
+  document.querySelectorAll('.collapsible-table').forEach(function(block) {
+    syncTopCollapsedRows(block);
+    syncBottomCollapsedRows(block);
+  });
+}
+// Boards sitting side by side expand and collapse together so a row keeps a flat bottom edge.
+// Once the grid stacks to one column there is no row to keep level, so they act independently.
+function leaderboardGridIsPaired(grid) {
+  return getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length > 1;
+}
+function syncLeaderboardPair(cell) {
+  var grid = cell.parentElement;
+  if (!leaderboardGridIsPaired(grid)) return;
+  var cells = Array.prototype.slice.call(grid.children);
+  var index = cells.indexOf(cell);
+  var partner = cells[index % 2 === 0 ? index + 1 : index - 1];
+  if (!partner) return;
+  var block = cell.querySelector('.collapsible-table');
+  var partnerBlock = partner.querySelector('.collapsible-table');
+  // A partner with nothing to expand stays as it is rather than collapsing rows it never hid.
+  if (!block || !partnerBlock || !partnerBlock.querySelector('.expand-row')) return;
+  setCollapsibleCollapsed(partnerBlock, block.classList.contains('collapsed'));
+}
+function bindLeaderboardPairs() {
+  var grid = document.querySelector('.leaderboard-grid');
+  if (!grid) return;
+  // The inline onclick has already toggled the clicked block by the time this bubbles up.
+  grid.addEventListener('click', function(event) {
+    var trigger = event.target.closest('.expand-row, .overlay-row');
+    if (!trigger) return;
+    var cell = trigger.closest('.leaderboard-cell');
+    if (cell) syncLeaderboardPair(cell);
+  });
+}
+function prMatchesStatus(item, statusKey) {
+  if (statusKey === 'not-shipped') {
+    return item.statusKey === 'lost' || item.statusKey === 'superseded';
+  }
+  return item.statusKey === statusKey;
+}
+function prMatchesRepo(item, repoKey) {
+  return repoKey === 'all' || item.repoLabel === repoKey;
+}
+function countPrItems(statusKey, repoKey) {
+  return PR_DATA.filter(function(item) {
+    return prMatchesStatus(item, statusKey) && prMatchesRepo(item, repoKey);
+  }).length;
+}
+function updatePrFilterPills() {
+  PR_FILTERS.forEach(function(filter) {
+    var pill = document.querySelector('#pr-filter-pills .sort-pill[data-status="' + filter.key + '"]');
+    if (!pill) return;
+    var count = countPrItems(filter.key, CURRENT_PR_FILTER.repoKey);
+    pill.textContent = filter.label + ' (' + count + ')';
+  });
+}
+function renderPrTable(statusKey, repoKey) {
+  var tbody = document.getElementById('pr-list-body');
+  var wrapper = document.getElementById('pr-list-collapsible');
+  if (!tbody) return;
+  var filtered = PR_DATA.filter(function(item) {
+    return prMatchesStatus(item, statusKey) && prMatchesRepo(item, repoKey);
+  });
+  var visibleItems = collapsibleVisibleItems(wrapper);
+  var html = '';
+  filtered.forEach(function(item, index) {
+    var via = '';
+    if (item.viaLabel) {
+      via = item.viaUrl ? '<a href="' + item.viaUrl + '">' + item.viaLabel + '</a>' : item.viaLabel;
+    }
+    var repoCell = item.repo
+      ? '<a class="plain-link" href="https://github.com/' + item.repo + '">' + escapeHtml(item.repoLabel || '') + '</a>'
+      : escapeHtml(item.repoLabel || '');
+    html += '<tr class="pr-main-row">' +
+      '<td><a href="' + item.url + '">#' + item.number + '</a></td>' +
+      '<td>' + repoCell + '</td>' +
+      '<td><span class="tag ' + item.statusClass + '">' + item.statusLabel + '</span></td>' +
+      '<td>' + prDateCell(item.dateLabel) + '</td>' +
+      '<td>' + (item.releaseUrl ? '<a href="' + item.releaseUrl + '">' + escapeHtml(item.releaseLabel) + '</a>' : escapeHtml(item.releaseLabel || '')) + '</td>' +
+      '<td>' + via + '</td>' +
+    '</tr>' +
+    '<tr class="pr-title-row">' +
+      '<td class="pr-title-gap"></td>' +
+      '<td colspan="5"><div class="pr-title-text" title="' + escapeHtml(item.title || '') + '">' + escapeHtml(item.title || '') + '</div></td>' +
+    '</tr>';
+    if (wrapper && index + 1 === visibleItems && filtered.length > visibleItems) {
+      html += expandRowHtml(wrapper.id, 'Show all ' + filtered.length, 6);
+    }
+  });
+  if (!html) {
+    html = '<tr><td colspan="6" class="empty-state">No PRs in this status.</td></tr>';
+  }
+  tbody.innerHTML = html;
+  setCollapsibleCollapsed(wrapper, filtered.length > visibleItems);
+  updateCollapsedOverlays();
+}
+function bindPillGroup(containerId, attr, filterKey) {
+  document.getElementById(containerId).addEventListener('click', function(e) {
+    var pill = e.target.closest('.sort-pill');
+    if (!pill) return;
+    CURRENT_PR_FILTER[filterKey] = pill.getAttribute(attr);
+    document.querySelectorAll('#' + containerId + ' .sort-pill').forEach(function(p) {
+      p.classList.remove('active');
+    });
+    pill.classList.add('active');
+    updatePrFilterPills();
+    renderPrTable(CURRENT_PR_FILTER.statusKey, CURRENT_PR_FILTER.repoKey);
+  });
+}
+bindPillGroup('pr-filter-pills', 'data-status', 'statusKey');
+bindPillGroup('pr-repo-pills', 'data-repo', 'repoKey');
+bindLeaderboardPairs();
+syncLandscapeStickyOffset();
+if (typeof ResizeObserver !== 'undefined') {
+  var landscapeRow = document.getElementById('pr-landscape-row');
+  if (landscapeRow) {
+    new ResizeObserver(syncLandscapeStickyOffset).observe(landscapeRow);
+  }
+}
+window.addEventListener('resize', syncLandscapeStickyOffset);
+updatePrFilterPills();
+renderPrTable(CURRENT_PR_FILTER.statusKey, CURRENT_PR_FILTER.repoKey);
+
+document.querySelectorAll('details.projections').forEach(function(details) {
+  var lb = details.previousElementSibling;
+  while (lb && !lb.classList.contains('leaderboard')) lb = lb.previousElementSibling;
+  if (!lb) return;
+  var selfRow = lb.querySelector('tr.is-self');
+  if (!selfRow) return;
+  var cells = selfRow.querySelectorAll('td');
+  var myOpen = parseInt(cells[3].textContent) || 0;
+  if (!myOpen) return;
+  var summaryEl = details.querySelector('summary');
+  var myRate = parseFloat((summaryEl.textContent.match(/([\d.]+)\/day/) || [])[1]) || 0;
+  if (!myRate) return;
+  var myCredited = parseInt(cells[2].textContent) || 0;
+  details.querySelectorAll('table tr').forEach(function(row) {
+    var td = row.querySelectorAll('td');
+    if (td.length < 4) return;
+    var name = td[0].textContent.trim();
+    var lbRow = null;
+    lb.querySelectorAll('tbody tr').forEach(function(r) {
+      var a = r.querySelector('a');
+      if (a && a.textContent.trim() === name) lbRow = r;
+    });
+    var theirOpen = lbRow ? (parseInt(lbRow.querySelectorAll('td')[3].textContent) || 0) : 0;
+    var theirRate = parseFloat(td[2].textContent) || 0;
+    var rawGap = parseInt((td[1].textContent.match(/\+(\d+)/) || [])[1]) || 0;
+    var effectiveGap = rawGap - myOpen + theirOpen;
+    var netRate = myRate - theirRate;
+    var catchupTd = td[3];
+    if (effectiveGap <= 0 && myRate > 0) {
+      var days = Math.round(rawGap / myRate * 10) / 10;
+      var when = new Date(Date.now() + days * 86400000);
+      var dateStr = when.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      var pending = myOpen - rawGap + theirOpen;
+      catchupTd.className = '';
+      catchupTd.innerHTML = days + 'd (' + dateStr + ') <span class="note">(' + pending + ' surplus)</span>';
+    } else if (effectiveGap > 0 && netRate > 0) {
+      var days = Math.round(effectiveGap / netRate * 10) / 10;
+      var when = new Date(Date.now() + days * 86400000);
+      var dateStr = when.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      catchupTd.innerHTML = days + 'd (' + dateStr + ') <span class="note">(' + myOpen + ' pending)</span>';
+    }
+  });
+  summaryEl.textContent = summaryEl.textContent.replace(/rank #/, myOpen + ' open, rank #');
+});
+</script>
+
+</body>
+</html>

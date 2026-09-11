@@ -2,29 +2,46 @@ name: Deploy
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 permissions:
-  pages: write
-  id-token: write
+  contents: read
 concurrency:
   group: pages
   cancel-in-progress: false
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/configure-pages@v5
+      - run: sudo apt-get install -y poppler-utils
+      - name: Assemble public site
+        run: |
+          mkdir -p _site/assets _site/resume _site/recommendations _site/pr-stats
+          cp index.html style.css favicon.ico manifest.json robots.txt CNAME resume.pdf resume.docx recommendations.pdf recommendations.docx _site/
+          cp assets/android-chrome-192x192.png assets/android-chrome-512x512.png assets/apple-touch-icon.png assets/favicon.png assets/safari-pinned-tab.svg assets/script.js assets/timeline.js assets/share.jpg _site/assets/
+          cp pr-stats/index.html _site/pr-stats/
+          for doc in resume recommendations; do
+            cp "$doc/index.html" "$doc/thumb.jpg" "_site/$doc/"
+            pdftocairo -png -r 200 "$doc.pdf" "_site/$doc/page"
+          done
+          cd _site
+          python ../generator/cachebust.py
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - run: sudo apt-get install -y poppler-utils
-      - run: |
-          for pdf in resume recommendations; do
-            pdftocairo -png -r 200 ${pdf}.pdf ${pdf}/page
-          done
-      - run: python docs/generate.py
-      - run: python cachebust.py
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
       - id: deploy
         uses: actions/deploy-pages@v4
