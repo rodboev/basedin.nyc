@@ -29,7 +29,7 @@ def _read_index(repo_root: Path) -> str:
 
 def test_homepage_links_and_assets_resolve(repo_root: Path) -> None:
     content = _read_index(repo_root)
-    assert '<h1>LGTM Leaderboard</h1>' in content
+    assert '<h1>&quot;LGTM!&quot; Leaderboard</h1>' in content
     assert 'href="/resume/"' in content
     assert 'href="/recommendations/"' in content
     assert 'href="../' not in content
@@ -42,14 +42,16 @@ def test_homepage_links_and_assets_resolve(repo_root: Path) -> None:
 
 
 def test_cachebusting_only_updates_public_local_assets(repo_root: Path, tmp_path: Path) -> None:
-    html = '<link href="/style.css"><script src="https://cdn.example.com/chart.js"></script>'
+    html = '<link href="/style.css"><script src="https://cdn.example.com/chart.js"></script><object data="/page.svg"></object>'
     for directory in (tmp_path, *(tmp_path / name for name in ("resume", "recommendations", "pr-stats", "docs"))):
         directory.mkdir(exist_ok=True)
         (directory / "index.html").write_text(html, encoding="utf-8")
     (tmp_path / "style.css").write_text("body { color: black; }", encoding="utf-8")
+    (tmp_path / "page.svg").write_text("<svg/>", encoding="utf-8")
     subprocess.run([sys.executable, str(repo_root / "cachebust.py")], cwd=tmp_path, check=True, capture_output=True)
     updated = (tmp_path / "index.html").read_text(encoding="utf-8")
     assert re.search(r'href="/style.css\?v=[0-9a-f]{8}"', updated)
+    assert re.search(r'data="/page.svg\?v=[0-9a-f]{8}"', updated)
     assert 'src="https://cdn.example.com/chart.js"' in updated
     assert (tmp_path / "docs/index.html").read_text(encoding="utf-8") == html
 

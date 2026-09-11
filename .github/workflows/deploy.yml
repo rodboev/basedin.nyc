@@ -21,12 +21,15 @@ jobs:
       - name: Assemble public site
         run: |
           mkdir -p _site/assets _site/resume _site/recommendations _site/pr-stats
-          cp index.html style.css favicon.ico manifest.json robots.txt CNAME resume.pdf resume.docx recommendations.pdf recommendations.docx _site/
+          cp *.html style.css favicon.ico manifest.json robots.txt CNAME resume.pdf resume.docx recommendations.pdf recommendations.docx _site/
           cp assets/android-chrome-192x192.png assets/android-chrome-512x512.png assets/apple-touch-icon.png assets/favicon.png assets/safari-pinned-tab.svg assets/script.js assets/timeline.js assets/share.jpg _site/assets/
           cp pr-stats/index.html _site/pr-stats/
           for doc in resume recommendations; do
             cp "$doc/index.html" "$doc/thumb.jpg" "_site/$doc/"
-            pdftocairo -png -r 200 "$doc.pdf" "_site/$doc/page"
+            pages=$(pdfinfo "$doc.pdf" | awk '/^Pages:/ {print $2}')
+            for page in $(seq 1 "$pages"); do
+              pdftocairo -svg -f "$page" -l "$page" "$doc.pdf" "_site/$doc/page-$page.svg"
+            done
           done
           cd _site
           python ../generator/cachebust.py

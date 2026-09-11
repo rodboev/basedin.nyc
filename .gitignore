@@ -1,7 +1,9 @@
 ~$*.docx
 __pycache__/
 resume/page-*.png
+resume/page-*.svg
 recommendations/page-*.png
+recommendations/page-*.svg
 
 /docs/
 /_site/

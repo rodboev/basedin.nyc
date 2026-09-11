@@ -236,10 +236,12 @@ body.preview {
   padding: 2vh 0;
   gap: 2vh;
 }
-body.preview > img {
+body.preview > object {
   display: block;
   width: min(720px, 96vw);
   height: auto;
+  aspect-ratio: 612 / 792;
+  border: 0;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   background: white;
   user-select: none;
@@ -354,6 +356,10 @@ body.pr .nav-links a.current {
   font-weight: 400;
 }
 
+body.pr:has(a:not(.current):hover, button:hover, .sort-pill:hover) .nav-links a.current {
+  color: var(--nav-link-dim);
+}
+
 body.pr .nav-links a.current:hover,
 body.pr .nav-links a.current:focus-visible {
   color: white;
@@ -365,10 +371,6 @@ body.pr h2 {
   margin: 2rem 0 0.75rem;
   padding-bottom: 0.28rem;
   border-bottom: 1px solid var(--pr-border);
-}
-
-body.pr .top-row + h2 {
-  margin-top: -0.5rem;
 }
 
 body.pr h3 {
@@ -457,6 +459,7 @@ body.pr .repo-matrix {
   --repo-column-width: 22%;
   --data-column-width: calc(78% / 7);
   table-layout: fixed;
+  margin-top: 2rem;
   margin-bottom: 0.75rem;
 }
 
@@ -1252,13 +1255,13 @@ body.pr .red { color: var(--pr-red); }
     gap: 0;
     display: block;
   }
-  body.preview > img {
+  body.preview > object {
     box-shadow: none;
     width: 100% !important;
     height: auto;
     break-after: page;
   }
-  body.preview > img:last-of-type {
+  body.preview > object:last-of-type {
     break-after: auto;
   }
 }
