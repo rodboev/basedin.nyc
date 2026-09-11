@@ -20,6 +20,9 @@ ADOPTION_CREDIT_PATTERN = re.compile(
     r"\b(?:you\s+proposed|design\s+carried\s+through|carried\s+through\s+to\s+the\s+final|based\s+on\s+your|your\s+(?:approach|design|implementation|proposal|opt-in))\b",
     re.IGNORECASE,
 )
+# A maintainer stating this PR's own branch was rebased forward into a named PR:
+# the replacement carries this diff, so the content landed whoever holds the trailer.
+REBASE_TAKEOVER_PATTERN = re.compile(r"\brebas(?:e|ed|ing)\b[^.\n]{0,80}?\bas\s+#(\d+)", re.IGNORECASE)
 WITHDRAWN_PATTERN = re.compile(r"\bwithdraw(?:ing|n)?\b", re.IGNORECASE)
 AUTHOR_CLOSE_PATTERN = re.compile(r"\bclos(?:ing|ed|e)\b", re.IGNORECASE)
 MERGED_CARRY_FORWARD_PATTERN = re.compile(r"\bmerge(?:d|s|ing)?(?:\s+to\s+main)?\b", re.IGNORECASE)
@@ -479,7 +482,24 @@ def has_landing_credit(pr: PullRequest, evidence: Evidence, replacement: PullReq
         return True
     if maintainer_ship_comment_credits_author(pr, evidence, replacement.number):
         return True
+    if maintainer_rebased_this_pr_forward(pr, evidence, replacement.number):
+        return True
     return get_credited_ship_evidence(pr, evidence) is not None
+
+
+def maintainer_rebased_this_pr_forward(pr: PullRequest, evidence: Evidence, replacement_number: int) -> bool:
+    author_login = author_login_for_classification(pr, evidence)
+    for comment in evidence.comments:
+        if is_review_bot_login(comment.author.login):
+            continue
+        if author_login and comment.author.login == author_login:
+            continue
+        if not is_maintainer_comment(pr.repo, comment, evidence):
+            continue
+        for match in REBASE_TAKEOVER_PATTERN.finditer(comment.body or ""):
+            if int(match.group(1)) == replacement_number:
+                return True
+    return False
 
 
 def maintainer_ship_comment_credits_author(pr: PullRequest, evidence: Evidence, replacement_number: int, radius: int = 80) -> bool:
