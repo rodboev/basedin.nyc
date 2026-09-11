@@ -103,7 +103,6 @@ def render_breakdown_section(
     segments = [BarSegment(key=item.key, width=item.width, title=item.title, content=item.content) for item in bar_items]
     legend = [LegendItem(key=item.key, label=item.label, count=item.count) for item in bar_items]
     return (
-        "<h2>Breakdown</h2>\n\n"
         f"{render_stat_grid(primary_cards)}\n"
         f"{render_stat_grid(secondary_cards)}\n\n"
         "<div class=\"bar-container\">\n"

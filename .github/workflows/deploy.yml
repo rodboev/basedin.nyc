@@ -26,7 +26,10 @@ jobs:
           cp pr-stats/index.html _site/pr-stats/
           for doc in resume recommendations; do
             cp "$doc/index.html" "$doc/thumb.jpg" "_site/$doc/"
-            pdftocairo -png -r 200 "$doc.pdf" "_site/$doc/page"
+            pages=$(pdfinfo "$doc.pdf" | awk '/^Pages:/ {print $2}')
+            for page in $(seq 1 "$pages"); do
+              pdftocairo -svg -f "$page" -l "$page" "$doc.pdf" "_site/$doc/page-$page.svg"
+            done
           done
           cd _site
           python ../generator/cachebust.py
