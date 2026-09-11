@@ -5,6 +5,8 @@ kenn-io/agentsview
 kenn-io/roborev
 kenn-io/msgvault
 kenn-io/docbank
+kenn-io/kata
+kenn-io/forge
 thedotmack/claude-mem
 headroomlabs-ai/headroom
 mem0ai/mem0
