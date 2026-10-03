@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: actions/configure-pages@v5
-      - run: sudo apt-get install -y poppler-utils
+      - run: sudo apt-get update && sudo apt-get install -y poppler-utils
       - name: Assemble public site
         run: |
           mkdir -p _site/assets _site/resume _site/recommendations _site/pr-stats
