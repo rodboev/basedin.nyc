@@ -3,12 +3,13 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import threading
 from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
 import re
 
-from pytest import CaptureFixture, MonkeyPatch
+from pytest import CaptureFixture, MonkeyPatch, raises
 
 import generate
 import core.leaderboard as leaderboard_mod
@@ -631,6 +632,32 @@ def _closed_view(closed_at: str) -> GhPullRequestView:
             "author": {"login": "rodboev"},
         }
     )
+
+
+def test_classification_failure_cancels_pending_work(monkeypatch: MonkeyPatch) -> None:
+    now = datetime(2026, 7, 17, tzinfo=timezone.utc)
+    pulls = [("owner/repo", _closed_view("2026-07-12T00:00:00Z").model_copy(update={"number": n})) for n in range(1, 5)]
+    calls: list[int] = []
+    release = threading.Event()
+
+    def fail_first(repo: str, number: int, pr: object) -> Evidence:
+        calls.append(number)
+        if number == 1:
+            raise GhRetryExhausted("boom")
+        # Holds the single worker so later PRs are still queued when the failure is handled.
+        release.wait(timeout=5)
+        return Evidence()
+
+    monkeypatch.setattr(generate, "live_evidence", fail_first)
+    monkeypatch.setattr(generate, "cancel_running_gh", lambda: None)
+
+    try:
+        with raises(GhRetryExhausted):
+            generate.report_items_from_live_pull_requests(pulls, Cache(), now=now, workers=1)
+    finally:
+        release.set()
+    assert calls[0] == 1
+    assert set(calls) <= {1, 2}
 
 
 def test_withdrawn_entry_within_recheck_window_reclassifies_live(monkeypatch: MonkeyPatch) -> None:

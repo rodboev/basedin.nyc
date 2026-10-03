@@ -46,7 +46,7 @@ import argparse
 import json
 import sys
 from collections.abc import Callable
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from dataclasses import replace
 from datetime import datetime, timezone
 from datetime import timedelta
@@ -62,7 +62,7 @@ from core.models import Cache, ClassificationEntry, PullRequest, UserRef, int_va
 from core.repos import resolve_canonical_repos, set_repo_display_names
 from core.credit import cached_release_credit_counts
 from core.releases import refresh_release_cache, release_for_pr
-from core.github import GhPullRequestView, GhRetryExhausted, run_gh
+from core.github import GhPullRequestView, GhRetryExhausted, cancel_running_gh, run_gh
 from core.html import ReportSanityInput, write_report_if_sane
 from core.page import (
     render_breakdown_section,
@@ -295,7 +295,7 @@ def generate_report(
             print(f"WARNING: leaderboard refresh failed for {repo}: {exc}", file=sys.stderr)
     warn_stale_leaderboards(repos, cache, now=now)
     try:
-        typed_items, cache_updated = report_items_from_live_pull_requests(live_prs, cache, now=now)
+        typed_items, cache_updated = report_items_from_live_pull_requests(live_prs, cache, now=now, workers=workers)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
@@ -654,17 +654,31 @@ def report_items_from_live_pull_requests(
     cache: Cache,
     *,
     now: datetime,
+    workers: int = 4,
 ) -> tuple[list[PrReportItem], bool]:
     items: list[PrReportItem] = []
     cache_updated = False
-    classification_total = sum(1 for repo, pr in pulls if _needs_live_classification(repo, pr, cache, now))
-    classified_count = 0
+    pending = [(repo, pr) for repo, pr in pulls if _needs_live_classification(repo, pr, cache, now)]
+    # Fetch evidence concurrently; cache writes stay on this thread in the loop below.
+    classified: dict[tuple[str, int], ClassificationResult] = {}
+    pool = ThreadPoolExecutor(max_workers=workers)
+    futures: dict[Future[ClassificationResult], tuple[str, GhPullRequestView]] = {}
+    try:
+        for repo, pr in pending:
+            futures[pool.submit(_classify_closed_view, repo, pr)] = (repo, pr)
+        for done, future in enumerate(as_completed(futures), start=1):
+            repo, pr = futures[future]
+            result = future.result()
+            classified[(repo, pr.number)] = result
+            write_pr_classification_progress(done, len(pending), repo, pr.number, pr.author.login, result.log_label, result.classification)
+    except BaseException:
+        # Stop queued and in-flight gh calls instead of draining the queue after a failure or Ctrl+C.
+        cancel_running_gh()
+        pool.shutdown(wait=False, cancel_futures=True)
+        raise
+    pool.shutdown(wait=True)
     for repo, pr in pulls:
-        should_log_classification = _needs_live_classification(repo, pr, cache, now)
-        classification, did_update_cache = live_pull_request_classification(repo, pr, cache, now=now)
-        if should_log_classification and did_update_cache:
-            classified_count += 1
-            write_pr_classification_progress(classified_count, classification_total, repo, pr.number, pr.author.login, classification.log_label, classification.classification)
+        classification, did_update_cache = live_pull_request_classification(repo, pr, cache, now=now, classified=classified.get((repo, pr.number)))
         cache_updated = cache_updated or did_update_cache
         items.append(report_item_from_pull_request_view(repo=repo, pr=pr, classification=classification))
     return items, cache_updated
@@ -761,6 +775,7 @@ def live_pull_request_classification(
     cache: Cache,
     *,
     now: datetime,
+    classified: ClassificationResult | None = None,
 ) -> tuple[ClassificationResult, bool]:
     key = classification_cache_key(repo, pr.number)
     entry = cache.entries.get(key)
@@ -783,17 +798,7 @@ def live_pull_request_classification(
             ),
             False,
         )
-    if pr.state == "MERGED" or pr.mergedAt:
-        result = ClassificationResult(
-            classification="shipped",
-            via_label="direct",
-            via_url=pr.url or f"https://github.com/{repo}/pull/{pr.number}",
-            evidence_kind="direct-merge",
-            log_label="shipped (merged directly)",
-        )
-    else:
-        pull_request = _pull_request_from_view(repo, pr)
-        result = classify_closed_pr(pull_request, live_evidence(repo, pr.number, pull_request))
+    result = classified or _classify_closed_view(repo, pr)
     set_cached_closed_classification(
         cache,
         repo=repo,
@@ -806,6 +811,19 @@ def live_pull_request_classification(
         now=now,
     )
     return result, True
+
+
+def _classify_closed_view(repo: str, pr: GhPullRequestView) -> ClassificationResult:
+    if pr.state == "MERGED" or pr.mergedAt:
+        return ClassificationResult(
+            classification="shipped",
+            via_label="direct",
+            via_url=pr.url or f"https://github.com/{repo}/pull/{pr.number}",
+            evidence_kind="direct-merge",
+            log_label="shipped (merged directly)",
+        )
+    pull_request = _pull_request_from_view(repo, pr)
+    return classify_closed_pr(pull_request, live_evidence(repo, pr.number, pull_request))
 
 
 def _pull_request_from_view(repo: str, pr: GhPullRequestView) -> PullRequest:
