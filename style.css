@@ -306,7 +306,6 @@ body.pr {
   max-width: 960px;
   width: calc(100% - 10vw);
   margin: min(2vw, 2rem) auto;
-  padding-bottom: 3rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -751,7 +750,7 @@ body.pr .footer {
   text-align: center;
   color: var(--pr-dim);
   font-size: 0.75rem;
-  margin-top: 2.5rem;
+  margin: 2rem 0;
 }
 
 body.pr .tag {

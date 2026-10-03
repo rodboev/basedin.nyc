@@ -7,11 +7,13 @@ kenn-io/msgvault
 kenn-io/docbank
 kenn-io/kata
 kenn-io/forge
+kenn-io/kit
+# kenn-io/kit-ui
 thedotmack/claude-mem
 headroomlabs-ai/headroom
+# NVIDIA/SkillSpector
 # mem0ai/mem0
 # stablyai/orca
-NVIDIA/SkillSpector
 # microsoft/presidio
 # NousResearch/hermes-agent
 # unslothai/unsloth

@@ -120,8 +120,8 @@ def test_write_report_if_sane_force_write_overrides_guard(tmp_path: Path) -> Non
 
 
 def test_normalize_generated_html_masks_dates_and_whitespace() -> None:
-    left = "<p>Generated July 2, 2026 from GitHub API</p>\n<script>var TL_TODAY = '2026-07-02';</script><script src=\"timeline.js?v=2026-07-02\"></script>"
-    right = "<p>Generated July 3, 2026 from GitHub API</p> <script>var TL_TODAY = '2026-07-03';</script><script src=\"timeline.js?v=2026-07-03\"></script>"
+    left = "<p>Generated July 2, 2026, 9:05 AM ET</p>\n<script>var TL_TODAY = '2026-07-02';</script><script src=\"timeline.js?v=2026-07-02\"></script>"
+    right = "<p>Generated July 3, 2026, 11:47 PM ET</p> <script>var TL_TODAY = '2026-07-03';</script><script src=\"timeline.js?v=2026-07-03\"></script>"
 
     assert normalize_generated_html(left) == normalize_generated_html(right)
 

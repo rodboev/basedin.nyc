@@ -375,11 +375,17 @@ def live_evidence(repo: str, number: int, pr: PullRequest) -> Evidence:
     )
 
 
-def fetch_comments(repo: str, number: int) -> list[Comment]:
-    raw = run_gh("api", f"repos/{repo}/issues/{number}/comments?per_page=100", suppress_errors=True)
-    payload = json.loads(raw) if raw else []
-    if not isinstance(payload, list):
+def _paginated_list(endpoint: str) -> list[object]:
+    # A single page misses late events such as the closing one on PRs with 100+ timeline items.
+    raw = run_gh("api", endpoint, "--paginate", "--slurp", "-H", "Accept: application/vnd.github+json", suppress_errors=True)
+    pages = json.loads(raw) if raw else []
+    if not isinstance(pages, list):
         return []
+    return [item for page in pages if isinstance(page, list) for item in page]
+
+
+def fetch_comments(repo: str, number: int) -> list[Comment]:
+    payload = _paginated_list(f"repos/{repo}/issues/{number}/comments?per_page=100")
     comments: list[Comment] = []
     for item in payload:
         if not isinstance(item, dict):
@@ -397,16 +403,7 @@ def fetch_comments(repo: str, number: int) -> list[Comment]:
 
 
 def fetch_timeline(repo: str, number: int) -> list[TimelineEvent]:
-    raw = run_gh(
-        "api",
-        f"repos/{repo}/issues/{number}/timeline?per_page=100",
-        "-H",
-        "Accept: application/vnd.github+json",
-        suppress_errors=True,
-    )
-    payload = json.loads(raw) if raw else []
-    if not isinstance(payload, list):
-        return []
+    payload = _paginated_list(f"repos/{repo}/issues/{number}/timeline?per_page=100")
     return [mapped for event in payload if isinstance(event, dict) for mapped in [_timeline_event(event)] if mapped is not None]
 
 
