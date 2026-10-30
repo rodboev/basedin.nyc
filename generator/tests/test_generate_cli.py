@@ -663,8 +663,8 @@ def test_classification_failure_cancels_pending_work(monkeypatch: MonkeyPatch) -
 def test_withdrawn_entry_within_recheck_window_reclassifies_live(monkeypatch: MonkeyPatch) -> None:
     now = datetime(2026, 7, 17, tzinfo=timezone.utc)
     cache = Cache()
-    cache.entries["owner/repo#10"] = ClassificationEntry(classification="withdrawn", evidenceKind="author-withdrawn", cachedAt="2026-07-12T00:00:00Z")
-    view = _closed_view("2026-07-12T00:00:00Z")
+    cache.entries["owner/repo#10"] = ClassificationEntry(classification="withdrawn", evidenceKind="author-withdrawn", cachedAt="2026-07-15T00:00:00Z")
+    view = _closed_view("2026-07-15T00:00:00Z")
     monkeypatch.setattr(generate, "live_evidence", lambda repo, number, pr: Evidence())
     monkeypatch.setattr(
         generate,

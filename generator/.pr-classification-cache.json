@@ -91335,7 +91335,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-10-30T11:49:17.078717Z"
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
     },
     "kenn-io/msgvault#1445": {
       "classification": "shipped",
@@ -91599,7 +91599,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-10-30T11:49:17.078717Z"
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
     },
     "nesquena/hermes-webui#7072": {
       "classification": "withdrawn",
@@ -91607,7 +91607,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-10-30T11:49:17.078717Z"
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
     },
     "nesquena/hermes-webui#7064": {
       "classification": "withdrawn",
@@ -91615,7 +91615,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-10-30T11:49:17.078717Z"
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
     },
     "nesquena/hermes-webui#7063": {
       "classification": "withdrawn",
@@ -91623,7 +91623,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-10-30T11:49:17.078717Z"
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
     },
     "nesquena/hermes-webui#7068": {
       "classification": "withdrawn",
@@ -91631,7 +91631,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-10-30T11:49:17.078717Z"
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
     },
     "nesquena/hermes-webui#6665": {
       "classification": "withdrawn",
@@ -91639,7 +91639,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-10-30T11:49:17.078717Z"
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
     },
     "kenn-io/msgvault#1554": {
       "classification": "shipped",
@@ -91671,7 +91671,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-10-30T11:49:17.078717Z"
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
     },
     "headroomlabs-ai/headroom#2695": {
       "classification": "withdrawn",
@@ -91679,7 +91679,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-10-30T11:49:17.078717Z"
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
     },
     "kenn-io/msgvault#1398": {
       "classification": "shipped",
@@ -91831,7 +91831,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-10-30T11:49:17.078717Z"
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
     },
     "kenn-io/agentsview#2540": {
       "classification": "withdrawn",
@@ -91839,7 +91839,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-10-30T11:49:17.078717Z"
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
     },
     "kenn-io/agentsview#2539": {
       "classification": "withdrawn",
@@ -91847,7 +91847,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-10-30T11:49:17.078717Z"
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
     },
     "kenn-io/agentsview#2538": {
       "classification": "withdrawn",
@@ -91855,7 +91855,7 @@
       "viaLabel": "",
       "viaUrl": "",
       "evidenceKind": "author-withdrawn",
-      "cachedAt": "2026-10-30T11:49:17.078717Z"
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
     },
     "kenn-io/agentsview#2530": {
       "classification": "shipped",
@@ -92256,6 +92256,38 @@
       "viaUrl": "https://github.com/kenn-io/kit/pull/260",
       "evidenceKind": "direct-merge",
       "cachedAt": "2026-10-30T17:38:15.132179Z"
+    },
+    "kenn-io/agentsview#2544": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/agentsview/pull/2544",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
+    },
+    "kenn-io/roborev#1573": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/roborev/pull/1573",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
+    },
+    "kenn-io/forge#1655": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/forge/pull/1655",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
+    },
+    "kenn-io/kit#253": {
+      "classification": "shipped",
+      "release": "",
+      "viaLabel": "direct",
+      "viaUrl": "https://github.com/kenn-io/kit/pull/253",
+      "evidenceKind": "direct-merge",
+      "cachedAt": "2026-10-30T23:17:06.605151Z"
     }
   },
   "authorPulls": {
@@ -126843,7 +126875,7 @@
       "state": "OPEN",
       "title": "feat(docbank): request text extraction for mirrored attachments",
       "createdAt": "2026-10-22T22:53:11Z",
-      "updatedAt": "2026-10-29T21:16:42Z",
+      "updatedAt": "2026-10-31T01:36:07Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/1436-docbank-processing",
@@ -127023,7 +127055,7 @@
       "state": "OPEN",
       "title": "feat(documents): convert long Docling PDFs in 50-page ranges",
       "createdAt": "2026-10-23T14:23:20Z",
-      "updatedAt": "2026-10-29T17:36:41Z",
+      "updatedAt": "2026-10-31T01:35:56Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/1375-docling-page-ranges",
@@ -127077,7 +127109,7 @@
       "state": "OPEN",
       "title": "refactor(documents): drop local document processing for Docbank",
       "createdAt": "2026-10-23T04:21:59Z",
-      "updatedAt": "2026-10-30T15:22:20Z",
+      "updatedAt": "2026-10-31T01:35:54Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/1436-drop-documentindex",
@@ -128301,7 +128333,7 @@
       "state": "OPEN",
       "title": "perf(daemon): batch usage lookups per reconciliation page",
       "createdAt": "2026-10-26T23:34:54Z",
-      "updatedAt": "2026-10-27T02:02:48Z",
+      "updatedAt": "2026-10-31T01:35:59Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/usage-per-page-1356-2",
@@ -128319,16 +128351,16 @@
       "state": "OPEN",
       "title": "fix(sync): pace watched and detail refreshes through the hour",
       "createdAt": "2026-10-27T01:56:25Z",
-      "updatedAt": "2026-10-30T16:17:29Z",
+      "updatedAt": "2026-10-30T20:28:12Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/1552-paced-sync-final",
       "author": {
         "login": "rodboev"
       },
-      "additions": 1465,
-      "deletions": 230,
-      "changedFiles": 29,
+      "additions": 1833,
+      "deletions": 239,
+      "changedFiles": 31,
       "url": "https://github.com/kenn-io/forge/pull/1566"
     },
     "kenn-io/forge#1564": {
@@ -129108,12 +129140,12 @@
     "kenn-io/kit#253": {
       "repo": "kenn-io/kit",
       "number": 253,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "feat(embedlocal): find or start a local embeddings server",
       "createdAt": "2026-10-28T23:32:00Z",
-      "updatedAt": "2026-10-30T03:09:54Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-10-30T22:14:50Z",
+      "closedAt": "2026-10-30T22:14:47Z",
+      "mergedAt": "2026-10-30T22:14:47Z",
       "headRefName": "pr/93-2-find-embeddings-server",
       "author": {
         "login": "rodboev"
@@ -129453,7 +129485,7 @@
       "state": "OPEN",
       "title": "feat(sandbox): run Codex agentic jobs inside nono",
       "createdAt": "2026-10-29T05:57:17Z",
-      "updatedAt": "2026-10-30T13:17:14Z",
+      "updatedAt": "2026-10-30T19:38:07Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/codex-confined-commands",
@@ -129561,16 +129593,16 @@
       "state": "OPEN",
       "title": "feat(web): reduce the sidebar to four places with a status dot",
       "createdAt": "2026-10-29T14:08:09Z",
-      "updatedAt": "2026-10-30T13:11:41Z",
+      "updatedAt": "2026-10-31T01:35:58Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/redesign-3-shell",
       "author": {
         "login": "rodboev"
       },
-      "additions": 7020,
-      "deletions": 7796,
-      "changedFiles": 187,
+      "additions": 3753,
+      "deletions": 4362,
+      "changedFiles": 134,
       "url": "https://github.com/kenn-io/msgvault/pull/1568"
     },
     "kenn-io/msgvault#1563": {
@@ -129615,7 +129647,7 @@
       "state": "OPEN",
       "title": "feat(photos): suggest rotation for sideways photos",
       "createdAt": "2026-10-29T15:18:58Z",
-      "updatedAt": "2026-10-30T14:55:39Z",
+      "updatedAt": "2026-10-31T01:35:42Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/839-5-automatic-orientation",
@@ -129633,7 +129665,7 @@
       "state": "OPEN",
       "title": "feat(photos): suggest keeper frames within burst stacks",
       "createdAt": "2026-10-29T04:47:40Z",
-      "updatedAt": "2026-10-30T14:28:43Z",
+      "updatedAt": "2026-10-31T01:35:41Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/839-4-best-shots-plan3",
@@ -129795,16 +129827,16 @@
       "state": "OPEN",
       "title": "feat(ci): check synthesized findings in a sandbox before posting",
       "createdAt": "2026-10-29T23:53:41Z",
-      "updatedAt": "2026-10-30T13:18:33Z",
+      "updatedAt": "2026-10-31T01:36:01Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/ci-checker",
       "author": {
         "login": "rodboev"
       },
-      "additions": 1165,
+      "additions": 1175,
       "deletions": 30,
-      "changedFiles": 20,
+      "changedFiles": 21,
       "url": "https://github.com/kenn-io/roborev/pull/1553"
     },
     "kenn-io/roborev#1552": {
@@ -129864,19 +129896,19 @@
     "kenn-io/agentsview#2544": {
       "repo": "kenn-io/agentsview",
       "number": 2544,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "ci(workflows): skip CI jobs unrelated to a pull request's changed files",
       "createdAt": "2026-10-29T23:10:56Z",
-      "updatedAt": "2026-10-30T17:06:09Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-10-30T20:02:58Z",
+      "closedAt": "2026-10-30T20:02:55Z",
+      "mergedAt": "2026-10-30T20:02:55Z",
       "headRefName": "pr/ci-waste-3-change-gating",
       "author": {
         "login": "rodboev"
       },
-      "additions": 52,
-      "deletions": 0,
-      "changedFiles": 2,
+      "additions": 62,
+      "deletions": 13,
+      "changedFiles": 3,
       "url": "https://github.com/kenn-io/agentsview/pull/2544"
     },
     "kenn-io/agentsview#2531": {
@@ -130029,16 +130061,16 @@
       "state": "OPEN",
       "title": "feat(web): put message files, tasks, and actions under each message",
       "createdAt": "2026-10-29T23:04:28Z",
-      "updatedAt": "2026-10-30T13:18:36Z",
+      "updatedAt": "2026-10-30T22:19:46Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/redesign-4-messages",
       "author": {
         "login": "rodboev"
       },
-      "additions": 13685,
-      "deletions": 9838,
-      "changedFiles": 461,
+      "additions": 2329,
+      "deletions": 1031,
+      "changedFiles": 90,
       "url": "https://github.com/kenn-io/msgvault/pull/1579"
     },
     "kenn-io/msgvault#1574": {
@@ -130206,12 +130238,12 @@
     "kenn-io/forge#1655": {
       "repo": "kenn-io/forge",
       "number": 1655,
-      "state": "OPEN",
+      "state": "MERGED",
       "title": "test(fleetapi): check hub fanout deadline without sleeping",
       "createdAt": "2026-10-29T22:19:08Z",
-      "updatedAt": "2026-10-30T00:46:51Z",
-      "closedAt": null,
-      "mergedAt": null,
+      "updatedAt": "2026-10-30T22:31:15Z",
+      "closedAt": "2026-10-30T22:31:12Z",
+      "mergedAt": "2026-10-30T22:31:12Z",
       "headRefName": "pr/ci-waste-11",
       "author": {
         "login": "rodboev"
@@ -130299,7 +130331,7 @@
       "state": "OPEN",
       "title": "ci(workflows): skip unaffected test suites on pull requests",
       "createdAt": "2026-10-30T03:34:18Z",
-      "updatedAt": "2026-10-30T11:58:29Z",
+      "updatedAt": "2026-10-30T18:38:02Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/ci-waste-4-change-gating",
@@ -130335,16 +130367,16 @@
       "state": "OPEN",
       "title": "ci(workflows): skip unaffected test lanes on pull requests",
       "createdAt": "2026-10-30T03:34:31Z",
-      "updatedAt": "2026-10-30T11:58:23Z",
+      "updatedAt": "2026-10-30T18:38:01Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/ci-waste-4-change-gating",
       "author": {
         "login": "rodboev"
       },
-      "additions": 62,
-      "deletions": 1,
-      "changedFiles": 2,
+      "additions": 72,
+      "deletions": 14,
+      "changedFiles": 3,
       "url": "https://github.com/kenn-io/kata/pull/751"
     },
     "kenn-io/kata#750": {
@@ -130425,16 +130457,16 @@
       "state": "OPEN",
       "title": "ci(workflows): skip unaffected test suites on pull requests",
       "createdAt": "2026-10-30T03:34:26Z",
-      "updatedAt": "2026-10-30T11:58:18Z",
+      "updatedAt": "2026-10-30T18:50:32Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/ci-waste-4-change-gating",
       "author": {
         "login": "rodboev"
       },
-      "additions": 88,
+      "additions": 91,
       "deletions": 0,
-      "changedFiles": 3,
+      "changedFiles": 4,
       "url": "https://github.com/kenn-io/docbank/pull/1161"
     },
     "kenn-io/docbank#1157": {
@@ -130533,16 +130565,16 @@
       "state": "OPEN",
       "title": "feat(web): redesign files, sources, and staged deletions",
       "createdAt": "2026-10-30T07:11:13Z",
-      "updatedAt": "2026-10-30T13:06:57Z",
+      "updatedAt": "2026-10-30T20:23:06Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "pr/redesign-5-files",
       "author": {
         "login": "rodboev"
       },
-      "additions": 11970,
-      "deletions": 10660,
-      "changedFiles": 277,
+      "additions": 2931,
+      "deletions": 1933,
+      "changedFiles": 64,
       "url": "https://github.com/kenn-io/msgvault/pull/1588"
     },
     "kenn-io/msgvault#1587": {
@@ -130605,7 +130637,7 @@
       "state": "OPEN",
       "title": "fix(daemon): end log capture before reading server warnings",
       "createdAt": "2026-10-30T16:29:18Z",
-      "updatedAt": "2026-10-30T16:30:32Z",
+      "updatedAt": "2026-10-30T22:32:09Z",
       "closedAt": null,
       "mergedAt": null,
       "headRefName": "fix/daemon-log-capture-race",
@@ -130652,26 +130684,242 @@
       "deletions": 7,
       "changedFiles": 3,
       "url": "https://github.com/kenn-io/docbank/pull/1167"
+    },
+    "kenn-io/roborev#1573": {
+      "repo": "kenn-io/roborev",
+      "number": 1573,
+      "state": "MERGED",
+      "title": "fix(api): regenerate CI summary validators",
+      "createdAt": "2026-10-30T20:27:26Z",
+      "updatedAt": "2026-10-30T22:44:23Z",
+      "closedAt": "2026-10-30T22:44:21Z",
+      "mergedAt": "2026-10-30T22:44:21Z",
+      "headRefName": "fix/generated-ci-run-health",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 6,
+      "deletions": 0,
+      "changedFiles": 1,
+      "url": "https://github.com/kenn-io/roborev/pull/1573"
+    },
+    "kenn-io/docbank#1178": {
+      "repo": "kenn-io/docbank",
+      "number": 1178,
+      "state": "OPEN",
+      "title": "feat(changes): stream vault changes to agents and integrations",
+      "createdAt": "2026-10-30T23:07:12Z",
+      "updatedAt": "2026-10-31T01:36:04Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/paperpilot-vault-changes",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 1431,
+      "deletions": 91,
+      "changedFiles": 59,
+      "url": "https://github.com/kenn-io/docbank/pull/1178"
+    },
+    "kenn-io/docbank#1177": {
+      "repo": "kenn-io/docbank",
+      "number": 1177,
+      "state": "OPEN",
+      "title": "feat(watch): tag watched inbox imports with existing tags",
+      "createdAt": "2026-10-30T22:50:37Z",
+      "updatedAt": "2026-10-31T01:31:19Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/watch-import-tags-v3",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 608,
+      "deletions": 88,
+      "changedFiles": 25,
+      "url": "https://github.com/kenn-io/docbank/pull/1177"
+    },
+    "kenn-io/docbank#1176": {
+      "repo": "kenn-io/docbank",
+      "number": 1176,
+      "state": "OPEN",
+      "title": "feat(watch): queue profile processing for watched-inbox imports",
+      "createdAt": "2026-10-30T22:08:04Z",
+      "updatedAt": "2026-10-31T01:35:44Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/watch-processing-profile",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 544,
+      "deletions": 39,
+      "changedFiles": 29,
+      "url": "https://github.com/kenn-io/docbank/pull/1176"
+    },
+    "kenn-io/docbank#1175": {
+      "repo": "kenn-io/docbank",
+      "number": 1175,
+      "state": "OPEN",
+      "title": "feat(pdf): show encryption, signature, attachment, and action evidence",
+      "createdAt": "2026-10-30T21:58:34Z",
+      "updatedAt": "2026-10-30T23:57:01Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/paperpilot-4-pdf-evidence",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 807,
+      "deletions": 51,
+      "changedFiles": 24,
+      "url": "https://github.com/kenn-io/docbank/pull/1175"
+    },
+    "kenn-io/docbank#1174": {
+      "repo": "kenn-io/docbank",
+      "number": 1174,
+      "state": "OPEN",
+      "title": "feat(import): add documents from a URL with fetch provenance",
+      "createdAt": "2026-10-30T21:57:02Z",
+      "updatedAt": "2026-10-31T01:36:02Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/url-import-plan2",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 975,
+      "deletions": 96,
+      "changedFiles": 40,
+      "url": "https://github.com/kenn-io/docbank/pull/1174"
+    },
+    "kenn-io/kit#265": {
+      "repo": "kenn-io/kit",
+      "number": 265,
+      "state": "OPEN",
+      "title": "feat(agentmcp): print standalone client config with bearer env references",
+      "createdAt": "2026-10-30T19:57:13Z",
+      "updatedAt": "2026-10-31T00:34:32Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/paperpilot-mcp-config",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 151,
+      "deletions": 16,
+      "changedFiles": 5,
+      "url": "https://github.com/kenn-io/kit/pull/265"
+    },
+    "kenn-io/docbank#1180": {
+      "repo": "kenn-io/docbank",
+      "number": 1180,
+      "state": "OPEN",
+      "title": "feat(mcp): print Claude Code and Codex configuration",
+      "createdAt": "2026-10-30T23:42:50Z",
+      "updatedAt": "2026-10-31T01:36:05Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/paperpilot-mcp-config",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 391,
+      "deletions": 41,
+      "changedFiles": 8,
+      "url": "https://github.com/kenn-io/docbank/pull/1180"
+    },
+    "kenn-io/roborev#1583": {
+      "repo": "kenn-io/roborev",
+      "number": 1583,
+      "state": "OPEN",
+      "title": "ci(workflows): retry dependency downloads with kit",
+      "createdAt": "2026-10-31T01:10:09Z",
+      "updatedAt": "2026-10-31T01:12:05Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/vet-retro-8b-download-retry",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 55,
+      "deletions": 16,
+      "changedFiles": 5,
+      "url": "https://github.com/kenn-io/roborev/pull/1583"
+    },
+    "kenn-io/kata#768": {
+      "repo": "kenn-io/kata",
+      "number": 768,
+      "state": "OPEN",
+      "title": "ci(workflows): retry dependency downloads through shared helpers",
+      "createdAt": "2026-10-31T00:44:20Z",
+      "updatedAt": "2026-10-31T01:35:47Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/vet-retro-8b-download-retry",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 39,
+      "deletions": 21,
+      "changedFiles": 4,
+      "url": "https://github.com/kenn-io/kata/pull/768"
+    },
+    "kenn-io/docbank#1182": {
+      "repo": "kenn-io/docbank",
+      "number": 1182,
+      "state": "OPEN",
+      "title": "ci(workflows): retry dependency downloads with kit",
+      "createdAt": "2026-10-31T01:10:00Z",
+      "updatedAt": "2026-10-31T01:49:01Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/vet-retro-8b-download-retry",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 74,
+      "deletions": 32,
+      "changedFiles": 7,
+      "url": "https://github.com/kenn-io/docbank/pull/1182"
+    },
+    "kenn-io/forge#1697": {
+      "repo": "kenn-io/forge",
+      "number": 1697,
+      "state": "OPEN",
+      "title": "ci(workflows): retry dependency downloads with kit",
+      "createdAt": "2026-10-31T01:08:55Z",
+      "updatedAt": "2026-10-31T01:10:10Z",
+      "closedAt": null,
+      "mergedAt": null,
+      "headRefName": "pr/vet-retro-8b-download-retry",
+      "author": {
+        "login": "rodboev"
+      },
+      "additions": 47,
+      "deletions": 12,
+      "changedFiles": 5,
+      "url": "https://github.com/kenn-io/forge/pull/1697"
     }
   },
   "authorPullScanMeta": {
     "kenn-io/agentsview": {
-      "scannedAt": "2026-10-30T17:38:15.132179Z",
+      "scannedAt": "2026-10-31T01:49:16.155313Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "thedotmack/claude-mem": {
-      "scannedAt": "2026-10-30T17:38:15.132179Z",
+      "scannedAt": "2026-10-31T01:49:16.155313Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "headroomlabs-ai/headroom": {
-      "scannedAt": "2026-10-30T17:38:15.132179Z",
+      "scannedAt": "2026-10-31T01:49:16.155313Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "nesquena/hermes-webui": {
-      "scannedAt": "2026-10-30T17:38:15.132179Z",
+      "scannedAt": "2026-10-31T01:49:16.155313Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
@@ -130716,32 +130964,32 @@
       "lookbackHours": 48
     },
     "kenn-io/roborev": {
-      "scannedAt": "2026-10-30T17:38:15.132179Z",
+      "scannedAt": "2026-10-31T01:49:16.155313Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "kenn-io/msgvault": {
-      "scannedAt": "2026-10-30T17:38:15.132179Z",
+      "scannedAt": "2026-10-31T01:49:16.155313Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "kenn-io/docbank": {
-      "scannedAt": "2026-10-30T17:38:15.132179Z",
+      "scannedAt": "2026-10-31T01:49:16.155313Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "kenn-io/kata": {
-      "scannedAt": "2026-10-30T17:38:15.132179Z",
+      "scannedAt": "2026-10-31T01:49:16.155313Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "kenn-io/forge": {
-      "scannedAt": "2026-10-30T17:38:15.132179Z",
+      "scannedAt": "2026-10-31T01:49:16.155313Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
     "kenn-io/kit": {
-      "scannedAt": "2026-10-30T17:38:15.132179Z",
+      "scannedAt": "2026-10-31T01:49:16.155313Z",
       "source": "graphql-search",
       "lookbackHours": 48
     },
@@ -137631,8 +137879,8 @@
       "scanResumed": false
     },
     "kenn-io/agentsview|community-shipped-v4|all": {
-      "cachedAt": "2026-10-29T16:15:20.218801Z",
-      "refreshedAt": "2026-10-29T16:15:20.218801Z",
+      "cachedAt": "2026-10-30T23:17:06.605151Z",
+      "refreshedAt": "2026-10-30T23:17:06.605151Z",
       "logins": [
         "wesm",
         "rodboev",
@@ -137641,9 +137889,9 @@
         "salmonumbrella",
         "mjacobs",
         "dqtz5vpvj9-create",
+        "tpn",
         "prateek",
         "andrew05060414",
-        "tpn",
         "userFRM",
         "scross01",
         "macollins27",
@@ -137709,6 +137957,9 @@
         "sinnet3000",
         "cdeil",
         "thellert",
+        "biggestbinary",
+        "ianpittwood",
+        "vzd3v",
         "Devehab",
         "hskiba",
         "wxxb789",
@@ -137841,28 +138092,28 @@
       "stats": {
         "wesm": {
           "total": 438,
-          "open": 5,
-          "recentCount": 16
+          "open": 4,
+          "recentCount": 10
         },
         "rodboev": {
-          "total": 355,
-          "open": 2,
-          "recentCount": 19
+          "total": 367,
+          "open": 0,
+          "recentCount": 26
         },
         "mariusvniekerk": {
-          "total": 251,
-          "open": 2,
-          "recentCount": 25
+          "total": 254,
+          "open": 3,
+          "recentCount": 21
         },
         "cpcloud": {
-          "total": 102,
+          "total": 105,
           "open": 1,
-          "recentCount": 8
+          "recentCount": 9
         },
         "salmonumbrella": {
-          "total": 74,
-          "open": 14,
-          "recentCount": 16
+          "total": 75,
+          "open": 13,
+          "recentCount": 5
         },
         "mjacobs": {
           "total": 69,
@@ -137874,6 +138125,11 @@
           "open": 0,
           "recentCount": 0
         },
+        "tpn": {
+          "total": 16,
+          "open": 0,
+          "recentCount": 1
+        },
         "prateek": {
           "total": 16,
           "open": 0,
@@ -137883,11 +138139,6 @@
           "total": 15,
           "open": 3,
           "recentCount": 2
-        },
-        "tpn": {
-          "total": 15,
-          "open": 0,
-          "recentCount": 0
         },
         "userFRM": {
           "total": 14,
@@ -137987,12 +138238,12 @@
         "mvanhorn": {
           "total": 3,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "MaxFreedomPollard": {
           "total": 3,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "TimeToBuildBob": {
           "total": 3,
@@ -138076,7 +138327,7 @@
         },
         "gadenbuie": {
           "total": 2,
-          "open": 2,
+          "open": 1,
           "recentCount": 2
         },
         "NicholasLea": {
@@ -138214,9 +138465,24 @@
           "open": 0,
           "recentCount": 0
         },
-        "Devehab": {
+        "biggestbinary": {
           "total": 1,
           "open": 1,
+          "recentCount": 1
+        },
+        "ianpittwood": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1
+        },
+        "vzd3v": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "Devehab": {
+          "total": 1,
+          "open": 0,
           "recentCount": 1
         },
         "hskiba": {
@@ -138237,7 +138503,7 @@
         "orshih6": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "whr819987540": {
           "total": 1,
@@ -138857,16 +139123,16 @@
       },
       "shippedCounts": {
         "leejuhanKr": 1,
-        "wesm": 421,
-        "rodboev": 332,
-        "mariusvniekerk": 208,
-        "cpcloud": 100,
-        "salmonumbrella": 31,
+        "wesm": 422,
+        "rodboev": 342,
+        "mariusvniekerk": 210,
+        "cpcloud": 103,
+        "salmonumbrella": 32,
         "mjacobs": 66,
         "dqtz5vpvj9-create": 16,
+        "tpn": 15,
         "prateek": 12,
         "andrew05060414": 11,
-        "tpn": 14,
         "userFRM": 12,
         "scross01": 11,
         "macollins27": 9,
@@ -138904,7 +139170,7 @@
         "charlieviettq": 3,
         "vikram": 2,
         "zerone0x": 3,
-        "gadenbuie": 0,
+        "gadenbuie": 1,
         "NicholasLea": 2,
         "danielhernik": 2,
         "colinmollenhour": 1,
@@ -138932,7 +139198,10 @@
         "sinnet3000": 2,
         "cdeil": 2,
         "thellert": 2,
-        "Devehab": 0,
+        "biggestbinary": 0,
+        "ianpittwood": 1,
+        "vzd3v": 0,
+        "Devehab": 1,
         "hskiba": 1,
         "wxxb789": 1,
         "Michal-Fularz": 1,
@@ -139064,7 +139333,7 @@
       "commentShippedCounts": {},
       "releaseCreditCounts": {},
       "releaseCreditMeta": null,
-      "recentAnchor": "2026-10-29T16:15:20.218801Z",
+      "recentAnchor": "2026-10-30T23:17:06.605151Z",
       "scanPages": 20,
       "scanResumed": false
     },
@@ -307121,8 +307390,8 @@
       "releaseCreditMeta": null
     },
     "thedotmack/claude-mem|community-shipped-v4|all": {
-      "cachedAt": "2026-10-29T16:15:20.218801Z",
-      "refreshedAt": "2026-10-29T16:15:20.218801Z",
+      "cachedAt": "2026-10-30T23:17:06.605151Z",
+      "refreshedAt": "2026-10-30T23:17:06.605151Z",
       "logins": [
         "rudycelekli",
         "rodboev",
@@ -307136,19 +307405,19 @@
         "ntdatt812",
         "octo-patch",
         "bigph00t",
+        "kevin9327",
         "YOMXXX",
         "mguttmann",
         "yetanotherflo",
         "dajiaohuang",
         "laihenyi",
-        "kevin9327",
         "Iyanuoluwa007",
         "lorenzozanee",
         "jayvenn21",
         "rich-murphey",
         "junnhwan",
-        "ChenglinWei97",
         "Montinou",
+        "ChenglinWei97",
         "Kizuno18",
         "escooterclinic",
         "rajivsinclair",
@@ -307163,6 +307432,7 @@
         "darion-yaphet",
         "surfingdoggo",
         "Manantra",
+        "balabommablock-cpu",
         "quinnmacro",
         "rymalia",
         "XX888QM",
@@ -307170,7 +307440,6 @@
         "Regis-RCR",
         "zerone0x",
         "influenist",
-        "balabommablock-cpu",
         "patrickballard",
         "ShitK",
         "mehmetcelik7",
@@ -307192,6 +307461,7 @@
         "faustbrian",
         "ToxMox",
         "basher83",
+        "costajohnt",
         "DrDLyuan",
         "Moep90",
         "endcoreAK",
@@ -307221,6 +307491,7 @@
         "MrSaneApps",
         "JiehoonKwak",
         "7Sageer",
+        "parveen0029",
         "ezoushen",
         "anirudhqwerty",
         "Shubham-Padkonde",
@@ -307243,7 +307514,6 @@
         "Dandroid-D",
         "goodluckstrategy-hash",
         "EugeneChung",
-        "costajohnt",
         "jeanmonet",
         "robll-v1",
         "girish-kanjiyani7",
@@ -307310,6 +307580,14 @@
         "iefnaf",
         "trevwilson",
         "dreamiurg",
+        "beckman55",
+        "1-DARK",
+        "nextjohnp7",
+        "saiteja02110-sketch",
+        "Bortlesboat",
+        "SatoriKomeij",
+        "Zohaibmuaz",
+        "montjeffrey",
         "ekson73",
         "tonydavis629",
         "rav4nn",
@@ -307359,7 +307637,6 @@
         "agammann",
         "Plitzen85",
         "FenjuFu",
-        "LalitaSuthimoon9",
         "claudemeister",
         "wakqasahmed",
         "Felixkw12",
@@ -307749,9 +308026,9 @@
       ],
       "stats": {
         "rudycelekli": {
-          "total": 240,
-          "open": 2,
-          "recentCount": 1
+          "total": 247,
+          "open": 8,
+          "recentCount": 8
         },
         "rodboev": {
           "total": 90,
@@ -307769,9 +308046,9 @@
           "recentCount": 0
         },
         "DeryFerd": {
-          "total": 30,
+          "total": 33,
           "open": 3,
-          "recentCount": 20
+          "recentCount": 17
         },
         "stantheman0128": {
           "total": 29,
@@ -307781,7 +308058,7 @@
         "L4XB": {
           "total": 25,
           "open": 0,
-          "recentCount": 17
+          "recentCount": 3
         },
         "alessandropcostabr": {
           "total": 25,
@@ -307808,6 +308085,11 @@
           "open": 0,
           "recentCount": 0
         },
+        "kevin9327": {
+          "total": 18,
+          "open": 4,
+          "recentCount": 12
+        },
         "YOMXXX": {
           "total": 17,
           "open": 0,
@@ -307820,7 +308102,7 @@
         },
         "yetanotherflo": {
           "total": 15,
-          "open": 3,
+          "open": 0,
           "recentCount": 3
         },
         "dajiaohuang": {
@@ -307832,11 +308114,6 @@
           "total": 15,
           "open": 0,
           "recentCount": 0
-        },
-        "kevin9327": {
-          "total": 14,
-          "open": 2,
-          "recentCount": 8
         },
         "Iyanuoluwa007": {
           "total": 14,
@@ -307856,22 +308133,22 @@
         "rich-murphey": {
           "total": 10,
           "open": 0,
-          "recentCount": 9
+          "recentCount": 2
         },
         "junnhwan": {
           "total": 10,
           "open": 0,
           "recentCount": 0
         },
+        "Montinou": {
+          "total": 9,
+          "open": 1,
+          "recentCount": 2
+        },
         "ChenglinWei97": {
           "total": 9,
           "open": 0,
           "recentCount": 0
-        },
-        "Montinou": {
-          "total": 8,
-          "open": 0,
-          "recentCount": 1
         },
         "Kizuno18": {
           "total": 8,
@@ -307910,7 +308187,7 @@
         },
         "Wenjix": {
           "total": 6,
-          "open": 6,
+          "open": 1,
           "recentCount": 6
         },
         "nero-harsh": {
@@ -307942,6 +308219,11 @@
           "total": 6,
           "open": 0,
           "recentCount": 0
+        },
+        "balabommablock-cpu": {
+          "total": 5,
+          "open": 1,
+          "recentCount": 4
         },
         "quinnmacro": {
           "total": 5,
@@ -307978,30 +308260,25 @@
           "open": 0,
           "recentCount": 0
         },
-        "balabommablock-cpu": {
-          "total": 4,
-          "open": 2,
-          "recentCount": 3
-        },
         "patrickballard": {
           "total": 4,
-          "open": 2,
+          "open": 1,
           "recentCount": 4
         },
         "ShitK": {
           "total": 4,
-          "open": 2,
-          "recentCount": 4
+          "open": 1,
+          "recentCount": 2
         },
         "mehmetcelik7": {
           "total": 4,
-          "open": 2,
+          "open": 1,
           "recentCount": 4
         },
         "SuperMarioYL": {
           "total": 4,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "CCCLL": {
           "total": 4,
@@ -308088,9 +308365,14 @@
           "open": 0,
           "recentCount": 0
         },
+        "costajohnt": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 1
+        },
         "DrDLyuan": {
           "total": 3,
-          "open": 1,
+          "open": 0,
           "recentCount": 1
         },
         "Moep90": {
@@ -308233,35 +308515,40 @@
           "open": 0,
           "recentCount": 0
         },
+        "parveen0029": {
+          "total": 2,
+          "open": 2,
+          "recentCount": 2
+        },
         "ezoushen": {
           "total": 2,
-          "open": 1,
+          "open": 0,
           "recentCount": 1
         },
         "anirudhqwerty": {
           "total": 2,
-          "open": 1,
+          "open": 0,
           "recentCount": 2
         },
         "Shubham-Padkonde": {
           "total": 2,
-          "open": 1,
+          "open": 0,
           "recentCount": 2
         },
         "LuckVd": {
           "total": 2,
           "open": 0,
-          "recentCount": 2
+          "recentCount": 1
         },
         "cveld": {
           "total": 2,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "iann": {
           "total": 2,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "pengqun": {
           "total": 2,
@@ -308339,11 +308626,6 @@
           "recentCount": 0
         },
         "EugeneChung": {
-          "total": 2,
-          "open": 0,
-          "recentCount": 0
-        },
-        "costajohnt": {
           "total": 2,
           "open": 0,
           "recentCount": 0
@@ -308678,9 +308960,49 @@
           "open": 0,
           "recentCount": 0
         },
-        "ekson73": {
+        "beckman55": {
           "total": 1,
           "open": 1,
+          "recentCount": 1
+        },
+        "1-DARK": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "nextjohnp7": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "saiteja02110-sketch": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "Bortlesboat": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "SatoriKomeij": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "Zohaibmuaz": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
+        },
+        "montjeffrey": {
+          "total": 1,
+          "open": 0,
+          "recentCount": 1
+        },
+        "ekson73": {
+          "total": 1,
+          "open": 0,
           "recentCount": 1
         },
         "tonydavis629": {
@@ -308690,7 +309012,7 @@
         },
         "rav4nn": {
           "total": 1,
-          "open": 1,
+          "open": 0,
           "recentCount": 1
         },
         "nicho810": {
@@ -308731,17 +309053,17 @@
         "smrifat1411": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "rigel905": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "gabfamoreira": {
           "total": 1,
           "open": 0,
-          "recentCount": 1
+          "recentCount": 0
         },
         "specetator": {
           "total": 1,
@@ -308919,11 +309241,6 @@
           "recentCount": 0
         },
         "FenjuFu": {
-          "total": 1,
-          "open": 0,
-          "recentCount": 0
-        },
-        "LalitaSuthimoon9": {
           "total": 1,
           "open": 0,
           "recentCount": 0
@@ -310866,11 +311183,12 @@
         "T-sanjay-ram": 0,
         "loulanyue": 0,
         "go-enols": 1,
-        "rudycelekli": 225,
+        "LalitaSuthimoon9": 0,
+        "rudycelekli": 226,
         "rodboev": 42,
         "ousamabenyounes": 30,
         "Glucksberg": 13,
-        "DeryFerd": 27,
+        "DeryFerd": 30,
         "stantheman0128": 26,
         "L4XB": 23,
         "alessandropcostabr": 16,
@@ -310878,19 +311196,19 @@
         "ntdatt812": 8,
         "octo-patch": 7,
         "bigph00t": 6,
+        "kevin9327": 14,
         "YOMXXX": 4,
         "mguttmann": 0,
-        "yetanotherflo": 11,
+        "yetanotherflo": 14,
         "dajiaohuang": 3,
         "laihenyi": 2,
-        "kevin9327": 12,
         "Iyanuoluwa007": 9,
         "lorenzozanee": 4,
         "jayvenn21": 3,
         "rich-murphey": 10,
         "junnhwan": 10,
-        "ChenglinWei97": 7,
         "Montinou": 8,
+        "ChenglinWei97": 7,
         "Kizuno18": 7,
         "escooterclinic": 7,
         "rajivsinclair": 3,
@@ -310898,13 +311216,14 @@
         "aniruddhaadak80": 4,
         "michelhelsdingen": 2,
         "ixnaswang": 1,
-        "Wenjix": 0,
+        "Wenjix": 5,
         "nero-harsh": 4,
         "Mola-maker": 4,
         "pg-adm1n": 1,
         "darion-yaphet": 1,
         "surfingdoggo": 3,
         "Manantra": 3,
+        "balabommablock-cpu": 4,
         "quinnmacro": 4,
         "rymalia": 1,
         "XX888QM": 1,
@@ -310912,10 +311231,9 @@
         "Regis-RCR": 0,
         "zerone0x": 1,
         "influenist": 0,
-        "balabommablock-cpu": 2,
-        "patrickballard": 2,
-        "ShitK": 2,
-        "mehmetcelik7": 2,
+        "patrickballard": 3,
+        "ShitK": 3,
+        "mehmetcelik7": 3,
         "SuperMarioYL": 3,
         "CCCLL": 4,
         "Kustom665": 0,
@@ -310934,7 +311252,8 @@
         "faustbrian": 0,
         "ToxMox": 2,
         "basher83": 1,
-        "DrDLyuan": 2,
+        "costajohnt": 3,
+        "DrDLyuan": 3,
         "Moep90": 2,
         "endcoreAK": 3,
         "zichen0116": 2,
@@ -310963,9 +311282,10 @@
         "MrSaneApps": 1,
         "JiehoonKwak": 0,
         "7Sageer": 1,
-        "ezoushen": 1,
-        "anirudhqwerty": 1,
-        "Shubham-Padkonde": 1,
+        "parveen0029": 0,
+        "ezoushen": 2,
+        "anirudhqwerty": 2,
+        "Shubham-Padkonde": 2,
         "LuckVd": 1,
         "cveld": 2,
         "iann": 2,
@@ -310985,7 +311305,6 @@
         "Dandroid-D": 2,
         "goodluckstrategy-hash": 2,
         "EugeneChung": 1,
-        "costajohnt": 2,
         "jeanmonet": 1,
         "robll-v1": 0,
         "girish-kanjiyani7": 2,
@@ -311052,7 +311371,15 @@
         "iefnaf": 0,
         "trevwilson": 1,
         "dreamiurg": 2,
-        "ekson73": 0,
+        "beckman55": 0,
+        "1-DARK": 0,
+        "nextjohnp7": 0,
+        "saiteja02110-sketch": 0,
+        "Bortlesboat": 0,
+        "SatoriKomeij": 0,
+        "Zohaibmuaz": 0,
+        "montjeffrey": 1,
+        "ekson73": 1,
         "tonydavis629": 0,
         "rav4nn": 0,
         "nicho810": 0,
@@ -311101,7 +311428,6 @@
         "agammann": 1,
         "Plitzen85": 1,
         "FenjuFu": 1,
-        "LalitaSuthimoon9": 0,
         "claudemeister": 1,
         "wakqasahmed": 1,
         "Felixkw12": 1,
@@ -311492,8 +311818,8 @@
       "commentShippedCounts": {},
       "releaseCreditCounts": {},
       "releaseCreditMeta": null,
-      "recentAnchor": "2026-10-29T16:15:20.218801Z",
-      "scanPages": 26,
+      "recentAnchor": "2026-10-30T23:17:06.605151Z",
+      "scanPages": 27,
       "scanResumed": false
     },
     "thedotmack/claude-mem|community-shipped-v5|all": {
@@ -327744,9 +328070,9 @@
       "scanResumed": false
     },
     "kenn-io/roborev|community-shipped-v4|all": {
-      "cachedAt": "2026-10-29T16:15:20.218801Z",
-      "refreshedAt": "2026-10-29T16:15:20.218801Z",
-      "recentAnchor": "2026-10-29T16:15:20.218801Z",
+      "cachedAt": "2026-10-30T23:17:06.605151Z",
+      "refreshedAt": "2026-10-30T23:17:06.605151Z",
+      "recentAnchor": "2026-10-30T23:17:06.605151Z",
       "scanPages": 13,
       "scanResumed": false,
       "logins": [
@@ -327779,6 +328105,7 @@
         "anshbansal",
         "andyxhadji",
         "sinzin91",
+        "akinolur",
         "strawberry-little-bear",
         "sean0407",
         "dshvadskiy",
@@ -327825,26 +328152,26 @@
         "wesm": {
           "total": 519,
           "open": 0,
-          "recentCount": 6
+          "recentCount": 3
         },
         "mariusvniekerk": {
-          "total": 237,
-          "open": 4,
-          "recentCount": 32
+          "total": 247,
+          "open": 2,
+          "recentCount": 35
         },
         "cpcloud": {
-          "total": 76,
+          "total": 83,
           "open": 0,
-          "recentCount": 9
+          "recentCount": 16
         },
         "rodboev": {
-          "total": 75,
-          "open": 3,
-          "recentCount": 11
+          "total": 83,
+          "open": 4,
+          "recentCount": 16
         },
         "salmonumbrella": {
-          "total": 56,
-          "open": 23,
+          "total": 59,
+          "open": 21,
           "recentCount": 22
         },
         "hughdbrown": {
@@ -327966,6 +328293,11 @@
           "total": 2,
           "open": 0,
           "recentCount": 0
+        },
+        "akinolur": {
+          "total": 1,
+          "open": 1,
+          "recentCount": 1
         },
         "strawberry-little-bear": {
           "total": 1,
@@ -328175,10 +328507,10 @@
       },
       "shippedCounts": {
         "wesm": 508,
-        "mariusvniekerk": 228,
-        "cpcloud": 69,
-        "rodboev": 70,
-        "salmonumbrella": 20,
+        "mariusvniekerk": 240,
+        "cpcloud": 76,
+        "rodboev": 77,
+        "salmonumbrella": 25,
         "hughdbrown": 6,
         "mjacobs": 7,
         "darrenhaas": 2,
@@ -328203,6 +328535,7 @@
         "anshbansal": 1,
         "andyxhadji": 2,
         "sinzin91": 2,
+        "akinolur": 0,
         "strawberry-little-bear": 1,
         "sean0407": 1,
         "dshvadskiy": 1,
@@ -328247,9 +328580,9 @@
       }
     },
     "kenn-io/msgvault|community-shipped-v4|all": {
-      "cachedAt": "2026-10-29T16:15:20.218801Z",
-      "refreshedAt": "2026-10-29T16:15:20.218801Z",
-      "recentAnchor": "2026-10-29T16:15:20.218801Z",
+      "cachedAt": "2026-10-30T23:17:06.605151Z",
+      "refreshedAt": "2026-10-30T23:17:06.605151Z",
+      "recentAnchor": "2026-10-30T23:17:06.605151Z",
       "scanPages": 12,
       "scanResumed": false,
       "logins": [
@@ -328257,11 +328590,11 @@
         "wesm",
         "rodboev",
         "mariusvniekerk",
+        "cpcloud",
         "hughdbrown",
         "exactmike",
         "jesserobbins",
         "danshapiro",
-        "cpcloud",
         "hansn74",
         "sweenzor",
         "eserie",
@@ -328275,6 +328608,7 @@
         "njt",
         "sarcasticbird",
         "etbyrd",
+        "elviskahoro",
         "fucx",
         "franklintra",
         "m-j-r",
@@ -328283,7 +328617,6 @@
         "jr-k",
         "aaronwolen",
         "fmasi",
-        "elviskahoro",
         "bjabes",
         "sternryan",
         "schlabrendorff",
@@ -328325,24 +328658,29 @@
       ],
       "stats": {
         "salmonumbrella": {
-          "total": 320,
+          "total": 328,
           "open": 76,
-          "recentCount": 34
+          "recentCount": 18
         },
         "wesm": {
-          "total": 254,
-          "open": 11,
-          "recentCount": 19
+          "total": 260,
+          "open": 8,
+          "recentCount": 24
         },
         "rodboev": {
-          "total": 201,
-          "open": 10,
-          "recentCount": 30
+          "total": 210,
+          "open": 9,
+          "recentCount": 33
         },
         "mariusvniekerk": {
-          "total": 49,
-          "open": 1,
-          "recentCount": 12
+          "total": 50,
+          "open": 0,
+          "recentCount": 10
+        },
+        "cpcloud": {
+          "total": 20,
+          "open": 2,
+          "recentCount": 7
         },
         "hughdbrown": {
           "total": 19,
@@ -328352,7 +328690,7 @@
         "exactmike": {
           "total": 18,
           "open": 1,
-          "recentCount": 1
+          "recentCount": 0
         },
         "jesserobbins": {
           "total": 17,
@@ -328364,15 +328702,10 @@
           "open": 0,
           "recentCount": 0
         },
-        "cpcloud": {
-          "total": 15,
-          "open": 0,
-          "recentCount": 3
-        },
         "hansn74": {
           "total": 12,
           "open": 0,
-          "recentCount": 2
+          "recentCount": 1
         },
         "sweenzor": {
           "total": 12,
@@ -328434,6 +328767,11 @@
           "open": 0,
           "recentCount": 0
         },
+        "elviskahoro": {
+          "total": 3,
+          "open": 0,
+          "recentCount": 1
+        },
         "fucx": {
           "total": 3,
           "open": 0,
@@ -328456,7 +328794,7 @@
         },
         "AndrewWiggins": {
           "total": 2,
-          "open": 2,
+          "open": 1,
           "recentCount": 2
         },
         "jr-k": {
@@ -328470,11 +328808,6 @@
           "recentCount": 0
         },
         "fmasi": {
-          "total": 2,
-          "open": 0,
-          "recentCount": 0
-        },
-        "elviskahoro": {
           "total": 2,
           "open": 0,
           "recentCount": 0
@@ -328671,15 +329004,15 @@
         }
       },
       "shippedCounts": {
-        "salmonumbrella": 192,
-        "wesm": 237,
-        "rodboev": 171,
-        "mariusvniekerk": 47,
+        "salmonumbrella": 193,
+        "wesm": 239,
+        "rodboev": 181,
+        "mariusvniekerk": 49,
+        "cpcloud": 16,
         "hughdbrown": 14,
         "exactmike": 13,
         "jesserobbins": 12,
         "danshapiro": 16,
-        "cpcloud": 13,
         "hansn74": 12,
         "sweenzor": 10,
         "eserie": 5,
@@ -328693,15 +329026,15 @@
         "njt": 4,
         "sarcasticbird": 1,
         "etbyrd": 4,
+        "elviskahoro": 2,
         "fucx": 3,
         "franklintra": 2,
         "m-j-r": 2,
         "YourEconProf": 3,
-        "AndrewWiggins": 0,
+        "AndrewWiggins": 1,
         "jr-k": 2,
         "aaronwolen": 2,
         "fmasi": 1,
-        "elviskahoro": 1,
         "bjabes": 2,
         "sternryan": 0,
         "schlabrendorff": 1,
@@ -328743,9 +329076,9 @@
       }
     },
     "kenn-io/docbank|community-shipped-v4|all": {
-      "cachedAt": "2026-10-29T16:15:20.218801Z",
-      "refreshedAt": "2026-10-29T16:15:20.218801Z",
-      "recentAnchor": "2026-10-29T16:15:20.218801Z",
+      "cachedAt": "2026-10-30T23:17:06.605151Z",
+      "refreshedAt": "2026-10-30T23:17:06.605151Z",
+      "recentAnchor": "2026-10-30T23:17:06.605151Z",
       "scanPages": 11,
       "scanResumed": false,
       "logins": [
@@ -328759,29 +329092,29 @@
       ],
       "stats": {
         "salmonumbrella": {
-          "total": 417,
+          "total": 419,
           "open": 11,
-          "recentCount": 18
+          "recentCount": 20
         },
         "wesm": {
-          "total": 357,
-          "open": 4,
-          "recentCount": 29
+          "total": 366,
+          "open": 3,
+          "recentCount": 35
         },
         "rodboev": {
-          "total": 235,
-          "open": 6,
-          "recentCount": 29
+          "total": 248,
+          "open": 10,
+          "recentCount": 36
         },
         "mariusvniekerk": {
-          "total": 30,
-          "open": 0,
-          "recentCount": 15
+          "total": 32,
+          "open": 1,
+          "recentCount": 11
         },
         "cpcloud": {
-          "total": 5,
-          "open": 0,
-          "recentCount": 5
+          "total": 9,
+          "open": 2,
+          "recentCount": 4
         },
         "Joi": {
           "total": 1,
@@ -328795,20 +329128,20 @@
         }
       },
       "shippedCounts": {
-        "salmonumbrella": 136,
-        "wesm": 348,
-        "rodboev": 210,
-        "mariusvniekerk": 30,
-        "cpcloud": 5,
+        "salmonumbrella": 138,
+        "wesm": 358,
+        "rodboev": 219,
+        "mariusvniekerk": 31,
+        "cpcloud": 7,
         "Joi": 1,
         "mjacobs": 1
       }
     },
     "kenn-io/kata|community-shipped-v4|all": {
-      "cachedAt": "2026-10-29T16:15:20.218801Z",
-      "refreshedAt": "2026-10-29T16:15:20.218801Z",
-      "recentAnchor": "2026-10-29T16:15:20.218801Z",
-      "scanPages": 6,
+      "cachedAt": "2026-10-30T23:17:06.605151Z",
+      "refreshedAt": "2026-10-30T23:17:06.605151Z",
+      "recentAnchor": "2026-10-30T23:17:06.605151Z",
+      "scanPages": 7,
       "scanResumed": false,
       "logins": [
         "wesm",
@@ -328839,27 +329172,27 @@
         "wesm": {
           "total": 188,
           "open": 0,
-          "recentCount": 10
+          "recentCount": 8
         },
         "salmonumbrella": {
-          "total": 180,
+          "total": 184,
           "open": 19,
           "recentCount": 35
         },
         "mariusvniekerk": {
-          "total": 78,
+          "total": 80,
           "open": 0,
-          "recentCount": 13
+          "recentCount": 10
         },
         "rodboev": {
-          "total": 66,
+          "total": 71,
           "open": 1,
-          "recentCount": 8
+          "recentCount": 11
         },
         "cpcloud": {
-          "total": 22,
-          "open": 1,
-          "recentCount": 2
+          "total": 28,
+          "open": 3,
+          "recentCount": 7
         },
         "mjacobs": {
           "total": 15,
@@ -328867,9 +329200,9 @@
           "recentCount": 0
         },
         "Dangerboi": {
-          "total": 4,
-          "open": 0,
-          "recentCount": 3
+          "total": 11,
+          "open": 2,
+          "recentCount": 10
         },
         "codyw912": {
           "total": 4,
@@ -328954,12 +329287,12 @@
       },
       "shippedCounts": {
         "wesm": 186,
-        "salmonumbrella": 128,
-        "mariusvniekerk": 75,
-        "rodboev": 63,
-        "cpcloud": 17,
+        "salmonumbrella": 132,
+        "mariusvniekerk": 77,
+        "rodboev": 68,
+        "cpcloud": 21,
         "mjacobs": 14,
-        "Dangerboi": 3,
+        "Dangerboi": 7,
         "codyw912": 4,
         "naveenspark": 4,
         "njt": 2,
@@ -328979,9 +329312,9 @@
       }
     },
     "kenn-io/forge|community-shipped-v4|all": {
-      "cachedAt": "2026-10-29T16:15:20.218801Z",
-      "refreshedAt": "2026-10-29T16:15:20.218801Z",
-      "recentAnchor": "2026-10-29T16:15:20.218801Z",
+      "cachedAt": "2026-10-30T23:17:06.605151Z",
+      "refreshedAt": "2026-10-30T23:17:06.605151Z",
+      "recentAnchor": "2026-10-30T23:17:06.605151Z",
       "scanPages": 16,
       "scanResumed": false,
       "logins": [
@@ -328998,23 +329331,23 @@
       ],
       "stats": {
         "mariusvniekerk": {
-          "total": 843,
-          "open": 5,
-          "recentCount": 48
+          "total": 867,
+          "open": 3,
+          "recentCount": 61
         },
         "wesm": {
           "total": 335,
           "open": 0,
-          "recentCount": 17
+          "recentCount": 13
         },
         "cpcloud": {
-          "total": 126,
-          "open": 1,
-          "recentCount": 10
+          "total": 143,
+          "open": 11,
+          "recentCount": 23
         },
         "rodboev": {
-          "total": 119,
-          "open": 2,
+          "total": 129,
+          "open": 1,
           "recentCount": 40
         },
         "andyxhadji": {
@@ -329049,10 +329382,10 @@
         }
       },
       "shippedCounts": {
-        "mariusvniekerk": 801,
+        "mariusvniekerk": 827,
         "wesm": 325,
-        "cpcloud": 116,
-        "rodboev": 116,
+        "cpcloud": 123,
+        "rodboev": 127,
         "andyxhadji": 2,
         "hughdbrown": 1,
         "salmonumbrella": 2,

@@ -12,22 +12,23 @@ import pytest
 @pytest.mark.parametrize(
     ("key", "fail", "expected"),
     [
-        ("P", "", ["add", "commit", "push", "watch"]),
-        ("p", "", ["add", "commit", "push", "watch"]),
+        ("\r", "", ["add", "commit", "push", "watch"]),
         ("P", "push", ["add", "commit", "push"]),
-        ("\r", "", []),
-        ("\x03", "", []),
-        ("interrupt", "", []),
         ("P", "generate", []),
         ("P", "add", ["add"]),
         ("P", "commit", ["add", "commit"]),
+        ("P", "red", ["add", "commit", "push", "watch"]),
+        ("p", "red", ["add", "commit", "push", "watch"]),
+        ("\r", "red", []),
+        ("\x03", "red", []),
+        ("interrupt", "red", []),
     ],
 )
-def test_publish_requires_p_and_successful_commands(tmp_path: Path, key: str, fail: str, expected: list[str]) -> None:
+def test_publish_asks_only_after_a_new_red_pr(tmp_path: Path, key: str, fail: str, expected: list[str]) -> None:
     wrapper = Path(__file__).resolve().parents[1] / "generate.cmd"
     script = wrapper.read_text().replace("python ", f'"{sys.executable}" ').replace("git ", f'"{sys.executable}" fake_git.py ').replace("import msvcrt, sys", "import fake_msvcrt as msvcrt, sys")
     (tmp_path / "generate.cmd").write_text(script)
-    (tmp_path / "generate.py").write_text("import os, sys; sys.exit(1 if os.environ['FAIL'] == 'generate' else 0)\n")
+    (tmp_path / "generate.py").write_text("import os, sys; sys.exit({'generate': 1, 'red': 3}.get(os.environ['FAIL'], 0))\n")
     (tmp_path / "watch_deploy.py").write_text("open('git.log', 'a').write('watch\\n')\n")
     (tmp_path / "fake_msvcrt.py").write_text(
         "import os, sys\n"
