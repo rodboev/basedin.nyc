@@ -97,8 +97,11 @@ DEFAULT_CACHE_FILE = Path(".pr-classification-cache.json")
 DEFAULT_REBUILD_CACHE_FILE = Path(".pr-classification-cache.rebuild.json")
 DEFAULT_DIVERGENCE_FILE = Path("classification-divergences.json")
 AUTHOR_PULL_LOOKBACK_HOURS = 48
-WITHDRAWN_RECHECK_DAYS = 14
+WITHDRAWN_RECHECK_DAYS = 3
 WITHDRAWN_RECHECK_INTERVAL_HOURS = 6
+# generate.cmd publishes without asking unless a run newly classifies one of these.
+RED_CLASSIFICATIONS = frozenset({"lost", "superseded"})
+NEW_RED_EXIT_CODE = 3
 AUTHOR_PULL_SEARCH_PAGE_SIZE = 100
 AUTHOR_PULL_SEARCH_MAX_PAGES = 10
 AUTHOR_PULL_GRAPHQL_QUERY = """\
@@ -294,6 +297,7 @@ def generate_report(
         except GhRetryExhausted as exc:
             print(f"WARNING: leaderboard refresh failed for {repo}: {exc}", file=sys.stderr)
     warn_stale_leaderboards(repos, cache, now=now)
+    red_before = _red_cache_keys(cache)
     try:
         typed_items, cache_updated = report_items_from_live_pull_requests(live_prs, cache, now=now, workers=workers)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
@@ -380,7 +384,14 @@ def generate_report(
             print(f"ERROR: {issue}", file=sys.stderr)
         return 1
     print(f"Generated report at {out_file}", file=sys.stderr)
-    return 0
+    new_red = sorted(_red_cache_keys(cache) - red_before)
+    for key in new_red:
+        print(f"NEW {cache.entries[key].classification.upper()}: {key}", file=sys.stderr)
+    return NEW_RED_EXIT_CODE if new_red else 0
+
+
+def _red_cache_keys(cache: Cache) -> set[str]:
+    return {key for key, entry in cache.entries.items() if entry.classification in RED_CLASSIFICATIONS}
 
 def fetch_author_pull_requests(
     repos: list[str],
@@ -753,7 +764,7 @@ def _needs_live_classification(repo: str, pr: GhPullRequestView, cache: Cache, n
 
 def _withdrawn_recheck_due(entry: ClassificationEntry, pr: GhPullRequestView, now: datetime) -> bool:
     # A withdrawal can be provisional: the author closed in favor of a takeover PR
-    # that has not merged yet. Keep reclassifying live until the close is 14 days
+    # that has not merged yet. Keep reclassifying live until the close is WITHDRAWN_RECHECK_DAYS
     # old so a replacement that lands with credit upgrades the entry; after that
     # the withdrawal is settled and the cache entry is final. Within that window,
     # throttle to WITHDRAWN_RECHECK_INTERVAL_HOURS against cachedAt (rewritten on
