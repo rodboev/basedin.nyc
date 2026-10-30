@@ -6,7 +6,7 @@ function acceptanceRate(shipped, closed) { return closed > 0 ? shipped / closed 
 function formatAcceptanceRate(rate) {
   if (rate == null) return 'N/A';
   if (rate === 100) return '100';
-  if (rate > 99) return (Math.floor(rate * 10) / 10).toFixed(1);
+  if (rate > 99) return String(Math.floor(rate * 10) / 10);
   return String(Math.round(rate));
 }
 var isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
