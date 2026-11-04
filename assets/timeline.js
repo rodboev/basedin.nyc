@@ -471,7 +471,7 @@ function updateBreakdown(r) {
   syncRangeLabels(r);
 }
 
-var range = 60, dChart, cChart, animId = 0, transId = 0;
+var range = 90, dChart, cChart, animId = 0, transId = 0;
 function cleanupAnim() {
   if (!dChart || !cChart) return;
   dChart._barScales = null; cChart._barScales = null;
@@ -583,7 +583,7 @@ function build(r) {
 }
 // Load animation walks these ranges in order; the first is the frame the static markup is built at
 // and must match BD_LOAD_SEED_RANGE in core/timeline.py. See the note there for why it is not 1 or 0.
-var BD_LOAD_RANGES = [2, 7, 14, 30, 60];
+var BD_LOAD_RANGES = [2, 7, 14, 30, 60, 90];
 function bdStats(r) {
   var sl = sliceData(r);
   var op = 0, s = 0, o = 0, sp = 0, l = 0, loc = 0, ad = 0, ld = 0;
